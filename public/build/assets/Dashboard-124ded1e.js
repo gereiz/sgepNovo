@@ -1,0 +1,1 @@
+import{_ as e}from"./AuthenticatedLayout-412c41fb.js";import{o as r,c as t,a,u as o,F as s,Z as c}from"./app-010c01ec.js";import"./_plugin-vue_export-helper-c27b6911.js";const f={__name:"Dashboard",setup(n){return(_,m)=>(r(),t(s,null,[a(o(c),{title:"Dashboard"}),a(e)],64))}};export{f as default};
