@@ -97,28 +97,47 @@ const clientesFiltrados = computed(() => {
                             <FormKit type="step" name="Inf.Básicas">
                                 <!-- Dados Básicos do Cliente -->
 
+        
                                 <!-- Nome Fantasia -->
                                 <FormKit 
                                     type="text" 
                                     label="Nome Fantasia"  
                                     validation="required"
+                                    :classes ="{
+                                        label: 'text-sky-800',
+                                        inner:'w-full',
+                                        input: 'h-12'
+                                    }"
                                 />
-                
-                                <!-- Email do Responsável -->
-                                <FormKit 
-                                    type="email" 
-                                    label="Email do Responsável" 
-                                    prefix-icon="email" 
-                                    validation="required"
-                                />
-            
-                                <!-- Celular do Responsável -->
+                                
+                                    <!-- Celular do Responsável -->
                                 <FormKit
                                     type="tel"
                                     validation="required"
                                     label="Phone"
                                     prefix-icon="telephone"
+                                    :classes ="{
+                                        label: 'text-sky-800',
+                                        inner:'w-full',
+                                        input: 'h-12'
+                                    }"
                                 />
+                                
+                              
+                                <!-- Email do Responsável -->
+                                    <FormKit 
+                                        type="email" 
+                                        label="Email do Responsável" 
+                                        prefix-icon="email" 
+                                        validation="required"
+                                        :classes ="{
+                                            label: 'text-sky-800',
+                                            inner:'w-full',
+                                            input: 'h-12'
+                                        }"
+                                    />
+            
+                               
 
                             </FormKit>
                             
