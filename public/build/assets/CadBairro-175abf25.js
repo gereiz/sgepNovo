@@ -1,1 +1,0 @@
-import{_ as r}from"./AuthenticatedLayout-412c41fb.js";import{o as e,c as t,a,u as o,F as s,Z as c}from"./app-010c01ec.js";import"./_plugin-vue_export-helper-c27b6911.js";const u={__name:"CadBairro",setup(n){return(_,m)=>(e(),t(s,null,[a(o(c),{title:"Bairros"}),a(r)],64))}};export{u as default};
