@@ -78,7 +78,7 @@
             <div class="group">
             <p  class="text-white mt-1">Relatórios</p>
                 <ul  class="hidden group-hover:block w-52 text-white ml-1 mt-2 space-y-2">
-                    <li class="hover:text-slate-400"><a>Cadastro de Cidades</a></li>
+                    <li class="hover:text-slate-400"><a href="https://sgepequipe.com/relColagem">Relatório de Colagem</a></li>
                     <li class="hover:text-slate-400"><a>Cadastro de Regiões</a></li>
                     <li class="hover:text-slate-400"><a href="/CadBairro">Cadastro de Bairros</a></li>
                 </ul>
