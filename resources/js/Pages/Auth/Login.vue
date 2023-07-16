@@ -90,7 +90,6 @@
     const form = useForm({
         email: '',
         password: '',
-        _token: this.$page.props.csrf_token,
         remember: false,
     });
 
