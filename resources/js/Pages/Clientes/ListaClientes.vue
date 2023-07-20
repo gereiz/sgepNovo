@@ -55,8 +55,6 @@ const clientesFiltrados = computed(() => {
                 <div class="card-body">
                     <div class="w-full flex flex-col flex-wrap md:flex-row justify-center">
                         
-
-                        
                         <div v-for="(cli, index) in clientesFiltrados" :key="index" class="card w-full md:w-5/12 bg-base-100 border-2 rounded-md shadow-xl mt-4 md:mr-4">
                             <label for="modal-cliente" @click="setClienteData(cli.id, (cli.nome_fantasia ? cli.nome_fantasia : cli.razao_social))">
                                 <div class="card-body">

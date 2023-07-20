@@ -4,6 +4,7 @@ use App\Http\Controllers\Clientes\ClienteController;
 use App\Http\Controllers\Enderecos\BairroController;
 use App\Http\Controllers\Enderecos\CidadeController;
 use App\Http\Controllers\Enderecos\RegiaoController;
+use App\Http\Controllers\Paineis\PaineisController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -70,6 +71,11 @@ Route::middleware('auth')->group(function () {
 
     //Clientes
     route::get('/Clientes', [ClienteController::class, 'index'])->name('lista.cliente'); 
+
+
+
+    //Painéis
+    route::get('/Paineis', [PaineisController::class, 'index'])->name('lista.paineis'); 
 
 
 

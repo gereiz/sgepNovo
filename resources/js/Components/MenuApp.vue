@@ -46,7 +46,7 @@
             <div class="group">
             <p  class="text-white mt-1">Painéis</p>
                 <ul  class="hidden group-hover:block w-52 text-white ml-1 mt-2 space-y-2">
-                    <li class="hover:text-slate-400"><a>Lista de Painéis</a></li>
+                    <li class="hover:text-slate-400"><a href="/Paineis">Lista de Painéis</a></li>
                 </ul>
             </div>
         </div>
@@ -78,7 +78,24 @@
             <div class="group">
             <p  class="text-white mt-1">Relatórios</p>
                 <ul  class="hidden group-hover:block w-52 text-white ml-1 mt-2 space-y-2">
-                    <li class="hover:text-slate-400"><a href="https://sgepequipe.com/relColagem" target="_blank">Relatório de Colagem</a></li>
+                    <li class="hover:text-slate-400"><a href="https://sgepequipe.com/relColagem" target="_blanksgepnovo/public/">Relatório de Colagem</a></li>
+                    <li class="hover:text-slate-400"><a>Cadastro de Regiões</a></li>
+                    <li class="hover:text-slate-400"><a href="/CadBairro">Cadastro de Bairros</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financeiro -->
+    <div class="w-full flex">
+        <div class="w-2/12 md:ml-2.5 text-center">
+            <i class="fa-regular fa-file text-white text-xl"></i>
+        </div> 
+        <div class="w-10/12 flex">
+            <div class="group">
+            <p  class="text-white mt-1">Financeiro</p>
+                <ul  class="hidden group-hover:block w-52 text-white ml-1 mt-2 space-y-2">
+                    <li class="hover:text-slate-400"><a href="https://sgepequipe.com/relColagem" target="_blanksgepnovo/public/">Relatório de Colagem</a></li>
                     <li class="hover:text-slate-400"><a>Cadastro de Regiões</a></li>
                     <li class="hover:text-slate-400"><a href="/CadBairro">Cadastro de Bairros</a></li>
                 </ul>
