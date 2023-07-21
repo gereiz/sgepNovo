@@ -13,7 +13,7 @@ class PaineisController extends Controller
     
     public function index() {
 
-        $paineis = Painel::all();
+        $paineis = Painel::with('bairro')->get();
 
         return Inertia::render('Paineis/ListaPaineis', compact('paineis'));
 
