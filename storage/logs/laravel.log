@@ -16441,6 +16441,7 @@ Did you mean one of these?
 #71 C:\\laragon\\www\\sgepNovo\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(16): require_once('C:\\\\laragon\\\\www\\\\...')
 #72 {main}
 "} 
+<<<<<<< HEAD
 [2023-07-20 23:27:00] local.ERROR: filemtime(): stat failed for C:\laragon\www\sgepNovo\.env {"exception":"[object] (ErrorException(code: 0): filemtime(): stat failed for C:\\laragon\\www\\sgepNovo\\.env at C:\\laragon\\www\\sgepNovo\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\ServeCommand.php:99)
 [stacktrace]
 #0 C:\\laragon\\www\\sgepNovo\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Bootstrap\\HandleExceptions.php(254): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(2, 'filemtime(): st...', 'C:\\\\laragon\\\\www\\\\...', 99)
@@ -17149,3 +17150,5 @@ Did you mean one of these?
 #65 C:\\laragon\\www\\sgepNovo\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(16): require_once('C:\\\\laragon\\\\www\\\\...')
 #66 {main}
 "} 
+=======
+>>>>>>> parent of c6ddf3c (s)
