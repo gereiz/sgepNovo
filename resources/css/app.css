@@ -36,6 +36,15 @@
         @apply w-full max-w-7xl mt-14 ml-2
     }
 
+
+
+
+    /* Painéi */
+
+    .img-painel {
+        @apply sm:mx-auto max-w-[300px] rounded-xl sm:hover:max-w-[430px] transition-all duration-1000
+    }
+
     
 
 }

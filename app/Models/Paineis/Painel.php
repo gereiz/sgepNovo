@@ -4,13 +4,14 @@ namespace App\Models\Paineis;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Enderecos\Bairro;
 
 class Painel extends Model
 {
     use HasFactory;
 
 
-    protected $table = 'outdoors'; 
+    protected $table = 'outdoors';
 
 
     public function bairro()
