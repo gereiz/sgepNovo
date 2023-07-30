@@ -24,10 +24,10 @@ var pan = ref(props.paineis)
 
 function getImage(i) {
     // Devenvolvimento
-    var image = 'http://[::1]:5173/storage/app/public/'+ i 
+    // var image = 'http://[::1]:5173/storage/app/public/'+ i 
 
     // Produção
-    // var image = '/storage/'+ i 
+    var image = '/storage/'+ i 
 
     return image
 }
