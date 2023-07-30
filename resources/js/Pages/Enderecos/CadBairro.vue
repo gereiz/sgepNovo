@@ -16,7 +16,7 @@ const formBairroEdit = reactive({nome_edit: '', id_bairro: ''});
 
 function setBairroData(id, d) {
     nomeBairro.value = d
-    formBairroEdit.nome_edit = d
+    formBairroEdit.nome_edit = d 
     formBairroEdit.id_bairro = id
 }
 

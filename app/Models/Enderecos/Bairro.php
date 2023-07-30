@@ -9,7 +9,7 @@ class Bairro extends Model
 {
     use HasFactory;
 
-    public $timestamps = false; 
+    public $timestamps = false;
     protected $table = 'bairros';
     protected $fillable = ['nome', 'regiao_id'];
 

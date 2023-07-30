@@ -23,7 +23,7 @@ function getImage(i) {
     var image = 'http://[::1]:5173/storage/app/public/'+ i 
 
     // Produção
-    var image = '/storage/'+ i 
+    // var image = '/storage/'+ i 
 
     return image
 }
@@ -72,6 +72,7 @@ function getImage(i) {
 
                                         <div class="w-full sm:w-11/12 flex justify-center flex-wrap mb-4">
                                             <div class="w-full flex justify-between sm:justify-between">
+                                                <h2 class="text-xs sm:card-title">Região: {{pain.bairro.regiao.nome}}</h2>
                                                 <h2 class="text-xs sm:card-title">Bairro: {{pain.bairro.nome}}</h2>
                                                 <h2 class="text-xs sm:card-title text-red-500">Identificação.: {{pain.identificacao}}</h2>
                                             </div>

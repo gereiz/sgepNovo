@@ -47,6 +47,7 @@
             <p  class="text-white mt-1">Painéis</p>
                 <ul  class="hidden group-hover:block w-52 text-white ml-1 mt-2 space-y-2">
                     <li class="hover:text-slate-400"><a href="/Paineis">Lista de Painéis</a></li>
+                    <li class="hover:text-slate-400"><a href="/ResPaineis">Reserva de Painéis</a></li>
                 </ul>
             </div>
         </div>

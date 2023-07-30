@@ -39,10 +39,14 @@
 
 
 
-    /* Painéi */
+    /* Painéis */
 
     .img-painel {
         @apply sm:mx-auto max-w-[300px] rounded-xl sm:hover:max-w-[430px] transition-all duration-1000
+    }
+
+    .select-paineis {
+        @apply w-full h-10 input input-bordered rounded-none mb-4
     }
 
     
