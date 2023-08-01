@@ -39,18 +39,17 @@ function getImage(i) {
 
 function getPaineis() {
     
-    let pan = ref(props.paineis)
-
     axios.post('/GetPaineis', {status: idPainel.value})
     .then(res => {
+        
+        pan.value = res.data
 
-        if(this.pan != undefined) {
-            this.pan = res.data
-        }
+        console.log(pan.value)
         
     })
 
 }
+
 
 
 
