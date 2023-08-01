@@ -43,12 +43,14 @@ function getPaineis() {
 
     axios.post('/GetPaineis', {status: idPainel.value})
     .then(res => {
-        pan = res.data
+
+        if(this.pan != undefined) {
+            this.pan = res.data
+        }
         
     })
 
 }
-
 
 
 
@@ -64,7 +66,7 @@ function getPaineis() {
             <!-- Cabeçalho e barra de Pesquisa -->
             <div class="w-full h-14 flex mb-2">
                 <div class="w-2/12 h-14 flex items-center">
-                    <h1 class="text-xl sm:text-4xl font-bold">Reservas {{ambiente}}</h1>
+                    <h1 class="text-xl sm:text-4xl font-bold">Reservas</h1>
                     <h1 class="text-lg sm:text-2xl text-red-400 font-bold ml-2 sm:ml-4">{{ pan.length }}</h1>
                 </div>
                 
