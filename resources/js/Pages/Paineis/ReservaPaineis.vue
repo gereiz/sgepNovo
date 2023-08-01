@@ -3,9 +3,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
 import { useToastr } from '@/Components/toastr';
 import { ref, reactive, onMounted, computed, watch } from 'vue';
-import Multiselect from 'vue-multiselect';
 
-const props = defineProps(['reservas', 'paineis', 'bisemanas', 'cidades', 'regioes', 'bairros']);
+const props = defineProps(['ambiente', 'reservas', 'paineis', 'bisemanas', 'cidades', 'regioes', 'bairros']);
 
 const idPainel = ref(0);
 
@@ -23,20 +22,28 @@ var pan = ref(props.paineis)
 // })
 
 function getImage(i) {
-    // Devenvolvimento
-    // var image = 'http://[::1]:5173/storage/app/public/'+ i 
 
-    // Produção
-    var image = '/storage/'+ i 
-
+    if(props.ambiente == 'local') {
+        // Devenvolvimento
+        var image = 'http://[::1]:5173/storage/app/public/'+ i 
+   
+    } else {
+         // Produção
+        var image = '/storage/'+ i 
+    }
+    
     return image
 }
 
+
+
 function getPaineis() {
+    
+    let pan = ref(props.paineis)
 
     axios.post('/GetPaineis', {status: idPainel.value})
     .then(res => {
-        this.pan = res.data
+        pan = res.data
         
     })
 
@@ -57,7 +64,7 @@ function getPaineis() {
             <!-- Cabeçalho e barra de Pesquisa -->
             <div class="w-full h-14 flex mb-2">
                 <div class="w-2/12 h-14 flex items-center">
-                    <h1 class="text-xl sm:text-4xl font-bold">Reservas</h1>
+                    <h1 class="text-xl sm:text-4xl font-bold">Reservas {{ambiente}}</h1>
                     <h1 class="text-lg sm:text-2xl text-red-400 font-bold ml-2 sm:ml-4">{{ pan.length }}</h1>
                 </div>
                 

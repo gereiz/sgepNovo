@@ -51,15 +51,18 @@ class ReservaController extends Controller
 
         $cidades = Cidade::orderBy('nome')->get();
 
+        $ambiente = env('APP_ENV');
+
 
         return Inertia::render('Paineis/ReservaPaineis', compact('reservas',
                                                                                             'paineis',
                                                                                             'disponiveis',
                                                                                             'reservados',
-                                                                               'bisemanas',
-                                                                               'bairros',
-                                                                               'regioes',
-                                                                            'cidades'));
+                                                                                            'bisemanas',
+                                                                                            'bairros',
+                                                                                            'regioes',
+                                                                                            'cidades',
+                                                                                            'ambiente'));
 
     }
 
