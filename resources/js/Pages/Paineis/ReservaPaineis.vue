@@ -8,18 +8,10 @@ const props = defineProps(['ambiente', 'reservas', 'paineis', 'bisemanas', 'cida
 
 const idPainel = ref(0);
 
+const itemRefs = ref([])
+
 var pan = ref(props.paineis)
 
-// onMounted(() =>{
-
-// getPaineis()
-
-// })
-
-// watch( pan, (val) =>{
-//     // getPaineis()
-
-// })
 
 function getImage(i) {
 
@@ -35,21 +27,36 @@ function getImage(i) {
     return image
 }
 
-
-
 function getPaineis() {
     
     axios.post('/GetPaineis', {status: idPainel.value})
     .then(res => {
         
         pan.value = res.data
-
-        console.log(pan.value)
         
     })
 
 }
 
+function isChecked(val) {
+    const cardPainel = itemRefs.value[val];
+            
+    // cardPainel.classList.add('bg-green-500');
+
+    let classes = cardPainel.classList
+
+    
+    let clicked = Object.values(classes).find(function(click) {
+        return click === 'bg-green-500'
+    })
+
+    if(clicked == undefined) {
+        cardPainel.classList.add('bg-green-500');
+    } else {
+        cardPainel.classList.remove('bg-green-500');
+    }
+
+}
 
 
 
@@ -130,9 +137,9 @@ function getPaineis() {
                     <div class="w-full flex flex-col flex-wrap sm:flex-row justify-center">
                         
                         <!-- Cards dos Paineis -->
-                        <div v-for="(pain, index) in pan" :key="index" class="card w-full sm:w-5/12 bg-base-100 border-2 rounded-md shadow-xl mt-4 sm:mr-4">
+                        <div v-for="(pain, index) in pan" ref="itemRefs" :key="index" class="card w-full sm:w-5/12 bg-base-100 border-2 rounded-md shadow-xl mt-4 sm:mr-4">
                             <label for="modal-cliente">
-                                <div class="card-body">
+                                <div class="card-body" :id="index"  @click="isChecked(index)">
                                    <div class="w-full flex flex-col items-center">
                                         <div class="w-full mb-4 -ml-4">
                                             <img class="img-painel" :src="getImage(pain.image_url)" alt="Bairro">
@@ -150,8 +157,10 @@ function getPaineis() {
                                         <!-- Botões -->
                                         <div class="w-full sm:w-11/12 flex justify-center flex-wrap space-x-2 mb-4">
                                             <button class="botao bg-sky-700">Detalhes</button>
+                                            <button v-if="idPainel == 1" class="botao bg-green-700">Reservar</button>
+                                            <button v-if="idPainel == 2" class="botao w-fit px-2 bg-red-700">Cancelar</button>
                                             <button class="botao bg-yellow-700">Editar</button>
-                                            <button class="botao bg-red-700">Excluir</button>
+                                            <button v-if="idPainel == 0" class="botao bg-red-700">Excluir</button>
                                         </div>
 
                                    </div>
