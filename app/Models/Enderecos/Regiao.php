@@ -19,7 +19,7 @@ class Regiao extends Model
         return $this->belongsTo(Cidade::class, 'cidade_id');
     }
 
-    public function bairro() 
+    public function bairro()
     {
         return $this->hasMany(Bairro::class, 'regiao_id', 'id');
     }
