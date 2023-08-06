@@ -18,7 +18,7 @@ class Cidade extends Model
         return $this->belongsTo(UF::class, 'uf_id');
     }
 
-    public function regiao()
+    public function regiao() 
     {
         return $this->hasMany(Regiao::class, 'cidade_id', 'id');
     }

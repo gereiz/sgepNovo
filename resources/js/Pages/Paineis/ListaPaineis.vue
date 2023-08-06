@@ -5,7 +5,9 @@ import { useToastr } from '@/Components/toastr';
 import { ref, reactive, onMounted, computed } from 'vue';
 
 const props = defineProps(['paineis'])
+
 const pesqPainel = ref('');
+
 const paineisFiltrados = computed(() => {
     let paineisFiltrados = Object.values(props.paineis).filter((painel) => {
         return (
@@ -15,7 +17,6 @@ const paineisFiltrados = computed(() => {
 
     return paineisFiltrados;
 });
-
 
 function getImage(i) {
     // Devenvolvimento
