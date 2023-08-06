@@ -20,7 +20,24 @@ class ReservaController extends Controller
     
     public function index() {
 
-        $paineis = Painel::with('bairro.regiao.cidade')->get();
+        $paineis = Painel::with('bairro.regiao')->get();
+
+
+        $reservados = Painel::with('bairro.regiao')
+                           ->join('reservas AS res', 'res.outdoor_id', '=', 'out.id')
+                           ->where('res.bisemana_id','=', 28)
+                           ->groupBY('out.id')
+                           ->distinct()
+        ->get();
+
+
+        $disponiveis = Painel::with('bairro.regiao')
+                          ->join('reservas AS res', 'res.outdoor_id', '=', 'out.id')
+                          ->whereNotIn('out.id', $reservados->pluck('outdoor_id'))
+                          ->groupBY('out.id')
+                          ->orderBy('out.identificacao')
+        ->get();
+
 
         $reservas = DB::table('reservas AS res')
                         ->join('outdoors AS out', 'res.outdoor_id', '=', 'out.id')
@@ -37,38 +54,36 @@ class ReservaController extends Controller
         $ambiente = env('APP_ENV');
 
 
-        return Inertia::render('Paineis/ReservaPaineis',
-                        compact('reservas',
-                                    'paineis',
-                                    'bisemanas',
-                                    'bairros',
-                                    'regioes',
-                                    'cidades',
-                                    'ambiente'));
+        return Inertia::render('Paineis/ReservaPaineis', compact('reservas',
+                                                                                            'paineis',
+                                                                                            'disponiveis',
+                                                                                            'reservados',
+                                                                                            'bisemanas',
+                                                                                            'bairros',
+                                                                                            'regioes',
+                                                                                            'cidades',
+                                                                                            'ambiente'));
 
     }
 
 
     public function getPaineis(Request $request) {
-
-        $ident = $request->paineisId;
         
-        $paineis = Painel::with('bairro.regiao.cidade')->get();
+        $paineis = Painel::with('bairro.regiao')->get();
 
-        $reservados = Painel::with('bairro.regiao.cidade')
+        $reservados = Painel::with('bairro.regiao')
                            ->join('reservas AS res', 'res.outdoor_id', '=', 'out.id')
                            ->where('res.bisemana_id','=', 28)
-                        //    ->where('res.outdoor_id', '=', $ident)
                            ->groupBY('out.id')
                            ->distinct()
         ->get();
 
-        $disponiveis = Painel::with('bairro.regiao.cidade')
+        $disponiveis = Painel::with('bairro.regiao')
                           ->join('reservas AS res', 'res.outdoor_id', '=', 'out.id')
                           ->whereNotIn('out.id', $reservados->pluck('outdoor_id'))
                           ->groupBY('out.id')
                           ->orderBy('out.identificacao')
-        ->get();
+            ->get();
   
         if($request->status == 1) {
             
@@ -80,6 +95,9 @@ class ReservaController extends Controller
 
         }
     
+       
+        
+
         return response()->json($paineis);
     }
 }

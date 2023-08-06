@@ -19,5 +19,3 @@ yarn-error.log
 .env
 public/hot
 public/hot
-app/Providers/AppServiceProvider.php
-app/Providers/AppServiceProvider.php
