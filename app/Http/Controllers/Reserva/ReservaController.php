@@ -20,10 +20,10 @@ class ReservaController extends Controller
     
     public function index() {
 
-        $paineis = Painel::with('bairro.regiao')->get();
+        $paineis = Painel::with('bairro.regiao.cidade')->get();
 
 
-        $reservados = Painel::with('bairro.regiao')
+        $reservados = Painel::with('bairro.regiao.cidade')
                            ->join('reservas AS res', 'res.outdoor_id', '=', 'out.id')
                            ->where('res.bisemana_id','=', 28)
                            ->groupBY('out.id')
@@ -31,7 +31,7 @@ class ReservaController extends Controller
         ->get();
 
 
-        $disponiveis = Painel::with('bairro.regiao')
+        $disponiveis = Painel::with('bairro.regiao.cidade')
                           ->join('reservas AS res', 'res.outdoor_id', '=', 'out.id')
                           ->whereNotIn('out.id', $reservados->pluck('outdoor_id'))
                           ->groupBY('out.id')
@@ -69,16 +69,16 @@ class ReservaController extends Controller
 
     public function getPaineis(Request $request) {
         
-        $paineis = Painel::with('bairro.regiao')->get();
+        $paineis = Painel::with('bairro.regiao.cidade')->get();
 
-        $reservados = Painel::with('bairro.regiao')
+        $reservados = Painel::with('bairro.regiao.cidade')
                            ->join('reservas AS res', 'res.outdoor_id', '=', 'out.id')
                            ->where('res.bisemana_id','=', 28)
                            ->groupBY('out.id')
                            ->distinct()
         ->get();
 
-        $disponiveis = Painel::with('bairro.regiao')
+        $disponiveis = Painel::with('bairro.regiao.cidade')
                           ->join('reservas AS res', 'res.outdoor_id', '=', 'out.id')
                           ->whereNotIn('out.id', $reservados->pluck('outdoor_id'))
                           ->groupBY('out.id')
