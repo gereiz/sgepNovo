@@ -29,8 +29,12 @@
         @apply botao bg-cor-primaria hover:bg-blue-500 
     }
 
+    .botao-danger {
+        @apply botao bg-red-700 hover:bg-red-500
+    }
+
     .botao-modal {
-        @apply botao h-14 flex justify-center items-center bg-cor-primaria hover:bg-emerald-800
+        @apply botao h-10 flex justify-center items-center bg-cor-primaria hover:bg-green-600 duration-1000
     }
 
     .modal-big {
@@ -39,11 +43,10 @@
 
 
 
-
     /* Painéis */
 
     .img-painel {
-        @apply sm:mx-auto max-w-[300px] rounded-xl sm:hover:max-w-[430px] transition-all duration-1000
+        @apply sm:mx-auto sm:max-w-[300px] rounded-xl hover:max-w-[125%] hover:-ml-5 sm:hover:mx-auto sm:hover:max-w-[430px] transition-all duration-1000
     }
 
     .select-paineis {

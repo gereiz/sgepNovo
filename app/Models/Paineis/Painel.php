@@ -27,3 +27,4 @@ class Painel extends Model
         return $this->hasMany(Reserva::class, 'id', 'outdoor_id');
     }
 }
+ 

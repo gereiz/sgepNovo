@@ -1,11 +1,10 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
-import { router } from '@inertiajs/vue3'
+import { Head, router } from '@inertiajs/vue3';
 import { useToastr } from '@/Components/toastr';
 import { ref, reactive, onMounted, computed } from 'vue';
 
-const toastr = useToastr();
+const toastr = useToastr(); 
 const props = defineProps(['bairros', 'regioes', 'errors']);
 
 const nomeBairro = ref('');

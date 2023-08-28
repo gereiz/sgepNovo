@@ -208,29 +208,29 @@ const clientesFiltrados = computed(() => {
                 </div>
             </div>
 
-                <!-- Edição / Exclusão de Bairro -->
-                <input type="checkbox" id="modal-cliente" class="modal-toggle" />
-                <label for="modal-cliente" class="modal modal-bottom sm:modal-middle cursor-pointer">
-                    <label class="modal-box relative" for="">
-                        <div class="h-12 border-b-2 font-bold text-center md:text-start">
-                            <h1 class="">Dados do Cliente: {{nomeCli}}</h1>
-                        </div>
-                        <p>{{codCli}} - {{nomeCli}}</p>
-                        <!-- <div class="h-full flex flex-col border-b-2 font-bold text-center md:text-start space-x-4 space-y-4 pb-2">
-                            <div class="flex space-x-4">
-                                <div class="w-full">
-                                    <form @submit.prevent="editaBairro">
-                                        <span class="label-text ml-1">Nome</span>
-                                        <input v-model="formBairroEdit.nome_edit" class="w-full input input-bordered mb-4" type="text" >
-                                        <label @click="editaBairro()" for="modal-cliente" class="botao-modal w-full bg-amber-500 hover:bg-amber-700 mb-4">Salvar Edição</label>
-                                    </form>
-                                    <span class="card-title justify-center mb-4">ou</span>
-                                    <label @click="deletaBairro()" for="modal-cliente" class="botao-modal w-full bg-red-500 hover:bg-red-800">Excluir Bairro</label>
-                                </div>
-                            </div> 
-                        </div>'-->
-                    </label>
+            <!-- Edição / Exclusão de Bairro -->
+            <input type="checkbox" id="modal-cliente" class="modal-toggle" />
+            <label for="modal-cliente" class="modal modal-bottom sm:modal-middle cursor-pointer">
+                <label class="modal-box relative" for="">
+                    <div class="h-12 border-b-2 font-bold text-center md:text-start">
+                        <h1 class="">Dados do Cliente: {{nomeCli}}</h1>
+                    </div>
+                    <p>{{codCli}} - {{nomeCli}}</p>
+                    <!-- <div class="h-full flex flex-col border-b-2 font-bold text-center md:text-start space-x-4 space-y-4 pb-2">
+                        <div class="flex space-x-4">
+                            <div class="w-full">
+                                <form @submit.prevent="editaBairro">
+                                    <span class="label-text ml-1">Nome</span>
+                                    <input v-model="formBairroEdit.nome_edit" class="w-full input input-bordered mb-4" type="text" >
+                                    <label @click="editaBairro()" for="modal-cliente" class="botao-modal w-full bg-amber-500 hover:bg-amber-700 mb-4">Salvar Edição</label>
+                                </form>
+                                <span class="card-title justify-center mb-4">ou</span>
+                                <label @click="deletaBairro()" for="modal-cliente" class="botao-modal w-full bg-red-500 hover:bg-red-800">Excluir Bairro</label>
+                            </div>
+                        </div> 
+                    </div>'-->
                 </label>
+            </label>
 
         </div>
     </AuthenticatedLayout>
