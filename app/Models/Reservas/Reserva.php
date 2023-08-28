@@ -15,6 +15,15 @@ class Reserva extends Model
 
     public $timestamps = false;
     protected $table = 'reservas';
+    protected $fillable = ['cliente_id',
+                            'outdoor_id',
+                            'bisemana_id',
+                            'dt_reserva',
+                            'campanha',
+                            'obs', '
+                            pi_ok',
+                            'user_id'
+                        ];
  
     public function cliente()
     {

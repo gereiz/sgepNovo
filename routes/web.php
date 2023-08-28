@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Clientes\ClienteController;
+use App\Http\Controllers\Config\ConfiguracoesController;
 use App\Http\Controllers\Enderecos\BairroController;
 use App\Http\Controllers\Enderecos\CidadeController;
 use App\Http\Controllers\Enderecos\RegiaoController;
@@ -21,15 +22,6 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-// Route::get('/', function () {
-//     return Inertia::render('Welcome', [
-//         'canLogin' => Route::has('login'),
-//         'canRegister' => Route::has('register'),
-//         'laravelVersion' => Application::VERSION,
-//         'phpVersion' => PHP_VERSION,
-//     ]);
-// });
 
 route::get('/', function() {
     return Inertia::render('Auth/Login');
@@ -80,9 +72,18 @@ Route::middleware('auth')->group(function () {
 
     route::get('/ResPaineis', [ReservaController::class, 'index'])->name('reserva.paineis');
     route::post('/GetPaineis', [ReservaController::class, 'getPaineis'])->name('get.paineis');
+    route::post('/GetBisemanas', [ReservaController::class, 'getBisemanas'])->name('get.bisemanas');
+    route::post('/GetRegioes', [ReservaController::class, 'getRegioes'])->name('get.regioes');
+    route::post('/GetBairros', [ReservaController::class, 'getBairros'])->name('get.bairros');
+    route::post('/ReservaPainel', [ReservaController::class, 'reservaPainel'])->name('reserva.painel');
+    route::post('/CancelaReserva', [ReservaController::class, 'cancelaReserva'])->name('cancela.reserva');
 
 
 
+    // Configurações
+    route::get('/Config', [ConfiguracoesController::class, 'index']);
+
+    route::post('/AddAno', [ConfiguracoesController::class, 'storeYear'])->name('add.ano');
 
 
 
