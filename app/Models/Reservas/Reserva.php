@@ -20,8 +20,8 @@ class Reserva extends Model
                             'bisemana_id',
                             'dt_reserva',
                             'campanha',
-                            'obs', '
-                            pi_ok',
+                            'observacao',
+                            'pi_ok',
                             'user_id'
                         ];
  

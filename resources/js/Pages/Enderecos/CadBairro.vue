@@ -175,7 +175,7 @@ const bairrosFiltrados = computed(() => {
     </AuthenticatedLayout>
 </template>
 
-<!-- <script>
+
 export default {
 //   components: { ToastSuccess },
     props: ['bairros', 'regioes', 'teste'],

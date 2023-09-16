@@ -70,6 +70,8 @@ Route::middleware('auth')->group(function () {
     //Painéis
     route::get('/Paineis', [PaineisController::class, 'index'])->name('lista.paineis');
 
+
+    // Reserva de painéis
     route::get('/ResPaineis', [ReservaController::class, 'index'])->name('reserva.paineis');
     route::post('/GetPaineis', [ReservaController::class, 'getPaineis'])->name('get.paineis');
     route::post('/GetBisemanas', [ReservaController::class, 'getBisemanas'])->name('get.bisemanas');
@@ -77,6 +79,14 @@ Route::middleware('auth')->group(function () {
     route::post('/GetBairros', [ReservaController::class, 'getBairros'])->name('get.bairros');
     route::post('/ReservaPainel', [ReservaController::class, 'reservaPainel'])->name('reserva.painel');
     route::post('/CancelaReserva', [ReservaController::class, 'cancelaReserva'])->name('cancela.reserva');
+    
+
+
+    route::get('/ResPaineisCli', [ReservaController::class, 'reservaPainelIndex'])->name('reserva.paineis.cli');
+    route::post('/GetPaineisCli', [ReservaController::class, 'getPaineisCliente'])->name('get.paineis.cli');
+    route::post('/ResPaineisCli', [ReservaController::class, 'reservaPaineisCliente'])->name('res.paineis.cli');
+    route::post('/DelResCliente', [ReservaController::class, 'delResCliente'])->name('del.reserva.cli');
+    route::post('/GetCliente', [ReservaController::class, 'getCliente'])->name('res.get.cli');
 
 
 

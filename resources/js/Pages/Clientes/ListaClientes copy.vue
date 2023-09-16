@@ -78,7 +78,7 @@ const clientesFiltrados = computed(() => {
                                         <label for="modal-cliente" @click="setBairroData(cli.id, cli.nome_fantasia)" class="w-full md:w-28 botao-modal">Ações</label>
                                     </div> -->
                                 </div>
-                            </label>
+                            </label> 
                         </div>
                     </div>
                 </div>

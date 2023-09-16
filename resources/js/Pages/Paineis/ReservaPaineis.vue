@@ -1,18 +1,22 @@
 <script setup>
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-    import ModalCancRes from '@/Pages/Paineis/Partials/ModalCancelRes.vue'
+    import ModalCancRes from '@/Pages/Paineis/Components/ModalCancelRes.vue'
+    import RelatorioDisponibiliadade from '@/Pages/Relatorios/RelatorioDisponibiliadade.vue'
     import { Head, router } from '@inertiajs/vue3';
     import { useToastr } from '@/Components/toastr';
-    import { ref, reactive, onMounted, computed } from 'vue'
+    import { ref, reactive, onMounted, computed, watch } from 'vue'
     import Multiselect from 'vue-multiselect'
+    import html2pdf from 'html2pdf.js'
 
 
     const toastr = useToastr(); 
     const props = defineProps(['ambiente', 'reservas', 'anos', 'paineis', 'clientes', 'bisemanas', 'cidades', 'regioes', 'bairros']);
+    const disp = ref(null);
 
     const itemRefs = ref([])
     const pesqPainel = ref('');
     const checkedPaineis = ref([]);
+    const paineisChecked = ref([]);
     const checkedPaineisId = ref([]);
     const pan = ref(props.paineis);
     const idents = reactive([]);
@@ -40,20 +44,7 @@
     const confPi = ref(null)
     const hidePiModal = ref(false)
 
-    const teste = ref('');
-
     const formReserva = reactive({cliente: '', campanha: '', observ: ''})
-
-    // const paineisFiltrados = computed(() => {
-    //     let paineisFiltrados = Object.values(props.paineis).filter((painel) => {
-    //         return (
-    //             String(painel.identificacao).toLowerCase().indexOf(pesqPainel.value.toLowerCase()) > -1
-    //         );
-    //     })
-        
-    //     return paineisFiltrados;
-    // });
-
 
     const bisemanaSelecionada = computed(() => {
         
@@ -177,27 +168,30 @@
     }
 
     
-    function isChecked(val, painelId, id) {
+    function isChecked(val, painelId, id, painel) {
         const cardPainel = itemRefs.value[val];
             
         let classes = cardPainel.classList
 
 
-        // Transforma o objeto classes em um array, e em seguida busca a classe bg-green
-        // let clicked = Object.values(classes).find(function(click) {
-        //     return click === 'bg-green-300'
-        // })
-
         if(Object.values(checkedPaineis.value).includes(painelId)) {
             checkedPaineis.value.splice(checkedPaineis.value.indexOf(painelId), 1)
+            paineisChecked.value.splice(paineisChecked.value.indexOf(painel), 1)
             checkedPaineisId.value.splice(checkedPaineis.value.indexOf(id), 1)
             cardPainel.checked = false
 
+
         } else {
             checkedPaineis.value.push(painelId);
+            paineisChecked.value.push(painel);
             checkedPaineisId.value.push(id);
             cardPainel.checked = true
 
+        }
+
+        if(checkedPaineis.value.length === 0) {
+            paineisChecked.value = []
+            checkedPaineisId.value = []
         }
 
 
@@ -207,6 +201,7 @@
     function clearChecked() {
         checkedPaineis.value = [];
         checkedPaineisId.value = [];
+        paineisChecked.value = []
 
         const cardPaineis = itemRefs.value;
     
@@ -270,7 +265,14 @@
 
     }
 
-    
+    function PDF(val) {
+        // disp.value = 1
+            
+        setTimeout(() => {
+            disp.value = 1
+        }, 2000);
+    }
+
 
 </script>
 
@@ -319,7 +321,7 @@
                     <!-- Bi-semanas -->
                     <div class="w-5/12 sm:w-[20%] flex flex-col me-4 sm:me-6">
                         <label for="bi-semana">Bi-Semana</label>
-                        <select class="select-paineis" name="bi-semana" id="bi-semama" v-model="idBisemana" :disabled="bsDisabled">
+                        <select class="select-paineis" name="bi-semana" id="bi-semama" v-model="idBisemana" :disabled="bsDisabled" @change="idPainel = 0">
                             <option value="0" selected disabled>Selecione</option>
                             <option v-for="(bs, index) in listaBisemana"
                                 :key="index" 
@@ -331,11 +333,11 @@
                     <!-- Status -->
                     <div class="w-full sm:w-1/12 flex flex-col me-4 sm:me-6">
                         <label for="status">Status</label>
-                        <select class="select-paineis" name="status" id="status" v-model="idPainel">
+                        <select class="select-paineis" name="status" id="status" v-model="idPainel" @change="getPaineis(), clearChecked()">
                             <option value="0">Todos</option>
                             <option value="1">Disponível</option>
                             <option value="2">Reservado</option>
-                        </select>
+                        </select> 
                     </div>
 
                     <!-- Identifcação -->
@@ -351,7 +353,7 @@
                                 :close-on-select="false"
                                 :show-labels="false"
                                 placeholder="Todos"
-                            >
+                                >
                                 </multiselect>  
                             </div>
                             <div class="w-2/12">
@@ -393,18 +395,18 @@
 
                     <!-- Botões -->
                     <div class="space-x-4 mt-3.5 mb-2">
-                        <button class="botao bg-sky-700 hover:bg-sky-500" @click="getPaineis()">Filtrar</button>
+                        <button class="botao bg-sky-700 hover:bg-sky-500" @click="getPaineis(), clearChecked()">Filtrar</button>
 
                         <div class="dropdown">
-                            <label tabindex="0" class="w-fit botao bg-green-700 hover:bg-green-500 px-2 py-[0.7rem]">Enviar Lista</label>
+                            <label v-if="idPainel == 1" tabindex="0" class="w-fit botao bg-green-700 hover:bg-green-500 px-2 py-[0.7rem]">Enviar Lista</label>
                             <ul tabindex="0" class="w-56 -ml-10 dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box mt-4">
                                 <li><a>Envio por Whatsapp</a></li>
                                 <li><a>Envio por Email</a></li>
-                                <li><a>Download do Relatório</a></li>
+                                <li><label for="modal-download" @click="PDF()">Download do Relatório</label></li>
                             </ul>
                         </div>
 
-                        <button v-if="checkedPaineisId.length > 1 && tipoPainel == 1" class="botao w-fit px-2 bg-orange-700 hover:bg-orange-500">Res. Múltipla</button>
+                        <!-- <button v-if="checkedPaineisId.length > 1 && tipoPainel == 1" class="botao w-fit px-2 bg-orange-700 hover:bg-orange-500">Res. Múltipla</button> -->
                     </div>
                 </div>
 
@@ -417,7 +419,7 @@
                         
                         <!-- Cards dos Paineis -->
                         <div v-for="(pain, index) in pan "  :key="index" class="card w-full sm:w-5/12 bg-base-100 border-2 rounded-md shadow-xl mt-4 sm:mr-4">
-                            <div class="card-body" :id="index" @click="isChecked(index, pain.identificacao, pain.id)">
+                            <div class="card-body" :id="index" @click="isChecked(index, pain.identificacao, pain.id, pain)">
                                 <div class="w-full flex justify-end">
                                     <input type="checkbox" ref="itemRefs" class="w-14 h-14 border-0 checkbox checkbox-success" />
                                 </div>
@@ -494,7 +496,7 @@
                                 <input v-model="formReserva.campanha" type="text" name="" id="" class="input input-bordered" :disabled="idBisemana == 0">
                             </div>
 
-                            <!-- Mensagem -->
+                            <!-- Observação -->
                             <div class="w-full flex flex-col">
                                 <span class="label-text ml-1">Mensagem</span>
                                 <textarea v-model="formReserva.observ" name="" id="" class="textarea textarea-bordered textarea-lg" :disabled="idBisemana == 0"></textarea>
@@ -540,10 +542,18 @@
                             </div>
                         </form>
                     </dialog>
-                    
                 </div>
             </div>
-          
+               
+            <!-- modal  Donwload disponibilidade-->
+            <RelatorioDisponibiliadade v-if="checkedPaineis.length > 0" 
+                                       :ambiente="props.ambiente" 
+                                       :paineisChecked="paineisChecked"
+                                       :bisemana="idBisemana"
+                                       :disp="disp"
+                                       id="modal-disp"
+            />
+
 
             <!-- Modal de cancelamento de Reserva-->
             <ModalCancRes :painel="painelReserva" :bisemana="idBisemana"  @atualizaPage="atualizaPaineis"/>

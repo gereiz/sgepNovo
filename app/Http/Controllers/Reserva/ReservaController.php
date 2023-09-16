@@ -27,20 +27,6 @@ class ReservaController extends Controller
 
         $anos = Ano::all();
 
-        $reservados = Painel::with('bairro.regiao.cidade')
-                           ->join('reservas AS res', 'res.outdoor_id', '=', 'out.id')
-                           ->where('res.bisemana_id','=', 28)
-                           ->groupBY('out.id')
-                           ->distinct()
-        ->get();
-
-        $disponiveis = Painel::with('bairro.regiao.cidade')
-                          ->join('reservas AS res', 'res.outdoor_id', '=', 'out.id')
-                          ->whereNotIn('out.id', $reservados->pluck('outdoor_id'))
-                          ->groupBY('out.id')
-                          ->orderBy('out.identificacao')
-        ->get();
-
         $reservas = DB::table('reservas AS res')
                         ->join('outdoors AS out', 'res.outdoor_id', '=', 'out.id')
         ->get();
@@ -62,8 +48,6 @@ class ReservaController extends Controller
                         compact('reservas',
                                     'paineis',
                                     'clientes',
-                                    'disponiveis',
-                                    'reservados',
                                     'bisemanas',
                                     'bairros',
                                     'regioes',
@@ -74,7 +58,6 @@ class ReservaController extends Controller
         );
 
     }
-
 
     public function getBisemanas(Request $request) {
 
@@ -99,7 +82,6 @@ class ReservaController extends Controller
 
     }
 
-
     public function getPaineis(Request $request) {
 
         $bairro = $request->bairro;
@@ -112,6 +94,10 @@ class ReservaController extends Controller
         $reservados = Painel::select('out.id',
                                      'out.identificacao',
                                      'out.bairro_id',
+                                     'out.logradouro',
+                                     'out.numero',
+                                     'out.latitude',
+                                     'out.longitude',
                                      'out.image_url',
                                      'bai.nome AS bnome',
                                      'reg.nome AS rnome',
@@ -140,6 +126,10 @@ class ReservaController extends Controller
         $disponiveis = Painel::select('out.id',
                                       'out.identificacao',
                                       'out.bairro_id',
+                                      'out.logradouro',
+                                      'out.numero',
+                                      'out.latitude',
+                                      'out.longitude',
                                       'out.image_url',
                                       'bai.nome AS bnome',
                                       'reg.nome AS rnome',
@@ -180,8 +170,6 @@ class ReservaController extends Controller
 
     public function reservaPainel(Request $request) {
 
-        // dd($request->all());
-
         $reserva_atual = Reserva::where([['bisemana_id', $request->bsId],['outdoor_id', $request->outdoorId]])->first();
 
         if($reserva_atual != []) {
@@ -194,7 +182,7 @@ class ReservaController extends Controller
                 'cliente_id' => $request->clienteId,
                 'outdoor_id' => $request->outdoorId,
                 'bisemana_id' => $request->bsId,
-                'de_reserva' => Carbon::now()->toDateString(),
+                'dt_reserva' => Carbon::now()->toDateString(),
                 'campanha' => $request->campanha,
                 'observacao' => $request->obs,
                 'pi_ok' => $request->checkPi,
@@ -225,5 +213,138 @@ class ReservaController extends Controller
         }
 
     }
+
+
+    public function reservaPainelIndex() {
+        
+        $clientes = Cliente::orderBy('razao_social')->get();
+
+        $anos = Ano::all();
+
+        $bisemanas = Bisemana::all();
+
+        $reservas = Reserva::where('bisemana_id', 34)->get();
+
+        $ambiente = env('APP_ENV');
+        
+        return Inertia::render('Paineis/ReservaPaineisCli', compact('clientes',
+                                                                    'anos',
+                                                                    'bisemanas',
+                                                                    'reservas',
+                                                                    'ambiente',
+                                                                     ));
+    }
+    
+
+    public function getPaineisCliente(Request $request) {
+
+        $bisemana = $request->bsId;
+        $cliente = $request->cliente;
+
+        $reservas = Painel::select('out.id',
+                                'out.identificacao',
+                                'out.bairro_id',
+                                'out.image_url',
+                                'res.campanha AS campanha',
+                                'res.observacao AS obs',
+                                'cli.razao_social AS razao_social',
+                                'cli.nome_fantasia AS nome_fantasia')
+            ->join('reservas AS res', 'res.outdoor_id', '=', 'out.id')
+            ->join('clientes AS cli', 'cli.id', '=', 'res.cliente_id')
+            ->where('res.bisemana_id','=', $bisemana)
+            ->when($cliente, function(Builder $query, $cliente) {
+                $query->where('res.cliente_id', $cliente);
+            })
+        
+            ->groupBY('out.id')
+            ->orderBy('out.identificacao')
+            ->distinct()
+        ->get();
+
+
+        $paineis = Painel::select('out.id',
+                                'out.identificacao',
+                                'out.bairro_id',
+                                'out.image_url',
+                                'out.logradouro',
+                                'out.numero',
+                                'out.ponto_referencia',
+                                'res.campanha AS campanha',
+                                'res.observacao AS obs',
+                                'cli.razao_social AS razao_social',
+                                'cli.nome_fantasia AS nome_fantasia')
+            ->join('reservas AS res', 'res.outdoor_id', '=', 'out.id')
+            ->join('clientes AS cli', 'cli.id', '=', 'res.cliente_id')
+            ->whereNotIn('out.id', $reservas->pluck('id'))
+            ->when($cliente, function(Builder $query, $cliente) {
+            $query->where('res.cliente_id', $cliente);
+            })
+
+            ->groupBY('out.id')
+            ->orderBy('out.identificacao')
+            ->distinct()
+        ->get();
+
+
+
+
+        return response()->json(['reservas' => $reservas, 'paineis' => $paineis]);
+
+    }
+    
+    
+    public function reservaPaineisCliente(Request $request) {
+
+        $paineis = $request->outdoorId;
+        $idPaineis = [];
+
+
+        foreach($paineis as $painel) {
+
+            array_push($idPaineis, intval(substr($painel, -3)));
+
+        }
+
+        foreach($idPaineis as $idPainel) {
+            
+            Reserva::create([
+                'cliente_id' => $request->clienteId,
+                'outdoor_id' => $idPainel,
+                'bisemana_id' => $request->bsId,
+                'dt_reserva' => Carbon::now()->toDateString(),
+                'campanha' => $request->campanha,
+                'observacao' => $request->obs,
+                'pi_ok' => $request->checkPi,
+                'user_id' => auth()->user()->id
+            ]);
+    
+            
+        }
+
+        return response()->json(['cod' => 1, 'msg' => 'Painel reservado!']);
+
+
+    }
+
+
+    public function getCliente(Request $request) {
+
+        return Cliente::find($request->cliente)->last();
+    }
+
+
+    public function delResCliente(Request $request) {
+
+        $paineisId = $request->paineisId;
+        $bs = $request->bs;
+
+        foreach ($paineisId as $pId) {
+           $reserva = Reserva::where([['outdoor_id', $pId], ['bisemana_id', $bs]])->delete();
+        }
+
+        return response()->json(['cod' => 1, 'msg' => 'Painéis Excluidos!']);
+    }
+    
+
 
 }
