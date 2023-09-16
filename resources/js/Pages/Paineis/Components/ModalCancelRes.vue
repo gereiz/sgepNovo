@@ -36,7 +36,7 @@ function cancelaReserva() {
 </script>
 
 <template>
-        <!-- Modal de Reserva Individual -->
+        <!-- Modal de Cancelamento da Reserva Individual -->
         <input type="checkbox" id="modal-canc-reserva" class="modal-toggle" />          
         <div class="modal flex items-end md:items-center">
             <form method="dialog" class="modal-box bg-white">
