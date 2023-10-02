@@ -1,20 +1,20 @@
 <script setup>
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import ModalCancRes from '@/Pages/Paineis/Components/ModalCancelRes.vue'
-    import RelatorioDisponibiliadade from '@/Pages/Relatorios/RelatorioDisponibiliadade.vue'
+    import ModalWpp from '@/Pages/Paineis/Components/ModalWpp.vue'
     import { Head, router } from '@inertiajs/vue3';
-    import { useToastr } from '@/Components/toastr';
+    import { getImage, toastr, enviaWpp } from '@/functions'
+    import * as cts from '@/Pages/Paineis/Components/constants'
     import { ref, reactive, onMounted, computed, watch } from 'vue'
     import Multiselect from 'vue-multiselect'
-    import html2pdf from 'html2pdf.js'
+  
 
-
-    const toastr = useToastr(); 
     const props = defineProps(['ambiente', 'reservas', 'anos', 'paineis', 'clientes', 'bisemanas', 'cidades', 'regioes', 'bairros']);
     const disp = ref(null);
 
+    const loading = ref(true)
+
     const itemRefs = ref([])
-    const pesqPainel = ref('');
     const checkedPaineis = ref([]);
     const paineisChecked = ref([]);
     const checkedPaineisId = ref([]);
@@ -23,7 +23,9 @@
     const listaClientes = ref('');
     const tipoPainel = ref('');
 
+    
     const bsDisabled = ref(true);
+    const statusDisabled = ref(true);
     const regDisabled = ref(true);
     const baiDisabled = ref(true);
 
@@ -39,7 +41,6 @@
     const listaBairro = ref(0);
 
     const painelReserva = ref('');
-    const bisemanaReserva = ref('');
     const valPi = ref(false)
     const confPi = ref(null)
     const hidePiModal = ref(false)
@@ -59,22 +60,7 @@
     onMounted(() => {
         getIdent()
 
-    })
-
-
-    function getImage(i) {
-
-        if(props.ambiente == 'local') {
-            // Desenvolvimento
-            var image = 'http://[::1]:5173/storage/app/public/'+ i 
-    
-        } else {
-            // Produção
-            var image = '/storage/'+ i 
-        }
-        
-        return image
-    }
+    }) 
 
 
     function getBisemana() {
@@ -139,6 +125,7 @@
             .then(res => {
                 pan.value = res.data
                 tipoPainel.value = idPainel.value
+
 
             })
 
@@ -265,12 +252,55 @@
 
     }
 
-    function PDF(val) {
-        // disp.value = 1
-            
-        setTimeout(() => {
-            disp.value = 1
-        }, 2000);
+
+    function relDisponiveis(tp) {
+
+        let btn = document.getElementById('envia_lista')
+        loading.value = false
+
+        axios.post('/setData', {numBs: idBisemana.value,
+                                idPaineis: checkedPaineisId.value,
+                                
+                                })
+            .then((res) => {
+
+                btn.innerHTML = 'Carregando...'
+
+                setTimeout(() => {
+
+                    axios.post('/relDisponiveis', {tpEnvio: tp})
+                        .then((res) => {
+                            console.log('Relatório gerado')
+                            console.log(res.data)
+
+                            if(tp == 'wpp') {
+
+                                enviaWpp(res.data)
+
+                            } else if(tp == 'pdf') {
+
+                                window.open('/relDisponiveis', '_blank')
+
+                            }
+
+
+                            btn.innerHTML = 'Enviar Lista'
+                            loading.value = true
+
+                        })
+                        .catch((err) => {
+                            console.log('Relatório não gerado')
+                        })
+
+                }, 2000);
+            })
+            .catch((err) => {
+                console.log('Dados não Enviados')
+            })
+
+
+
+
     }
 
 
@@ -321,7 +351,7 @@
                     <!-- Bi-semanas -->
                     <div class="w-5/12 sm:w-[20%] flex flex-col me-4 sm:me-6">
                         <label for="bi-semana">Bi-Semana</label>
-                        <select class="select-paineis" name="bi-semana" id="bi-semama" v-model="idBisemana" :disabled="bsDisabled" @change="idPainel = 0">
+                        <select class="select-paineis" name="bi-semana" id="bi-semama" v-model="idBisemana" :disabled="bsDisabled" @change="idPainel = 0, statusDisabled = false">
                             <option value="0" selected disabled>Selecione</option>
                             <option v-for="(bs, index) in listaBisemana"
                                 :key="index" 
@@ -333,7 +363,7 @@
                     <!-- Status -->
                     <div class="w-full sm:w-1/12 flex flex-col me-4 sm:me-6">
                         <label for="status">Status</label>
-                        <select class="select-paineis" name="status" id="status" v-model="idPainel" @change="getPaineis(), clearChecked()">
+                        <select class="select-paineis" name="status" id="status" :disabled="statusDisabled" v-model="idPainel" @change="getPaineis(), clearChecked()">
                             <option value="0">Todos</option>
                             <option value="1">Disponível</option>
                             <option value="2">Reservado</option>
@@ -395,18 +425,27 @@
 
                     <!-- Botões -->
                     <div class="space-x-4 mt-3.5 mb-2">
-                        <button class="botao bg-sky-700 hover:bg-sky-500" @click="getPaineis(), clearChecked()">Filtrar</button>
+                        <button class="botao bg-sky-700 hover:bg-sky-500" @click="getPaineis(), clearChecked()">
+                            Filtrar
+                        </button>
+
+                        <!-- <button v-if="tipoPainel == 1" class="botao w-fit px-2 bg-amber-700 hover:bg-amber-500">
+                            Sel. Todos
+                        </button> -->
 
                         <div class="dropdown">
-                            <label v-if="idPainel == 1" tabindex="0" class="w-fit botao bg-green-700 hover:bg-green-500 px-2 py-[0.7rem]">Enviar Lista</label>
+                        <label v-if="checkedPaineisId.length > 0 && tipoPainel == 1" tabindex="0" class="w-fit botao flex items-center bg-green-700 hover:bg-green-500 px-2 py-[0.7rem]">
+                                <img src="../../../../storage/app/public/img/spinner.png" class="w-4 h-4 me-2 animate-spin" :class="{'hidden': loading}" alt="spinner"> 
+                                 <p id="envia_lista">Enviar Lista</p>
+                            </label>
                             <ul tabindex="0" class="w-56 -ml-10 dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box mt-4">
-                                <li><a>Envio por Whatsapp</a></li>
+                                <li><label for="modal-wpp">Envio por Whatsapp</label></li>
                                 <li><a>Envio por Email</a></li>
-                                <li><label for="modal-download" @click="PDF()">Download do Relatório</label></li>
+                                <li><label @click="relDisponiveis('pdf')">Download do Relatório</label></li>
                             </ul>
                         </div>
-
-                        <!-- <button v-if="checkedPaineisId.length > 1 && tipoPainel == 1" class="botao w-fit px-2 bg-orange-700 hover:bg-orange-500">Res. Múltipla</button> -->
+                        
+                        
                     </div>
                 </div>
 
@@ -425,7 +464,7 @@
                                 </div>
                                 <div class="w-full flex flex-col items-center">
                                     <div class="w-full mb-4 -ml-4">
-                                        <img class="img-painel" :src="getImage(pain.image_url)" alt="Bairro">
+                                        <img class="img-painel" :src="getImage(props.ambiente ,pain.image_url)" alt="Bairro">
                                     </div>
 
                                     <!-- Informações -->
@@ -545,14 +584,8 @@
                 </div>
             </div>
                
-            <!-- modal  Donwload disponibilidade-->
-            <RelatorioDisponibiliadade v-if="checkedPaineis.length > 0" 
-                                       :ambiente="props.ambiente" 
-                                       :paineisChecked="paineisChecked"
-                                       :bisemana="idBisemana"
-                                       :disp="disp"
-                                       id="modal-disp"
-            />
+            <!-- modal  Whatsapp-->
+            <ModalWpp />
 
 
             <!-- Modal de cancelamento de Reserva-->

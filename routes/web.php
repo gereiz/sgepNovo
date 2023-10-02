@@ -8,6 +8,7 @@ use App\Http\Controllers\Enderecos\RegiaoController;
 use App\Http\Controllers\Paineis\PaineisController;
 use App\Http\Controllers\Reserva\ReservaController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Relatorios\RelatoriosController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -96,6 +97,12 @@ Route::middleware('auth')->group(function () {
     route::post('/AddAno', [ConfiguracoesController::class, 'storeYear'])->name('add.ano');
 
 
+
+
+    // Relatórios
+    route::post('/setData', [RelatoriosController::class, 'setData']);
+    
+    route::any('/relDisponiveis', [RelatoriosController::class, 'relDisponiveis']);
 
 
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

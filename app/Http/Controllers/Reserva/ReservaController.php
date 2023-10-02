@@ -23,6 +23,8 @@ class ReservaController extends Controller
     
     public function index() {
 
+        session(['dados' => '12345']);
+
         $paineis = Painel::with('bairro.regiao.cidade')->get();
 
         $anos = Ano::all();
