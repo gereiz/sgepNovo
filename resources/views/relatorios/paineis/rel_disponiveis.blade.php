@@ -104,7 +104,7 @@
                                     <div style="margin-top: -7%;">
                                         <?php
                                         $filePath = 'storage/'.$p->image_url;
-                                        $originalImage = asset($filePath);
+                                        $originalImage = public_path($filePath);
                                         //if(pathinfo('storage/'.$p->image_url, PATHINFO_EXTENSION) != "png" || mime_content_type($filePath) != "image/png"){
                                         if(filesize($filePath) > 50000){
                                             $info = getimagesize($filePath);

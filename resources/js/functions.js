@@ -28,10 +28,10 @@ export function getImage(amb, i) {
 } 
 
 
-export function enviaWpp(urlRel) {
-    let telwpp =  '5533984316850';
-    let msgwpp = '3032 Deluxe'
-    let url_wpp = ''
+export function enviaWpp(tel, msg, urlRel) {
+    let telwpp =  tel;
+    let msgwpp = msg
+    let url_wpp = urlRel
 
     console.log(navigator.userAgentData.mobile)
 
