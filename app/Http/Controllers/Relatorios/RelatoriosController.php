@@ -26,7 +26,6 @@ class RelatoriosController extends Controller
     }
 
 
-
     public function relDisponiveis(Request $request) {
 
         $user = auth()->user()->name;

@@ -12,6 +12,7 @@ use App\Models\Paineis\Painel;
 use Illuminate\Http\Request;
 use App\Models\Reservas\Reserva;
 use App\Models\Config\Ano;
+use App\Models\Config\Whatsapp;
 use App\Models\Clientes\Cliente;
 use Carbon\Carbon;
 use DB;
@@ -45,6 +46,8 @@ class ReservaController extends Controller
 
         $clientes = Cliente::orderBy('razao_social')->get();
 
+        $whatsapp = Whatsapp::all();
+
 
         return Inertia::render('Paineis/ReservaPaineis',
                         compact('reservas',
@@ -56,6 +59,7 @@ class ReservaController extends Controller
                                     'cidades',
                                     'ambiente',
                                     'anos',
+                                    'whatsapp'
                                     )
         );
 

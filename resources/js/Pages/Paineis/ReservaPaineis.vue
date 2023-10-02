@@ -9,10 +9,12 @@
     import Multiselect from 'vue-multiselect'
   
 
-    const props = defineProps(['ambiente', 'reservas', 'anos', 'paineis', 'clientes', 'bisemanas', 'cidades', 'regioes', 'bairros']);
+    const props = defineProps(['ambiente', 'reservas', 'anos', 'paineis', 'clientes', 'bisemanas', 'cidades', 'regioes', 'bairros', 'whatsapp']);
     const disp = ref(null);
 
     const loading = ref(true)
+
+    const linkWpp = ref ('');
 
     const itemRefs = ref([])
     const checkedPaineis = ref([]);
@@ -275,7 +277,7 @@
 
                             if(tp == 'wpp') {
 
-                                enviaWpp(res.data)
+                                linkWpp.value = res.data
 
                             } else if(tp == 'pdf') {
 
@@ -325,17 +327,6 @@
             <!-- Filtros de Pesquisa -->
             <div class="w-full flex flex-row flex-wrap items-center justify-center mb-20 sm:mb-0 ">
 
-                <!-- Barra de Pesquisa -->
-                <!-- <div class="w-full sm:w-5/12 me-4">
-                    <input v-model="pesqPainel" 
-                           placeholder="Pesquisar Painel"
-                           class="w-full h-10 input input-bordered rounded-none mb-4"
-                           type="text"
-                           name="pesquisar"
-                           id="pesquisar"
-                    >
-                </div> -->
-               
                 <!-- Ano Bi-semana, Status e Identificação -->
                 <div class="w-full flex items-center sm:justify-center flex-wrap">
 
@@ -439,7 +430,7 @@
                                  <p id="envia_lista">Enviar Lista</p>
                             </label>
                             <ul tabindex="0" class="w-56 -ml-10 dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box mt-4">
-                                <li><label for="modal-wpp">Envio por Whatsapp</label></li>
+                                <li><label @click="relDisponiveis('wpp')" for="modal-wpp">Envio por Whatsapp</label></li>
                                 <li><a>Envio por Email</a></li>
                                 <li><label @click="relDisponiveis('pdf')">Download do Relatório</label></li>
                             </ul>
@@ -585,7 +576,7 @@
             </div>
                
             <!-- modal  Whatsapp-->
-            <ModalWpp />
+            <ModalWpp :listaClientes="props.clientes" :whatsapp="props.whatsapp" :bisemana="bisemanaSelecionada" :linkrel="linkWpp" />
 
 
             <!-- Modal de cancelamento de Reserva-->
