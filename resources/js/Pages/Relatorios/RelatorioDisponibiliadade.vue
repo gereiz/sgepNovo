@@ -17,7 +17,7 @@
 
         if(props.ambiente == 'local') {
             // Desenvolvimento
-            var image = 'http://[::1]:5173/storage/app/public/'+ i 
+            var image = 'http://localhost:8000/storage/'+ i 
 
         } else {
             // Produção
@@ -46,7 +46,7 @@
     //             // this.relPDF = false
     //         }, 1000);
         
-    // }
+    // } 
 
     watch(()  => props.disp, (val) => {
         getPDF()

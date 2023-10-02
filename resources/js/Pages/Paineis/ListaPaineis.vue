@@ -20,7 +20,7 @@ const paineisFiltrados = computed(() => {
 
 function getImage(i) {
     // Devenvolvimento
-    var image = 'http://[::1]:5173/storage/app/public/'+ i 
+    var image = 'http://localhost:8000/storage/'+ i 
 
     // Produção
     // var image = '/storage/'+ i 

@@ -1,0 +1,25 @@
+.head_navbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-end;
+}
+
+
+.navbar_logo{
+    margin: 5% 3% 1% 5%;
+    max-width: 50px;
+}
+
+.menu_navbar {
+    display: flex;
+    margin: 0% 5%;
+}
+
+.btn_menu {
+    margin: 0rem 0rem 0rem 10rem;
+}
+
+.texto_sidenav{
+    margin-left:20px;
+}

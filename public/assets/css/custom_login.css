@@ -1,0 +1,16 @@
+.login_logo {
+    width: 100px;
+    position: absolute;
+    left: -50%;
+    top: 20%;
+}
+
+.text_login {
+    position: relative;
+    top: 25%;
+}
+
+.login_form {
+    position: relative;
+    top: 15%;
+}
