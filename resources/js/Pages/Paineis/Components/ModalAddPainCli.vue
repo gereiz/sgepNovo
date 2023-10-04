@@ -60,7 +60,7 @@ function reservaPainel() {
             formReserva.observ = ''
             paineisLista.value = []
             valPi.value = false
-
+ 
            
         }
     })

@@ -10,7 +10,7 @@ export const formReserva = reactive({cliente: '', campanha: '', observ: ''})
 
 export function detectMob() {
     return ( ( window.innerWidth <= 800 ) && ( window.innerHeight <= 600 ) );
-  }
+}
 
 
 export function getImage(amb, i) {
@@ -53,4 +53,12 @@ export function enviaWpp(tel, msg, urlRel) {
 
     window.open(url_wpp);
 
+}
+
+
+export function getLink(lat, lon) {
+
+    let link = 'https://maps.google.com/?q='+lat+','+lon
+
+    return link
 }
