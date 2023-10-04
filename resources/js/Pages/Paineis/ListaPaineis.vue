@@ -23,7 +23,7 @@ function getImage(i) {
     var image = 'http://localhost:8000/storage/'+ i 
 
     // Produção
-    // var image = '/storage/'+ i 
+    var image = '/storage/'+ i 
 
     return image
 }
