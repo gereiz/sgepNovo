@@ -4,16 +4,24 @@ import { Head } from '@inertiajs/vue3';
 import { useToastr } from '@/Components/toastr';
 import { ref, reactive, onMounted, computed } from 'vue';
 
+
 const props = defineProps(['anos'])
+
+const toastr = useToastr();
 
 const ano = ref('');
 
 
 function addAno() {
 
+    console.log(ano.value)
+
     axios.post('/AddAno', {ano: ano.value})
     .then(res => {
-        console.log(res.data)
+        toastr.success(res.data)
+    })
+    .catch((err) => {
+        console.log(err)
     })
 }
 

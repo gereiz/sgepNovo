@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Config\Ano;
+use Illuminate\Support\Facades\DB;
 
 
 class ConfiguracoesController extends Controller
@@ -18,10 +19,11 @@ class ConfiguracoesController extends Controller
     }
 
 
-    public function storeYear(Request $request) {
+    public function AddAno(Request $request) {
 
-
-        Ano::create(['ano_bisemana' => $request->ano]);
+        
+        DB::select("CALL InsereBisemanas($request->ano)");
+       
 
         return 'Ano '. $request->ano.' Gravado.';
     }
