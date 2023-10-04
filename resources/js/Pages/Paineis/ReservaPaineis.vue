@@ -3,7 +3,7 @@
     import ModalCancRes from '@/Pages/Paineis/Components/ModalCancelRes.vue'
     import ModalWpp from '@/Pages/Paineis/Components/ModalWpp.vue'
     import { Head, router } from '@inertiajs/vue3';
-    import { getImage, toastr, enviaWpp } from '@/functions'
+    import { getImage, toastr, enviaWpp, getLink } from '@/functions'
     import * as cts from '@/Pages/Paineis/Components/constants'
     import { ref, reactive, onMounted, computed, watch } from 'vue'
     import Multiselect from 'vue-multiselect'
@@ -420,10 +420,6 @@
                             Filtrar
                         </button>
 
-                        <!-- <button v-if="tipoPainel == 1" class="botao w-fit px-2 bg-amber-700 hover:bg-amber-500">
-                            Sel. Todos
-                        </button> -->
-
                         <div class="dropdown">
                         <label v-if="checkedPaineisId.length > 0 && tipoPainel == 1" tabindex="0" class="w-fit botao flex items-center bg-green-700 hover:bg-green-500 px-2 py-[0.7rem]">
                                 <img src="../../../../storage/app/public/img/spinner.png" class="w-4 h-4 me-2 animate-spin" :class="{'hidden': loading}" alt="spinner"> 
@@ -436,7 +432,9 @@
                             </ul>
                         </div>
                         
-                        
+                        <button v-if="checkedPaineisId.length > 1 && tipoPainel == 1" class="botao w-fit px-2 bg-teal-700 hover:bg-teal-500">
+                            Reserva Multipla
+                        </button>
                     </div>
                 </div>
 
@@ -450,24 +448,31 @@
                         <!-- Cards dos Paineis -->
                         <div v-for="(pain, index) in pan "  :key="index" class="card w-full sm:w-5/12 bg-base-100 border-2 rounded-md shadow-xl mt-4 sm:mr-4">
                             <div class="card-body" :id="index" @click="isChecked(index, pain.identificacao, pain.id, pain)">
+                              <div class="flex justify-between">
+                                <h2 class="text-xs sm:card-title">{{pain.cnome}}</h2>
+                                <h2 class="text-xs sm:card-title text-red-500">Identificação.: {{pain.identificacao}}</h2>
+                              </div>
                                 <div class="w-full flex justify-end">
                                     <input type="checkbox" ref="itemRefs" class="w-14 h-14 border-0 checkbox checkbox-success" />
                                 </div>
                                 <div class="w-full flex flex-col items-center">
-                                    <div class="w-full mb-4 -ml-4">
+                                    <div class="w-full mb-4 sm:-ml-4">
                                         <img class="img-painel" :src="getImage(props.ambiente ,pain.image_url)" alt="Bairro">
                                     </div>
 
                                     <!-- Informações -->
-                                    <div class="w-full sm:w-11/12 flex justify-center flex-wrap mb-4">
+                                    <div class="w-full sm:w-11/12 flex justify-center flex-wrap">
                                         <div class="w-full flex justify-between sm:justify-between flex-wrap space-y-4">
                                             <div class="w-full flex flex-wrap justify-between sm:justify-between">
-                                                <h2 class="text-xs sm:card-title">{{pain.cnome}}</h2>
-                                                <h2 class="text-xs sm:card-title">Região: {{pain.rnome}}</h2>
+                                                <h2 class="text-xs sm:card-title">Bairro: {{pain.bnome}}</h2>
+                                                <h2 class="text-xs flex sm:card-title hover:text-red-700">Ver Localização 
+                                                    <a :href="getLink(pain.latitude, pain.longitude)" target="_blank">
+                                                        <img class="w-6 ms-4 sm:w-10 sm:hover:w-14 transition-all duration-500" src="../../../../public/storage/img/regiao.png" alt="Mapa">
+                                                    </a> 
+                                                </h2>
                                             </div>
                                             <div class="w-full flex flex-wrap justify-between sm:justify-between">
-                                                <h2 class="text-xs sm:card-title">Bairro: {{pain.bnome}}</h2>
-                                                <h2 class="text-xs sm:card-title text-red-500">Identificação.: {{pain.identificacao}}</h2>
+                                                    <h2 class="text-xs sm:card-title">Localização: {{pain.logradouro}} - {{ pain.numero }}</h2>
                                             </div> 
                                         </div>
                                     </div>
@@ -574,6 +579,7 @@
                     </dialog>
                 </div>
             </div>
+            
                
             <!-- modal  Whatsapp-->
             <ModalWpp :listaClientes="props.clientes" :whatsapp="props.whatsapp" :bisemana="bisemanaSelecionada" :linkrel="linkWpp" />

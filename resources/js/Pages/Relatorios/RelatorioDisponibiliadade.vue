@@ -75,7 +75,7 @@
                         <span class="font-bold text-lg">Bi-semana: XX - 01/01/2023  à 31/01/2023</span>
                     </div>
                 </div>
-            </div>
+            </div> 
             <div class="text-center">
                 <span class="text-2xl font-bold text-red-700 underline">Esta disponibilidade está sujeita a alteração, sem aviso prévio.</span>
             </div>
