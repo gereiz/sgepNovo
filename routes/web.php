@@ -94,10 +94,10 @@ Route::middleware('auth')->group(function () {
     // Configurações
     route::get('/Config', [ConfiguracoesController::class, 'index']);
 
-    route::post('/AddAno', [ConfiguracoesController::class, 'storeYear'])->name('add.ano');
+    route::post('/AddAno', [ConfiguracoesController::class, 'AddAno'])->name('add.ano');
 
 
-
+ 
 
     // Relatórios
     route::post('/setData', [RelatoriosController::class, 'setData']);
