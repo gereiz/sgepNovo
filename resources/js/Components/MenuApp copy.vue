@@ -97,11 +97,11 @@
                 Relatórios
             </div>
                 <div class="collapse-content -mt-2 ms-2 space-y-4"> 
-                    <p class="hover:text-slate-400"><a href="https://sgepequipe.com/relColagem" target="_blank">Relatório de Colagem</a></p>
-                    <p class="hover:text-slate-400"><a href="https://sgepequipe.com/relReservaCLiente" target="_blank">Reservas por Cliente</a></p>
-                    <p class="hover:text-slate-400"><a href="https://sgepequipe.com/relPainelCliente" target="_blank">Painéis por Cliente</a></p>
-                    <p class="hover:text-slate-400"><a href="https://sgepequipe.com/relPainelBisemana" target="_blank">Painéis por Bisemana</a></p>
-                    <p class="hover:text-slate-400"><a href="https://sgepequipe.com/relClienteXbisemana" target="_blank">Clientes por Bisemana</a></p>
+                    <p class="hover:text-slate-400"><a href="https://old.sgepequipe.com/relColagem" target="_blank">Relatório de Colagem</a></p>
+                    <p class="hover:text-slate-400"><a href="https://old.sgepequipe.com/relReservaCLiente" target="_blank">Reservas por Cliente</a></p>
+                    <p class="hover:text-slate-400"><a href="https://old.sgepequipe.com/relPainelCliente" target="_blank">Painéis por Cliente</a></p>
+                    <p class="hover:text-slate-400"><a href="https://old.sgepequipe.com/relPainelBisemana" target="_blank">Painéis por Bisemana</a></p>
+                    <p class="hover:text-slate-400"><a href="https://old.sgepequipe.com/relClienteXbisemana" target="_blank">Clientes por Bisemana</a></p>
 
                 </div>
             </div>
@@ -120,7 +120,7 @@
                 Financeiro
             </div>
                 <div class="collapse-content -mt-2 ms-2 space-y-4"> 
-                    <!-- <p class="hover:text-slate-400"><a href="https://sgepequipe.com/relColagem" target="_blanksgepnovo/public/">Relatório de Colagem</a></p>
+                    <!-- <p class="hover:text-slate-400"><a href="https://old.sgepequipe.com/relColagem" target="_blanksgepnovo/public/">Relatório de Colagem</a></p>
                     <p class="hover:text-slate-400"><a>Cadastro de Regiões</a></p>
                     <p class="hover:text-slate-400"><a href="/CadBairro">Cadastro de Bairros</a></p> -->
                 </div>
