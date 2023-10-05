@@ -268,7 +268,7 @@ function cancelaResMulti() {
                                     <div class="w-5/12 mb-4 -ml-6 -mt-4">
                                         <img class="w-36 h-24" :src="getImage(res.image_url)" alt="Foto-painel">
                                     </div>
-                                    <div class="w-6/12 mb-4 ml-4 sm:-ml-4 -mt-4 space-y-2">
+                                    <div class="w-7/12 mb-4 ml-4 -mt-4 space-y-2">
                                         <span class="font-bold text-sm text-red-500">Painel: </span>
                                         <span class="font-extrabold text-xs"> {{ res.identificacao }} - {{ res.nome_fantasia ? res.nome_fantasia : res.razao_social }}</span>
                                         
