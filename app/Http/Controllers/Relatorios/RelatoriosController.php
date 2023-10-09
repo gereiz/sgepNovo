@@ -23,7 +23,7 @@ class RelatoriosController extends Controller
         }
 
         
-    }
+    } 
 
 
     public function relDisponiveis(Request $request) {

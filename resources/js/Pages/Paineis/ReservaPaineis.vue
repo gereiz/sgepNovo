@@ -432,9 +432,9 @@
                             </ul>
                         </div>
                         
-                        <button v-if="checkedPaineisId.length > 1 && tipoPainel == 1" class="botao w-fit px-2 bg-teal-700 hover:bg-teal-500">
+                        <!-- <button v-if="checkedPaineisId.length > 1 && tipoPainel == 1" class="botao w-fit px-2 bg-teal-700 hover:bg-teal-500">
                             Reserva Multipla
-                        </button>
+                        </button> -->
                     </div>
                 </div>
 
