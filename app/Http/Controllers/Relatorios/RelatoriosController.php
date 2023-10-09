@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Bisemanas\Bisemana;
 use App\Models\Paineis\Painel;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 use PDF;
 
 
@@ -23,11 +24,11 @@ class RelatoriosController extends Controller
         }
 
         
-    } 
+    }
 
 
     public function relDisponiveis(Request $request) {
-
+        $tZone = new \DateTimeZone('America/Sao_paulo');
         $user = auth()->user()->name;
         $paineis = session('paineis');
         $status = 'Disponíveis';
@@ -35,7 +36,7 @@ class RelatoriosController extends Controller
         $numBisemana = $bisemana->num_bisemana;
         $periodo = date('d/m/Y',  strtotime($bisemana->inicio)).' a '.date('d/m/Y',  strtotime($bisemana->fim));
         $envio = $request->tpEnvio;
-
+        $time = Carbon::now($tZone)->toTimeString();
         $fileName = 'Paineis_Disponiveis_Bi-semana_'.$numBisemana.'.pdf';
 
 
@@ -54,7 +55,7 @@ class RelatoriosController extends Controller
 
         }
 
-        return $pdf->download('Paineis_disponiveis_'.$periodo.'.pdf');
+        return $pdf->download('Paineis_disponiveis_'.$periodo.'_'.$time.'.pdf');
 
     }
 }
