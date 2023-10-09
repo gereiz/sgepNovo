@@ -160,7 +160,7 @@
     function isChecked(val, painelId, id, painel) {
         const cardPainel = itemRefs.value[val];
             
-        // let classes = cardPainel.classList
+        let classes = cardPainel.classList
 
 
         if(Object.values(checkedPaineis.value).includes(painelId)) {
@@ -184,23 +184,6 @@
         }
 
 
-    }
-
-    function checkAll() {
-        let i = 0;
-
-        clearChecked();
-        
-         pan.value.forEach(painel => {
-            let cardPainel = itemRefs.value[i];
-            console.log(painel)
-
-            checkedPaineis.value.push(painel.identificacao);
-            paineisChecked.value.push(painel);
-            checkedPaineisId.value.push(painel.id);
-            cardPainel.checked = true
-            i++;
-        });
     }
 
 
@@ -435,10 +418,6 @@
                     <div class="space-x-4 mt-3.5 mb-2">
                         <button class="botao bg-sky-700 hover:bg-sky-500" @click="getPaineis(), clearChecked()">
                             Filtrar
-                        </button>
-
-                        <button v-if="tipoPainel == 1" @click="checkAll()" class="botao w-32 max-h-10 bg-fuchsia-700 hover:bg-fuchsia-500 ">
-                            Marcar Todos
                         </button>
 
                         <div class="dropdown">
