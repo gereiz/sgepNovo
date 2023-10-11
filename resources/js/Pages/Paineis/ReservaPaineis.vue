@@ -162,21 +162,18 @@
             
         // let classes = cardPainel.classList
 
-
         if(Object.values(checkedPaineis.value).includes(painelId)) {
             checkedPaineis.value.splice(checkedPaineis.value.indexOf(painelId), 1)
             paineisChecked.value.splice(paineisChecked.value.indexOf(painel), 1)
-            checkedPaineisId.value.splice(checkedPaineis.value.indexOf(id), 1)
+            checkedPaineisId.value.splice(checkedPaineisId.value.indexOf(id), 1)
             cardPainel.checked = false
-
-
         } else {
             checkedPaineis.value.push(painelId);
             paineisChecked.value.push(painel);
             checkedPaineisId.value.push(id);
             cardPainel.checked = true
-
         }
+
 
         if(checkedPaineis.value.length === 0) {
             paineisChecked.value = []
@@ -186,6 +183,7 @@
 
     }
 
+
     function checkAll() {
         let i = 0;
 
@@ -193,8 +191,7 @@
         
          pan.value.forEach(painel => {
             let cardPainel = itemRefs.value[i];
-            console.log(painel)
-
+            
             checkedPaineis.value.push(painel.identificacao);
             paineisChecked.value.push(painel);
             checkedPaineisId.value.push(painel.id);
@@ -290,7 +287,6 @@
                     axios.post('/relDisponiveis', {tpEnvio: tp})
                         .then((res) => {
                             console.log('Relatório gerado')
-                            console.log(res.data)
 
                             if(tp == 'wpp') {
 

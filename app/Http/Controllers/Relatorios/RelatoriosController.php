@@ -54,7 +54,7 @@ class RelatoriosController extends Controller
             return env('APP_URL').Storage::url('pdf/'.$fileName);
 
         }
-
+        dd(session()->all());
         return $pdf->download('Paineis_disponiveis_'.$periodo.'_'.$time.'.pdf');
 
     }
