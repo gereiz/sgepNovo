@@ -37,7 +37,7 @@ class RelatoriosController extends Controller
         $periodo = date('d/m/Y',  strtotime($bisemana->inicio)).' a '.date('d/m/Y',  strtotime($bisemana->fim));
         $envio = $request->tpEnvio;
         $time = Carbon::now($tZone)->toTimeString();
-        $fileName = 'Paineis_Disponiveis_Bi-semana_'.$numBisemana.'.pdf';
+        $fileName = 'Paineis_Disponiveis_Bi-semana_'.$numBisemana.'_'.$time.'.pdf';
 
 
         $pdf = PDF::loadView('relatorios.paineis.rel_disponiveis', compact('numBisemana',
@@ -54,7 +54,7 @@ class RelatoriosController extends Controller
             return env('APP_URL').Storage::url('pdf/'.$fileName);
 
         }
-        dd(session()->all());
+
         return $pdf->download('Paineis_disponiveis_'.$periodo.'_'.$time.'.pdf');
 
     }
