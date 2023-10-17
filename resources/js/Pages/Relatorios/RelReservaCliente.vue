@@ -13,7 +13,7 @@
     const cliId = ref(0)
     const anoId = ref(0)
     const bsId = ref(0)
-    const orient = ref('')
+    const orient = ref('P')
 
     function setReservaCliente() {
 
