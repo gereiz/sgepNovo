@@ -100,9 +100,18 @@ Route::middleware('auth')->group(function () {
  
 
     // Relatórios
-    route::post('/setData', [RelatoriosController::class, 'setData']);
     
+    // Dispopnibilidade
+    route::post('/setData', [RelatoriosController::class, 'setData']);
     route::any('/relDisponiveis', [RelatoriosController::class, 'relDisponiveis']);
+
+    // Painéis x CLiente
+    route::get('/ReservaCliente', [RelatoriosController::class, 'RelReservaCliente']);
+    route::post('/setRelReservaCliente', [RelatoriosController::class, 'setRelReservaCliente']);
+    route::any('/getRelReservaCliente', [RelatoriosController::class, 'getRelReservaCliente']);
+
+
+    
 
 
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
