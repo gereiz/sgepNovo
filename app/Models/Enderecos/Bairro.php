@@ -4,6 +4,7 @@ namespace App\Models\Enderecos;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Enderecos\Regiao;
 
 class Bairro extends Model
 {

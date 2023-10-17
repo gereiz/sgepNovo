@@ -13,7 +13,7 @@ class Painel extends Model
     use HasFactory;
 
 
-    protected $table = 'outdoors AS out';
+    protected $table = 'outdoors';
 
 
     public function bairro()
