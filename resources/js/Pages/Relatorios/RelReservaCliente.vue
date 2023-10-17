@@ -28,10 +28,11 @@
 
 
     function getRelReservaCliente() {
+        let btn = document.getElementById('gera_rel')
 
         axios.post('/setRelReservaCliente', {numBs: bsId.value , cliente: cliId.value })
             .then((res) =>{
-
+                btn.innerHTML = 'Carregando...'
             })
             .catch((err) => {
                 console.log(err)
@@ -44,11 +45,12 @@
                                             orient: orient.value
             })
             .then((res) => {
-            console.log(res.data)
             
-            setTimeout(() => {
-                window.open('/getRelReservaCliente', '_blank')
-            }, 2000);
+                setTimeout(() => {
+                    btn.innerHTML = 'Gerar Relatório'
+                    window.open('/getRelReservaCliente', '_blank')
+
+                }, 3000);
             })
             .catch((err) => {
             console.log(err)
@@ -118,7 +120,7 @@
                                 </select>
                             </div>
                             <div class="w-full sm:w-5/12 flex flex-col items-center sm:items-start justify-center">
-                                <button class="botao-primario w-11/12 sm:w-fit sm:px-4 -ms-3.5 sm:-ms-0 mt-5" @click="getRelReservaCliente()">Gerar Relatório</button>
+                                <button id="gera_rel" class="botao-primario w-11/12 sm:w-fit sm:px-4 -ms-3.5 sm:-ms-0 mt-5" @click="getRelReservaCliente()">Gerar Relatório</button>
                             </div>
                         </div>
                     </div>
