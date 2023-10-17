@@ -94,14 +94,13 @@ class RelatoriosController extends Controller
 
 
     public function getRelReservaCliente(Request $request) {
-
         $tZone = new \DateTimeZone('America/Sao_paulo');
         $user = auth()->user()->name;
         $bisemana = Bisemana::where('id', session('num_bs'))->first();
         $numBisemana = $bisemana->num_bisemana;
         $periodo = date('d/m/Y',  strtotime($bisemana->inicio)).' a '.date('d/m/Y',  strtotime($bisemana->fim));
         $cliente = Cliente::where('id', session('cliente'))->first();
-        $clienteNome = $cliente->nome_fantasia ? $cliente->nome_fantasia: $cliente->razao_social; 
+        $clienteNome = $cliente->nome_fantasia ? $cliente->nome_fantasia: $cliente->razao_social;
         $time = Carbon::now($tZone)->toTimeString();
 
         $paineis = Reserva::with('painel.bairro.regiao.cidade')->where([['bisemana_id', session('num_bs')], ['cliente_id', session('cliente')]])->get();
