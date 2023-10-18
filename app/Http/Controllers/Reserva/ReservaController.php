@@ -97,19 +97,19 @@ class ReservaController extends Controller
         $paineis = Painel::with('bairro.regiao.cidade')->get();
 
 
-        $reservados = Painel::select('out.id',
-                                     'out.identificacao',
-                                     'out.bairro_id',
-                                     'out.logradouro',
-                                     'out.numero',
-                                     'out.latitude',
-                                     'out.longitude',
-                                     'out.image_url',
+        $reservados = Painel::select('outdoors.id',
+                                     'outdoors.identificacao',
+                                     'outdoors.bairro_id',
+                                     'outdoors.logradouro',
+                                     'outdoors.numero',
+                                     'outdoors.latitude',
+                                     'outdoors.longitude',
+                                     'outdoors.image_url',
                                      'bai.nome AS bnome',
                                      'reg.nome AS rnome',
                                      'cid.nome AS cnome')
-                           ->join('reservas AS res', 'res.outdoor_id', '=', 'out.id')
-                           ->join('bairros AS bai', 'bai.id', '=', 'out.bairro_id')
+                           ->join('reservas AS res', 'res.outdoor_id', '=', 'outdoors.id')
+                           ->join('bairros AS bai', 'bai.id', '=', 'outdoors.bairro_id')
                            ->join('regioes AS reg', 'reg.id', '=', 'bai.regiao_id')
                            ->join('cidades AS cid', 'cid.id', '=', 'reg.cidade_id')
                            ->where('res.bisemana_id','=', $request->bisemana)
@@ -120,31 +120,31 @@ class ReservaController extends Controller
                                     $query->where('bai.regiao_id', '=', $regiao);
                            })
                            ->when($bairro, function (Builder $query, $bairro) {
-                                    $query->where('out.bairro_id', '=', $bairro);
+                                    $query->where('outdoors.bairro_id', '=', $bairro);
                            })
                            
-                           ->groupBY('out.id')
-                           ->orderBy('out.identificacao')
+                           ->groupBY('outdoors.id')
+                           ->orderBy('outdoors.identificacao')
                            ->distinct()
         ->get();
 
 
-        $disponiveis = Painel::select('out.id',
-                                      'out.identificacao',
-                                      'out.bairro_id',
-                                      'out.logradouro',
-                                      'out.numero',
-                                      'out.latitude',
-                                      'out.longitude',
-                                      'out.image_url',
+        $disponiveis = Painel::select('outdoors.id',
+                                      'outdoors.identificacao',
+                                      'outdoors.bairro_id',
+                                      'outdoors.logradouro',
+                                      'outdoors.numero',
+                                      'outdoors.latitude',
+                                      'outdoors.longitude',
+                                      'outdoors.image_url',
                                       'bai.nome AS bnome',
                                       'reg.nome AS rnome',
                                       'cid.nome AS cnome')
-                          ->join('reservas AS res', 'res.outdoor_id', '=', 'out.id')
-                          ->join('bairros AS bai', 'bai.id', '=', 'out.bairro_id')
+                          ->join('reservas AS res', 'res.outdoor_id', '=', 'outdoors.id')
+                          ->join('bairros AS bai', 'bai.id', '=', 'outdoors.bairro_id')
                           ->join('regioes AS reg', 'reg.id', '=', 'bai.regiao_id')
                           ->join('cidades AS cid', 'cid.id', '=', 'reg.cidade_id')
-                          ->whereNotIn('out.id', $reservados->pluck('id'))
+                          ->whereNotIn('outdoors.id', $reservados->pluck('id'))
                           ->when($cidade, function (Builder $query, $cidade) {
                             $query->where('reg.cidade_id', '=', $cidade);
                           })
@@ -152,11 +152,11 @@ class ReservaController extends Controller
                                     $query->where('bai.regiao_id', '=', $regiao);
                           })
                           ->when($bairro, function (Builder $query, $bairro) {
-                                    $query->where('out.bairro_id', '=', $bairro);
+                                    $query->where('outdoors.bairro_id', '=', $bairro);
                           })
                           
-                          ->groupBY('out.id')
-                          ->orderBy('out.identificacao')
+                          ->groupBY('outdoors.id')
+                          ->orderBy('outdoors.identificacao')
         ->get();
   
 
@@ -242,52 +242,52 @@ class ReservaController extends Controller
     }
     
 
-    public function getPaineisCliente(Request $request) {
+    public function getPaineisCliente(Request $request) { 
 
         $bisemana = $request->bsId;
         $cliente = $request->cliente;
 
-        $reservas = Painel::select('out.id',
-                                'out.identificacao',
-                                'out.bairro_id',
-                                'out.image_url',
+        $reservas = Painel::select('outdoors.id',
+                                'outdoors.identificacao',
+                                'outdoors.bairro_id',
+                                'outdoors.image_url',
                                 'res.campanha AS campanha',
                                 'res.observacao AS obs',
                                 'cli.razao_social AS razao_social',
                                 'cli.nome_fantasia AS nome_fantasia')
-            ->join('reservas AS res', 'res.outdoor_id', '=', 'out.id')
+            ->join('reservas AS res', 'res.outdoor_id', '=', 'outdoors.id')
             ->join('clientes AS cli', 'cli.id', '=', 'res.cliente_id')
             ->where('res.bisemana_id','=', $bisemana)
             ->when($cliente, function(Builder $query, $cliente) {
                 $query->where('res.cliente_id', $cliente);
             })
         
-            ->groupBY('out.id')
-            ->orderBy('out.identificacao')
+            ->groupBY('outdoors.id')
+            ->orderBy('outdoors.identificacao')
             ->distinct()
         ->get();
 
 
-        $paineis = Painel::select('out.id',
-                                'out.identificacao',
-                                'out.bairro_id',
-                                'out.image_url',
-                                'out.logradouro',
-                                'out.numero',
-                                'out.ponto_referencia',
+        $paineis = Painel::select('outdoors.id',
+                                'outdoors.identificacao',
+                                'outdoors.bairro_id',
+                                'outdoors.image_url',
+                                'outdoors.logradouro',
+                                'outdoors.numero',
+                                'outdoors.ponto_referencia',
                                 'res.campanha AS campanha',
                                 'res.observacao AS obs',
                                 'cli.razao_social AS razao_social',
                                 'cli.nome_fantasia AS nome_fantasia')
-            ->join('reservas AS res', 'res.outdoor_id', '=', 'out.id')
+            ->join('reservas AS res', 'res.outdoor_id', '=', 'outdoors.id')
             ->join('clientes AS cli', 'cli.id', '=', 'res.cliente_id')
-            ->whereNotIn('out.id', $reservas->pluck('id'))
+            ->whereNotIn('outdoors.id', $reservas->pluck('id'))
             ->when($cliente, function(Builder $query, $cliente) {
             $query->where('res.cliente_id', $cliente);
             })
 
-            ->groupBY('out.id')
-            ->orderBy('out.identificacao')
+            ->groupBY('outdoors.id')
+            ->orderBy('outdoors.identificacao')
             ->distinct()
         ->get();
 
