@@ -74,7 +74,7 @@
     <!-- Relatórios -->
     <div class="w-full flex">
         <div class="w-2/12 md:ml-2.5 text-center">
-            <i class="fa-regular fa-file text-white text-xl"></i>
+            <i class="fa-regular fa-file text-white text-xl"></i> 
         </div> 
         <div class="w-10/12 flex">
             <div class="group">
