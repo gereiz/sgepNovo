@@ -75,7 +75,6 @@ class RelatoriosController extends Controller
     }
 
 
-
     public function setRelReservaCliente(Request $request) {
 
         $anoBs = $request->anoBs;
@@ -88,7 +87,7 @@ class RelatoriosController extends Controller
             session(['orientacao' => $request->orient]);
         }
 
-        return $bisemanas;
+        return $bisemanas; 
 
     }
 
