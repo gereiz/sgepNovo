@@ -148,7 +148,7 @@
                         <!-- Cidade -->
                         <div class="w-full sm:w-[20%] flex flex-col">
                             <label for="cidade">Cidade</label>
-                            <select class="select select-bordered w-full max-w-xs" v-model="cidId" :disabled="!bsId" @change="setRegioes()">
+                            <select class="select select-bordered w-full max-w-xs" v-model="cidId" disabled @change="setRegioes()">
                                 <option value="0" disabled selected>Todos</option>
                                 <option v-for="cid, index in cidades" :key="index" :value="cid.id">{{ cid.nome }}</option>
                             </select>
@@ -157,7 +157,7 @@
                         <!-- Região -->
                         <div class="w-full sm:w-[20%] flex flex-col">
                             <label for="regiao">Região</label>
-                            <select class="select select-bordered w-full max-w-xs" v-model="regId" :disabled="!cidId" @change="setBairros()">
+                            <select class="select select-bordered w-full max-w-xs" v-model="regId" disabled @change="setBairros()">
                                 <option value="0" disabled selected>Todos</option>
                                 <option v-for="reg, index in regioes" :key="index" :value="reg.id">{{ reg.nome }}</option>
                             </select>
@@ -166,7 +166,7 @@
                         <!-- Bairro -->
                         <div class="w-full sm:w-[20%] flex flex-col">
                             <label for="bairro">Bairro</label>
-                            <select class="select select-bordered w-full max-w-xs" v-model="baiId" :disabled="!regId">
+                            <select class="select select-bordered w-full max-w-xs" v-model="baiId" disabled>
                                 <option value="0" disabled selected>Todos</option>
                                 <option v-for="bai, index in bairros" :key="index" :value="bai.id">{{ bai.nome }}</option>
                             </select>
