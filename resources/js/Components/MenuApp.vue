@@ -80,8 +80,7 @@
             <div class="group">
             <p  class="text-white mt-1">Relatórios</p>
                 <ul  class="hidden group-hover:block w-52 text-white ml-1 mt-2 space-y-2">
-                    <li class="hover:text-slate-400"><a href="/RelColagem">Relatório de Colagem</a></li>
-                    <!-- <li class="hover:text-slate-400"><a href="https://old.sgepequipe.com/relColagem" target="_blank">Relatório de Colagem</a></li> -->
+                    <li class="hover:text-slate-400"><a href="https://old.sgepequipe.com/relColagem" target="_blank">Relatório de Colagem</a></li>
                     <li class="hover:text-slate-400"><a href="/ReservaCliente">Reservas por Cliente</a></li>
                     <!-- <li class="hover:text-slate-400"><a href="https://old.sgepequipe.com/relReservaCLiente" target="_blank">Reservas por Cliente</a></li> -->
                     <li class="hover:text-slate-400"><a href="https://old.sgepequipe.com/relPainelCliente" target="_blank">Painéis por Cliente</a></li>

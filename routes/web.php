@@ -9,7 +9,6 @@ use App\Http\Controllers\Paineis\PaineisController;
 use App\Http\Controllers\Reserva\ReservaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Relatorios\RelatoriosController;
-use App\Http\Controllers\Relatorios\RelColagemController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -112,12 +111,6 @@ Route::middleware('auth')->group(function () {
     route::any('/getRelReservaCliente', [RelatoriosController::class, 'getRelReservaCliente']);
 
 
-    // Relatório de Colagem
-    route::get('/RelColagem', [RelColagemController::class, 'relColagem']);
-    route::post('/setRelColagem', [RelColagemController::class, 'setRelColagem']);
-    route::post('/setRegioes', [RelColagemController::class, 'setRegioes']);
-    route::post('/setBairros', [RelColagemController::class, 'setBairros']);
-    route::any('/getRelColagem', [RelColagemController::class, 'getRelColagem']);
     
 
 
