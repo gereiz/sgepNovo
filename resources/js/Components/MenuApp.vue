@@ -89,7 +89,7 @@
                 </ul>
             </div>
         </div>
-    </div>
+    </div> 
 
     <!-- Financeiro -->
     <div class="w-full flex">
