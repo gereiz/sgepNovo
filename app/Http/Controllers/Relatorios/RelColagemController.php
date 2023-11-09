@@ -114,6 +114,7 @@ class RelColagemController extends Controller
 
 
         if($rel_bisemana->isEmpty() ) {
+            dd('aaa');
             return back()->with('error', 'Não existem reservas no período selecionado.');
         
         } else {
