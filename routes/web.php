@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Clientes\ClienteController;
 use App\Http\Controllers\Config\ConfiguracoesController;
+use App\Http\Controllers\Data\DataController;
 use App\Http\Controllers\Enderecos\BairroController;
 use App\Http\Controllers\Enderecos\CidadeController;
 use App\Http\Controllers\Enderecos\RegiaoController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Reserva\ReservaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Relatorios\RelatoriosController;
 use App\Http\Controllers\Relatorios\RelColagemController;
+use App\Http\Controllers\Relatorios\RelPainXCliController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -43,6 +45,9 @@ Route::get('/dashboard', function () {
 
 
 Route::middleware('auth')->group(function () {
+
+    // Data
+    route::post('/getBisemana', [DataController::class, 'getBs']);
 
     // Bairros
     route::get('/CadBairro', [BairroController::class, 'index'])->name('cad.bairro');
@@ -106,10 +111,16 @@ Route::middleware('auth')->group(function () {
     route::post('/setData', [RelatoriosController::class, 'setData']);
     route::any('/relDisponiveis', [RelatoriosController::class, 'relDisponiveis']);
 
-    // Painéis x CLiente
+    // Reservas x CLiente
     route::get('/ReservaCliente', [RelatoriosController::class, 'RelReservaCliente']);
     route::post('/setRelReservaCliente', [RelatoriosController::class, 'setRelReservaCliente']);
     route::any('/getRelReservaCliente', [RelatoriosController::class, 'getRelReservaCliente']);
+
+
+    // Painéis x CLientes por Bi-semanas
+    route::get('/PaineisCliente', [RelPainXCliController::class, 'index']);
+    route::any('/setPaineisCliente', [RelPainXCliController::class, 'setRelPainXCli']);
+    route::any('/getPaineisCliente', [RelPainXCliController::class, 'getRelPainXCli']);
 
 
     // Relatório de Colagem
@@ -118,6 +129,8 @@ Route::middleware('auth')->group(function () {
     route::post('/setRegioes', [RelColagemController::class, 'setRegioes']);
     route::post('/setBairros', [RelColagemController::class, 'setBairros']);
     route::any('/getRelColagem', [RelColagemController::class, 'getRelColagem']);
+
+
     
 
 
