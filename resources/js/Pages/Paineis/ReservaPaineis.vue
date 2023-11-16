@@ -359,7 +359,7 @@
                             <option value="0" selected disabled>Selecione</option>
                             <option v-for="(bs, index) in listaBisemana"
                                 :key="index" 
-                                :value="bs.id">BS: {{ bs.num_bisemana }} {{ new Date(bs.inicio).toLocaleDateString() }} até {{ new Date(bs.fim).toLocaleDateString() }}
+                                :value="bs.id">BS: {{ bs.num_bisemana }} {{ new Date(bs.inicio) }} até {{ new Date(bs.fim) }}
                             </option>
                         </select>
                     </div>
