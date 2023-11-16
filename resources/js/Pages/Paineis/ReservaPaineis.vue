@@ -359,7 +359,7 @@
                             <option value="0" selected disabled>Selecione</option>
                             <option v-for="(bs, index) in listaBisemana"
                                 :key="index" 
-                                :value="bs.id">BS: {{ bs.num_bisemana }} {{ new Date(bs.inicio).toLocaleDateString('pt-br', {timeZone: 'America/Sao_Paulo'}) }} até {{ new Date(bs.fim).toLocaleDateString('pt-br', {timeZone: 'America/Sao_Paulo'}) }}
+                                :value="bs.id">BS: {{ bs.num_bisemana }} {{ new Date(bs.inicio).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }} até {{ new Date(bs.fim).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }}
                             </option>
                         </select>
                     </div>
