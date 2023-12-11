@@ -48,6 +48,9 @@ Route::middleware('auth')->group(function () {
 
     // Data
     route::post('/getBisemana', [DataController::class, 'getBs']);
+    route::get('/dtGetBairros', [DataController::class, 'getBairros']);
+    route::get('/dtGetCidades', [DataController::class, 'getCidades']);
+    route::get('/dtGetUf', [DataController::class, 'getUf']);
 
     // Bairros
     route::get('/CadBairro', [BairroController::class, 'index'])->name('cad.bairro');

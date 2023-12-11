@@ -9,8 +9,14 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 // FormKit imports
 import { plugin as formKitPlugin, defaultConfig } from '@formkit/vue'
 import { createMultiStepPlugin } from '@formkit/addons'
+
+import { createProPlugin, inputs } from '@formkit/pro'
 import '@formkit/themes/genesis'
+import '@formkit/pro/genesis'
 import '@formkit/addons/css/multistep'
+
+const pro = createProPlugin('fk-118c01e3122', inputs)
+
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
@@ -22,7 +28,7 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue, Ziggy)
             .use(formKitPlugin, defaultConfig({
-                plugins: [createMultiStepPlugin()]
+                plugins: [pro, createMultiStepPlugin()]
               }))
             .mount(el);
     },

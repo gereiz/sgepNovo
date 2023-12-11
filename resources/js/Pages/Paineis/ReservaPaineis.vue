@@ -2,15 +2,15 @@
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import ModalCancRes from '@/Pages/Paineis/Components/ModalCancelRes.vue'
     import ModalWpp from '@/Pages/Paineis/Components/ModalWpp.vue'
+    import ModalPiRes from './Components/ModalPiRes.vue';
     import { Head, router } from '@inertiajs/vue3';
     import { getImage, toastr, enviaWpp, getLink } from '@/functions'
-    import * as cts from '@/Pages/Paineis/Components/constants'
     import { ref, reactive, onMounted, computed, watch } from 'vue'
     import Multiselect from 'vue-multiselect'
+    
   
 
     const props = defineProps(['ambiente', 'reservas', 'anos', 'paineis', 'clientes', 'bisemanas', 'cidades', 'regioes', 'bairros', 'whatsapp']);
-    const disp = ref(null);
 
     const loading = ref(true)
 
@@ -25,7 +25,8 @@
     const listaClientes = ref('');
     const tipoPainel = ref('');
 
-    
+    const cliente = ref ('');
+
     const bsDisabled = ref(true);
     const statusDisabled = ref(true);
     const regDisabled = ref(true);
@@ -38,6 +39,8 @@
     const idRegiao = ref(0);
     const idBairro = ref(0);
 
+    const bisemana = ref({})
+
     const listaBisemana = ref(0);
     const listaRegiao = ref(0);
     const listaBairro = ref(0);
@@ -47,7 +50,9 @@
     const confPi = ref(null)
     const hidePiModal = ref(false)
 
-    const formReserva = reactive({cliente: '', campanha: '', observ: ''})
+    const open = ref(false);
+
+    const formReserva = reactive({cliente: 0, campanha: '', observ: ''})
 
     const bisemanaSelecionada = computed(() => {
         
@@ -63,6 +68,13 @@
         getIdent()
 
     }) 
+
+    function getCliente(cli) {
+
+        console.log(cli)
+
+        cliente.value = cli
+    }
 
 
     function getBisemana() {
@@ -240,7 +252,7 @@
     function reservaPainel(pan) {
 
 
-        axios.post('/ReservaPainel', {clienteId: formReserva.cliente,
+        axios.post('/ReservaPainel', {clienteId: formReserva.cliente.id,
                                       outdoorId: pan,
                                       bsId: idBisemana.value,
                                       campanha: formReserva.campanha,
@@ -318,6 +330,14 @@
 
     }
 
+    function openPi(val)  {
+        if(val == 't') {
+            open.value = true
+        } else 
+        open.value = false
+        
+    }
+
 
 </script>
 
@@ -339,7 +359,7 @@
 
             <!-- Filtros de Pesquisa -->
             <div class="w-full flex flex-row flex-wrap items-center justify-center mb-20 sm:mb-0 ">
-
+ 
                 <!-- Ano Bi-semana, Status e Identificação -->
                 <div class="w-full flex items-center sm:justify-center flex-wrap">
 
@@ -398,7 +418,7 @@
                 </div>
                 
                 <!-- Cidades, Regiões e Bairros -->
-                <div class="w-full flex items-center justify-center flex-wrap">
+                <div class="w-full flex items-center sm:justify-center flex-wrap">
 
                     <!-- Cidades -->
                     <div class="w-5/12 sm:w-[15%] flex flex-col me-4 sm:me-6">
@@ -442,7 +462,7 @@
                                 <img src="../../../../storage/app/public/img/spinner.png" class="w-4 h-4 me-2 animate-spin" :class="{'hidden': loading}" alt="spinner"> 
                                  <p id="envia_lista">Enviar Lista</p>
                             </label>
-                            <ul tabindex="0" class="w-56 -ml-10 dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box mt-4">
+                            <ul tabindex="0" class="w-56 -ml-20 sm:-ml-10 dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box mt-4">
                                 <li><label @click="relDisponiveis('wpp')" for="modal-wpp">Envio por Whatsapp</label></li>
                                 <li><a>Envio por Email</a></li>
                                 <li><label @click="relDisponiveis('pdf')">Download do Relatório</label></li>
@@ -516,7 +536,7 @@
             <div class="modal flex items-end md:items-center">
                 <div class="modal-box">
                     <div class="flex mb-4">
-                        <label for="modal-reserva" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
+                        <label for="modal-reserva" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" @click="formReserva.cliente = 0">✕</label>
                         <h3 class="font-bold text-lg">Reservar Painel:</h3>
                         <h3 class="font-bold text-lg ml-2 text-red-500">Identificação {{ painelReserva.identificacao }}</h3>
                     </div>
@@ -525,7 +545,7 @@
                         <div class="w-full flex flex-col sm:flex-row flex-wrap space-y-4 sm:space-y-8">
 
                             <!-- Bi-semana -->
-                            <div class="w-full flex flex-col">
+                            <div class="w-7/12 flex flex-col">
                                 <span class="label-text ml-1">Bi-semana</span>
                                 <select name="" id="" class="select select-bordered" disabled>
                                     <option v-for="(bs, index) in bisemanaSelecionada" 
@@ -538,7 +558,8 @@
                             <div class="w-full sm:w-6/12 flex flex-col me-4">
                                 <span class="label-text ml-1">Cliente</span>
                                 <select v-model="formReserva.cliente" name="" id="" class="select select-bordered" :disabled="idBisemana == 0">
-                                    <option v-for="(cli, index) in listaClientes" :key="index" :value="cli.id">{{ cli.nome_fantasia ? cli.nome_fantasia : cli.razao_social }}</option>
+                                    <option value="0" selected>Selecione o cliente</option>
+                                    <option v-for="(cli, index) in listaClientes" :key="index" :value="cli">{{ cli.nome_fantasia ? cli.nome_fantasia : cli.razao_social }}</option>
                                 </select>
                             </div>
 
@@ -563,6 +584,7 @@
                                                v-model="valPi" 
                                                @click="valPi = !valPi, confirmaPI()" 
                                                class="checkbox checkbox-lg checkbox-success border-2 border-gray-400" 
+                                               :disabled="formReserva.cliente === 0"
                                         />
                                     </label>
                                 </div>
@@ -583,12 +605,12 @@
                             <h3 class="font-black text-2xl text-red-700 animate-pulse duration-200 text-center">ATENÇÃO!</h3>
                             <p class="py-4">Ao Marcar que existe uma P. I. para esta reserva não será mais possível alterá-la!</p>
                             <p class="py-4">Confirme somente se tiver certeza da reserva.</p>
-                            <div class="modal-action">
+                            <div class="ModalAddPain-action">
 
                             <!-- if there is a button in form, it will close the modal -->
                             <div class="w-full flex justify-center space-x-4">
-                                <button class="w-5/12 botao-primario" @click="hidePiModal = false">Confirmar</button>
-                                <button @click="valPi = false, hidePiModal = false" class="w-5/12 botao-danger">Ainda não !</button>   
+                                <button class="w-5/12 botao-primario" @click="hidePiModal = false, openPi('t')">Confirmar</button>
+                                <button @click="valPi = false, hidePiModal = false, openPi('f')" class="w-5/12 botao-danger">Ainda não !</button>   
                             </div>
                             
                             </div>
@@ -604,6 +626,13 @@
 
             <!-- Modal de cancelamento de Reserva-->
             <ModalCancRes :painel="painelReserva" :bisemana="idBisemana"  @atualizaPage="atualizaPaineis"/>
+
+            <ModalPiRes :openPi="open" 
+                        :cliente="formReserva.cliente" 
+                        :campanha="formReserva.campanha"
+                        :painel="painelReserva"
+                        @closePi="openPi"
+            />
             
 
         </div>
