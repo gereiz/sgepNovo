@@ -2,13 +2,24 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { useToastr } from '@/Components/toastr';
-import { ref, reactive, onMounted, computed } from 'vue';
+import { ref, computed } from 'vue';
+import AddCliente from './Components/AddCliente.vue';
 
 const props = defineProps(['clientes'])
 
 const pesqCliente = ref('');
 const nomeCli = ref('');
 const codCli = ref('');
+
+const open = ref(false)
+
+function openAdd(val) {
+    if(val === 't') {
+        open.value = true
+    } else {
+        open.value = false
+    }
+}
 
 function setClienteData (id, nome) {
     codCli.value = id; 
@@ -42,7 +53,7 @@ const clientesFiltrados = computed(() => {
                 </div>
                 
                 <div class="w-10/12 flex justify-end">
-                    <label for="modal-cliente-add" class="w-28 botao-modal text-sm ">+ Novo Cliente</label>
+                    <label for="modal-cliente-add" class="w-28 botao-modal text-sm" @click="openAdd('t')">+ Novo Cliente</label>
                 </div>
                 
             </div>
@@ -67,7 +78,7 @@ const clientesFiltrados = computed(() => {
                                     </div>
 
                                     <div class="w-full flex justify-center md:justify-start mb-4 md:mb-0">
-                                            <img class="w-20 md:w-32" src="../../../../storage/app/public/img/cliente.png" alt="Bairro">
+                                            <img class="w-20 md:w-32" src="../../../../storage/app/public/img/cliente.png" alt="Cliente">
                                     </div>
 
                                     <!-- <div class="w-full card-actions justify-center md:justify-end ">
@@ -80,197 +91,7 @@ const clientesFiltrados = computed(() => {
                 </div>
             </div>
 
-            <!-- Inclusão de novo Cliente -->
-            <input type="checkbox" id="modal-cliente-add" class="modal-toggle" />
-            <div class="modal flex items-end md:items-center">
-                <div class="modal-box">
-                    <div class="flex mb-4">
-                        <label for="modal-cliente-add" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
-                        <h3 class="font-bold text-lg">Novo Cliente</h3>
-                    </div>
-
-                    <!-- Formulário -->
-                    <FormKit type="form" :actions="false">
-                        <FormKit type="multi-step" tab-style="progress" :allow-incomplete="false">
-                            <FormKit type="step" name="Inf.Básicas">
-                                <!-- Dados Básicos do Cliente -->
-
-        
-                                <!-- Nome Fantasia -->
-                                <FormKit 
-                                    type="text" 
-                                    label="Nome Fantasia"  
-                                    validation="required"
-                                    :classes ="{
-                                        label: 'text-sky-800',
-                                        inner:'w-full',
-                                        input: 'h-12'
-                                    }"
-                                />
-                                
-                                    <!-- Celular do Responsável -->
-                                <FormKit
-                                    type="tel"
-                                    validation="required"
-                                    label="Phone"
-                                    prefix-icon="telephone"
-                                    :classes ="{
-                                        label: 'text-sky-800',
-                                        inner:'w-full',
-                                        input: 'h-12'
-                                    }"
-                                />
-                                
-                              
-                                <!-- Email do Responsável -->
-                                    <FormKit 
-                                        type="email" 
-                                        label="Email do Responsável" 
-                                        prefix-icon="email" 
-                                        validation="required"
-                                        :classes ="{
-                                            label: 'text-sky-800',
-                                            inner:'w-full',
-                                            input: 'h-12'
-                                        }"
-                                    />
-            
-                               
-
-                            </FormKit>
-                            
-                            <FormKit type="step" name="Inf. Adicionais">
-                                <!-- Dados Complementares do Cliente -->
-
-                                <!-- Razão Social -->
-                                <FormKit 
-                                    type="text" 
-                                    label="Razão Social" 
-                                    prefix-icon="avatarMan" 
-                                    validation="required"
-                                />
-
-                                <!-- CPF / CNPJ -->
-                                <FormKit 
-                                    type="number" 
-                                    label="CPF / CNPJ" 
-                                    prefix-icon="number" 
-                                    validation="required"
-                                />
-
-                                <!-- CPF / CNPJ -->
-                                <FormKit 
-                                    type="number" 
-                                    label="Insc. Estadual" 
-                                    prefix-icon="number" 
-                                    validation="required"
-                                />
-
-                                <!-- Contato -->
-                                <FormKit 
-                                    type="text" 
-                                    label="Nome do Responsável" 
-                                    prefix-icon="avatarMan" 
-                                    validation="required"
-                                />
-
-                            </FormKit>
-
-                            <FormKit type="step" name="Endereço">
-                                <!-- Dadps de Endereço -->
-
-                                 <!-- Endereço -->
-                                 <FormKit 
-                                    type="text" 
-                                    label="Endereço"  
-                                    validation="required"
-                                />
-
-                                 <!-- Número -->
-                                 <FormKit 
-                                    type="text" 
-                                    label="Número" 
-                                    validation="required"
-                                />
-
-                                 <!-- Bairro -->
-                                 <FormKit 
-                                    type="text" 
-                                    label="Bairro"  
-                                    validation="required"
-                                />
-
-                                 <!-- Cidade -->
-                                 <FormKit 
-                                    type="text" 
-                                    label="Cidade"  
-                                    validation="required"
-                                />
-
-                                 <!-- UF -->
-                                 <FormKit 
-                                    type="text" 
-                                    label="UF"  
-                                    validation="required"
-                                />
-
-                                 <!-- CEP -->
-                                 <FormKit 
-                                    type="text" 
-                                    label="CEP"  
-                                    validation="required"
-                                />
-
-
-                            </FormKit>
-
-                            <FormKit type="step" name="Inf. Extras">
-                                <!-- Informações Extras -->
-                                
-                                <!-- Tipo -->
-                                <FormKit 
-                                    type="text" 
-                                    label="Tipo"  
-                                    validation="required"
-                                />
-
-                                <!-- Ativo -->
-                                <FormKit 
-                                    type="text" 
-                                    label="Ativo"  
-                                    validation="required"
-                                />
-                            </FormKit>
-                        </FormKit>
-                    </FormKit>
-                    
-                    
-                </div>
-            </div>
-
-                <!-- Edição / Exclusão de Bairro -->
-                <input type="checkbox" id="modal-cliente" class="modal-toggle" />
-                <label for="modal-cliente" class="modal modal-bottom sm:modal-middle cursor-pointer">
-                    <label class="modal-box relative" for="">
-                        <div class="h-12 border-b-2 font-bold text-center md:text-start">
-                            <h1 class="">Dados do Cliente: {{nomeCli}}</h1>
-                        </div>
-                        <p>{{codCli}} - {{nomeCli}}</p>
-                        <!-- <div class="h-full flex flex-col border-b-2 font-bold text-center md:text-start space-x-4 space-y-4 pb-2">
-                            <div class="flex space-x-4">
-                                <div class="w-full">
-                                    <form @submit.prevent="editaBairro">
-                                        <span class="label-text ml-1">Nome</span>
-                                        <input v-model="formBairroEdit.nome_edit" class="w-full input input-bordered mb-4" type="text" >
-                                        <label @click="editaBairro()" for="modal-cliente" class="botao-modal w-full bg-amber-500 hover:bg-amber-700 mb-4">Salvar Edição</label>
-                                    </form>
-                                    <span class="card-title justify-center mb-4">ou</span>
-                                    <label @click="deletaBairro()" for="modal-cliente" class="botao-modal w-full bg-red-500 hover:bg-red-800">Excluir Bairro</label>
-                                </div>
-                            </div> 
-                        </div>'-->
-                    </label>
-                </label>
+            <AddCliente :openAdd="open" @CloseAdd="openAdd"/>
 
         </div>
     </AuthenticatedLayout>

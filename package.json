@@ -19,12 +19,16 @@
     },
     "dependencies": {
         "@formkit/addons": "^0.17.4",
+        "@formkit/pro": "^0.118.1",
         "@formkit/themes": "^0.17.4",
         "@formkit/vue": "^0.17.4",
         "@fortawesome/fontawesome-free": "^6.4.0",
+        "@headlessui/vue": "^1.7.16",
+        "@heroicons/vue": "^2.0.18",
         "@webzlodimir/vue-avatar": "^0.0.8",
         "daisyui": "^2.51.6",
         "html2pdf.js": "^0.9.0",
+        "maska": "^2.1.10",
         "toastr": "^2.1.4",
         "vue-multiselect": "^3.0.0-beta.2",
         "vue-toastification": "^2.0.0-rc.5"
