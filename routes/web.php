@@ -48,8 +48,8 @@ Route::middleware('auth')->group(function () {
 
     // Data
     route::post('/getBisemana', [DataController::class, 'getBs']);
-    route::get('/dtGetBairros', [DataController::class, 'getBairros']);
-    route::get('/dtGetCidades', [DataController::class, 'getCidades']);
+    route::any('/dtGetBairros', [DataController::class, 'getBairros']);
+    route::any('/dtGetCidades', [DataController::class, 'getCidades']);
     route::get('/dtGetUf', [DataController::class, 'getUf']);
 
     // Bairros
@@ -74,7 +74,8 @@ Route::middleware('auth')->group(function () {
 
     //Clientes
     route::get('/Clientes', [ClienteController::class, 'index'])->name('lista.cliente');
-
+    route::post('/CadCliente', [ClienteController::class, 'cadastraCliente']);
+    route::post('/EditCliente', [ClienteController::class, 'editCliente']);
 
 
     //Painéis
