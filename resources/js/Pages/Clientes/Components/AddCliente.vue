@@ -1,20 +1,24 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, shallowRef, watch } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { CheckIcon } from '@heroicons/vue/24/outline'
 import { vMaska } from 'maska'
 import StepOne from './FormAdd/StepOne.vue'
 import StepTwo from './FormAdd/StepTwo.vue'
 import StepThree from './FormAdd/StepThree.vue'
+import toastr from 'toastr'
 
-const props = defineProps(['openAdd']);
+const props = defineProps(['openAdd', 'clienteEdit']);
 const emit = defineEmits(['closeAdd'])
 
 const open = ref(false)
+const step = shallowRef(StepOne)
+const formCliOne = ref({})
+const formCliTwo = ref({})
+const FormCliThree = ref({})
+const formCliente = ref({})
 
-const st = ref(0)
 
-const step = ref(StepOne)
 
 function closeAdd() {
     open.value = false
@@ -22,40 +26,78 @@ function closeAdd() {
 
 }
 
-function naviNext() {
-    if(st.value <  2) {
-        st.value ++
-    }
-
-    if(st.value == 0) {
-        step.value = StepOne;
-
-    } else if(st.value == 1) {
-        step.value = StepTwo;
-
-    }  else if(st.value == 2) { 
-        step.value = StepThree
-    }
-
+function nextStep(ev) {
+  if (ev === 0) {
+    step.value = StepOne
+    closeAdd()
+  } else if (ev === 1) {
+    step.value = StepOne
+  } else if (ev === 2) {
+    step.value = StepTwo
+  } else if(ev === 3) {
+    step.value =  StepThree
+  } else if (ev === 4) {
+    step.value = StepOne
+    // toastr.success('Cliente cdastrado!')
+    addCliente()
+    closeAdd()
+  }
 
 }
 
-function naviprevious() {
-    if(st.value > 0){
-        st.value --
-    }
-    
+function getFormOne(ev) {
 
-    if(st.value == 0) {
-        step.value = StepOne;
+  formCliOne.value.r_social = ev.r_social
+  formCliOne.value.n_fantasia = ev.n_fantasia
+  formCliOne.value.cpf_cnpj = ev.cpf_cnpj
+  formCliOne.value.insc_est = ev.insc_est
 
-    } else if(st.value == 1) {
-        step.value = StepTwo;
+  localStorage.setItem('formOne', JSON.stringify(formCliOne.value))
 
-    }  else if(st.value == 2) { 
-        step.value = StepThree
-    }
 }
+
+function getFormTwo(ev) {
+
+  formCliTwo.value.ender = ev.ender
+  formCliTwo.value.numero = ev.numero
+  formCliTwo.value.uf = ev.uf
+  formCliTwo.value.cidade = ev.cidade
+  formCliTwo.value.bairro = ev.bairro
+  formCliTwo.value.cep = ev.cep
+
+
+  localStorage.setItem('formTwo', JSON.stringify(formCliTwo.value))
+
+}
+
+function getFormThree(ev) {
+
+FormCliThree.value.responsavel = ev.responsavel
+FormCliThree.value.tel_resp = ev.telResp
+FormCliThree.value.email_resp = ev.emailResp
+FormCliThree.value.idCliente = ev.idCliente
+
+localStorage.setItem('formThree', JSON.stringify(FormCliThree.value))
+
+formCliente.value.sOne = JSON.parse(localStorage.getItem('formOne'))
+formCliente.value.sTwo = JSON.parse(localStorage.getItem('formTwo'))
+formCliente.value.sThree = JSON.parse(localStorage.getItem('formThree'))
+
+}
+
+function addCliente() {
+
+  axios.post('/CadCliente', {form: formCliente.value})
+    .then((res) => {
+      // console.log(res)
+      location.reload()
+    })
+    .catch((err) => {
+      console.error(err)
+    })
+
+}
+
 
 watch(() => props.openAdd, (val)  =>{
     if(val === true) {
@@ -90,11 +132,18 @@ watch(() => props.openAdd, (val)  =>{
 
                             <div class="border-b border-gray-900/10 pb-12">
                                 <p class="mt-1 text-sm leading-6 text-gray-600">Preencha os dados para incluir um novo cliente.</p>
-
                                 <div class="mt-10 space-y-10">
-                                    
-                                    <component :is="step"> </component>
-
+                                    <keep-alive>
+                                      <component :is="step" :clienteEdit="props.clienteEdit"
+                                                @step2="nextStep" 
+                                                @step3="nextStep"
+                                                @stepSubumit="nextStep"
+                                                @formOne="getFormOne"
+                                                @formTwo="getFormTwo"
+                                                @formThree="getFormThree"
+                                      > 
+                                      </component>
+                                    </keep-alive>
                                 </div>
                             </div>
                         </div>
@@ -102,11 +151,6 @@ watch(() => props.openAdd, (val)  =>{
                     </form>
                     
                   </div>
-                </div>
-                <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-                  <label v-if="st != 0" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" @click="naviprevious">Voltar</label>
-                  <label  v-else class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" @click="open = false, closeAdd()">Cancelar</label>
-                  <label class="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto" @click="naviNext">Avançar</label>
                 </div>
               </DialogPanel>
             </TransitionChild>

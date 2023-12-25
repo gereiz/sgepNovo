@@ -10,6 +10,7 @@ const props = defineProps(['clientes'])
 const pesqCliente = ref('');
 const nomeCli = ref('');
 const codCli = ref('');
+const cliente = ref({})
 
 const open = ref(false)
 
@@ -19,6 +20,24 @@ function openAdd(val) {
     } else {
         open.value = false
     }
+}
+
+function openEdit(val) {
+    axios.post('/EditCliente', {idCliente: codCli.value})
+        .then((res) =>{
+            cliente.value = res.data[0]
+
+        })
+        .catch((err) => {
+            console.error(err)
+    })
+    
+    if(val === 't') {
+        open.value = true
+    } else {
+        open.value = false
+    }
+
 }
 
 function setClienteData (id, nome) {
@@ -67,7 +86,7 @@ const clientesFiltrados = computed(() => {
                     <div class="w-full flex flex-col flex-wrap md:flex-row justify-center">
                         
                         <div v-for="(cli, index) in clientesFiltrados" :key="index" class="card w-full md:w-5/12 bg-base-100 border-2 rounded-md shadow-xl mt-4 md:mr-4">
-                            <label for="modal-cliente" @click="setClienteData(cli.id, (cli.nome_fantasia ? cli.nome_fantasia : cli.razao_social))">
+                            <label for="modal-cliente">
                                 <div class="card-body">
                                     <div class="w-full flex justify-between flex-wrap mb-4">
                                         <div class="w-full flex justify-between">
@@ -80,18 +99,19 @@ const clientesFiltrados = computed(() => {
                                     <div class="w-full flex justify-center md:justify-start mb-4 md:mb-0">
                                             <img class="w-20 md:w-32" src="../../../../storage/app/public/img/cliente.png" alt="Cliente">
                                     </div>
-
-                                    <!-- <div class="w-full card-actions justify-center md:justify-end ">
-                                        <label for="modal-cliente" @click="setBairroData(cli.id, cli.nome_fantasia)" class="w-full md:w-28 botao-modal">Ações</label>
-                                    </div> -->
                                 </div>
                             </label>
+
+                            <div class="w-full flex justify-center py-4 space-x-4">
+                                <label @click="setClienteData(cli.id, (cli.nome_fantasia ? cli.nome_fantasia : cli.razao_social)), openEdit('t')" class="w-5/12 px-3 py-2 text-center text-sm font-semibold text-gray-900 rounded-md bg-amber-500 hover:bg-amber-400 ring-amber-300 shadow-sm ring-1 ring-inset">Editar</label>
+                                <label class="w-5/12 px-3 py-2 text-center text-sm font-semibold text-white rounded-md bg-red-500 hover:bg-red-400 ring-red-300 shadow-sm ring-1 ring-inset">Excluir</label>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <AddCliente :openAdd="open" @CloseAdd="openAdd"/>
+            <AddCliente :openAdd="open" :clienteEdit="cliente" @CloseAdd="openAdd"/>
 
         </div>
     </AuthenticatedLayout>
