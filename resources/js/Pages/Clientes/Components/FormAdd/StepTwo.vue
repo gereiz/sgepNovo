@@ -9,7 +9,7 @@ const emit = defineEmits(['step3', 'formTwo'])
 const toastr = useToastr()
 
 const bairros = ref([]);
-const cidades = ref([]);
+const cidades = ref([]); 
 const ufs = ref([]);
 
 const cliente = ref (props.clienteEdit)

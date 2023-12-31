@@ -3,10 +3,41 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { useToastr } from '@/Components/toastr';
 import { ref, reactive, onMounted, computed } from 'vue';
+import AddPainel from './Components/AddPainel.vue';
 
 const props = defineProps(['paineis'])
 
 const pesqPainel = ref('');
+const open = ref(false);
+
+const painel = ref({});
+
+function openAdd(val) {
+    if(val === 't') {
+        open.value = true
+    } else {
+        open.value = false
+    }
+}
+
+function openEdit(val, id) {
+    axios.post('/EditPainel', {idPainel: id})
+        .then((res) =>{
+           painel.value = res.data
+
+        })
+        .catch((err) => {
+            console.error(err)
+    })
+
+    
+    if(val === 't') {
+        open.value = true
+    } else {
+        open.value = false
+    }
+
+}
 
 const paineisFiltrados = computed(() => {
     let paineisFiltrados = Object.values(props.paineis).filter((painel) => {
@@ -45,7 +76,7 @@ function getImage(i) {
                 </div>
                 
                 <div class="w-10/12 flex justify-end">
-                    <label for="modal-cliente-add" class="w-28 botao-modal text-sm ">+ Novo Painel</label>
+                    <label for="modal-cliente-add" class="w-28 botao-modal text-sm " @click="openAdd('t')">+ Novo Painel</label>
                 </div>
                 
             </div>
@@ -69,7 +100,6 @@ function getImage(i) {
                                             <img class="img-painel" :src="getImage(pain.image_url)" alt="Bairro">
                                         </div>
 
-
                                         <div class="w-full sm:w-11/12 flex justify-center flex-wrap mb-4">
                                             <div class="w-full flex justify-between sm:justify-between">
                                                 <h2 class="text-xs sm:card-title">Região: {{pain.bairro.regiao.nome}}</h2>
@@ -81,7 +111,7 @@ function getImage(i) {
                                         <!-- Botões -->
                                         <div class="w-full sm:w-11/12 flex justify-center flex-wrap space-x-2 mb-4">
                                             <button class="botao bg-sky-700">Detalhes</button>
-                                            <button class="botao bg-yellow-700">Editar</button>
+                                            <button class="botao bg-yellow-700" @click="openEdit('t', pain.id)">Editar</button>
                                             <button class="botao bg-red-700">Excluir</button>
                                         </div>
 
@@ -95,7 +125,7 @@ function getImage(i) {
                 </div>
             </div>
 
-          
+          <addPainel :openAdd="open" @CloseAdd="openAdd" :painel="painel" />
 
         </div>
     </AuthenticatedLayout>

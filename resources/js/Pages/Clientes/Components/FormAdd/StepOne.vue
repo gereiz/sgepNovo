@@ -12,7 +12,7 @@ const toastr = useToastr()
 const cadCli = ref ({r_social: '',
                      n_fantasia: '',
                      cpf_cnpj: '',
-                     insc_est: ''});
+                     insc_est: ''}); 
 
 
 // Alimenta os campos com informações do cliente para edição

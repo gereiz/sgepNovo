@@ -80,6 +80,8 @@ Route::middleware('auth')->group(function () {
 
     //Painéis
     route::get('/Paineis', [PaineisController::class, 'index'])->name('lista.paineis');
+    route::post('/CadPainel', [PaineisController::class, 'cadastraPainel'])->name('add.painel');
+    route::post('/EditPainel', [PaineisController::class, 'editPainel']);
 
 
     // Reserva de painéis
