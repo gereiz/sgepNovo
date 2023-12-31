@@ -19,3 +19,4 @@ yarn-error.log
 public/hot
 public/hot
 storage/logs
+*.log

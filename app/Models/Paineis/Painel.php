@@ -15,6 +15,22 @@ class Painel extends Model
 
     protected $table = 'outdoors';
 
+    protected $fillable = ['identificacao',
+                            'ident_antiga',
+                            'tipo',
+                            'bairro_id',
+                            'logradouro',
+                            'numero',
+                            'cadan',
+                            'posicao',
+                            'dimensao',
+                            'dimensao_lona',
+                            'ponto_referencia',
+                            'latitude',
+                            'longitude',
+                            'image_url'
+                        ];
+
 
     public function bairro()
     {

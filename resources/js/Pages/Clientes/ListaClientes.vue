@@ -71,7 +71,7 @@ const clientesFiltrados = computed(() => {
                     <h1 class="text-lg md:text-2xl text-red-400 font-bold ml-2 md:ml-4">{{ clientes.length }}</h1>
                 </div>
                 
-                <div class="w-10/12 flex justify-end">
+                <div class="w-10/12 flex justify-end"> 
                     <label for="modal-cliente-add" class="w-28 botao-modal text-sm" @click="openAdd('t')">+ Novo Cliente</label>
                 </div>
                 
