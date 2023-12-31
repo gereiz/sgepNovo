@@ -69,14 +69,6 @@
 
     }) 
 
-    function getCliente(cli) {
-
-        console.log(cli)
-
-        cliente.value = cli
-    }
-
-
     function getBisemana() {
 
         axios.post('/GetBisemanas', {bisemana: idAno.value})
@@ -486,7 +478,10 @@
                         <div v-for="(pain, index) in pan "  :key="index" class="card w-full sm:w-5/12 bg-base-100 border-2 rounded-md shadow-xl mt-4 sm:mr-4">
                             <div class="card-body" :id="index" @click="isChecked(index, pain.identificacao, pain.id, pain)">
                               <div class="flex justify-between">
-                                <h2 class="text-xs sm:card-title">{{pain.cnome}}</h2>
+                                <img v-if="pain.tipo === '1'" class="w-10 ms-4 sm:w-14 sm:hover:w-20 transition-all duration-500" src="../../../../public/storage/img/painel_nobre.png"
+                                            alt="Painel Nobre" title="Painel Nobre">
+                                <img v-else class="w-10 ms-4 sm:w-14 sm:hover:w-20 transition-all duration-500" src="../../../../public/storage/img/painel_conv.png"
+                                            alt="Painel Convêncional" title="Painel Convêncional">
                                 <h2 class="text-xs sm:card-title text-red-500">Identificação.: {{pain.identificacao}}</h2>
                               </div>
                                 <div class="w-full flex justify-end">
