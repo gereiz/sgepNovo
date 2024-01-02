@@ -110,7 +110,7 @@ function getImage(i) {
 
                                         <!-- Botões -->
                                         <div class="w-full sm:w-11/12 flex justify-center flex-wrap space-x-2 mb-4">
-                                            <button class="botao bg-sky-700">Detalhes</button>
+                                            <!-- <button class="botao bg-sky-700">Detalhes</button> -->
                                             <button class="botao bg-yellow-700" @click="openEdit('t', pain.id)">Editar</button>
                                             <button class="botao bg-red-700">Excluir</button>
                                         </div>
