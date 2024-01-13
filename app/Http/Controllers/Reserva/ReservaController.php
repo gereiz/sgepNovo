@@ -36,7 +36,7 @@ class ReservaController extends Controller
 
         $bisemanas = Bisemana::all();
 
-        $bairros = Bairro::orderBy('nome')->get();
+        $bairros = Bairro::orderBy('nome')->get();  
         
         $regioes = Regiao::orderBy('nome')->get();
 
@@ -104,6 +104,7 @@ class ReservaController extends Controller
                                      'outdoors.numero',
                                      'outdoors.latitude',
                                      'outdoors.longitude',
+                                     'outdoors.tipo',
                                      'outdoors.image_url',
                                      'bai.nome AS bnome',
                                      'reg.nome AS rnome',
@@ -136,6 +137,7 @@ class ReservaController extends Controller
                                       'outdoors.numero',
                                       'outdoors.latitude',
                                       'outdoors.longitude',
+                                      'outdoors.tipo',
                                       'outdoors.image_url',
                                       'bai.nome AS bnome',
                                       'reg.nome AS rnome',

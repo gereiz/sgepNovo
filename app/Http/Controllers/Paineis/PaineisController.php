@@ -8,7 +8,7 @@ use App\Models\Paineis\Painel;
 use Illuminate\Http\Request;
 use App\Services\PainelServce;
 
-
+ 
 class PaineisController extends Controller
 {
     

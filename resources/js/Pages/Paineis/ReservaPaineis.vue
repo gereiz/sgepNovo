@@ -338,7 +338,7 @@
     <Head title="Reservas" />
 
     <AuthenticatedLayout>
-        <div class="w-full h-screen pt-24 pb-32 mx-2 sm:mx-4">
+        <div class="w-full h-screen pt-10 pb-32 mx-2 sm:mx-4">
             
             <!-- Cabeçalho -->
             <div class="w-full h-14 flex mb-2">
@@ -392,13 +392,12 @@
                         <div class="w-full flex">
                             <div class="w-9/12 me-4">
                                 <multiselect disabled
-                                v-model="checkedPaineis"
-                                :options="idents"
-                                :multiple="true"
-                                :searchable="true"
-                                :close-on-select="false"
-                                :show-labels="false"
-                                placeholder="Todos"
+                                    v-model="checkedPaineis"
+                                    :options="idents"
+                                    :multiple="true"
+                                    :close-on-select="true"
+                                    :show-labels="true"
+                                    placeholder="Todos"
                                 >
                                 </multiselect>  
                             </div>
@@ -461,9 +460,6 @@
                             </ul>
                         </div>
                         
-                        <!-- <button v-if="checkedPaineisId.length > 1 && tipoPainel == 1" class="botao w-fit px-2 bg-teal-700 hover:bg-teal-500">
-                            Reserva Multipla
-                        </button> -->
                     </div>
                 </div>
 

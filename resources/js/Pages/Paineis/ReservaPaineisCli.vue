@@ -276,7 +276,7 @@ function cancelaResMulti() {
                                         <span class="font-bold text-sm text-red-500">Campanha: </span> <span class="font-extrabold text-xs">{{ res.campanha }}</span> <br>
                                         <span class="font-bold text-sm text-red-500">Obs.: </span> <span class="font-extrabold text-xs">{{ res.obs }}</span>
                                     </div>
-
+                                    
                                    
                                 </div>
                             </div>
