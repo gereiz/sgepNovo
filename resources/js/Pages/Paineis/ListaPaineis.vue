@@ -66,7 +66,7 @@ function getImage(i) {
     <Head title="Painéis" />
 
     <AuthenticatedLayout>
-        <div class="w-full h-screen pt-24 pb-32 mx-2 sm:mx-4">
+        <div class="w-full h-screen pt-10 sm:pt-4 pb-32 mx-2 sm:mx-4">
             
             <!-- Cabeçalho e barra de Pesquisa -->
             <div class="w-full h-14 flex mb-2 pe-3 sm:pe-0">
@@ -95,6 +95,13 @@ function getImage(i) {
                         <div v-for="(pain, index) in paineisFiltrados" :key="index" class="card w-full sm:w-5/12 bg-base-100 border-2 rounded-md shadow-xl mt-4 sm:mr-4">
                             <label for="modal-cliente">
                                 <div class="card-body">
+                                    <div class="flex justify-between">
+                                        <img v-if="pain.tipo === '1'" class="w-10 ms-4 sm:w-14 sm:hover:w-20 transition-all duration-500" src="../../../../public/storage/img/painel_nobre.png"
+                                                    alt="Painel Nobre" title="Painel Nobre">
+                                        <img v-else class="w-10 ms-4 sm:w-14 sm:hover:w-20 transition-all duration-500" src="../../../../public/storage/img/painel_conv.png"
+                                                    alt="Painel Convêncional" title="Painel Convêncional">
+                                        <h2 class="text-xs sm:card-title text-red-500">Identificação.: {{pain.identificacao}}</h2>
+                                    </div>
                                    <div class="w-full flex flex-col items-center">
                                         <div class="w-full mb-4 -ml-4">
                                             <img class="img-painel" :src="getImage(pain.image_url)" alt="Bairro">
@@ -104,7 +111,6 @@ function getImage(i) {
                                             <div class="w-full flex justify-between sm:justify-between">
                                                 <h2 class="text-xs sm:card-title">Região: {{pain.bairro.regiao.nome}}</h2>
                                                 <h2 class="text-xs sm:card-title">Bairro: {{pain.bairro.nome}}</h2>
-                                                <h2 class="text-xs sm:card-title text-red-500">Identificação.: {{pain.identificacao}}</h2>
                                             </div>
                                         </div>
 
