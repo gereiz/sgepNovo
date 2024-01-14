@@ -192,11 +192,11 @@ function cancelaResMulti() {
     <Head title="Painéis" />
 
     <AuthenticatedLayout>
-        <div class="w-full h-screen pt-24 pb-32 mx-2 md:mx-4">
+        <div class="w-full h-screen pt-20 pb-32 mx-2 md:mx-4">
 
             <!-- Cabeçalho e barra de Pesquisa -->
             <div class="w-full h-14 flex mb-2">
-                <div class="w-2/12 h-14 flex items-center">
+                <div class="sm:w-2/12 h-14 flex items-center">
                     <h1 class="titulo">Reservas por Cliente </h1> <p class="text-red-500 font-bold ml-2">{{ reservas.length }}</p>
                     <!-- <h1 class="text-lg md:text-2xl text-red-400 font-bold ml-2 md:ml-4">{{ paineis.length }}</h1> -->
                 </div>

@@ -338,7 +338,7 @@
     <Head title="Reservas" />
 
     <AuthenticatedLayout>
-        <div class="w-full h-screen pt-10 pb-32 mx-2 sm:mx-4">
+        <div class="w-full h-screen pt-20 pb-32 mx-2 sm:mx-4">
             
             <!-- Cabeçalho -->
             <div class="w-full h-14 flex mb-2">

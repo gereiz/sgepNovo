@@ -66,7 +66,7 @@ function getFormOne(ev) {
 
 function getFormTwo(ev) {
 
-formCliTwo.value.idPainel = ''
+formCliTwo.value.idPainel = props.painel[0].id
 formCliTwo.value.ident = ev.ident
 formCliTwo.value.ident_ant = ev.ident_ant
 formCliTwo.value.cadan = ev.cadan
@@ -78,6 +78,7 @@ formCliTwo.value.imagem = ev.imagem
 
 formCliente.value.sOne = JSON.parse(localStorage.getItem('formOnePainel'))
 formCliente.value.sTwo = formCliTwo.value
+
 
 addPainel()
 
@@ -92,7 +93,7 @@ function addPainel() {
   }
 
 
-  axios.post('/addPainel', {dados: formCliente.value}, config)
+  axios.post('/CadPainel', {dados: formCliente.value}, config)
         .then((res) => {
           location.reload()
         })
