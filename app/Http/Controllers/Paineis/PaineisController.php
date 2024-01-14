@@ -22,10 +22,8 @@ class PaineisController extends Controller
 
 
     public function cadastraPainel(Request $request) {
-        
         $painelService = new PainelService();
 
-        // dd($request->all());
 
         $painelService->storeOrUpdatePainel($request);
     
