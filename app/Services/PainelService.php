@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Paineis\Painel;
 
-class PainelServce
+class PainelService
 {
 
     public function storeOrUpdatePainel(Request $request) {
@@ -24,7 +24,7 @@ class PainelServce
             ];
     
     
-            $validator = Validator::make($request->all(), [
+            $validator = Validator::make($request->all(), [ 
                 'dados.sTwo.ident' => ['unique:outdoors,identificacao']
             ]);
     

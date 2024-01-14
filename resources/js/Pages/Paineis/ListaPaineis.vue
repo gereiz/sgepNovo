@@ -66,7 +66,7 @@ function getImage(i) {
     <Head title="Painéis" />
 
     <AuthenticatedLayout>
-        <div class="w-full h-screen pt-10 sm:pt-4 pb-32 mx-2 sm:mx-4">
+        <div class="w-full h-screen pt-20 sm:pt-4 pb-32 mx-2 sm:mx-4">
             
             <!-- Cabeçalho e barra de Pesquisa -->
             <div class="w-full h-14 flex mb-2 pe-3 sm:pe-0">

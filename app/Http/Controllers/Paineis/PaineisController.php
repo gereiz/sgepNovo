@@ -6,9 +6,9 @@ use Inertia\Inertia;
 use App\Http\Controllers\Controller;
 use App\Models\Paineis\Painel;
 use Illuminate\Http\Request;
-use App\Services\PainelServce;
+use App\Services\PainelService;
 
- 
+  
 class PaineisController extends Controller
 {
     
@@ -23,7 +23,9 @@ class PaineisController extends Controller
 
     public function cadastraPainel(Request $request) {
         
-        $painelService = new PainelServce();
+        $painelService = new PainelService();
+
+        // dd($request->all());
 
         $painelService->storeOrUpdatePainel($request);
     

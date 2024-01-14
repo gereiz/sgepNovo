@@ -19,20 +19,22 @@ const form = useForm({ident: null,
                        dimLona: null,
                        posicao: null,
                        tipo: null,
-                       imagem: null
+                       imagem: null,
+                       idPainel: null
 
 
 })
 
 onMounted(() => {
     if(props.painel.value != {}) {
-       form.ident = painelEdit.value[0].identificacao
-       form.ident_ant = painelEdit.value[0].ident_antiga
-       form.cadan = painelEdit.value[0].cadan
-       form.dim = painelEdit.value[0].dimensao
-       form.dimLona = painelEdit.value[0].dimensao_lona
-       form.posicao = painelEdit.value[0].posicao
-       form.tipo = painelEdit.value[0].tipo
+        form.idPainel = painelEdit.value[0].id
+        form.ident = painelEdit.value[0].identificacao
+        form.ident_ant = painelEdit.value[0].ident_antiga
+        form.cadan = painelEdit.value[0].cadan
+        form.dim = painelEdit.value[0].dimensao
+        form.dimLona = painelEdit.value[0].dimensao_lona
+        form.posicao = painelEdit.value[0].posicao
+        form.tipo = painelEdit.value[0].tipo
        
 } 
 })
@@ -52,6 +54,8 @@ function sendFormTwo() {
     if(form.ident != null && form.ident_ant != null && form.cadan != null && form.posicao != null && form.tipo != null && form.imagem != null ){
         emit('formTwo', form)
     }
+
+    console.log(form.idPainel)
 }
 
 function toSubmitStep() {

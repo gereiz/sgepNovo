@@ -91,7 +91,7 @@ const user = computed(() => page.props.auth.user)
 
         
         <!-- Menu Mobile -->
-        <div class="sticky w-screen h-full top-0 z-40 flex items-center gap-x-6 bg-gray-900 px-4 py-6 shadow-sm sm:px-6 md:hidden">
+        <div class="sticky w-screen top-0 z-40 flex items-center gap-x-6 bg-gray-900 px-4 py-3 shadow-sm sm:px-6 md:hidden">
             <button type="button" class="-m-2.5 p-2.5 text-gray-400 lg:hidden" @click="sidebarOpen = true">
                 <span class="sr-only">Open sidebar</span>
                 <Bars3Icon class="h-6 w-6" aria-hidden="true" />
