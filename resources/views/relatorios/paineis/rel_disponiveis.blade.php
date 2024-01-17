@@ -96,6 +96,11 @@
                                     <div class="endereco-relatorio">
                                         <p><b>Localização:</b>  {{$p->logradouro}}, nº{{$p->numero}} - {{$p->bairro->nome}} / {{$p->bairro->regiao->cidade->nome}}</p>
                                         <p><b>Coordenadas:</b> <a href="https://maps.google.com/?q={{$p->latitude}},{{$p->longitude}}" target="_blank">Ver localização no mapa</a> </p>
+                                        <p style="color: #B22222;"><i>@if ($p->tipo == 1)
+                                            Painel Nobre (Reservas somente em combo)
+                                            @else
+                                            Painel Convencional
+                                        @endif</i></p>
                                     </div>
                                 </div>
 
