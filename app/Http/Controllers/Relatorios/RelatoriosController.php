@@ -79,8 +79,7 @@ class RelatoriosController extends Controller
     public function setRelReservaCliente(Request $request) {
         session()->forget('num_bs');
         session()->forget('cliente');
-        session()->forget('orientacao');
-        
+        session()->forget('cliente');
         $anoBs = $request->anoBs;
         $bisemanas = Bisemana::where('ano_id', $anoBs)->get();
 
