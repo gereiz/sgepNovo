@@ -26,11 +26,22 @@
             })
     }
 
+    function setCliente() {
+        axios.post('/setCliente', {cliente: cliId.value})
+            .then((res) => {
+                console.log(res.data)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    }
+
 
     function getRelReservaCliente() {
         let btn = document.getElementById('gera_rel')
 
-        axios.post('/setRelReservaCliente', {numBs: bsId.value , cliente: cliId.value })
+
+        axios.post('/setRelReservaCliente', {numBs: bsId.value})
             .then((res) =>{
                 btn.innerHTML = 'Carregando...'
             })
@@ -80,7 +91,7 @@
                             <!-- Cliente -->
                             <div class="w-full sm:w-[20%] flex flex-col">
                                 <label for="cliente">Cliente</label>
-                                <select class="select select-bordered w-full max-w-xs" v-model="cliId">
+                                <select class="select select-bordered w-full max-w-xs" v-model="cliId" @change="setCliente()">
                                     <option value="0" disabled selected>Selecione</option>
                                     <option v-for="cli, index in clientes" :key="index" :value="cli.id">{{ cli.nome_fantasia ? cli.nome_fantasia : cli.razao_social  }}</option>
                                 </select>
