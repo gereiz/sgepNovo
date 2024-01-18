@@ -82,6 +82,13 @@ class RelatoriosController extends Controller
         return session('cliente');
     }
 
+    public function setBsCliente(Request $request) {
+
+        session(['num_bs' => $request->numBs]);
+
+        return session('num_bs');
+    }
+
     public function setRelReservaCliente(Request $request) {
 
         $anoBs = $request->anoBs;
@@ -89,7 +96,6 @@ class RelatoriosController extends Controller
 
 
         if(isset($request->numBs)) {
-            session(['num_bs' => $request->numBs]);
             session(['orientacao' => $request->orient]);
         }
 

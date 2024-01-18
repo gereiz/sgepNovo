@@ -41,7 +41,7 @@
         let btn = document.getElementById('gera_rel')
 
 
-        axios.post('/setRelReservaCliente', {numBs: bsId.value})
+        axios.post('/setBsCliente', {numBs: bsId.value})
             .then((res) =>{
                 btn.innerHTML = 'Carregando...'
             })
