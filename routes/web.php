@@ -120,6 +120,7 @@ Route::middleware('auth')->group(function () {
     // Reservas x CLiente
     route::get('/ReservaCliente', [RelatoriosController::class, 'RelReservaCliente']);
     route::post('/setRelReservaCliente', [RelatoriosController::class, 'setRelReservaCliente']);
+    route::post('/setCliente', [RelatoriosController::class, 'setCliente']);
     route::any('/getRelReservaCliente', [RelatoriosController::class, 'getRelReservaCliente']);
 
 
