@@ -77,9 +77,6 @@ class RelatoriosController extends Controller
 
 
     public function setRelReservaCliente(Request $request) {
-        session()->forget('num_bs');
-        session()->forget('cliente');
-        session()->forget('cliente');
         $anoBs = $request->anoBs;
         $bisemanas = Bisemana::where('ano_id', $anoBs)->get();
 
@@ -99,7 +96,7 @@ class RelatoriosController extends Controller
         $tZone = new \DateTimeZone('America/Sao_paulo');
         $user = auth()->user()->name;
         $bisemana = Bisemana::where('id', session('num_bs'))->first();
-        $numBisemana = $bisemana->num_bisemana;
+        $numBisemana = session('num_bs');
         $periodo = date('d/m/Y',  strtotime($bisemana->inicio)).' a '.date('d/m/Y',  strtotime($bisemana->fim));
         $cliente = Cliente::where('id', session('cliente'))->first();
         $clienteNome = $cliente->nome_fantasia ? $cliente->nome_fantasia: $cliente->razao_social;

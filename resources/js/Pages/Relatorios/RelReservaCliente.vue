@@ -39,8 +39,7 @@
             })
 
 
-        setTimeout(() => {
-            axios.post('/getRelReservaCliente', {cliente: cliId.value,
+        axios.post('/getRelReservaCliente', {cliente: cliId.value,
                                             ano: anoId.value,
                                             bisemana: bsId.value,
                                             orient: orient.value
@@ -56,7 +55,6 @@
             .catch((err) => {
             console.log(err)
             })
-        }, 3000);
 
     }
 
