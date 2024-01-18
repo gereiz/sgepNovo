@@ -35,20 +35,21 @@
                 console.log(err)
             })
     }
+    function setBsCliente() {
+        axios.post('/setBsCliente', {numBs: bsId.value})
+            .then((res) =>{
+                console.log(res.data)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    }
 
 
     function getRelReservaCliente() {
         let btn = document.getElementById('gera_rel')
 
-
-        axios.post('/setBsCliente', {numBs: bsId.value})
-            .then((res) =>{
-                btn.innerHTML = 'Carregando...'
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-
+        btn.innerHTML = 'Carregando...'
 
         axios.post('/getRelReservaCliente', {cliente: cliId.value,
                                             ano: anoId.value,
@@ -110,7 +111,7 @@
                             <!-- Bi-semana -->
                             <div class="w-full sm:w-3/12 flex flex-col">
                                 <label for="cliente">Bi-semana</label>
-                                <select class="select select-bordered w-full max-w-xs" v-model="bsId" :disabled="bisemanas.length === 0">
+                                <select class="select select-bordered w-full max-w-xs" v-model="bsId" :disabled="bisemanas.length === 0" @change="setBsCliente()">
                                     <option value="0" disabled selected>Selecione</option>
                                     <option v-for="bs, index in bisemanas" :key="index" :value="bs.id">BS: {{ bs.num_bisemana }} {{ new Date(bs.inicio).toLocaleDateString() }} até {{ new Date(bs.fim).toLocaleDateString() }}</option>
                                   
