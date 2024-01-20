@@ -1,8 +1,9 @@
 <script setup>
-import { ref, shallowRef, watch } from 'vue'
+import { ref, shallowRef, watch, computed } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { CheckIcon } from '@heroicons/vue/24/outline'
 import { vMaska } from 'maska'
+import { usePage } from '@inertiajs/vue3';
 
 import StepOne from './FormAddPainel/StepOnePainel.vue'
 import StepTwo from './FormAddPainel/StepTwoPainel.vue'
@@ -11,6 +12,9 @@ import toastr from 'toastr'
 
 const props = defineProps(['openAdd', 'clienteEdit', 'painel']);
 const emit = defineEmits(['closeAdd'])
+
+const page = usePage()
+const user = computed(() => page.props.auth.user)
 
 
 const step = shallowRef (StepOne)
@@ -130,7 +134,7 @@ watch(() => props.openAdd, (val)  =>{
                     <CheckIcon class="h-6 w-6 text-green-600" aria-hidden="true" />
                   </div>
                   <div class="mt-3 text-center sm:mt-5">
-                    <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900">Cadastrar Novo Painel</DialogTitle>
+                    <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900">Cadastrar Novo Painel </DialogTitle>
 
                     <keep-alive>
                         <component :is="step"
@@ -139,6 +143,7 @@ watch(() => props.openAdd, (val)  =>{
                                  @formOne="getFormOne"
                                  @step2="nextStep"
                                  @formTwo="getFormTwo"
+                                 :user="user"
                         > 
                         </component>
                     </keep-alive>

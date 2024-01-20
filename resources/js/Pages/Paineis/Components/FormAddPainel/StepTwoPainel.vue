@@ -5,7 +5,7 @@ import { useForm } from '@inertiajs/vue3';
 import { vMaska } from "maska";
 import { useToastr } from '@/Components/toastr';
 
-const props = defineProps(['painel'])
+const props = defineProps(['painel', 'user'])
 const emit = defineEmits(['step1', 'formOne'])
 const toastr = useToastr()
 
@@ -122,7 +122,7 @@ function toSubmitStep() {
             <div class="w-full sm:w-3/12">
                 <label for="ident" class="block text-sm font-medium leading-6 text-gray-900">Identificação</label>
                 <div class="mt-2">
-                    <input type="number" name="ident" id="ident" v-model="form.ident"
+                    <input type="number" name="ident" id="ident" v-model="form.ident" :disabled="user.id !==1 && user.id !==1"
                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center" />
                 </div>
             </div>
@@ -130,7 +130,7 @@ function toSubmitStep() {
             <div class="w-full sm:w-3/12">
                 <label for="ident_ant" class="block text-sm font-medium leading-6 text-gray-900">Ident. Antiga</label>
                 <div class="mt-2">
-                    <input type="text" name="ident_ant" id="ident_ant" v-model="form.ident_ant"
+                    <input type="text" name="ident_ant" id="ident_ant" v-model="form.ident_ant" :disabled="user.id !==1 && user.id !==1"
                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center" />
                 </div>
             </div>
@@ -151,7 +151,7 @@ function toSubmitStep() {
             <div class="w-full sm:w-2/12">
                 <label for="dimensao" class="block text-sm font-medium leading-6 text-gray-900">Dimensão</label>
                 <div class="mt-2">
-                    <input type="text" name="dimensao" id="dimensao" v-model="form.dim"
+                    <input type="text" name="dimensao" id="dimensao" v-model="form.dim" :disabled="user.id !==1 && user.id !==1"
                         class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center" 
                     />
                 </div>
@@ -178,7 +178,7 @@ function toSubmitStep() {
             <div class="w-full sm:w-3/12">
                 <label for="tipo" class="block text-sm font-medium leading-6 text-gray-900">Tipo</label>
                 <div class="mt-2">
-                    <select id="tipo" name="tipo" v-model="form.tipo"
+                    <select id="tipo" name="tipo" v-model="form.tipo" :disabled="user.id !==1 && user.id !==1"
                             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                         <option value="0" disabled selected>Selecione</option>
                         <option value="1">Nobre</option>
@@ -201,7 +201,7 @@ function toSubmitStep() {
                         <div class="mt-4 flex text-sm leading-6 text-gray-600">
                             <label for="file-upload" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
                                 <span>Selecione um arquivo</span>
-                                <input id="file-upload" name="file-upload" type="file" class="sr-only" @input="form.imagem = $event.target.files[0]"/>
+                                <input id="file-upload" name="file-upload" type="file" class="sr-only" @input="form.imagem = $event.target.files[0]" :disabled="user.id !==1 && user.id !==1"/>
                             </label>
                             <p class="pl-1">ou arraste e solte aqui</p>
                         </div>

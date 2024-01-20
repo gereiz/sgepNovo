@@ -13,7 +13,7 @@ import {
 } from '@heroicons/vue/24/outline'
 import VueAvatar from "@webzlodimir/vue-avatar";
 import "@webzlodimir/vue-avatar/dist/style.css";
-import { usePage } from '@inertiajs/vue3'
+import { usePage } from '@inertiajs/vue3' 
 import MenuApp from '@/Components/MenuApp.vue';
 
 
