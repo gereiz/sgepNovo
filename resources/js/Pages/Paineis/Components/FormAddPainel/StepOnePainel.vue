@@ -4,7 +4,7 @@ import { ref, onMounted, watch } from 'vue';
 import { vMaska } from "maska";
 import { useToastr } from '@/Components/toastr';
 
-const props = defineProps(['painel'])
+const props = defineProps(['painel', 'user'])
 const emit = defineEmits(['step1', 'formOne'])
 const toastr = useToastr()
 
@@ -142,7 +142,7 @@ watch(() => props.painel, (val) => {
             <div class="w-full sm:w-6/12">
                 <label for="endereco" class="block text-sm font-medium leading-6 text-gray-900">Endereço</label>
                 <div class="mt-2">
-                    <input type="text" name="endereco" id="endereco" v-model="endPain.ender"
+                    <input type="text" name="endereco" id="endereco" v-model="endPain.ender" :disabled="user.id !==1 && user.id !==1"
                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center" />
                 </div>
             </div>
@@ -150,7 +150,7 @@ watch(() => props.painel, (val) => {
             <div class="w-full sm:w-1/12">
                 <label for="numero" class="block text-sm font-medium leading-6 text-gray-900">Número</label>
                 <div class="mt-2">
-                    <input type="text" name="numero" id="numero" v-model="endPain.numero"
+                    <input type="text" name="numero" id="numero" v-model="endPain.numero" :disabled="user.id !==1 && user.id !==1"
                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center" />
                 </div>
             </div>
@@ -158,7 +158,7 @@ watch(() => props.painel, (val) => {
             <div class="w-full sm:w-3/12">
                 <label for="referencia" class="block text-sm font-medium leading-6 text-gray-900">Ponto de Referência</label>
                 <div class="mt-2">
-                    <input type="text" name="referencia" id="referencia" v-model="endPain.referencia"
+                    <input type="text" name="referencia" id="referencia" v-model="endPain.referencia" :disabled="user.id !==1 && user.id !==1"
                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center" />
                 </div>
             </div>
@@ -170,7 +170,7 @@ watch(() => props.painel, (val) => {
             <div class="w-full sm:w-3/12">
                 <label for="uf" class="block text-sm font-medium leading-6 text-gray-900">UF</label>
                 <div class="mt-2">
-                    <select id="uf" name="uf" v-model="endPain.uf" @change="getCidades()"
+                    <select id="uf" name="uf" v-model="endPain.uf" @change="getCidades()" :disabled="user.id !==1 && user.id !==1"
                             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                         <option value="0" disabled selected>Selecione</option>
                         <option v-for="(uf, index) in ufs" :key="index" :value="uf.id">{{ uf.nome }}</option>
@@ -207,7 +207,7 @@ watch(() => props.painel, (val) => {
             <div class="w-full sm:w-4/12">
                 <label for="latitude" class="block text-sm font-medium leading-6 text-gray-900">Latitude</label>
                 <div class="mt-2">
-                    <input type="text" name="latitude" id="latitude" v-model="endPain.latitude"
+                    <input type="text" name="latitude" id="latitude" v-model="endPain.latitude" :disabled="user.id !==1 && user.id !==1"
                         class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center" 
                     />
                 </div>
@@ -216,7 +216,7 @@ watch(() => props.painel, (val) => {
             <div class="w-full sm:w-4/12">
                 <label for="longitude" class="block text-sm font-medium leading-6 text-gray-900">Longitude</label>
                 <div class="mt-2">
-                    <input type="text" name="longitude" id="longitude" v-model="endPain.longitude"
+                    <input type="text" name="longitude" id="longitude" v-model="endPain.longitude" :disabled="user.id !==1 && user.id !==1"
                         class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center"   
                     />
                 </div>
