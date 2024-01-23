@@ -21,6 +21,15 @@ class PaineisController extends Controller
     }
 
 
+    public function indexApi() {
+
+        $paineis = Painel::with('bairro.regiao')->get();
+ 
+        return response()->json($paineis);
+
+    }
+
+
     public function cadastraPainel(Request $request) {
         $painelService = new PainelService();
 
