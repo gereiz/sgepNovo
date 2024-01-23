@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\LoginControllerDomains;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Paineis\PaineisController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,4 +20,6 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::get('users', [LoginControllerDomains::class, 'index']); 
+// Route::get('users', [LoginControllerDomains::class, 'index']); 
+
+route::get('/Paineis', [PaineisController::class, 'indexApi'])->name('api.lista.paineis');
