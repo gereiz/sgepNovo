@@ -1,11 +1,11 @@
 <script setup>
-import { ref, reactive, watch } from 'vue'
+import { ref, onMounted, watch, shallowRef } from 'vue'
 import { useToastr } from '@/Components/toastr';
 import StepOne from './FormPI/StepOne.vue'
 import StepTwo from './FormPI/StepTwo.vue';
 
+import { XMarkIcon } from '@heroicons/vue/24/outline'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
-import { ExclamationTriangleIcon, XMarkIcon, UserCircleIcon  } from '@heroicons/vue/24/outline'
 
 const toastr = useToastr();
 
@@ -13,43 +13,34 @@ const emit = defineEmits(['closePi'])
 
 const props = defineProps(['painel', 'bisemana', 'openPi', 'cliente', 'campanha', 'painel'])
 
-const st = ref(0)
-
-const step = ref(StepOne)
-
+const step = shallowRef(StepOne)
 const open = ref(false)
+const getForm = ref(0)
 
 function closeM() {
     open.value  = false
     emit('closePi', open.value)
 }
 
-function naviNext() {
-    if(st.value <  1) {
-        st.value ++
-    }
 
-    if(st.value == 0) {
-        step.value = StepOne;
-
-    } else if(st.value == 1) {
-        step.value = StepTwo;
-    }
-
-}
-
-function naviprevious() {
-    if(st.value > 0){
-        st.value --
-    }
+function naviForm(ev) {
+  if(ev == 0) {
     
+    closeM()
+  
+  } else if(ev == 1) {
 
-    if(st.value == 0) {
-        step.value = StepOne;
+    step.value = StepOne;
 
-    } else if(st.value == 1) {
-        step.value = StepTwo;
-    }
+  } else if(ev == 2) {
+
+    step.value = StepTwo;
+    
+  } else if(ev == 3) {
+
+    console.log('enviar')
+
+    } 
 }
 
 watch( () => props.openPi, (val) =>  {
@@ -78,32 +69,13 @@ watch( () => props.openPi, (val) =>  {
                     <XMarkIcon class="h-6 w-6" aria-hidden="true" />
                   </button>
                 </div>
-                <div class="sm:flex flex-col sm:items-start">
-                  <!-- <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                    <ExclamationTriangleIcon class="h-6 w-6 text-red-600" aria-hidden="true" />
-                  </div> -->
-                  <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                    <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900">Pedido de Inserção </DialogTitle>
-                    <div class="flex mt-2">
-                      <p class="text-sm text-gray-500 mb-4">Preencha os dados para criação do Pedido de Inserção.</p>
-                      <button v-if="st === 0" class="w-8 h-8 flex items-center justify-center bg-amber-600 -mt-1 text-sm font-semibold text-white shadow-sm hover:bg-amber-500 sm:ml-3 rounded-full animate-bounce" 
-                              title="Editar Cliente">
-                        <UserCircleIcon class="h-6 w-6" aria-hidden="true" />
-                      </button>
-                    </div>
-                    
-                  </div>
 
+                <div class="sm:flex flex-col sm:items-start">
                   <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                       <KeepAlive>
-                          <component :is="step" :cliente="cliente" :campanha="campanha" :painel="painel" @nextStep="naviForm"></component>
+                          <component :is="step" :cliente="cliente" :campanha="campanha" :painel="painel" :getform="getForm" @nextStep="naviForm"></component>
                       </KeepAlive>
                   </div>
-                </div>
-                <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                  <label class="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto" @click="naviNext">Avançar</label>
-                  <label v-if="st != 0" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" @click="naviprevious">Voltar</label>
-                  <label  v-else class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" @click="open = false, closeM()">Cancelar</label>
                 </div>
               </DialogPanel>
             </TransitionChild>

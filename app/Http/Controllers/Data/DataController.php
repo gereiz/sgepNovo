@@ -55,5 +55,11 @@ class DataController extends Controller
         return $uf;
     }
 
+    public function getUfCli(Request $request) {
+        $uf = UF::where('id', $request->uf)->first();
+
+        return $uf;
+    }
+
 
 }

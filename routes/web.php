@@ -51,6 +51,7 @@ Route::middleware('auth')->group(function () {
     route::any('/dtGetBairros', [DataController::class, 'getBairros']);
     route::any('/dtGetCidades', [DataController::class, 'getCidades']);
     route::get('/dtGetUf', [DataController::class, 'getUf']);
+    route::post('/dtGetUfCli', [DataController::class, 'getUfCli']);
 
     // Bairros
     route::get('/CadBairro', [BairroController::class, 'index'])->name('cad.bairro');

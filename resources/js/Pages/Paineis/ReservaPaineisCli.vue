@@ -181,7 +181,7 @@ function cancelaResMulti() {
         })
 
 }
-
+ 
 
 
 
@@ -242,6 +242,8 @@ function cancelaResMulti() {
                     <!-- Botões -->
                     <div class=" w-full sm:w-[20%] flex mt-2 space-x-4">
                         <label v-if="idCliente != 0" @click="clearChecked()" for="modal-add-painel" class="w-fit botao-modal px-2 transition-all duration-1000">Incluir painéis</label>
+                        <label v-if="idCliente != 0" for="modal-add-painel" class="w-fit botao-modal bg-slate-700 hover:bg-slate-500 px-2 transition-all duration-1000">Gerar PI</label>
+                        <label v-if="idCliente != 0" for="modal-add-painel" class="w-fit botao-modal bg-red-700 hover:bg-red-500 px-2 transition-all duration-1000">Excluir Reserva</label>
                         <label v-if="idCliente != 0 && checkedPaineis.length > 0" for ="modal-canc-res-cli" class="w-fit botao-danger px-2 transition-all duration-1000">Excluir Selecionados</label>
                         
                     </div>

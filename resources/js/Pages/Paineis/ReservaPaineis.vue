@@ -123,7 +123,7 @@
         } else {
 
             axios.post('/GetPaineis', {ano: idAno.value,
-                                   bisemana: idBisemana.value,
+                                   bisemana: idBisemana.value, 
                                    statusPainel: idPainel.value,
                                    cidade: idCidade.value,
                                    regiao: idRegiao.value,
@@ -327,7 +327,7 @@
             open.value = true
         } else 
         open.value = false
-        
+         
     }
 
 
@@ -383,7 +383,7 @@
                             <option value="0">Todos</option>
                             <option value="1">Disponível</option>
                             <option value="2">Reservado</option>
-                        </select> 
+                        </select>  
                     </div>
 
                     <!-- Identifcação -->
