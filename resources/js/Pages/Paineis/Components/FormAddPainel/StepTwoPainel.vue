@@ -36,7 +36,7 @@ onMounted(() => {
         form.posicao = painelEdit.value[0].posicao
         form.tipo = painelEdit.value[0].tipo
        
-} 
+    } 
 })
  
 

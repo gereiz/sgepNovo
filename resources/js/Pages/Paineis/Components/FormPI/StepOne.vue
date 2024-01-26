@@ -2,6 +2,7 @@
 import { ref, onMounted, watch } from 'vue';
 import { vMaska } from "maska"
 import { UserCircleIcon } from '@heroicons/vue/24/outline'
+import { useForm } from '@inertiajs/vue3';
 
 
 const props = defineProps(['cliente', 'campanha', 'painel', 'getform'])
@@ -10,9 +11,22 @@ const emit = defineEmits(['nextStep']);
 const edit = ref(false);
 const ufs = ref([]);
 const cidades = ref([])
-const cidade = ref('')
+const cliente = ref(props.cliente)
 const clienteUf = ref(props.cliente.uf)
-const clienteCidade = ref(props.cliente.uf)
+const clienteCidade = ref(props.cliente.cidade)
+
+const formOne = useForm({
+    cliente: null,
+    cnpj: null,
+    endereco: null,
+    cep: null,
+    uf: clienteUf,
+    cidade: clienteCidade,
+    celular: null,
+    inscEst: null,
+    responsavel: null,
+    email: null
+})
 
 onMounted(() =>{
   
@@ -31,6 +45,22 @@ onMounted(() =>{
     })
 
     getCidadeCli()
+
+
+    if(props.cliente.value != {}) {
+        formOne.clienteId = cliente.value.id
+        formOne.clienteNome = cliente.value.razao_social ? cliente.value.razao_social : cliente.value.nome_fantasia
+        formOne.cnpj = cliente.value.cpf_cnpj ? cliente.value.cpf_cnpj : '00000000000000'
+        formOne.endereco = cliente.value.endereco ? cliente.value.endereco + ' - ' + cliente.value.num : 'Não Cadastrado'
+        formOne.cep = cliente.value.cep ? cliente.value.cep : '00.000-000'
+        formOne.uf = clienteUf.value
+        formOne.cidade =clienteCidade.value
+        formOne.celular = cliente.value.tel_responsavel ? cliente.value.tel_responsavel : 'Não Cadastrado'
+        formOne.inscEst = cliente.value.nro_insc ? cliente.value.nro_insc : 'Nao Cadastrado' 
+        formOne.responsavel = cliente.value.responsavel ? cliente.value.responsavel : 'Não Cadastrado'
+        formOne.email = cliente.value.email_responsavel ? cliente.value.email_responsavel : 'Não Cadastrado'
+       
+    }
 
 })
 
@@ -90,7 +120,7 @@ watch(() => props.getform, (val)  =>{
                     <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
                         <input type="text" 
-                            :value="cliente.nome_fantasia ? cliente.nome_fantasia : cliente.razao_social"
+                            v-model="formOne.clienteNome"
                             class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs" 
                             :disabled="edit == false" />
                     </div>
@@ -103,7 +133,7 @@ watch(() => props.getform, (val)  =>{
                     <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
                         <input type="text" 
-                            :value="cliente.cpf_cnpj ? cliente.cpf_cnpj : '00000000000000'"
+                            v-model="formOne.cnpj"
                             v-maska
                             data-maska="[
                                 '###.###.###-##',
@@ -124,7 +154,7 @@ watch(() => props.getform, (val)  =>{
                     <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
                         <input type="text" 
-                            :value="cliente.endereco ? cliente.endereco + ' nº '+ cliente.num : 'Não Cadastrado'"
+                            v-model="formOne.endereco"
                             class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs" 
                             :disabled="edit == false" />
                     </div>
@@ -137,7 +167,7 @@ watch(() => props.getform, (val)  =>{
                     <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
                         <input type="text" 
-                            :value="cliente.cep ? cliente.cep : '00000000'"
+                            v-model="formOne.cep"
                             v-maska
                             data-maska="##.###-###"
                             class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs" 
@@ -152,7 +182,7 @@ watch(() => props.getform, (val)  =>{
             <div class="sm:col-span-4">
                 <label for="uf" class="block text-sm font-medium leading-6 text-gray-900">UF</label>
                 <div class="mt-2">
-                    <select id="uf" name="uf" v-model="clienteUf" @change="getCidadeCli()"
+                    <select id="uf" name="uf" v-model="formOne.uf" @change="getCidadeCli()"
                             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                             :disabled="edit == false">
                         <option value="0" disabled selected>Selecione</option>
@@ -164,7 +194,7 @@ watch(() => props.getform, (val)  =>{
             <div class="sm:col-span-4">
                 <label for="cidade" class="block text-sm font-medium leading-6 text-gray-900">Cidade</label>
                 <div class="mt-2">
-                    <select id="cidade" name="cidade" v-model="clienteCidade"
+                    <select id="cidade" name="cidade" v-model="formOne.cidade"
                             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                             :disabled="edit == false">
                         <option value="0" disabled selected>Selecione</option>
@@ -184,7 +214,7 @@ watch(() => props.getform, (val)  =>{
                     <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
                         <input type="text" 
-                            :value="cliente.celular ? cliente.celular : 'Não Cadastrado'"
+                            v-model="formOne.celular"
                             v-maska
                             data-maska="(##) #####-####"
                             class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs" 
@@ -199,7 +229,7 @@ watch(() => props.getform, (val)  =>{
                     <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
                         <input type="text" 
-                            :value="cliente.nro_insc ? cliente.nro_insc : 'Não Cadastrado'"
+                            v-model="formOne.inscEst"
                             class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs" 
                             :disabled="edit == false" />
                     </div>
@@ -215,7 +245,7 @@ watch(() => props.getform, (val)  =>{
                     <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
                         <input type="text" 
-                            :value="cliente.responsavel ? cliente.responsavel : 'Não Cadastrado'"
+                            v-model="formOne.responsavel"
                             class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs" 
                             :disabled="edit == false" />
                     </div>
@@ -228,7 +258,7 @@ watch(() => props.getform, (val)  =>{
                     <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
                         <input type="text" 
-                            :value="cliente.email ? cliente.email : 'Não Cadastrado'"
+                            v-model="formOne.email"
                             class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs" 
                             :disabled="edit == false" />
                     </div>
@@ -240,7 +270,6 @@ watch(() => props.getform, (val)  =>{
     <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
         <label class="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto" @click="nextStep(2)">Avançar</label>
         <label class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" @click="nextStep(0)">Cancelar</label>
-       
     </div>
      
 </template>
