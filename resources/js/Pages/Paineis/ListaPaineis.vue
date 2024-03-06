@@ -76,7 +76,7 @@ function getImage(i) {
                 </div>
                 
                 <div class="w-10/12 flex justify-end">
-                    <label for="modal-cliente-add" class="w-28 botao-modal text-sm " @click="openAdd('t')">+ Novo Painel</label>
+                    <label for="modal-painel-add" class="w-28 botao-modal text-sm " @click="openAdd('t')">+ Novo Painel</label>
                 </div>
                 
             </div>

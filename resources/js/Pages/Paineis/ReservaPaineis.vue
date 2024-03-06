@@ -8,7 +8,6 @@
     import { ref, reactive, onMounted, computed, watch } from 'vue'
     import Multiselect from 'vue-multiselect'
     
-  
 
     const props = defineProps(['ambiente', 'reservas', 'anos', 'paineis', 'clientes', 'bisemanas', 'cidades', 'regioes', 'bairros', 'whatsapp']);
 
@@ -598,12 +597,12 @@
                             <p class="py-4">Confirme somente se tiver certeza da reserva.</p>
                             <div class="ModalAddPain-action">
 
-                            <!-- if there is a button in form, it will close the modal -->
-                            <div class="w-full flex justify-center space-x-4">
-                                <button class="w-5/12 botao-primario" @click="hidePiModal = false, openPi('t')">Confirmar</button>
-                                <button @click="valPi = false, hidePiModal = false, openPi('f')" class="w-5/12 botao-danger">Ainda não !</button>   
-                            </div>
-                            
+                                <!-- if there is a button in form, it will close the modal -->
+                                <div class="w-full flex justify-center space-x-4">
+                                    <button class="w-5/12 botao-primario" @click="hidePiModal = false, openPi('t')">Confirmar</button>
+                                    <button @click="valPi = false, hidePiModal = false, openPi('f')" class="w-5/12 botao-danger">Ainda não !</button>   
+                                </div>
+                                
                             </div>
                         </form>
                     </dialog>
@@ -621,6 +620,7 @@
             <ModalPiRes :openPi="open" 
                         :cliente="formReserva.cliente" 
                         :campanha="formReserva.campanha"
+                        :bisemana="bisemanaSelecionada"
                         :painel="painelReserva"
                         @closePi="openPi"
             />

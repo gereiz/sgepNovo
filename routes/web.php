@@ -8,10 +8,11 @@ use App\Http\Controllers\Enderecos\CidadeController;
 use App\Http\Controllers\Enderecos\RegiaoController;
 use App\Http\Controllers\Paineis\PaineisController;
 use App\Http\Controllers\Reserva\ReservaController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Relatorios\RelatoriosController;
 use App\Http\Controllers\Relatorios\RelColagemController;
 use App\Http\Controllers\Relatorios\RelPainXCliController;
+use App\Http\Controllers\Reserva\PiController;
+use App\Http\Controllers\User\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -45,6 +46,9 @@ Route::get('/dashboard', function () {
 
 
 Route::middleware('auth')->group(function () {
+
+    // Usuários
+    route::post('/alteraSenha', [UserController::class, 'alteraSenha']);
 
     // Data
     route::post('/getBisemana', [DataController::class, 'getBs']);
@@ -95,13 +99,18 @@ Route::middleware('auth')->group(function () {
     route::post('/CancelaReserva', [ReservaController::class, 'cancelaReserva'])->name('cancela.reserva');
     
 
-
+    // Reseva de painés por cliente
     route::get('/ResPaineisCli', [ReservaController::class, 'reservaPainelIndex'])->name('reserva.paineis.cli');
     route::post('/GetPaineisCli', [ReservaController::class, 'getPaineisCliente'])->name('get.paineis.cli');
     route::post('/ResPaineisCli', [ReservaController::class, 'reservaPaineisCliente'])->name('res.paineis.cli');
     route::post('/DelResCliente', [ReservaController::class, 'delResCliente'])->name('del.reserva.cli');
     route::post('/GetCliente', [ReservaController::class, 'getCliente'])->name('res.get.cli');
 
+
+
+    // Pi's
+    route::any('/sessionData', [PiController::class, 'sessionData']);
+    route::any('/storePi', [PiController::class, 'storePi']);
 
 
     // Configurações

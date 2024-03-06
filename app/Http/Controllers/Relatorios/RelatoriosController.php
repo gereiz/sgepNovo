@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Inertia\Inertia;
 use PDF;
-
+ 
 
 
 class RelatoriosController extends Controller

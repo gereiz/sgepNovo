@@ -48,7 +48,7 @@ function nextStep(ev) {
 function getFormOne(ev) {
 
   formCliOne.value.r_social = ev.r_social
-  formCliOne.value.n_fantasia = ev.n_fantasia
+  formCliOne.value.n_fantasia = ev.n_fantasia  
   formCliOne.value.cpf_cnpj = ev.cpf_cnpj
   formCliOne.value.insc_est = ev.insc_est
 

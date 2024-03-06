@@ -24,8 +24,6 @@ class ReservaController extends Controller
     
     public function index() {
 
-        session(['dados' => '12345']);
-
         $paineis = Painel::with('bairro.regiao.cidade')->get();
 
         $anos = Ano::all();
@@ -87,6 +85,7 @@ class ReservaController extends Controller
         return Bairro::where('regiao_id', $request->idReg)->get();
 
     }
+
 
     public function getPaineis(Request $request) {
 
@@ -244,7 +243,7 @@ class ReservaController extends Controller
     }
     
 
-    public function getPaineisCliente(Request $request) { 
+    public function getPaineisCliente(Request $request) {
 
         $bisemana = $request->bsId;
         $cliente = $request->cliente;

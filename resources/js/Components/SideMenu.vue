@@ -15,12 +15,23 @@ import VueAvatar from "@webzlodimir/vue-avatar";
 import "@webzlodimir/vue-avatar/dist/style.css";
 import { usePage } from '@inertiajs/vue3' 
 import MenuApp from '@/Components/MenuApp.vue';
+import ModalAlteraSenha from '@/Components/ModalAlteraSenha.vue';
+
+const open = ref(false);
 
 
 const page = usePage()
 const sidebarOpen = ref(false)
 const user = computed(() => page.props.auth.user)
 
+function openPi(val)  {
+    console.log(val)
+        if(val == 't') {
+            open.value = true
+        } else 
+        open.value = false
+         
+    }
 
 </script>
 
@@ -75,7 +86,10 @@ const user = computed(() => page.props.auth.user)
                     <a href="#" class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white hover:bg-gray-800">
                         <div class="dropdown dropdown-top dropdown-hover">
                             <vue-avatar :username="user.name" background-color="#ef4444" :size="40"/>
-                            <ul tabindex="0" class="dropdown-content menu p-2 shadow rounded-box w-fit -ms-4">
+                            <ul tabindex="0" class="min-w-[135px] dropdown-content menu p-2 shadow rounded-box -ms-4">
+                                <li>
+                                    <label @click="openPi('t')">Alterar Senha</label>
+                                </li>
                                 <li>
                                     <a href="/logout">Sair</a>
                                 </li>
@@ -101,8 +115,11 @@ const user = computed(() => page.props.auth.user)
             </div>
             <div class="dropdown dropdown-hover">
                 <vue-avatar :username="user.name" background-color="#ef4444" :size="40"/>
-                <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-fit -ms-4">
-                    <li>
+                <ul tabindex="0" class="min-w-[135px] dropdown-content menu p-2 shadow bg-base-100 rounded-box w-fit -ml-[5.1rem]">
+                    <li class="text-sm">
+                        <label @click="openPi('t')">Alterar Senha</label>
+                    </li>
+                    <li class="text-sm">
                         <a href="/logout">Sair</a>
                     </li>
                 </ul>
@@ -115,4 +132,6 @@ const user = computed(() => page.props.auth.user)
         </div>
         </main>
     </div>
+
+    <ModalAlteraSenha :openPi="open" :user="user" @closePi="openPi"> </ModalAlteraSenha>
 </template>
