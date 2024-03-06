@@ -13,7 +13,7 @@ class Bairro extends Model
     public $timestamps = false;
     protected $table = 'bairros';
     protected $fillable = ['nome', 'regiao_id'];
-
+ 
 
     public function regiao()
     {
