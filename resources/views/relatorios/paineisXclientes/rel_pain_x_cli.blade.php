@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="{{public_path('assets/vendor/css/rtl/bootstrap.css')}}">
 <link rel="stylesheet" href="{{public_path('assets/css/relatorios.css')}}">
 
-<style> 
+<style>
     body {
         font-family: "Lucida Console", "Courier New", monospace;
     } 
@@ -33,10 +33,9 @@
 
             <tr class="thead-dark">
                 <th colspan="1"></th>
-                <th colspan="8" class="text-center small">Cliente</th>
+                <th colspan="9" class="text-center small">Cliente</th>
                 <th colspan="1" class="text-center small">Campanha</th>
                 <th colspan="1" class="text-center small">Qtd.</th>
-                <th colspan="1" class="text-center small">vendedor</th>
             </tr>
  
             @php
@@ -45,17 +44,16 @@
 
             @foreach ($reservas as $res)
             {{$count_total++}}
-            <tr>
+            <tr> 
                 <td colspan="1" class="small" style="font-weight: 800;">{{$loop->iteration}}</td>
-                <td colspan="8" class="small" style="font-weight: 800;">{{$res->nome_fantasia}}</td>
+                <td colspan="9" class="small" style="font-weight: 800;">{{$res->nome_fantasia}}</td>
                 <td colspan="1" class="text-center small" style="font-weight: 800;">{{$res->campanha}}</td>
                 <td colspan="1" class="text-center small" style="font-weight: 800;">{{$res->count_campanha}}</td>
-                <td colspan="1" class="text-center small" style="font-weight: 800;">{{$res->name}}</td>
             </tr>
             @endforeach
             <tr>
                 <td colspan="1"></td>
-                <td colspan="8" class="small" style="font-weight: 800; font-size: 16px" >Total</td>
+                <td colspan="9" class="small" style="font-weight: 800; font-size: 16px" >Total</td>
                 <td colspan="1"></td>
                 <td colspan="1" class="text-center small" style="font-weight: 800; font-size: 16px">{{$count_res[0]->count_campanha}}</td>
             </tr>
