@@ -4,9 +4,12 @@ namespace App\Models\Reservas;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Enderecos\Bisemana;
-use App\Models\Enderecos\Cliente;
+use App\Models\Bisemanas\Bisemana;
+use App\Models\Clientes\Cliente;
 use App\Models\Paineis\Painel;
+use App\Models\Enderecos\Bairro;
+use App\Models\User;
+
 
 class Reserva extends Model
 {

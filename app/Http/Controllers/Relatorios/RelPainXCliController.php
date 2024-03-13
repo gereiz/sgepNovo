@@ -33,7 +33,7 @@ class RelPainXCliController extends Controller
 
         session(['bisemana_id' => $request->bsId]);
         session(['orientacao' => $request->orient]);
-
+ 
     }
 
 
@@ -48,9 +48,10 @@ class RelPainXCliController extends Controller
 
 
         $reservas = DB::table('reservas as res')
-                    ->select('res.campanha', 'cli.nome_fantasia', 'res.bisemana_id', 'res.cliente_id', DB::raw('COUNT(*) as count_campanha'))
+                    ->select('res.campanha', 'cli.nome_fantasia', 'res.bisemana_id', 'res.cliente_id', 'us.name', DB::raw('COUNT(*) as count_campanha'))
                     ->where('res.bisemana_id', $bisemana_id)
                     ->join('clientes as cli', 'res.cliente_id', 'cli.id')
+                    ->join('users as us', 'res.user_id', 'us.id')
                     ->orderBy('res.cliente_id')
                     ->groupBy('res.cliente_id', 'res.campanha', 'cli.nome_fantasia', 'res.bisemana_id')
                     ->get();
@@ -60,7 +61,7 @@ class RelPainXCliController extends Controller
                     ->where('res.bisemana_id', $bisemana_id)
                     ->get();
 
-        // dd($count_res);
+        // dd($reservas);
 
 
         $orientacao = (session('orientacao') == 'P') ? 'portrait' : 'landscape';
