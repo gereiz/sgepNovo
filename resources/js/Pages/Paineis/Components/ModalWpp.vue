@@ -49,7 +49,7 @@ function clienteLista({id, nome_fantasia, razao_social}) {
 
                     <!-- Cliente -->
                     <div class="w-full flex flex-col">
-                        <span class="label-text ml-1">Cliente</span>
+                        <span class="label-text ml-1">Cliente </span>
                         <multiselect
                             v-model="cliente"
                             :options="clientes"
