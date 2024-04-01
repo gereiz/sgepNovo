@@ -18,6 +18,5 @@ yarn-error.log
 .env
 public/hot
 public/hot
-/storage/logs/*
-*.log
+/public/storage/logs/*
 *.log
