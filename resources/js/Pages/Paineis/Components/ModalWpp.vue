@@ -91,7 +91,7 @@ function clienteLista({id, nome_fantasia, razao_social}) {
                 <!-- Botão de Confirmação de Reserva -->
                 <div class="modal-action">
                     <label class="w-6/12 botao-danger" @click="wppMsg = 0, cliente = 0, msgDisabled = true">Cancelar Envio</label>
-                    <label for="modal-wpp" class="w-6/12 botao-modal" @click="enviaWpp(cliente, wppMsg, props.linkrel)">Enviar por Whatsapp</label>
+                    <label for="modal-wpp" class="w-6/12 botao-modal" @click="enviaWpp(cliente.celular, wppMsg, props.linkrel)">Enviar por Whatsapp</label>
                 </div>
             </form>
         </div>
