@@ -5,11 +5,11 @@
             </HeaderApp>
         </div> -->
 
-        <div class="w-full flex flex-row justify-start">
+        <div class="w-full flex-col sm:flex-row justify-start">
             <SideMenu :menuMobile="openM" class="absolute sm:relative z-50">
             </SideMenu>
             
-            <div class="w-full flex ml-0 bg-stone-200 relative z-0 space-x-2">
+            <div class="w-full sm:w-[84.8%] flex ml-0 sm:ml-[15.1%] bg-stone-200 relative z-0 space-x-2">
                 <slot />
             </div>
         </div>
@@ -19,8 +19,8 @@
 </template>
 
 <script setup>
-import HeaderApp from '@/Components/HeaderApp.vue';
-import SideMenu from '@/Components/SideMenu.vue';
+import HeaderApp from '@/Components/Layout/HeaderApp.vue';
+import SideMenu from '@/Components/Layout/SideMenu.vue';
 
 import { ref, watch } from 'vue';
 

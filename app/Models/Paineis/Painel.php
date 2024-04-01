@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Enderecos\Bairro;
 use App\Models\Enderecos\Regiao;
 use App\Models\Reservas\Reserva;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Painel extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
 
     protected $table = 'outdoors';

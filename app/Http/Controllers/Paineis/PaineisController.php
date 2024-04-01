@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Paineis;
 use Inertia\Inertia;
 use App\Http\Controllers\Controller;
 use App\Models\Paineis\Painel;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request; 
 use App\Services\PainelService;
 
   
@@ -17,15 +17,6 @@ class PaineisController extends Controller
         $paineis = Painel::with('bairro.regiao')->get();
  
         return Inertia::render('Paineis/ListaPaineis', compact('paineis'));
-
-    }
-
-
-    public function indexApi() {
-
-        $paineis = Painel::with('bairro.regiao')->get();
- 
-        return response()->json($paineis);
 
     }
 
@@ -42,6 +33,12 @@ class PaineisController extends Controller
     public function editPainel(Request $request) {
 
         return Painel::where('id', $request->idPainel)->orderBy('identificacao')->get();
+
+    }
+
+    public function deletePainel(Request $request) {
+
+        Painel::where('id', $request->idPainel)->delete();
 
     }
 

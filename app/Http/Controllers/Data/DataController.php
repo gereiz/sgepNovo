@@ -18,7 +18,6 @@ class DataController extends Controller
         $this->middleware('auth');
     }
 
-
     public function getBs(Request $request) {
 
         $dataService = new DataService();

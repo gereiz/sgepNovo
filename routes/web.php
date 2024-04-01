@@ -87,6 +87,7 @@ Route::middleware('auth')->group(function () {
     route::get('/Paineis', [PaineisController::class, 'index'])->name('lista.paineis');
     route::post('/CadPainel', [PaineisController::class, 'cadastraPainel'])->name('add.painel');
     route::post('/EditPainel', [PaineisController::class, 'editPainel']);
+    route::any('/DelPainel', [PaineisController::class, 'deletePainel']);
 
 
     // Reserva de painéis
@@ -105,6 +106,7 @@ Route::middleware('auth')->group(function () {
     route::post('/ResPaineisCli', [ReservaController::class, 'reservaPaineisCliente'])->name('res.paineis.cli');
     route::post('/DelResCliente', [ReservaController::class, 'delResCliente'])->name('del.reserva.cli');
     route::post('/GetCliente', [ReservaController::class, 'getCliente'])->name('res.get.cli');
+
 
 
 

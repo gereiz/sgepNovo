@@ -1,19 +1,34 @@
 <script setup>
 
-import { ref, reactive, onMounted, computed } from 'vue';
+import { ref, reactive, onMounted, watch } from 'vue';
 import { useToastr } from '@/Components/toastr';
 import { enviaWpp } from '@/functions';
+import Multiselect from 'vue-multiselect'
 
 const toastr = useToastr(); 
 
 const props = defineProps(['listaClientes', 'whatsapp', 'bisemana', 'linkrel'])
 
-const cliente = ref(0)
+const cliente = ref()
+const clientes = ref(props.listaClientes)
+const telefone = ref()
 const wppMsg = ref(0)
 
 const msgDisabled = ref(true)
 
+watch(() => cliente.value, (val) => {
+    if(val) {
+        telefone.value = val.celular
+        msgDisabled.value = false
+    } else {
+        telefone.value = ''
+        msgDisabled.value = true
+    }
+})
 
+function clienteLista({id, nome_fantasia, razao_social}) {
+    return `${nome_fantasia ? nome_fantasia : razao_social}`
+}
 
 </script>
 
@@ -35,17 +50,24 @@ const msgDisabled = ref(true)
                     <!-- Cliente -->
                     <div class="w-full flex flex-col">
                         <span class="label-text ml-1">Cliente</span>
-                        <select id="sel-cliente" v-model="cliente" class="select select-bordered" @change="msgDisabled = false">
-                            <option value="0" disabled>SELECIONE O CLIENTE</option>
-                            <option v-for="(cli, index) in listaClientes" :key="index" :value="cli.celular">{{cli.nome_fantasia ? cli.nome_fantasia : cli.razao_social}}</option>
-                        </select>
+                        <multiselect
+                            v-model="cliente"
+                            :options="clientes"
+                            :custom-label="clienteLista"
+                            selectLabel="Enter para selecionar"
+                            :multiple="false"
+                            :close-on-select="true"
+                            :show-labels="true"
+                            placeholder="Selecione o Cliente"
+                        >
+                        </multiselect>
                     </div>
 
                     <!-- Telefone e Mensagem -->
                     <div class="w-full flex">
                         <div class="w-6/12 flex flex-col me-4">
                             <span class="label-text ml-1">Telefone</span>
-                            <input v-model="cliente" class="input input-bordered" disabled />
+                            <input v-model="telefone" class="input input-bordered" disabled />
                               
                         </div>
                         <div class="w-6/12 flex flex-col">
@@ -68,8 +90,8 @@ const msgDisabled = ref(true)
 
                 <!-- Botão de Confirmação de Reserva -->
                 <div class="modal-action">
-                    <label for="modal-wpp" class="w-6/12 botao-modal" @click="enviaWpp(cliente, wppMsg, props.linkrel)">Enviar por Whatsapp</label>
                     <label class="w-6/12 botao-danger" @click="wppMsg = 0, cliente = 0, msgDisabled = true">Cancelar Envio</label>
+                    <label for="modal-wpp" class="w-6/12 botao-modal" @click="enviaWpp(cliente, wppMsg, props.linkrel)">Enviar por Whatsapp</label>
                 </div>
             </form>
         </div>
