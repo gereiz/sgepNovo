@@ -113,7 +113,7 @@ const clientesFiltrados = computed(() => {
 
             <AddCliente :openAdd="open" :clienteEdit="cliente" @CloseAdd="openAdd"/>
 
-        </div>
+        </div> 
     </AuthenticatedLayout>
 </template>
 

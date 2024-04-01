@@ -4,19 +4,30 @@ import { Head } from '@inertiajs/vue3';
 import { useToastr } from '@/Components/toastr';
 import { ref, reactive, onMounted, computed } from 'vue';
 import AddPainel from './Components/AddPainel.vue';
+import DelPainel from './Components/DelPainel.vue';
 
 const props = defineProps(['paineis'])
 
 const pesqPainel = ref('');
 const open = ref(false);
+const openD = ref(false);
 
 const painel = ref({});
+const painelId = ref()
 
 function openAdd(val) {
     if(val === 't') {
         open.value = true
     } else {
         open.value = false
+    }
+}
+
+function openDel(val) {
+    if(val === 't') {
+        openD.value = true
+    } else {
+        openD.value = false
     }
 }
 
@@ -35,6 +46,17 @@ function openEdit(val, id) {
         open.value = true
     } else {
         open.value = false
+    }
+
+} 
+
+function openDelelete(val, id){
+    painelId.value = id
+
+    if(val === 't') {
+        openD.value = true
+    } else {
+        openD.value = false
     }
 
 }
@@ -118,7 +140,7 @@ function getImage(i) {
                                         <div class="w-full sm:w-11/12 flex justify-center flex-wrap space-x-2 mb-4">
                                             <!-- <button class="botao bg-sky-700">Detalhes</button> -->
                                             <button class="botao bg-yellow-700" @click="openEdit('t', pain.id)">Editar</button>
-                                            <button class="botao bg-red-700">Excluir</button>
+                                            <button class="botao bg-red-700" @click="openDelelete('t', pain.id)">Excluir</button>
                                         </div>
 
                                    </div>
@@ -132,6 +154,8 @@ function getImage(i) {
             </div>
 
           <addPainel :openAdd="open" @CloseAdd="openAdd" :painel="painel" />
+
+          <DelPainel :openDel="openD" @CloseDel="openDel" :painel="painelId" />
 
         </div>
     </AuthenticatedLayout>

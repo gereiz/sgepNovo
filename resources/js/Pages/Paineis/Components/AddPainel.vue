@@ -84,7 +84,7 @@ formCliente.value.sOne = JSON.parse(localStorage.getItem('formOnePainel'))
 formCliente.value.sTwo = formCliTwo.value
 
 
-addPainel()
+addPainel() 
 
 }
 

@@ -47,7 +47,7 @@ class ReservaController extends Controller
         $whatsapp = Whatsapp::all();
 
 
-        return Inertia::render('Paineis/ReservaPaineis',
+        return Inertia::render('Paineis/DispPaineis',
                         compact('reservas',
                                     'paineis',
                                     'clientes',
@@ -88,7 +88,6 @@ class ReservaController extends Controller
 
 
     public function getPaineis(Request $request) {
-
         $bairro = $request->bairro;
         $regiao = $request->regiao;
         $cidade = $request->cidade;
@@ -161,11 +160,11 @@ class ReservaController extends Controller
         ->get();
   
 
-        if($request->statusPainel == 1) {
+        if($request->statusPainel == 'D') {
             
             $paineis = $disponiveis;
 
-        } elseif($request->statusPainel == 2) {
+        } elseif($request->statusPainel == 'R') {
            
             $paineis = $reservados;
 
@@ -234,7 +233,7 @@ class ReservaController extends Controller
 
         $ambiente = env('APP_ENV');
         
-        return Inertia::render('Paineis/ReservaPaineisCli', compact('clientes',
+        return Inertia::render('Reservas/ReservaPaineisCli', compact('clientes',
                                                                     'anos',
                                                                     'bisemanas',
                                                                     'reservas',
@@ -301,8 +300,8 @@ class ReservaController extends Controller
     
     
     public function reservaPaineisCliente(Request $request) {
-
-        $paineis = $request->outdoorId;
+        // dd($request->all());
+        $paineis = $request->outdoorId[0];
         $idPaineis = [];
 
 
@@ -320,8 +319,8 @@ class ReservaController extends Controller
                 'bisemana_id' => $request->bsId,
                 'dt_reserva' => Carbon::now()->toDateString(),
                 'campanha' => $request->campanha,
-                'observacao' => $request->obs,
-                'pi_ok' => $request->checkPi,
+                'observacao' => $request->observacoes,
+                'pi_ok' => 0, //$request->checkPi,
                 'user_id' => auth()->user()->id
             ]);
     
