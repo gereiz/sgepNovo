@@ -36,9 +36,11 @@ export function enviaWpp(tel, msg, urlRel) {
     console.log(navigator.userAgentData.mobile)
 
      if(navigator.userAgentData.mobile) {
-        url_wpp = "https://api.whatsapp.com/send?phone="+telwpp+"&text="+msgwpp+"%0a"+ urlRel;
+        // url_wpp = "https://api.whatsapp.com/send?phone="+telwpp+"&text="+msgwpp+"%0a"+ urlRel;
+        url_wpp = "https://wa.me/"+telwpp+"?text="+msgwpp+"%0a"+ urlRel;
      } else {
         url_wpp = "https://web.whatsapp.com/send?phone="+telwpp+"&text="+msgwpp+"%0a"+ urlRel;
+        // url_wpp = "https://wa.me/"+telwpp+"&text="+msgwpp+"%0a"+ urlRel;
      }
 
      
