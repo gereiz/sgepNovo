@@ -52,7 +52,7 @@ export function enviaWpp(tel, msg, urlRel) {
 
     
 
-    window.open(url_wpp, '_blank');
+    window.open(url_wpp);
 
 }
 
