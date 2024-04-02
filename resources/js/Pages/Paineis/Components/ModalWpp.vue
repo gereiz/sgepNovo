@@ -11,8 +11,8 @@ const props = defineProps(['listaClientes', 'whatsapp', 'bisemana', 'linkrel'])
 
 const cliente = ref()
 const clientes = ref(props.listaClientes)
+const telefone = ref()
 const wppMsg = ref(0)
-const telefone = ref(cliente.value ? cliente.value.celular : '')
 
 const msgDisabled = ref(true)
 
@@ -91,8 +91,7 @@ function clienteLista({id, nome_fantasia, razao_social}) {
                 <!-- Botão de Confirmação de Reserva -->
                 <div class="modal-action">
                     <label class="w-6/12 botao-danger" @click="wppMsg = 0, cliente = 0, msgDisabled = true">Cancelar Envio</label>
-                    <!-- <label for="modal-wpp" class="w-6/12 botao-modal" @click="enviaWpp(telefone, wppMsg, props.linkrel)">Enviar por Whatsapp</label> -->
-                    <a  class="w-6/12 botao-modal" @click="enviaWpp(telefone, wppMsg, props.linkrel)">Enviar por Whatsapp</a>
+                    <label for="modal-wpp" class="w-6/12 botao-modal" @click="enviaWpp(cliente.celular, wppMsg, props.linkrel)">Enviar por Whatsapp</label>
                 </div>
             </form>
         </div>
