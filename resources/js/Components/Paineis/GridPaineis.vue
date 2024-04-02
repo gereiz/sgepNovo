@@ -29,7 +29,7 @@
         getPaineis()
     })
 
-    watch(() => observacoes.value, (val) => {
+    watch(() => campanha.value, (val) => {
         emit('campanha', campanha.value)
         emit('observacoes', observacoes.value)
     })
