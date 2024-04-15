@@ -327,7 +327,7 @@ class ReservaController extends Controller
                     'dt_reserva' => Carbon::now()->toDateString(),
                     'campanha' => $request->campanha,
                     'observacao' => $request->obs,
-                    'pi_ok' => $request->checkPi,
+                    'pi_ok' => 0, //$request->checkPi,
                     'user_id' => auth()->user()->id
                 ]);
             }
