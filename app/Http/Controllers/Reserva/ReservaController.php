@@ -300,10 +300,8 @@ class ReservaController extends Controller
     
     
     public function reservaPaineisCliente(Request $request) {
-        // dd($request->all());
         $paineis = $request->outdoorId[0];
         $idPaineis = [];
-
 
         foreach($paineis as $painel) {
 
@@ -313,16 +311,26 @@ class ReservaController extends Controller
 
         foreach($idPaineis as $idPainel) {
             
-            Reserva::create([
-                'cliente_id' => $request->clienteId,
-                'outdoor_id' => $idPainel,
-                'bisemana_id' => $request->bsId,
-                'dt_reserva' => Carbon::now()->toDateString(),
-                'campanha' => $request->campanha,
-                'observacao' => $request->observacoes,
-                'pi_ok' => 0, //$request->checkPi,
-                'user_id' => auth()->user()->id
-            ]);
+            // Verifica se o painel já foi reservado
+            $reserva_atual = Reserva::where([['outdoor_id', $idPainel],['bisemana_id', $request->bsId]])->first();
+
+            if($reserva_atual != []) {
+
+                return response()->json(['cod' => 0, 'msg' => 'Painel reservado anteriormente.']);
+            
+            } else {
+                
+                Reserva::create([
+                    'cliente_id' => $request->clienteId,
+                    'outdoor_id' => $idPainel,
+                    'bisemana_id' => $request->bsId,
+                    'dt_reserva' => Carbon::now()->toDateString(),
+                    'campanha' => $request->campanha,
+                    'observacao' => $request->obs,
+                    'pi_ok' => $request->checkPi,
+                    'user_id' => auth()->user()->id
+                ]);
+            }
     
             
         }
