@@ -87,9 +87,9 @@ formCliente.value.sThree = JSON.parse(localStorage.getItem('formThree'))
 
 function addCliente() {
 
-  axios.post('/CadCliente', {form: formCliente.value})
+  axios.post('/CadCliente', {form: formCliente.value}) 
     .then((res) => {
-      // console.log(res)
+      console.log(res)
       location.reload()
     })
     .catch((err) => {
