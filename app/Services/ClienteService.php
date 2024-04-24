@@ -12,16 +12,16 @@ class ClienteService
     
     public function storeOrUpdateCliente(Request $request) {
 
-        
-        if(!$request->form['sThree']['idCliente']) {
+        // dd($request->all());
+        if(count($request->form['sThree']) <= 3) {
+            $validator = Validator::make($request->form['sOne'], [
+                'cpf_cnpj' => 'unique:clientes,cpf_cnpj',
+            ]);
+
             $messages = [
                 'form.sOne.cpf_cnpj.unique' => 'o CPF / CNPJ já foi cadastrado anteriormente',
             ];
     
-    
-            $validator = Validator::make($request->all(), [
-                'form.sOne.cpf_cnpj' => ['unique:clientes,cpf_cnpj']
-            ]);
     
             if ($validator->fails()) {
                 return back()->with('error', $messages);
@@ -54,6 +54,7 @@ class ClienteService
             'tipo' => 1,
             'ativo' => 1 // isset($request->form['sOne']ativo)? 1 : 0;
         ]);
+
 
         return back()->with('success', 'Cliente cadastrado com sucesso!');
 
