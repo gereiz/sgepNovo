@@ -12,7 +12,6 @@ class ClienteService
     
     public function storeOrUpdateCliente(Request $request) {
 
-        // dd($request->all());
         if(count($request->form['sThree']) <= 3) {
             $validator = Validator::make($request->form['sOne'], [
                 'cpf_cnpj' => 'unique:clientes,cpf_cnpj',

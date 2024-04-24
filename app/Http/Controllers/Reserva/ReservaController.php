@@ -353,10 +353,19 @@ class ReservaController extends Controller
         $bs = $request->bs;
 
         foreach ($paineisId as $pId) {
-           $reserva = Reserva::where([['outdoor_id', $pId], ['bisemana_id', $bs]])->delete();
-        }
+            $reserva = Reserva::where([['outdoor_id', $pId], ['bisemana_id', $bs], ['user_id', auth()->user()->id]])->first();
+            $painel = Painel::find($pId);
+           
+           if($reserva) {
+               $reserva->delete();
 
-        return response()->json(['cod' => 1, 'msg' => 'Painéis Excluidos!']);
+               return response()->json(['cod' => 1, 'msg' => 'Painéis Excluidos!']);
+
+           } else {
+               return response()->json(['cod' => 0, 'msg' => 'O reserva do painel  '.$painel->identificacao.' só pode ser cancelada pelo usuário que o reservou!']);
+           }
+        }
+  
     }
     
 
