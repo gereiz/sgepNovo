@@ -24,7 +24,7 @@
 
     <!-- Clientes -->
     <div class="w-full flex">
-        <div class="w-2/12 md:ml-2.5 text-center"> 
+        <div class="w-2/12 md:ml-2.5 text-center">
             <i class="fa-solid fa-user-plus text-white text-xl"></i>
         </div> 
         <div class="w-10/12 flex">
