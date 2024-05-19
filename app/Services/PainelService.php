@@ -18,7 +18,7 @@ class PainelService
         $request->dados['sTwo']['imagem']->storeAs('public/'.$path, $filname);
 
 
-        if(!$request->dados['sTwo']['idPainel']) {
+        if(!$request->dados['sTwo']['idPainel']) { 
             $messages = [
                 'dados.sTwo.identificacao.unique' => 'Já existe um painel com essa Identificação!',
             ];

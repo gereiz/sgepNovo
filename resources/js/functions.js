@@ -63,3 +63,8 @@ export function getLink(lat, lon) {
 
     return link
 }
+
+
+export function cashBR(valor) {
+    return valor.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'})
+}

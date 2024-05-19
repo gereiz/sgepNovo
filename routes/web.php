@@ -13,6 +13,10 @@ use App\Http\Controllers\Relatorios\RelColagemController;
 use App\Http\Controllers\Relatorios\RelPainXCliController;
 use App\Http\Controllers\Reserva\PiController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\Financeiro\ServicosController;
+use App\Http\Controllers\Financeiro\FuncoesController;
+use App\Http\Controllers\Financeiro\ComissoesController;
+use App\Http\Controllers\Config\UsuarioController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -48,7 +52,11 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
 
     // Usuários
+    route::get('/ListaUsuarios', [UsuarioController::class, 'index'])->name('lista.usuarios');
     route::post('/alteraSenha', [UserController::class, 'alteraSenha']);
+    route::post('/CadUsuario', [UsuarioController::class, 'cadastraUsuario']);
+    route::post('/DelUsuario', [UsuarioController::class, 'deletaUsuario']);
+
 
     // Data
     route::post('/getBisemana', [DataController::class, 'getBs']);
@@ -107,7 +115,18 @@ Route::middleware('auth')->group(function () {
     route::post('/DelResCliente', [ReservaController::class, 'delResCliente'])->name('del.reserva.cli');
     route::post('/GetCliente', [ReservaController::class, 'getCliente'])->name('res.get.cli');
 
+    // Serviços
+    route::get('/Servicos', [ServicosController::class, 'index'])->name('servicos');
+    route::post('/CadastraServico', [ServicosController::class, 'cadastraServico'])->name('cad.servico');
+    route::post('/DelServico', [ServicosController::class, 'deletaServico'])->name('del.servico');
 
+    // Funções
+    route::get('/Funcoes', [FuncoesController::class, 'index'])->name('funcoes');
+    route::post('/CadastraFuncao', [FuncoesController::class, 'cadastraFuncao'])->name('cad.funcao');
+    route::post('/DelFuncao', [FuncoesController::class, 'deletaFuncao'])->name('del.funcao');
+
+    // Comissões
+    route::get('/Comissoes', [ComissoesController::class, 'index'])->name('/comissoes');
 
 
     // Pi's
@@ -123,8 +142,7 @@ Route::middleware('auth')->group(function () {
 
  
 
-    // Relatórios
-    
+        // Relatórios
     // Dispopnibilidade
     route::post('/setData', [RelatoriosController::class, 'setData']);
     route::any('/relDisponiveis', [RelatoriosController::class, 'relDisponiveis']);
