@@ -26,12 +26,6 @@ const formCliTwo = ref ({})
 const formCliente = ref ({})
 
 
-function closeAdd() {
-    open.value = false
-    emit('CloseAdd', open.value)
-
-}
-
 function nextStep(ev) {
   if (ev === 0) {
     step.value = StepOne

@@ -16,6 +16,7 @@ import "@webzlodimir/vue-avatar/dist/style.css";
 import { usePage } from '@inertiajs/vue3' 
 import MenuApp from '@/Components/Layout/MenuApp.vue';
 import ModalAlteraSenha from '@/Components/Layout/ModalAlteraSenha.vue';
+import MenuAppMobile from './MenuAppMobile.vue';
 
 const open = ref(false);
 
@@ -31,7 +32,7 @@ function openPi(val)  {
         } else 
         open.value = false
          
-    }
+}
 
 </script>
 
@@ -55,13 +56,12 @@ function openPi(val)  {
                     </button>
                     </div>
                 </TransitionChild>
-                <!-- Sidebar component, swap this element with another sidebar if you like -->
                 <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-2 pb-2 ring-1 ring-white/10">
                     <div class="flex h-16 shrink-0 items-center justify-center border-b border-gray-500">
                         <a href="/"><img v-if="!closeMenu" class="w-24 h-9" src="../../../../storage/app/public/img/logo-black.png" alt=""></a>
                     </div>
                     <nav class="flex flex-1 flex-col">
-                        <MenuApp/>
+                        <MenuAppMobile/>
                     </nav>
                 </div> 
                 </DialogPanel>
@@ -71,8 +71,7 @@ function openPi(val)  {
         </TransitionRoot>
 
         <!-- Static sidebar for desktop -->
-        <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-            <!-- Sidebar component, swap this element with another sidebar if you like -->
+        <!-- <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
             <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6">
                 <div class="flex h-16 shrink-0 items-center justify-center border-b border-gray-500">
                         <a href="/"><img v-if="!closeMenu" class="w-24 h-9" src="../../../../storage/app/public/img/logo-black.png" alt=""></a>
@@ -104,7 +103,7 @@ function openPi(val)  {
                 </ul>
                 </nav>
             </div>
-        </div>
+        </div> -->
 
         
         <!-- Menu Mobile -->
