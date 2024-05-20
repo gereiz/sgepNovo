@@ -86,8 +86,13 @@ class FinanceiroService
 
     public function deletaFuncao($id)
     {
-        $funcao = Funcao::find($id);
-        $funcao->delete();
+        if($id == 1) {
+            return response()->json(['error' => 'Não é possível deletar essa função'], 400);
+        } else {
+            $funcao = Funcao::find($id);
+            $funcao->delete();
+        }
+        
 
         return $funcao;
     }
