@@ -7,13 +7,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Financeiro\Servico;
 use App\Models\Financeiro\Funcao;
+use App\Models\Financeiro\Comissao;
+
 
 class FinanceiroService
 {
+    protected $servico;
+    protected $funcao;
+
+
     // Serviços
     public function listaServicos() {
         
-        $servicos = Servico::OrderBy('nome', 'asc')->get();
+        $servicos = Servico::with('comissoes')->OrderBy('nome', 'asc')->get();
 
         return $servicos;
     }
@@ -50,6 +56,13 @@ class FinanceiroService
     {
         $servico = Servico::find($id);
         $servico->delete();
+
+        return $servico;
+    }
+
+    public function getServico($id)
+    {
+        $servico = Servico::find($id);
 
         return $servico;
     }
@@ -97,5 +110,67 @@ class FinanceiroService
         return $funcao;
     }
 
+    // Comissões
+    public function listaComissoes()
+    {
+        $comissoes = Comissao::with('servico')->OrderBy('id_funcionario', 'asc')->get();
+
+        return $comissoes;
+    }
+
+    // Comissões por serviço
+    public function gravaComissaoservico(Request $request)
+    {
+        $comissao = Servico::updateOrCreate(
+            ['id' => $request['id_servico']],
+            [
+                'comissao' => number_format(floatval($request->valor_comissao = str_replace(',', '.', $request->valor_comissao)), 2, '.', ''),
+                'tipo_comissao' => $request->tipo_comissao,
+                'id_user' => auth()->user()->id
+            ]
+        );
+
+        return $comissao;
+    }
+
+    public function delComissaoServico($id)
+    {
+        $comissao = Servico::updateOrCreate(
+            ['id' => $id],
+            [
+                'comissao' => 0.00,
+                'tipo_comissao' => 0,
+                'id_user' => auth()->user()->id
+            ]
+        );
+
+        return $comissao;
+    }
+
+
+    // Comissões por usuário
+    public function cadastraComissaoUsuario(Request $request)
+    {
+        $comissao = Comissao::updateOrCreate(
+            ['id_servico' => $request->id_servico, 'id_funcionario' => $request->id_funcionario],
+            [
+                'id_funcionario' => $request->id_funcionario,
+                'id_servico' => $request->id_servico,   
+                'valor' => number_format(floatval($request->valor_comissao = str_replace(',', '.', $request->valor_comissao)), 2, '.', ''),
+                'tipo_comissao' => $request->tipo_comissao,
+                'id_user' => auth()->user()->id
+            ]
+        );
+
+        return $comissao;
+    }   
+
+    public function deletaComissaoUsuario($id)
+    {
+        $comissao = Comissao::find($id);
+        $comissao->delete();
+
+        return $comissao;
+    }
 
 }

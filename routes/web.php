@@ -65,11 +65,13 @@ Route::middleware('auth')->group(function () {
     route::get('/dtGetUf', [DataController::class, 'getUf']);
     route::post('/dtGetUfCli', [DataController::class, 'getUfCli']);
 
+
     // Bairros
     route::get('/CadBairro', [BairroController::class, 'index'])->name('cad.bairro');
     route::any('/AddBairro', [BairroController::class, 'cadastraBairro'])->name('cad.bairro.add');
     route::any('/EditBairro', [BairroController::class, 'editaBairro'])->name('cad.bairro.edit');
     route::any('/DelBairro', [BairroController::class, 'deletaBairro'])->name('cad.bairro.del');
+
 
     // Regiões
     route::get('/CadRegiao', [RegiaoController::class, 'index'])->name('cad.regiao');
@@ -115,18 +117,27 @@ Route::middleware('auth')->group(function () {
     route::post('/DelResCliente', [ReservaController::class, 'delResCliente'])->name('del.reserva.cli');
     route::post('/GetCliente', [ReservaController::class, 'getCliente'])->name('res.get.cli');
 
+        // Financeiro
     // Serviços
     route::get('/Servicos', [ServicosController::class, 'index'])->name('servicos');
     route::post('/CadastraServico', [ServicosController::class, 'cadastraServico'])->name('cad.servico');
     route::post('/DelServico', [ServicosController::class, 'deletaServico'])->name('del.servico');
+    route::post('/GetServico', [ServicosController::class, 'getServico'])->name('get.servico');
+
 
     // Funções
     route::get('/Funcoes', [FuncoesController::class, 'index'])->name('funcoes');
     route::post('/CadastraFuncao', [FuncoesController::class, 'cadastraFuncao'])->name('cad.funcao');
     route::post('/DelFuncao', [FuncoesController::class, 'deletaFuncao'])->name('del.funcao');
 
+
     // Comissões
     route::get('/Comissoes', [ComissoesController::class, 'index'])->name('/comissoes');
+    route::post('/GravaComissaoServico', [ComissoesController::class, 'gravaComissaoservico'])->name('grava.comissao.servico');
+    route::post('/DelComissaoServico', [ComissoesController::class, 'delComissaoServico'])->name('del.comissao.servico');   
+
+    route::post('/CadastraComissaoUsuario', [ComissoesController::class, 'cadastraComissaoUsuario'])->name('cad.comissao.usuario');
+    route::post('/DeletaComissaoUsuario', [ComissoesController::class, 'deletaComissaoUsuario'])->name('del.comissao.usuario'); 
 
 
     // Pi's
@@ -136,7 +147,6 @@ Route::middleware('auth')->group(function () {
 
     // Configurações
     route::get('/Config', [ConfiguracoesController::class, 'index']);
-
     route::post('/AddAno', [ConfiguracoesController::class, 'AddAno'])->name('add.ano');
 
 

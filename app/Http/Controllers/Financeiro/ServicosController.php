@@ -10,6 +10,8 @@ use App\Services\FinanceiroService;
 
 class ServicosController extends Controller
 {
+    protected $financeiroService;
+
     public function __construct(FinanceiroService $financeiroService)
     {
         $this->financeiroService = $financeiroService;
@@ -32,4 +34,11 @@ class ServicosController extends Controller
     {
         $servico = $this->financeiroService->deletaServico($request->id_servico);
     }
+
+    public function getServico(Request $request)
+    {
+        $servico = $this->financeiroService->getServico($request->id_servico);
+        return response()->json($servico);
+    }
+
 }

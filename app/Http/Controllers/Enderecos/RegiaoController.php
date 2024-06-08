@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Enderecos;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RegiaoRequest;
+use App\Http\Requests\RegiaoRequest; 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use DB;
