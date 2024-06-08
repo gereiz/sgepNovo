@@ -20,7 +20,7 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 
 
 class ReservaController extends Controller
-{
+{ 
     
     public function index() {
 
