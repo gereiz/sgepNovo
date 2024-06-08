@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Financeiro\Servico;
 use App\Models\Financeiro\Funcao;
 use App\Models\Financeiro\Comissao;
+use App\Models\User;
 
 
 class FinanceiroService
@@ -57,6 +58,9 @@ class FinanceiroService
         $servico = Servico::find($id);
         $servico->delete();
 
+        // Deleta todas as comissões relacionadas ao serviço
+        $comissoes = Comissao::where('id_servico', $id)->delete();  
+
         return $servico;
     }
 
@@ -105,6 +109,9 @@ class FinanceiroService
             $funcao = Funcao::find($id);
             $funcao->delete();
         }
+
+        // Altera a função de todos os usuários relacionados para 'Sem função'
+        $usuarios = User::where('function', $id)->update(['function' => 1]);
         
 
         return $funcao;

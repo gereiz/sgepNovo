@@ -79,8 +79,8 @@
                                         </div>
 
                                         <div class="w-full flex items-center justify-around mt-4 space-x-2">
-                                            <label class="inline-flex w-6/12 justify-center rounded-md bg-amber-500 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-amber-300 sm:mt-0 sm:w-5/12" @click="openEdit('t', func)">Editar</label>
-                                            <label class="inline-flex w-6/12 justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-300 sm:ml-3 sm:w-5/12" @click="openDel('t', func)">Excluir</label>
+                                            <label v-if="func.id !== 1" class="inline-flex w-6/12 justify-center rounded-md bg-amber-500 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-amber-300 sm:mt-0 sm:w-5/12" @click="openEdit('t', func)">Editar</label>
+                                            <label v-if="func.id !== 1"  class="inline-flex w-6/12 justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-300 sm:ml-3 sm:w-5/12" @click="openDel('t', func)">Excluir</label>
                                         </div>
                                     </div>
                                 </div>
