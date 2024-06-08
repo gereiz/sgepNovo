@@ -4,7 +4,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import {ClipboardDocumentCheckIcon } from '@heroicons/vue/24/outline'
 import { vMaska } from 'maska'
 import { usePage } from '@inertiajs/vue3';
-import FormAddServico from './FormAddServico.vue'
+
 
 const props = defineProps(['openAdd', 'servicos']);
 const emit = defineEmits(['closeAdd'])
@@ -70,13 +70,7 @@ function sendFormServ(val) {
                         Adicionar um novo Serviço: <span class="text-red-500 font-extrabold"></span>
                     </DialogTitle>
                     
-                    <FormAddServico @closeAdd="openAdd"
-                                    @sendFormServ="sendFormServ"
-                    > 
-
-                        
-                    </FormAddServico>
-                
+                 
                   </div>
                 </div>
               </DialogPanel>
