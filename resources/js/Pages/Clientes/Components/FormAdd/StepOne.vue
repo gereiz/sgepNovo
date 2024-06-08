@@ -18,10 +18,10 @@ const cadCli = ref ({r_social: '',
 // Alimenta os campos com informações do cliente para edição
 watch(() => props.clienteEdit, (val) => {
     
-    cadCli.value.r_social = val.razao_social ? val.razao_social : ''
-    cadCli.value.n_fantasia = val.nome_fantasia ? val.nome_fantasia : ''
-    cadCli.value.cpf_cnpj = val.cpf_cnpj ? val.cpf_cnpj : ''
-    cadCli.value.insc_est = val.nro_insc ? val.nro_insc : ''
+    cadCli.value.r_social = val.razao_social ? val.razao_social.toUpperCase() : ''
+    cadCli.value.n_fantasia = val.nome_fantasia ? val.nome_fantasia.toUpperCase() : ''
+    cadCli.value.cpf_cnpj = val.cpf_cnpj ? val.cpf_cnpj.toUpperCase() : ''
+    cadCli.value.insc_est = val.nro_insc ? val.nro_insc.toUpperCase() : ''
 
 })
 
