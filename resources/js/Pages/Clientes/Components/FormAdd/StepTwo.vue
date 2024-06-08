@@ -32,14 +32,14 @@ onMounted(() => {
 
     // Alimenta os campos deendereço com os dados coletados no stepOne
     if(props.clienteEdit.value != {}) {
-        endCli.value.ender = cliente.value.endereco
-        endCli.value.numero = cliente.value.num
-        endCli.value.uf = cliente.value.uf
+        endCli.value.ender = cliente.value.endereco.toUpperCase()
+        endCli.value.numero = cliente.value.num.toUpperCase()
+        endCli.value.uf = cliente.value.uf.toUpperCase()
         getCidades()
-        endCli.value.cidade = cliente.value.cidade
+        endCli.value.cidade = cliente.value.cidade.toUpperCase()
         getBairros()
-        endCli.value.bairro = cliente.value.bairro
-        endCli.value.cep = cliente.value.cep
+        endCli.value.bairro = cliente.value.bairro.toUpperCase()
+        endCli.value.cep = cliente.value.cep.toUpperCase()
     }
 
 })

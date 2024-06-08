@@ -19,9 +19,9 @@ onMounted(() => {
 
     if(props.clienteEdit.value != {}) {
 
-        respCli.value.responsavel = cliente.value.responsavel
-        respCli.value.telResp = cliente.value.tel_responsavel
-        respCli.value.emailResp = cliente.value.email_responsavel
+        respCli.value.responsavel = cliente.value.responsavel.toUpperCase()
+        respCli.value.telResp = cliente.value.tel_responsavel.toUpperCase()
+        respCli.value.emailResp = cliente.value.email_responsavel.toUpperCase()
     }
 
     // console.log(cliente.value)
