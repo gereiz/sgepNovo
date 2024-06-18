@@ -34,4 +34,12 @@ class ClienteController extends Controller
         return Cliente::where('id', $request->idCliente)->orderBy('nome_fantasia')->get();
     }
 
+
+    public function deleteCliente(Request $request) {
+
+        Cliente::where('id', $request->idCliente)->delete();
+
+        return back()->with('success', 'Cliente deletado com sucesso!');
+    }
+
 }

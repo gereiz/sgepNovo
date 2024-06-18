@@ -91,6 +91,7 @@ Route::middleware('auth')->group(function () {
     route::get('/Clientes', [ClienteController::class, 'index'])->name('lista.cliente');
     route::post('/CadCliente', [ClienteController::class, 'cadastraCliente']);
     route::post('/EditCliente', [ClienteController::class, 'editCliente']);
+    route::post('/DelCliente', [ClienteController::class, 'deleteCliente']);
 
 
     //Painéis
