@@ -46,6 +46,17 @@ function setClienteData (id, nome) {
 
 }
 
+function excluirCliente(id) {
+    axios.post('/DelCliente', {idCliente: id})
+        .then((res) =>{
+            useToastr('success', 'Cliente excluído com sucesso!')
+            location.reload()
+        })
+        .catch((err) => {
+            console.error(err)
+    })
+}
+
 const clientesFiltrados = computed(() => {
     let clientesFiltrados = Object.values(props.clientes).filter((cliente) => {
         return (
@@ -104,7 +115,7 @@ const clientesFiltrados = computed(() => {
 
                             <div class="w-full flex justify-center py-4 space-x-4">
                                 <label @click="setClienteData(cli.id, (cli.nome_fantasia ? cli.nome_fantasia : cli.razao_social)), openEdit('t')" class="w-5/12 px-3 py-2 text-center text-sm font-semibold text-gray-900 rounded-md bg-amber-500 hover:bg-amber-400 ring-amber-300 shadow-sm ring-1 ring-inset">Editar</label>
-                                <label class="w-5/12 px-3 py-2 text-center text-sm font-semibold text-white rounded-md bg-red-500 hover:bg-red-400 ring-red-300 shadow-sm ring-1 ring-inset">Excluir</label>
+                                <label @click="excluirCliente(cli.id)" class="w-5/12 px-3 py-2 text-center text-sm font-semibold text-white rounded-md bg-red-500 hover:bg-red-400 ring-red-300 shadow-sm ring-1 ring-inset">Excluir</label>
                             </div>
                         </div>
                     </div>

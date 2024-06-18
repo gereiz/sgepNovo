@@ -28,8 +28,9 @@ class ClienteService
 
         $tel_responsavel = str_replace(['(', ')', ' ', '-'], '', $request->form['sThree']['tel_resp']);
 
+        $cpf_cnpj = str_replace(['.', '-', '/'], '', $request->form['sOne']['cpf_cnpj']);
 
-        $cliente = Cliente::updateOrCreate(['cpf_cnpj' => $request->form['sOne']['cpf_cnpj']],
+        $cliente = Cliente::updateOrCreate(['cpf_cnpj' => $cpf_cnpj],
         [
             'razao_social' => $request->form['sOne']['r_social'],
             'nome_fantasia' => $request->form['sOne']['n_fantasia'],
@@ -56,6 +57,13 @@ class ClienteService
 
         return back()->with('success', 'Cliente cadastrado com sucesso!');
 
+    }
+
+    public function deleteCliente($id) {
+        $cliente = Cliente::find($id);
+        $cliente->delete();
+
+        return back()->with('success', 'Cliente excluído com sucesso!');
     }
 
 
