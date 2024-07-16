@@ -5,9 +5,9 @@ import { UserCircleIcon } from '@heroicons/vue/24/outline'
 import { useForm } from '@inertiajs/vue3';
 
 
-const props = defineProps(['cliente', 'campanha', 'painel', 'bisemana', 'getform'])
+const props = defineProps(['cliente', 'campanha', 'bisemana', 'getform', 'paineis'])
     
-const emit = defineEmits(['nextStep', 'formOne']);
+const emit = defineEmits(['closeForm','nextStep', 'formOne']);
 const edit = ref(false);
 const ufs = ref([]);
 const cidades = ref([])
@@ -47,7 +47,7 @@ onMounted(() =>{
 
     getCidadeCli()
     
-    setSession()
+    // setSession()
 
     if(props.cliente.value != {}) {
         formOne.clienteId = cliente.value.id
@@ -74,18 +74,18 @@ const nextStep = (val) => {
     }
 }
 
-function setSession() {
-    axios.post('/sessionData', {
-        cliente: props.cliente,
+// function setSession() {
+//     axios.post('/sessionData', {
+//         cliente: props.cliente,
             
-    })
-        .then((res) =>{
-            
-        })
-        .catch((err) => {
-            console.log(err)
-        })
-}
+//     })
+//         .then((res) =>{
+//             console.log(res.data)
+//         })
+//         .catch((err) => {
+//             console.log(err)
+//         })
+// }
 
 function changeEdit() {
     if(edit.value === false) {
@@ -103,6 +103,7 @@ function getCidadeCli() {
         })
 }
 
+
 // watch(() => props.getform, (val)  =>{
 //     emit('nextStep', val);
     
@@ -115,7 +116,7 @@ function getCidadeCli() {
     <div class="space-y-6 transition-all duration-1000">
         <!-- Botão de Editar contato -->
         <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-            <h1 as="h3" class="text-base font-semibold leading-6 text-gray-900">Pedido de Inserção </h1>
+            <h1 as="h3" class="text-base font-semibold leading-6 text-gray-900">Pedido de Inserção {{ paineis }}</h1>
             <div class="flex mt-2">
                 <p class="text-sm text-gray-500 mb-4">Confira os dados para criação do Pedido de Inserção.</p>
                 <button  class="w-8 h-8 flex items-center justify-center bg-amber-700 -mt-1 text-sm font-semibold text-white shadow-sm hover:bg-amber-500 sm:ml-3 rounded-full duration-1000" 
@@ -131,7 +132,7 @@ function getCidadeCli() {
                 <UserCircleIcon class="h-6 w-6" aria-hidden="true" />
                 </button>
             </div>
-            <p class="text-xs font-bold text-red-500">Bi-Semana: {{ bisemana[0].num_bisemana }} {{ new Date(bisemana[0].inicio).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }} até {{ new Date(bisemana[0].fim).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }}</p>
+            <p class="text-xs font-bold text-red-500">Bi-Semana: {{ bisemana.num_bisemana }} {{ new Date(bisemana.inicio).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }} até {{ new Date(bisemana.fim).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }}</p>
         </div>
         
         <!--Razão Social / CNPJ -->
@@ -182,7 +183,7 @@ function getCidadeCli() {
                     </div>
                 </div>
             </div>
-
+ 
             <div class="sm:col-span-4">
                 <label class="block text-sm font-medium leading-6 text-gray-900">CEP</label>
                 <div class="mt-2">

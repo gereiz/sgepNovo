@@ -22,7 +22,6 @@ class ClienteController extends Controller
     public function cadastraCliente(Request $request) {
 
         $clienteService = new ClienteService();
-
         
         $clienteService->storeOrUpdateCliente($request);
 
@@ -34,7 +33,7 @@ class ClienteController extends Controller
         return Cliente::where('id', $request->idCliente)->orderBy('nome_fantasia')->get();
     }
 
-
+    
     public function deleteCliente(Request $request) {
 
         Cliente::where('id', $request->idCliente)->delete();
