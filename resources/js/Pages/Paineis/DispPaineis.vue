@@ -2,7 +2,7 @@
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import ModalCancRes from '@/Pages/Paineis/Components/ModalCancelRes.vue'
     import ModalWpp from '@/Pages/Paineis/Components/ModalWpp.vue'
-    import ModalPiRes from './Components/ModalPiRes.vue';
+    import ModalPiRes from '../Reservas/ModalPiRes.vue';
     import { Head, router } from '@inertiajs/vue3';
     import { getImage, toastr, enviaWpp, getLink } from '@/functions'
     import { ref, reactive, onMounted, computed, watch } from 'vue'
@@ -68,9 +68,9 @@
 
     }) 
 
-    function getBisemana() {
+    function getBisemanas() {
 
-        axios.post('/GetBisemanas', {bisemana: idAno.value})
+        axios.post('/getBisemanass', {bisemana: idAno.value})
         .then(res =>{
 
             listaBisemana.value = Object.values(res.data)
@@ -341,7 +341,7 @@
             <!-- Cabeçalho -->
             <div class="w-full h-14 flex mb-2">
                 <div class="w-2/12 h-14 flex items-center">
-                    <h1 class="text-xl sm:text-4xl font-bold">Reservas</h1>
+                    <h1 class="text-xl sm:text-4xl font-bold">Painéis</h1>
                     <h1 class="text-lg sm:text-2xl text-red-400 font-bold ml-2 sm:ml-4">{{ pan.length }} </h1>
                 </div>
                 
@@ -356,7 +356,7 @@
                     <!-- Ano -->
                     <div class="w-5/12 sm:w-1/12 flex flex-col me-4 sm:me-6">
                         <label for="bi-semana">Ano</label>
-                        <select class="select-paineis" name="ano" id="ano" v-model="idAno" @change="getBisemana()">
+                        <select class="select-paineis" name="ano" id="ano" v-model="idAno" @change="getBisemanas()">
                             <option value="0" selected>Selecione</option>
                             <option v-for="(ano, index) in anos" :key="index" :value="ano.id">{{ ano.ano_bisemana }}</option>
                         </select>

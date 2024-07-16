@@ -13,16 +13,23 @@ use App\Services\DataService;
 
 class DataController extends Controller
 {
+    private $dataService;
 
-    public function __construct() {
+    public function __construct(DataService $dataService) {
         $this->middleware('auth');
+        $dataService = new DataService();
+        $this->dataService = $dataService;
     }
 
-    public function getBs(Request $request) {
+    public function getBisemanas(Request $request) {
+        
+        return $this->dataService->getBisemanas($request->anoId);
+    }
 
-        $dataService = new DataService();
+    public function getBisemana(Request $request) {
 
-        return $dataService->getBisemana($request->anoId);
+
+        return $this->dataService->getBisemana($request->idBs);
 
     }
 

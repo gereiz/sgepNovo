@@ -5,7 +5,7 @@ import { UserCircleIcon  } from '@heroicons/vue/24/outline'
 import { usePage, useForm } from '@inertiajs/vue3';    
 
 
-const props = defineProps(['cliente', 'campanha', 'painel','bisemana'])
+const props = defineProps(['cliente', 'campanha', 'paineis','bisemana'])
 const emit = defineEmits(['nextStep','formTwo']);
 
 const edit = ref(false)
@@ -46,9 +46,6 @@ watch((vlrUnit), (val) => {
     }   
 
     
-
-
-
 })
 
 watch((vlrDesc), (val) => {
@@ -61,15 +58,12 @@ watch((vlrDesc), (val) => {
         vlrTotal.value = (parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value)).toFixed(2)
         formTwo.vlr_total =  vlrTotal.value
     }
-
-
-    
+   
 })                                                                                          
 
 
 const formTwo = useForm({
-    painelId: props.painel.id,
-    painel: props.painel.identificacao,
+    paineis: props.paineis,
     campanha: props.campanha,
     vlr_unit: null,
     vlr_desc: vlrDescUnmask.value, 
@@ -90,7 +84,7 @@ const nextStep = (val) => {
     if(val == 3) {
         emit('formTwo', formTwo)
 
-        setSession()
+        // setSession() 
     }
 
 }
@@ -140,7 +134,7 @@ function setSession() {
                 <UserCircleIcon class="h-6 w-6" aria-hidden="true" />
                 </button>
             </div>
-            <p class="text-xs font-bold text-red-500">Bi-Semana: {{ bisemana[0].num_bisemana }} {{ new Date(bisemana[0].inicio).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }} até {{ new Date(bisemana[0].fim).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }}</p>
+            <p class="text-xs font-bold text-red-500">Bi-Semana: {{ bisemana.num_bisemana }} {{ new Date(bisemana.inicio).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }} até {{ new Date(bisemana.fim).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }}</p>
         </div>
 
         <!--Painéis / Campanha -->
@@ -151,8 +145,8 @@ function setSession() {
                     <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
                         <input type="text" 
-                            v-model="formTwo.painel"
-                            class="h-9 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs" 
+                            v-model="formTwo.paineis"
+                            class="h-9 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-red-500 font-extrabold placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs" 
                             disabled />
                     </div>
                 </div>
@@ -243,7 +237,7 @@ function setSession() {
                  
         </div>
 
-        <!-- Formade Pagamento / Pago ?-->
+        <!-- Forma de Pagamento / Pago ?-->
         <div class="w-full flex flex-wrap justify-center sm:space-x-6 space-y-6 sm:space-y-0">
             <div class="w-full sm:w-5/12">
                 <label class="block text-sm font-medium leading-6 text-gray-900">Forma de Pagamento</label>

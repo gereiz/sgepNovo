@@ -46,27 +46,6 @@ function getIdent(val) {
 
 }
 
-function atualizaPaineis(ev) {
-        idCliente.value = 0
-        
-        axios.post('/GetPaineisCli', {
-        bsId: idBisemana.value,
-        cliente: idCliente.value
-        })
-        .then((res) => {
-            reservas.value = res.data.reservas
-            paineis.value = res.data.paineis
-
-            idents.length = 0
-
-            if(idents.length == 0) {
-                getIdent(paineis.value)
-            }
-
-        })
-
-}
-
 function clearChecked() {
     checkedPaineis.value = [];
     checkedPaineisId.value = [];
@@ -114,9 +93,9 @@ function getImage(i) {
 return image
 }
 
-function getBisemana() {
+function getBisemanas() {
 
-    axios.post('/GetBisemanas', {bisemana: idAno.value})
+    axios.post('/getBisemanas', {anoId: idAno.value})
     .then(res =>{
 
         listaBisemana.value = Object.values(res.data)
@@ -231,7 +210,7 @@ function openEdit(val) {
                      <!-- Anos -->
                      <div class="w-[30%] sm:w-[8%] flex flex-col me-4 sm:me-6">
                         <label for="bi-semana">Ano</label>
-                        <select class="select-paineis" name="ano" id="ano" v-model="idAno" @change="getBisemana()">
+                        <select class="select-paineis" name="ano" id="ano" v-model="idAno" @change="getBisemanas()">
                             <option value="0" selected>Selecione</option>
                             <option v-for="(ano, index) in anos" :key="index" :value="ano.id">{{ ano.ano_bisemana }}</option>
                         </select>
@@ -313,7 +292,7 @@ function openEdit(val) {
                         </div>
                     </div>
 
-                </div>
+                </div>  
             </div>
 
 

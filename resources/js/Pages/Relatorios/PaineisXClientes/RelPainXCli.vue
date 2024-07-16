@@ -16,7 +16,7 @@
     
     function getBs() {
 
-        axios.post('/getBisemana', {anoId: anoId.value})
+        axios.post('/getBisemanas', {anoId: anoId.value})
             .then((res) => {
                 bisemanas.value = res.data
             })

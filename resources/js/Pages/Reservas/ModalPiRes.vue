@@ -1,9 +1,9 @@
 <script setup>
 import { ref, watch, shallowRef } from 'vue'
 import { useToastr } from '@/Components/toastr';
-import StepOnePi from './FormPI/StepOnePi.vue'
-import StepTwoPi from './FormPI/StepTwoPi.vue';
-import StepThreePi from './FormPI/StepThreePi.vue';
+import StepOnePi from './Components/FormPI/StepOnePi.vue'
+import StepTwoPi from './Components/FormPI/StepTwoPi.vue';
+import StepThreePi from './Components/FormPI/StepThreePi.vue';
 
 
 import { XMarkIcon } from '@heroicons/vue/24/outline'
@@ -12,9 +12,9 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 
 const toastr = useToastr();
 
-const emit = defineEmits(['closePi'])
+const emit = defineEmits(['closePi', 'closeAdd'])
 
-const props = defineProps(['painel', 'bisemana', 'openPi', 'cliente', 'campanha', 'painel'])
+const props = defineProps(['paineis', 'bisemana', 'openPi', 'cliente', 'campanha', 'painel'])
 
 const step = shallowRef(StepOnePi)
 const open = ref(false)
@@ -25,6 +25,8 @@ const formPi = ref({})
 watch( () => props.openPi, (val) =>  {
     if(val === true) {
         open.value = true
+    } else {
+        open.value = false
     }
 })
 
@@ -51,9 +53,9 @@ function saveFormOne(ev) {
 
 
 function saveFormTwo(ev) {
-    getFormPiTwo.value.painelId = ev.painelId
-    getFormPiTwo.value.painel = ev.painel
-    getFormPiTwo.value.bisemanaId = props.bisemana[0].id
+    getFormPiTwo.value.paineis = ev.paineis
+    // getFormPiTwo.value.painel = ev.painel
+    getFormPiTwo.value.bisemanaId = props.bisemana.id
     getFormPiTwo.value.campanha = ev.campanha
     getFormPiTwo.value.vlr_unit = ev.vlr_unit
     getFormPiTwo.value.vlr_desc = ev.vlr_desc
@@ -77,6 +79,7 @@ function saveFormTwo(ev) {
 
 
 function submitFormPi() {
+  // console.log(formPi.value)
   axios.post('/sessionData', {
     formPi: formPi.value
   })
@@ -135,7 +138,7 @@ function naviForm(ev) {
         <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100" leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
           <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </TransitionChild>
-
+       
         <div class="fixed inset-0 z-10 overflow-y-auto">
           <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" enter-to="opacity-100 translate-y-0 sm:scale-100" leave="ease-in duration-200" leave-from="opacity-100 translate-y-0 sm:scale-100" leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
@@ -146,14 +149,13 @@ function naviForm(ev) {
                     <XMarkIcon class="h-6 w-6" aria-hidden="true" />
                   </button>
                 </div>
-
                 <div class="sm:flex flex-col sm:items-start">
                   <div class="w-full mt-3 text-center sm:mt-0 sm:text-left">
                       <KeepAlive>
                           <component :is="step" 
                                      :cliente="cliente"
                                      :campanha="campanha"
-                                     :painel="painel"
+                                     :paineis="paineis"
                                      :bisemana="bisemana"
                                      @nextStep="naviForm" 
                                      @formOne="saveFormOne"
