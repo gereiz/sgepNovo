@@ -33,10 +33,10 @@ watch(() => props.openAdd, (val)  =>{
 })
 
 function sendFormFunc(val) {
-    console.log(val)
+    // console.log(val)
     axios.post('/CadastraFuncao', val)
     .then((response) => {
-        console.log(response)
+        // console.log(response)
         toastr.success('Função cadastrada com sucesso!')
         openAdd('f')
     })

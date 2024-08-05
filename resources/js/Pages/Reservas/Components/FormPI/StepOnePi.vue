@@ -3,7 +3,7 @@ import { ref, onMounted, watch } from 'vue';
 import { vMaska } from "maska"
 import { UserCircleIcon } from '@heroicons/vue/24/outline'
 import { useForm } from '@inertiajs/vue3';
-
+import toastr from 'toastr'
 
 const props = defineProps(['cliente', 'campanha', 'bisemana', 'getform', 'paineis'])
     
@@ -37,6 +37,8 @@ onMounted(() =>{
         
         if(clienteUf.value == null) {
             clienteUf.value = 0
+        } else {
+            getCidadeCli(clienteUf.value)
         }
 
         if(clienteCidade.value == null) {
@@ -45,9 +47,6 @@ onMounted(() =>{
 
     })
 
-    getCidadeCli()
-    
-    // setSession()
 
     if(props.cliente.value != {}) {
         formOne.clienteId = cliente.value.id
@@ -55,8 +54,8 @@ onMounted(() =>{
         formOne.cnpj = cliente.value.cpf_cnpj ? cliente.value.cpf_cnpj : '00000000000000'
         formOne.endereco = cliente.value.endereco ? cliente.value.endereco + ' - ' + cliente.value.num : 'Não Cadastrado'
         formOne.cep = cliente.value.cep ? cliente.value.cep : '00.000-000'
-        formOne.uf = clienteUf.value
-        formOne.cidade =clienteCidade.value
+        formOne.uf = clienteUf.value ? clienteUf.value : 0
+        formOne.cidade =clienteCidade.value ? clienteCidade.value : 0
         formOne.celular = cliente.value.tel_responsavel ? cliente.value.tel_responsavel : 'Não Cadastrado'
         formOne.inscEst = cliente.value.nro_insc ? cliente.value.nro_insc : 'Nao Cadastrado' 
         formOne.responsavel = cliente.value.responsavel ? cliente.value.responsavel : 'Não Cadastrado'
@@ -67,25 +66,25 @@ onMounted(() =>{
 })
 
 const nextStep = (val) => {
-    emit('nextStep', val);
+
     
     if(val == 2) {
-        emit('formOne', formOne);
+        if(formOne.uf == 0)  {
+        toastr.error('Selecione a UF do Cliente')
+        return
     }
-}
 
-// function setSession() {
-//     axios.post('/sessionData', {
-//         cliente: props.cliente,
-            
-//     })
-//         .then((res) =>{
-//             console.log(res.data)
-//         })
-//         .catch((err) => {
-//             console.log(err)
-//         })
-// }
+    if(formOne.cidade == 0)  {
+        toastr.error('Selecione a Cidade do Cliente')
+        return
+    }
+
+        emit('formOne', formOne);
+    } 
+    
+    emit('nextStep', val);
+
+}
 
 function changeEdit() {
     if(edit.value === false) {
@@ -93,8 +92,8 @@ function changeEdit() {
     }
 }
 
-function getCidadeCli() {
-    axios.post('/dtGetCidades', {uf: clienteUf.value})
+function getCidadeCli(uf) {
+    axios.post('/dtGetCidades', {uf: uf})
         .then((res) => {
             cidades.value = res.data
         })
@@ -116,7 +115,7 @@ function getCidadeCli() {
     <div class="space-y-6 transition-all duration-1000">
         <!-- Botão de Editar contato -->
         <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-            <h1 as="h3" class="text-base font-semibold leading-6 text-gray-900">Pedido de Inserção {{ paineis }}</h1>
+            <h1 as="h3" class="text-base font-semibold leading-6 text-gray-900">Pedido de Inserção</h1>
             <div class="flex mt-2">
                 <p class="text-sm text-gray-500 mb-4">Confira os dados para criação do Pedido de Inserção.</p>
                 <button  class="w-8 h-8 flex items-center justify-center bg-amber-700 -mt-1 text-sm font-semibold text-white shadow-sm hover:bg-amber-500 sm:ml-3 rounded-full duration-1000" 
@@ -132,7 +131,7 @@ function getCidadeCli() {
                 <UserCircleIcon class="h-6 w-6" aria-hidden="true" />
                 </button>
             </div>
-            <p class="text-xs font-bold text-red-500">Bi-Semana: {{ bisemana.num_bisemana }} {{ new Date(bisemana.inicio).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }} até {{ new Date(bisemana.fim).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }}</p>
+            <p class="text-xs font-bold text-red-500 text-center">Bi-Semana: {{ bisemana.num_bisemana }} {{ new Date(bisemana.inicio).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }} até {{ new Date(bisemana.fim).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }}</p>
         </div>
         
         <!--Razão Social / CNPJ -->
@@ -205,7 +204,7 @@ function getCidadeCli() {
             <div class="sm:col-span-4">
                 <label for="uf" class="block text-sm font-medium leading-6 text-gray-900">UF</label>
                 <div class="mt-2">
-                    <select id="uf" name="uf" v-model="formOne.uf" @change="getCidadeCli()"
+                    <select id="uf" name="uf" v-model="formOne.uf" @change="getCidadeCli(formOne.uf)"
                             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                             :disabled="edit == false">
                         <option value="0" disabled selected>Selecione</option>

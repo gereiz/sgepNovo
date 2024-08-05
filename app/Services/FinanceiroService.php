@@ -14,7 +14,7 @@ use App\Models\User;
 class FinanceiroService
 {
     protected $servico;
-    protected $funcao;
+    protected $funcao; 
 
 
     // Serviços

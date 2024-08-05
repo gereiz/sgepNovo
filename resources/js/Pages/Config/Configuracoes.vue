@@ -14,7 +14,7 @@ const ano = ref('');
 
 function addAno() {
 
-    console.log(ano.value)
+    // console.log(ano.value)
 
     axios.post('/AddAno', {ano: ano.value})
     .then(res => {

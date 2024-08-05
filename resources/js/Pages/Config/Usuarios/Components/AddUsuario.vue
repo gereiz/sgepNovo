@@ -34,11 +34,11 @@ watch(() => props.openAdd, (val)  =>{
 })
 
 function sendFormUsu(val) {
-    console.log(val)
+    // console.log(val)
     axios.post('/CadUsuario', val)
     .then((response) => {
-        console.log(response)
-        toastr.success('Usuário cadastrada com sucesso!')
+        // console.log(response)
+        toastr.success('Usuário cadastrado com sucesso!')
         openAdd('f')
     })
     .catch((error) => {

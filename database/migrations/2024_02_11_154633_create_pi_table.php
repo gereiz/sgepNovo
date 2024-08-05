@@ -25,7 +25,7 @@ return new class extends Migration
             $table->date('dt_pgto');
             $table->integer('forma_pagamento');
             $table->integer('vendedor');
-            $table->string('obs');
+            $table->string('obs')->nullable();
             $table->timestamps();
         });
     }

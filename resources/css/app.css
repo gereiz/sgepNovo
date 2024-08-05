@@ -74,6 +74,8 @@
         @apply h-[22rem] sm:h-[15rem] bg-base-100 border-2 rounded-md shadow-xl mt-4 sm:mr-4 hover:scale-[1.1] hover:z-50 transition-all duration-500
     }
     
+
+    /* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap'); */
     
 
 }

@@ -12,7 +12,7 @@ use App\Models\Paineis\Painel;
 use Illuminate\Http\Request;
 use App\Models\Reservas\Reserva;
 use App\Models\Config\Ano;
-use App\Models\Config\Whatsapp;
+use App\Models\Config\Whatsapp; 
 use App\Models\Clientes\Cliente;
 use Carbon\Carbon;
 use DB;
@@ -261,12 +261,13 @@ class ReservaController extends Controller
             ->when($cliente, function(Builder $query, $cliente) {
                 $query->where('res.cliente_id', $cliente);
             })
+
         
             ->groupBY('outdoors.id')
             ->orderBy('outdoors.identificacao')
             ->distinct()
         ->get();
-
+            
 
         $paineis = Painel::select('outdoors.id',
                                 'outdoors.identificacao',
@@ -285,6 +286,7 @@ class ReservaController extends Controller
             ->when($cliente, function(Builder $query, $cliente) {
             $query->where('res.cliente_id', $cliente);
             })
+            
 
             ->groupBY('outdoors.id')
             ->orderBy('outdoors.identificacao')

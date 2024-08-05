@@ -4,6 +4,7 @@ import { useToastr } from '@/Components/toastr';
 import StepOnePi from './Components/FormPI/StepOnePi.vue'
 import StepTwoPi from './Components/FormPI/StepTwoPi.vue';
 import StepThreePi from './Components/FormPI/StepThreePi.vue';
+import StepFourPi from './Components/FormPI/StepFourPi.vue';
 
 
 import { XMarkIcon } from '@heroicons/vue/24/outline'
@@ -20,6 +21,7 @@ const step = shallowRef(StepOnePi)
 const open = ref(false)
 const getFormPiOne = ref({})
 const getFormPiTwo = ref({})
+const getFormPiThree = ref({})
 const formPi = ref({})
 
 watch( () => props.openPi, (val) =>  {
@@ -47,44 +49,50 @@ function saveFormOne(ev) {
 
   localStorage.setItem('piFormOne', JSON.stringify(getFormPiOne.value))
 
-  console.log(JSON.parse(localStorage.getItem('piFormOne')))
+  // console.log(JSON.parse(localStorage.getItem('piFormOne')))
 
 }
 
-
 function saveFormTwo(ev) {
     getFormPiTwo.value.paineis = ev.paineis
-    // getFormPiTwo.value.painel = ev.painel
     getFormPiTwo.value.bisemanaId = props.bisemana.id
     getFormPiTwo.value.campanha = ev.campanha
-    getFormPiTwo.value.vlr_unit = ev.vlr_unit
-    getFormPiTwo.value.vlr_desc = ev.vlr_desc
-    getFormPiTwo.value.vlr_total = ev.vlr_total
+    getFormPiTwo.value.servicos = ev.servicos
     getFormPiTwo.value.formaPgto = ev.formaPgto
     getFormPiTwo.value.pgto = ev.pgto
     getFormPiTwo.value.dtPgto = ev.dtPgto
     getFormPiTwo.value.dReserva = ev.dtReserva
-    getFormPiTwo.value.userId = ev.userId
-    getFormPiTwo.value.userNome = ev.userNome
+    getFormPiTwo.value.vendedorId = ev.vendedorId
+    getFormPiTwo.value.vendedor = ev.vendedor
 
 
     localStorage.setItem('piFormTwo', JSON.stringify(getFormPiTwo.value))
 
-    console.log(JSON.parse(localStorage.getItem('piFormTwo')))
+}
+
+function saveFormThree(ev) {
+    getFormPiThree.value.faturar_sobre = ev.faturar_sobre
+    getFormPiThree.value.faturar_contra = ev.faturar_contra
+    getFormPiThree.value.enviar_faturamento = ev.enviar_faturamento
+
+    localStorage.setItem('piFormThree', JSON.stringify(getFormPiThree.value))
+
+    // console.log(JSON.parse(localStorage.getItem('piFormTwo')))
 
     formPi.value.One = JSON.parse(localStorage.getItem('piFormOne'))
     formPi.value.Two = JSON.parse(localStorage.getItem('piFormTwo'))
+    formPi.value.Three = JSON.parse(localStorage.getItem('piFormThree'))
 
 }
 
 
 function submitFormPi() {
-  // console.log(formPi.value)
+
   axios.post('/sessionData', {
     formPi: formPi.value
   })
   .then((res) => {
-    console.log(res)
+    // console.log(res)
 
     setTimeout(() => {
       window.open('/storePi', '_blank')
@@ -100,6 +108,7 @@ function closeM() {
     open.value  = false
     emit('closePi', open.value)
 }
+
 
 function naviForm(ev) {
   if(ev == 0) {
@@ -120,13 +129,18 @@ function naviForm(ev) {
 
   } else if(ev == 4) {
     
+    step.value = StepFourPi;
+
+  } else if(ev == 5) {
+    
     submitFormPi()
     
     setTimeout(() => {
       closeM()
     }, 3000);
-
-  }     
+    
+  }
+  
 }
 
 </script>
@@ -159,7 +173,8 @@ function naviForm(ev) {
                                      :bisemana="bisemana"
                                      @nextStep="naviForm" 
                                      @formOne="saveFormOne"
-                                     @formTwo="saveFormTwo">
+                                     @formTwo="saveFormTwo"
+                                     @formThree="saveFormThree">
                           </component>
                       </KeepAlive>
                   </div>

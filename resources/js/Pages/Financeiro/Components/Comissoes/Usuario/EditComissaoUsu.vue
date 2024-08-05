@@ -35,7 +35,7 @@ watch(() => props.openEdit, (val)  =>{
 function sendFormComissao(val) {
     axios.post('/CadastraComissaoUsuario', val)
     .then((response) => {
-        console.log(response)
+        // console.log(response)
         toastr.success('Comissão cadastrada com sucesso!')
         openEdit('f')
     })
