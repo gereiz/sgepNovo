@@ -34,6 +34,10 @@
         emit('observacoes', observacoes.value)
     })
 
+    watch(() => props.bisemana, (val) => {
+        getPaineis()
+    })
+
     function openCamp(val) {
         if(val === 't') {
             openCampanha.value = true
@@ -104,6 +108,8 @@
     function clearChecked() {
         checkedPaineis.value = [];
         checkedPaineisId.value = [];
+
+        campanha.value = ''
 
         const cardPaineis = itemRefs.value;
 

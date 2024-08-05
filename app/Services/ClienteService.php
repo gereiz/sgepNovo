@@ -9,6 +9,11 @@ use Illuminate\Http\Request;
 
 class ClienteService
 {
+    public function getCliente($id) {
+        $cliente = Cliente::find($id);
+
+        return $cliente;
+    }
     
     public function storeOrUpdateCliente(Request $request) {
         if(count($request->form['sThree']) <= 3) {

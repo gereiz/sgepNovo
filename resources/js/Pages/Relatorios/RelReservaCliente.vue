@@ -29,7 +29,7 @@
     function setCliente() {
         axios.post('/setCliente', {cliente: cliId.value})
             .then((res) => {
-                console.log(res.data)
+                // console.log(res.data)
             })
             .catch((err) => {
                 console.log(err)
@@ -38,7 +38,7 @@
     function setBsCliente() {
         axios.post('/setBsCliente', {numBs: bsId.value})
             .then((res) =>{
-                console.log(res.data)
+                // console.log(res.data)
             })
             .catch((err) => {
                 console.log(err)

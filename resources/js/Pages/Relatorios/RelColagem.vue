@@ -49,7 +49,7 @@
         axios.post('/setBairros', {regId: regId.value})
             .then((res) =>{
                 bairros.value = res.data
-                console.log(res.data)
+                // console.log(res.data)
             })
             .catch((err) => {
                 console.log(err)
@@ -67,7 +67,7 @@
             .then((res) =>{
                 axios.get('/getRelColagem')
                     .then(() =>{
-                        console.log(res.data)
+                        // console.log(res.data)
                         btn.innerHTML = 'Carregando...'
 
                         setTimeout(() => {

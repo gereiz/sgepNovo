@@ -33,10 +33,10 @@ watch(() => props.openAdd, (val)  =>{
 })
 
 function sendFormServ(val) {
-    console.log(val)
+    // console.log(val)
     axios.post('/CadastraServico', val)
     .then((response) => {
-        console.log(response)
+        // console.log(response)
         toastr.success('Serviço cadastrado com sucesso!')
         openAdd('f')
     })

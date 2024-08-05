@@ -10,6 +10,7 @@ use App\Services\FinanceiroService;
 
 class FuncoesController extends Controller
 {
+    private $financeiroService;
 
     public function __construct(FinanceiroService $financeiroService)
     {

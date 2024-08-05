@@ -154,7 +154,7 @@ function cancelaResMulti() {
     axios.post('/DelResCliente',  {paineisId: checkedPaineisId.value,
                                     bs: idBisemana.value})
         .then((res) => {
-            console.log(res.data)
+            // console.log(res.data)
             getReservasCli(idBisemana.value)
 
             if(res.data.cod === 0) {

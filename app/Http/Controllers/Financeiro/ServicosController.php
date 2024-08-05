@@ -41,4 +41,9 @@ class ServicosController extends Controller
         return response()->json($servico);
     }
 
+    public function listaServicos()
+    {
+        $servicos = $this->financeiroService->listaServicos();
+        return response()->json($servicos);
+    }
 }

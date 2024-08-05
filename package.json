@@ -27,8 +27,9 @@
         "@heroicons/vue": "^2.0.18",
         "@webzlodimir/vue-avatar": "^0.0.8",
         "daisyui": "^2.51.6",
-        "html2pdf.js": "^0.9.0",
+        "html2pdf.js": "^0.10.2",
         "maska": "^2.1.10",
+        "puppeteer": "^22.14.0",
         "toastr": "^2.1.4",
         "vue-multiselect": "^3.0.0-beta.2",
         "vue-toastification": "^2.0.0-rc.5"

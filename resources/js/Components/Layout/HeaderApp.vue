@@ -15,7 +15,7 @@ const page = usePage()
 const user = computed(() => page.props.auth.user)
 
 function openPi(val)  {
-    console.log(val)
+    // console.log(val)
         if(val == 't') {
             open.value = true
         } else 

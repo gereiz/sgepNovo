@@ -49,7 +49,7 @@ function getBisemana() {
 
       bisemana.value = res.data
 
-      console.log(bisemana.value)
+      // console.log(bisemana.value)
 
     })
 }
@@ -65,25 +65,28 @@ function reservaPaineis() {
     return
   } 
 
-  axios.post('/ResPaineisCli', {
-    clienteId: props.cliente.id,
-    outdoorId: checkedPaineisId.value,
-    bsId: props.bisemana,
-    campanha: campanha.value,
-    observacoes: observacoes.value
-  }).then((response) => {
-    toastr.success('Reserva realizada com sucesso!')
-    
-    closeAdd()
+  openAdd('t')
 
-    setTimeout(() => {
-      window.location.reload()
-    }, 2000)
-
-  }).catch((error) => {
-    toastr.error('Erro ao realizar a reserva!')
+  // axios.post('/ResPaineisCli', {
+  //   clienteId: props.cliente.id,
+  //   outdoorId: checkedPaineisId.value,
+  //   bsId: props.bisemana,
+  //   campanha: campanha.value,
+  //   observacoes: observacoes.value
+  // }).then((response) => {
+  //   toastr.success('Reserva realizada com sucesso!')
     
-  })
+  //   closeAdd()
+
+  //   setTimeout(() => {
+  //     window.location.reload()
+  //   }, 2000)
+
+  // }).catch((error) => {
+  //   toastr.error('Erro ao realizar a reserva!')
+    
+  // })
+  
 }
 
 function openAdd(val) {
@@ -140,8 +143,8 @@ function closePi() {
                         <label class="mt-3 inline-flex w-5/12 justify-center rounded-md bg-gray-200 px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-5/12" @click="closeAdd()">
                             Cancelar
                         </label>
-                        <label class="inline-flex w-5/12 justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-5/12" @click="openAdd('t')">
-                            Reservar
+                        <label class="inline-flex w-5/12 justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-5/12" @click="reservaPaineis()">
+                            Criar PI
                         </label>
                     </div>
                   </div>

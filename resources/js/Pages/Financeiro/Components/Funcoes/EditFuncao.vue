@@ -36,7 +36,7 @@ watch(() => props.openEdit, (val)  =>{
 function sendFormFunc(val) {
     axios.post('/CadastraFuncao', val)
     .then((response) => {
-        console.log(response)
+        // console.log(response)
         toastr.success('Serviço cadastrado com sucesso!')
         openEdit('f')
     })

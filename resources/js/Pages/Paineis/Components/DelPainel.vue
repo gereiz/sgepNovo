@@ -21,7 +21,7 @@ const open = ref(false)
 function  deletePainel() {
   axios.post('/DelPainel', {idPainel: props.painel})
       .then((res) => {
-        console.log(res)
+        // console.log(res)
           toastr.success('Painel deletado com sucesso')
           open.value = false
           emit('closeDel', open.value)

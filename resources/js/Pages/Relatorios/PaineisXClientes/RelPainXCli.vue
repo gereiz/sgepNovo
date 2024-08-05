@@ -36,11 +36,11 @@
                                         bsId: bsId.value,
                                         orient: orient.value})
             .then((res) => {
-                console.log('pegou os dados')
+                // console.log('pegou os dados')
 
                 axios.get('/getPaineisCliente')
                     .then((res) => {
-                        console.log('Gerou')
+                        // console.log('Gerou')
 
                         setTimeout(() => {
                             btn.innerHTML = 'Gerar Relatório'

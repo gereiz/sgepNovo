@@ -55,7 +55,7 @@ function sendFormTwo() {
         emit('formTwo', form)
     }
 
-    console.log(form.idPainel)
+    // console.log(form.idPainel)
 }
 
 function toSubmitStep() {

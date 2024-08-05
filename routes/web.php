@@ -53,6 +53,7 @@ Route::middleware('auth')->group(function () {
 
     // Usuários
     route::get('/ListaUsuarios', [UsuarioController::class, 'index'])->name('lista.usuarios');
+    route::get('/getUsuarios', [UsuarioController::class, 'getUsuarios']);
     route::post('/alteraSenha', [UserController::class, 'alteraSenha']);
     route::post('/CadUsuario', [UsuarioController::class, 'cadastraUsuario']);
     route::post('/DelUsuario', [UsuarioController::class, 'deletaUsuario']);
@@ -125,6 +126,7 @@ Route::middleware('auth')->group(function () {
     route::post('/CadastraServico', [ServicosController::class, 'cadastraServico'])->name('cad.servico');
     route::post('/DelServico', [ServicosController::class, 'deletaServico'])->name('del.servico');
     route::post('/GetServico', [ServicosController::class, 'getServico'])->name('get.servico');
+    route::get('/ListaServicos', [ServicosController::class, 'listaServicos'])->name('lista.servicos');
 
 
     // Funções

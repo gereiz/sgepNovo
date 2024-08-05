@@ -89,6 +89,17 @@
       'Flare' => 'Spatie\\LaravelIgnition\\Facades\\Flare',
     ),
   ),
+  'spatie/laravel-pdf' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Spatie\\LaravelPdf\\PdfServiceProvider',
+    ),
+    'aliases' => 
+    array (
+      'LaravelPdf' => 'Pdf',
+    ),
+  ),
   'tightenco/ziggy' => 
   array (
     'providers' => 

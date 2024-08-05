@@ -288,7 +288,7 @@
 
                     axios.post('/relDisponiveis', {tpEnvio: tp})
                         .then((res) => {
-                            console.log('Relatório gerado')
+                            // console.log('Relatório gerado')
 
                             if(tp == 'wpp') {
 
@@ -306,7 +306,7 @@
 
                         })
                         .catch((err) => {
-                            console.log('Relatório não gerado')
+                            // console.log('Relatório não gerado')
                         })
 
                 }, 2000);

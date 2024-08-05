@@ -89,7 +89,7 @@ function addCliente() {
 
   axios.post('/CadCliente', {form: formCliente.value}) 
     .then((res) => {
-      console.log(res)
+      // console.log(res)
       location.reload()
     })
     .catch((err) => {
