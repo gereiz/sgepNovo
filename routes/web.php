@@ -106,7 +106,7 @@ Route::middleware('auth')->group(function () {
     // Reserva de painéis
     route::get('/ResPaineis', [ReservaController::class, 'index'])->name('reserva.paineis');
     route::post('/GetPaineis', [ReservaController::class, 'getPaineis'])->name('get.paineis');
-    route::post('/getBisemanass', [ReservaController::class, 'getBisemanass'])->name('get.bisemanas');
+    route::post('/getBisemanas', [ReservaController::class, 'getBisemanas'])->name('get.bisemanas');
     route::post('/GetRegioes', [ReservaController::class, 'getRegioes'])->name('get.regioes');
     route::post('/GetBairros', [ReservaController::class, 'getBairros'])->name('get.bairros');
     route::post('/ReservaPainel', [ReservaController::class, 'reservaPainel'])->name('reserva.painel');
