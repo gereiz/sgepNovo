@@ -63,7 +63,7 @@ class ReservaController extends Controller
 
     }
 
-    public function getBisemanas(Request $request) {
+    public function getBisemanass(Request $request) {
 
 
         return Bisemana::where('ano_id', $request->bisemana)->get();
