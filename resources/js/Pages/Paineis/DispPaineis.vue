@@ -70,7 +70,7 @@
 
     function getBisemanas() {
 
-        axios.post('/getBisemanass', {bisemana: idAno.value})
+        axios.post('/getBisemanas', {bisemana: idAno.value})
         .then(res =>{
 
             listaBisemana.value = Object.values(res.data)
