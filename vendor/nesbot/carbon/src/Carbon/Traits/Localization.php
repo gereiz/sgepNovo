@@ -23,6 +23,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface as ContractsTranslatorInterface;
 
+// @codeCoverageIgnoreStart
 if (interface_exists('Symfony\\Contracts\\Translation\\TranslatorInterface') &&
     !interface_exists('Symfony\\Component\\Translation\\TranslatorInterface')
 ) {
@@ -31,6 +32,7 @@ if (interface_exists('Symfony\\Contracts\\Translation\\TranslatorInterface') &&
         'Symfony\\Component\\Translation\\TranslatorInterface'
     );
 }
+// @codeCoverageIgnoreEnd
 
 /**
  * Trait Localization.
@@ -495,7 +497,7 @@ trait Localization
     /**
      * Set the fallback locale.
      *
-     * @see https://symfony.com/doc/current/Components/old/translation.html#fallback-locales
+     * @see https://symfony.com/doc/current/components/translation.html#fallback-locales
      *
      * @param string $locale
      */
@@ -520,7 +522,7 @@ trait Localization
     /**
      * Get the fallback locale.
      *
-     * @see https://symfony.com/doc/current/Components/old/translation.html#fallback-locales
+     * @see https://symfony.com/doc/current/components/translation.html#fallback-locales
      *
      * @return string|null
      */

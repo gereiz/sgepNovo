@@ -9,7 +9,7 @@ for ULIDs and for UUIDs version 1 and versions 3 to 8.
 Resources
 ---------
 
- * [Documentation](https://symfony.com/doc/current/Components/old/uid.html)
+ * [Documentation](https://symfony.com/doc/current/components/uid.html)
  * [Contributing](https://symfony.com/doc/current/contributing/index.html)
  * [Report issues](https://github.com/symfony/symfony/issues) and
    [send Pull Requests](https://github.com/symfony/symfony/pulls)

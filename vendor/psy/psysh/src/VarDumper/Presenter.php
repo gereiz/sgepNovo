@@ -77,7 +77,7 @@ class Presenter
     /**
      * Register casters.
      *
-     * @see http://symfony.com/doc/current/Components/old/var_dumper/advanced.html#casters
+     * @see http://symfony.com/doc/current/components/var_dumper/advanced.html#casters
      *
      * @param callable[] $casters A map of casters
      */
@@ -105,7 +105,7 @@ class Presenter
      * @param int   $depth   (default: null)
      * @param int   $options One of Presenter constants
      */
-    public function present($value, int $depth = null, int $options = 0): string
+    public function present($value, ?int $depth = null, int $options = 0): string
     {
         $data = $this->cloner->cloneVar($value, !($options & self::VERBOSE) ? Caster::EXCLUDE_VERBOSE : 0);
 

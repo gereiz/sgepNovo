@@ -25,4 +25,13 @@
     @include('relatorios.pi.assinaturas')
 
 </body>
+
+<script>
+    window.onunload = refreshParent;
+    function refreshParent() {
+        window.opener.location.reload();
+    }
+</script>
+
+
 </html>

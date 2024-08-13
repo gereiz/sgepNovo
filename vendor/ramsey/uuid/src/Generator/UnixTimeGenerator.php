@@ -39,7 +39,7 @@ use const STR_PAD_LEFT;
  *
  * symfony/uid is copyright (c) Fabien Potencier.
  *
- * @link https://symfony.com/Components/old/Uid Symfony Uid component
+ * @link https://symfony.com/components/Uid Symfony Uid component
  * @link https://github.com/symfony/uid/blob/4f9f537e57261519808a7ce1d941490736522bbc/UuidV7.php Symfony UuidV7 class
  * @link https://github.com/symfony/uid/blob/6.2/LICENSE MIT License
  */
@@ -142,7 +142,7 @@ class UnixTimeGenerator implements TimeGeneratorInterface
             self::$seedIndex = 21;
         }
 
-        self::$rand[5] = 0xffff & $carry = self::$rand[5] + (self::$seedParts[self::$seedIndex--] & 0xffffff);
+        self::$rand[5] = 0xffff & $carry = self::$rand[5] + 1 + (self::$seedParts[self::$seedIndex--] & 0xffffff);
         self::$rand[4] = 0xffff & $carry = self::$rand[4] + ($carry >> 16);
         self::$rand[3] = 0xffff & $carry = self::$rand[3] + ($carry >> 16);
         self::$rand[2] = 0xffff & $carry = self::$rand[2] + ($carry >> 16);
