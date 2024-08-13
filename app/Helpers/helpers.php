@@ -24,7 +24,7 @@ function formatCpfCnpj($cpfCnpj) {
 
     return $cpfCnpj;
 }
-
+ 
 // formata o cep no formato xxxxx-xxx
 function formatCep($cep) {
     $cep = str_replace('-', '', $cep);
