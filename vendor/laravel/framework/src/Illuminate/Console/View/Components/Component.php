@@ -65,7 +65,7 @@ abstract class Component
 
         ob_start();
 
-        include __DIR__."/../../resources/views/Components/$view.php";
+        include __DIR__."/../../resources/views/components/$view.php";
 
         return tap(ob_get_contents(), function () {
             ob_end_clean();
@@ -107,8 +107,6 @@ abstract class Component
         $property = with(new ReflectionClass(OutputStyle::class))
             ->getParentClass()
             ->getProperty('questionHelper');
-
-        $property->setAccessible(true);
 
         $currentHelper = $property->isInitialized($this->output)
             ? $property->getValue($this->output)

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import DangerButton from '@/Components/old/DangerButton.vue';
-import InputError from '@/Components/old/InputError.vue';
-import InputLabel from '@/Components/old/InputLabel.vue';
-import Modal from '@/Components/old/Modal.vue';
-import SecondaryButton from '@/Components/old/SecondaryButton.vue';
-import TextInput from '@/Components/old/TextInput.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import InputError from '@/Components/InputError.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import Modal from '@/Components/Modal.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import TextInput from '@/Components/TextInput.vue';
 import { useForm } from '@inertiajs/vue3';
 import { nextTick, ref } from 'vue';
 
@@ -26,7 +26,9 @@ const deleteUser = () => {
         preserveScroll: true,
         onSuccess: () => closeModal(),
         onError: () => passwordInput.value?.focus(),
-        onFinish: () => form.reset(),
+        onFinish: () => {
+            form.reset();
+        },
     });
 };
 
@@ -81,7 +83,7 @@ const closeModal = () => {
                     <SecondaryButton @click="closeModal"> Cancel </SecondaryButton>
 
                     <DangerButton
-                        class="ml-3"
+                        class="ms-3"
                         :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
                         @click="deleteUser"
