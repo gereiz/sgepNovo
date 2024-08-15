@@ -67,25 +67,6 @@ function reservaPaineis() {
 
   openAdd('t')
 
-  // axios.post('/ResPaineisCli', {
-  //   clienteId: props.cliente.id,
-  //   outdoorId: checkedPaineisId.value,
-  //   bsId: props.bisemana,
-  //   campanha: campanha.value,
-  //   observacoes: observacoes.value
-  // }).then((response) => {
-  //   toastr.success('Reserva realizada com sucesso!')
-    
-  //   closeAdd()
-
-  //   setTimeout(() => {
-  //     window.location.reload()
-  //   }, 2000)
-
-  // }).catch((error) => {
-  //   toastr.error('Erro ao realizar a reserva!')
-    
-  // })
   
 }
 
@@ -144,7 +125,7 @@ function closePi() {
                             Cancelar
                         </label>
                         <label class="inline-flex w-5/12 justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-5/12" @click="reservaPaineis()">
-                            Criar PI
+                            Criar Reserva ou PI
                         </label>
                     </div>
                   </div>
@@ -159,6 +140,7 @@ function closePi() {
     <ModalPiRes :openPi="openPi"
                 :paineis="checkedPaineis"
                 :campanha="campanha"
+                :observacoes="observacoes"
                 @closePi="closePi" 
                 @closeAdd="closeAdd" 
                 :cliente="cliente"

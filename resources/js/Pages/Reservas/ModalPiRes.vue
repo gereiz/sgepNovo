@@ -15,7 +15,7 @@ const toastr = useToastr();
 
 const emit = defineEmits(['closePi', 'closeAdd'])
 
-const props = defineProps(['paineis', 'bisemana', 'openPi', 'cliente', 'campanha', 'painel'])
+const props = defineProps(['paineis', 'bisemana', 'openPi', 'cliente', 'campanha', 'observacoes', 'painel'])
 
 const step = shallowRef(StepOnePi)
 const open = ref(false)
@@ -57,6 +57,7 @@ function saveFormTwo(ev) {
     getFormPiTwo.value.paineis = ev.paineis
     getFormPiTwo.value.bisemanaId = props.bisemana.id
     getFormPiTwo.value.campanha = ev.campanha
+    getFormPiTwo.value.observacoes = props.observacoes
     getFormPiTwo.value.servicos = ev.servicos
     getFormPiTwo.value.formaPgto = ev.formaPgto
     getFormPiTwo.value.pgto = ev.pgto
@@ -67,6 +68,9 @@ function saveFormTwo(ev) {
 
 
     localStorage.setItem('piFormTwo', JSON.stringify(getFormPiTwo.value))
+
+    formPi.value.One = JSON.parse(localStorage.getItem('piFormOne'))
+    formPi.value.Two = JSON.parse(localStorage.getItem('piFormTwo'))
 
 }
 
@@ -79,8 +83,8 @@ function saveFormThree(ev) {
 
     // console.log(JSON.parse(localStorage.getItem('piFormTwo')))
 
-    formPi.value.One = JSON.parse(localStorage.getItem('piFormOne'))
-    formPi.value.Two = JSON.parse(localStorage.getItem('piFormTwo'))
+    // formPi.value.One = JSON.parse(localStorage.getItem('piFormOne'))
+    // formPi.value.Two = JSON.parse(localStorage.getItem('piFormTwo'))
     formPi.value.Three = JSON.parse(localStorage.getItem('piFormThree'))
 
 }
@@ -92,11 +96,9 @@ function submitFormPi() {
     formPi: formPi.value
   })
   .then((res) => {
-    // console.log(res)
-
-    setTimeout(() => {
-      window.open('/storePi', '_blank')
-    }, 2000);
+      setTimeout(() => {
+        window.open('/storePi', '_blank')
+      }, 2000);
   })
   .catch((err) =>{
     console.log(err)

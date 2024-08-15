@@ -86,6 +86,7 @@ const nextStep = (val) => {
 
 }
 
+
 function changeEdit() {
     if(edit.value === false) {
         edit.value = true
