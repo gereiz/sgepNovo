@@ -52,6 +52,7 @@ class PiController extends Controller
     public function storePi() {
         
         // dd(session('dadosPi'));
+        // dd(session()->all());
 
         $idPaineis = session('dadosPi')['Two']['paineis'][0];
         $bsId = session('dadosPi')['Two']['bisemanaId'];
@@ -61,7 +62,11 @@ class PiController extends Controller
         $data_pgto = $dt_pgto[2].'-'. $dt_pgto[1].'-'.$dt_pgto[0];
         $data_pgto_formated = session('dadosPi')['Two']['dtPgto'];
         $campanha = session('dadosPi')['Two']['campanha'];
-        $detalhes = session('dadosPi')['Two']['servicos'][0]['detalhes'];
+        $observacoes = session('dadosPi')['Two']['observacoes'];
+        
+        if(session('dadosPi')['Two']['servicos'] != []) {
+            $detalhes = session('dadosPi')['Two']['servicos'][0]['detalhes'];
+        } 
 
         $bisemana = Bisemana::where('id', session('dadosPi')['Two']['bisemanaId'])->first();
 
@@ -87,7 +92,11 @@ class PiController extends Controller
         $forma_pagamento = session('dadosPi')['Two']['formaPgto'];
         $pagamento = session('dadosPi')['Two']['pgto'];
 
-        $faturamento = session('dadosPi')['Three'];
+        if(isset(session('dadosPi')['Three'])) {
+            $faturamento = session('dadosPi')['Three'];
+        }
+
+
 
         $vendedor = session('dadosPi')['Two']['vendedor'];
 
@@ -109,7 +118,7 @@ class PiController extends Controller
                     'bisemana_id' => $bsId,
                     'dt_reserva' => Carbon::now()->toDateString(),
                     'campanha' => $campanha,
-                    'observacao' => $detalhes,
+                    'observacao' => $observacoes,
                     'pi_ok' => 1, //$request->checkPi,
                     'user_id' => auth()->user()->id
                 ]);
@@ -169,12 +178,19 @@ class PiController extends Controller
 
        
 
-        return Pdf::view('relatorios.pi.pi', compact('pi', 'cliente', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
-                                                     'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor'
-                                                     
-                                                     ))
-        ->orientation(Orientation::Landscape);
-    }
+        if(isset(session('dadosPi')['Three'])) {
+            return Pdf::view('relatorios.pi.pi', compact('pi', 'cliente', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
+            'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor'
+            
+            ))
+            ->orientation(Orientation::Landscape);
+        }
+
+
+            return response()->json(['cod' => 1, 'msg' => 'Paineis reservados!']);
+        }
 
 
 }
+
+
