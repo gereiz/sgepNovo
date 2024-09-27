@@ -25,8 +25,8 @@ const cadUsu = ref ({nome_usuario: nome_usuario,
                     senha_usuario: senha_usuario,
                     funcao_usuario: funcao_usuario,
                     id_usuario: id_usuario
-                    }); 
- 
+                    });
+
 
 function emitStep(val) {
     let btnSendFunc = document.getElementById('btnSendFunc')
@@ -47,21 +47,21 @@ function sendFormUsu() {
 
 
 
-</script> 
+</script>
 
 
 <template>
     <div class="w-full flex flex-col items-center justify-center space-y-8">
-       
+
         <div class="w-full flex flex-wrap justify-center space-x-0 sm:space-x-6 space-y-8 sm:space-y-0">
             <div class="w-10/12 sm:w-5/12">
                 <label for="nome_usuario" class="block text-sm font-medium leading-6 text-gray-900">Nome</label>
                 <div class="mt-2">
-                    <input type="text" 
-                        name="nome_usuario" 
-                        id="nome_usuario" 
+                    <input type="text"
+                        name="nome_usuario"
+                        id="nome_usuario"
                         v-model="nome_usuario"
-                        class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center" 
+                        class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center"
                     />
                 </div>
             </div>
@@ -69,11 +69,11 @@ function sendFormUsu() {
             <div class="w-10/12 sm:w-5/12">
                 <label for="email_usuario" class="block text-sm font-medium leading-6 text-gray-900">Email</label>
                 <div class="mt-2">
-                    <input type="text" 
-                        name="email_usuario" 
-                        id="email_usuario" 
+                    <input type="text"
+                        name="email_usuario"
+                        id="email_usuario"
                         v-model="email_usuario"
-                        class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center" 
+                        class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center"
                     />
                 </div>
             </div>
@@ -84,11 +84,11 @@ function sendFormUsu() {
             <div class="w-10/12 sm:w-5/12">
                 <label for="senha_usuario" class="block text-sm font-medium leading-6 text-gray-900">Senha</label>
                 <div class="mt-2">
-                    <input type="password" 
-                        name="senha_usuario" 
-                        id="senha_usuario" 
+                    <input type="password"
+                        name="senha_usuario"
+                        id="senha_usuario"
                         v-model="senha_usuario"
-                        class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center" 
+                        class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center"
                     />
                 </div>
             </div>

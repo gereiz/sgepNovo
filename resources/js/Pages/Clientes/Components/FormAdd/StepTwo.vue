@@ -9,11 +9,11 @@ const emit = defineEmits(['step3', 'formTwo'])
 const toastr = useToastr()
 
 const bairros = ref([]);
-const cidades = ref([]); 
+const cidades = ref([]);
 const ufs = ref([]);
 
 const cliente = ref (props.clienteEdit)
-
+ 
 
 const endCli = ref({ender: '',
                     numero: '',
@@ -25,7 +25,7 @@ const endCli = ref({ender: '',
 
 onMounted(() => {
     axios.get('/dtGetUf')
-    .then((res) => { 
+    .then((res) => {
         ufs.value = res.data
 
     })
@@ -53,7 +53,7 @@ function getCidades() {
         .catch((err) => {
             console.log(err)
         })
-    
+
 }
 
 function getBairros() {
@@ -68,7 +68,7 @@ function getBairros() {
 
 function emitStep(val) {
     let btnSendTwo = document.getElementById('btnSendTwo')
-    
+
     btnSendTwo.innerHTML = 'Carregando...'
     setTimeout(() => {
         emit('step3', val)
@@ -82,7 +82,7 @@ function toStepTheree() {
 
         toastr.error('O campo Endereço é obrigatório!')
         endereco.focus()
-    
+
     } else if(endCli.value.numero == '') {
         let numero = document.getElementById('numero')
 
@@ -116,7 +116,7 @@ function toStepTheree() {
     } else {
         emitStep(3)
     }
-    
+
 
 
 }
@@ -134,7 +134,7 @@ function sendFormTwo() {
 
 <template>
     <div class="w-full flex flex-col items-center justify-center space-y-8">
-       
+
         <div class="w-full flex flex-wrap justify-center space-x-0 sm:space-x-6 space-y-8 sm:space-y-0">
             <div class="w-full sm:w-9/12">
                 <label for="endereco" class="block text-sm font-medium leading-6 text-gray-900">Endereço</label>
@@ -166,7 +166,7 @@ function sendFormTwo() {
                     </select>
                 </div>
             </div>
-         
+
             <div class="w-full sm:w-6/12">
                 <label for="cidade" class="block text-sm font-medium leading-6 text-gray-900">Cidade</label>
                 <div class="mt-2">
@@ -176,7 +176,7 @@ function sendFormTwo() {
                         <option v-for="(cid, index) in cidades" :key="index" :value="cid.id">{{ cid.nome }}</option>
                     </select>
                 </div>
-            </div> 
+            </div>
         </div>
 
 
@@ -197,7 +197,7 @@ function sendFormTwo() {
                 <label for="cep" class="block text-sm font-medium leading-6 text-gray-900">CEP</label>
                 <div class="mt-2">
                     <input type="text" name="cep" id="cep" v-model="endCli.cep"
-                        class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center" 
+                        class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center"
                         v-maska
                         data-maska="##.###-###"
                     />

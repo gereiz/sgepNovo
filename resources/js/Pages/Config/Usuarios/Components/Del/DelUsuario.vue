@@ -31,7 +31,7 @@ function openDel(val) {
     }
 }
 
-function delServico(val) {
+function delUsuario(val) {
     axios.post('/DelUsuario', {id_usuario: val})
     .then((res) => {
         toastr.success('Usuário Inativado com sucesso!')
@@ -76,7 +76,7 @@ function delServico(val) {
                       </p>
                     </div>
                     <div class="mt-5 sm:mt-6 w-full space-y-4 border-t border-gray-200 pt-4 sm:space-x-8">
-                        <label id="btnSendServ" class="inline-flex w-10/12 justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-5/12" @click="delServico(props.usuario.id)">Deletar</label>
+                        <label id="btnSendServ" class="inline-flex w-10/12 justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-5/12" @click="delUsuario(props.usuario.id)">Inativar</label>
                         <label class="mt-3 inline-flex w-10/12 justify-center rounded-md bg-gray-200 px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-5/12" @click="openDel('f')">Cancelar</label>
                     </div>
                   </div>

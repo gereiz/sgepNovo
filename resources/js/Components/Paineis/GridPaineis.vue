@@ -60,7 +60,7 @@
         cardPainel.value = itemRefs.value[val];
 
             // console.log(cardPainel.value)
-            
+
         let classes = cardPainel.classList
 
         if(Object.values(checkedPaineis.value).includes(painelId)) {
@@ -89,17 +89,17 @@
         .catch((err) => {
             console.log(err)
         })
-    }   
+    }
 
     function getImage(i) {
 
         if(props.ambiente == 'local') {
             // Desenvolvimento
-            var image = 'http://localhost:8000/storage/'+ i 
+            var image = 'http://localhost:8000/storage/'+ i
 
         } else {
             // Produção
-            var image = '/storage/'+ i 
+            var image = '/storage/'+ i
         }
 
         return image
@@ -135,16 +135,16 @@
 
 
 <template>
-    
+
     <div class="w-full flex flex-wrap sm:flex-none mt-2 space-y-4 sm:space-y-0">
         <!-- Barra de pesquisa -->
         <div class="sm:w-4/12 w-full justify-center">
             <div class="w-10/12 ms-10 relative mt-2 rounded-md shadow-sm">
-                <input type="text" 
+                <input type="text"
                        v-model="pesquisaPainel"
-                       name="pesquisa_painel" 
+                       name="pesquisa_painel"
                        id="pesquisa_painel" class="block w-full rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                       placeholder="Pesquisar Painel" 
+                       placeholder="Pesquisar Painel"
                 />
             </div>
         </div>
@@ -154,7 +154,7 @@
             <div class="w-10/12 relative ms-10 sm:ms-0 mt-1 rounded-md shadow-sm">
                 <div class="w-full flex">
                     <div class="w-9/12 me-4">
-                        <multiselect disabled
+                        <!-- <multiselect disabled
                             v-model="checkedPaineis"
                             :options="idents"
                             :multiple="true"
@@ -162,7 +162,7 @@
                             :show-labels="true"
                             placeholder="Painéis Selecionados"
                         >
-                        </multiselect>  
+                        </multiselect>   -->
                     </div>
                     <div class="w-2/12">
                         <button @click="clearChecked()" class="botao max-h-10 bg-red-700 hover:bg-red-500 ">Limpar</button>
@@ -174,15 +174,15 @@
         <!-- Botão de Inclusão de campanha -->
         <div v-if="checkedPaineis.length > 0 && campanha == ''" class="sm:w-1/12 w-full sm:-ms-20 ">
             <button title="Preencher Campanha e Observações" @click="openCamp('t')">
-                <QuestionMarkCircleIcon 
-                class="-mt-1 w-14 h-14 sm:w-14 sm:h-14 text-red-600 hover:text-red-700 transition-all duration-1000 animate-bounce" 
+                <QuestionMarkCircleIcon
+                class="-mt-1 w-14 h-14 sm:w-14 sm:h-14 text-red-600 hover:text-red-700 transition-all duration-1000 animate-bounce"
             />
             </button>
         </div>
         <div v-else-if="checkedPaineis.length > 0 && campanha != ''" class="sm:w-1/12 w-full sm:-ms-20 ">
             <button title="Campanha e Observações preenchidos" @click="openCamp('t')">
-                <QuestionMarkCircleIcon 
-                class="-mt-1 w-14 h-14 sm:w-14 sm:h-14 text-green-600 hover:text-green-700 transition-all duration-1000 animate-bounce" 
+                <QuestionMarkCircleIcon
+                class="-mt-1 w-14 h-14 sm:w-14 sm:h-14 text-green-600 hover:text-green-700 transition-all duration-1000 animate-bounce"
             />
             </button>
         </div>
@@ -204,25 +204,25 @@
                                             alt="Painel Convêncional" title="Painel Convêncional">
                                 <span class="text-xs sm:text-lg font-bold text-red-500">Identificação.: {{pain.identificacao}}</span>
                             </div>
-                            
+
                             <div class="w-full flex flex-wrap sm:flex-nowrap justify-center my-2 sm:-ml-2 space-x-2">
                                 <div class="w-full flex justify-center sm:w-6/12">
                                     <img class="w-[240px] h-[140px] hover:scale-150 transition-all duration-1000 rounded-md" :src="getImage(pain.image_url)" alt="Foto-painel">
                                 </div>
 
                                 <div class="w-full sm:w-6/12">
-                                    <div class="sm:flex flex-wrap ">   
+                                    <div class="sm:flex flex-wrap ">
                                         <div class="w-full flex flex-col items-center space-y-3 mt-4 sm:mt-0">
                                             <p class="text-xs sm:text-md font-extrabold">Bairro: {{pain.bnome}}</p>
 
                                             <p class="text-xs sm:card-md">{{pain.logradouro}} - {{ pain.numero }}</p>
 
                                             <p class="text-xs sm:text-md hover:text-red-700 sm:ml-4">
-                                                Ver Localização     
+                                                Ver Localização
                                             </p>
                                             <a :href="getLink(pain.latitude, pain.longitude)" target="_blank">
                                                 <img class="w-6 h-6 ms-4 -mt-1 sm:hover:w-10 sm:hover:h-10 transition-all duration-500" src="../../../../public/storage/img/regiao.png" alt="Mapa">
-                                            </a> 
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -236,7 +236,7 @@
         </div>
     </div>
 
-    <ConfirmaReserva :open="openCampanha" 
+    <ConfirmaReserva :open="openCampanha"
                      @closeObs="openCamp"
                      @campanha="getCampanha($event)"
                      @observacoes="getObservacoes($event)" />
