@@ -5,6 +5,12 @@ import { router } from '@inertiajs/vue3'
 import { useToastr } from '@/Components/toastr';
 import { ref, reactive, onMounted, computed } from 'vue';
 
+import CardRegistro from '@/Components/Cards/CardRegistro.vue';
+import CardContainer from '@/Components/Cards/CardContainer.vue';
+import HeaderCadastro from '@/Components/Layout/HeaderCadastro.vue';
+import CardForm from '@/Components/Cards/CardForm.vue';
+import FormAddCidade from './Components/FormAddCidade.vue';
+
 const toastr = useToastr();
 const props = defineProps(['cidades', 'uf', 'errors']);
 
@@ -13,6 +19,8 @@ const pesqCidade = ref('');
 const formCidadeAdd = reactive({nome: '', uf_id: 0}); 
 const formCidadeEdit = reactive({nome_edit: '', id_cidade: ''});
 
+const cidades = ref(props.cidades);
+
 function setRegiaoData(cid,ufid, d) {
     nomeCidade.value = d
     formCidadeEdit.nome_edit = d
@@ -20,19 +28,20 @@ function setRegiaoData(cid,ufid, d) {
     formCidadeEdit.id_uf = ufid
 }
 
-function cadastraCidade() {
+function cadastraCidade(ev) {
 
-    if(formCidadeAdd.nome.length < 3) {
-        toastr.error('O nome da Cidade deve ter no mínimo 3 caracteres!')
-    } else if(formCidadeAdd.uf_id == 0) {
-        toastr.error('A Cidade deve pertener a uma UF!')
-    } else {
-        router.post('/AddCidade', this.formCidadeAdd)
-        toastr.success('Cidade '+ formCidadeAdd.nome +' cadastrada!')
+    console.log(ev)
 
-        formCidadeAdd.nome = ''
-        formCidadeAdd.uf_id = 0
-    }
+    axios.post('/AddCidade', ev)
+        .then((res) => {
+            toastr.success('Cidade '+ ev.nome +' adicionada com sucesso!')
+        })
+        .catch((err) => {
+            toastr.error('Erro ao adicionar Cidade!')
+        })
+    router.reload()
+   
+
   
 };
 
@@ -65,6 +74,12 @@ const cidadesFiltradas = computed(() => {
     return cidadesFiltradas;
 })
 
+const getPesquisa = (pesq) => {
+    pesqCidade.value = pesq
+}
+
+
+
 </script>
 
 <template>
@@ -74,73 +89,22 @@ const cidadesFiltradas = computed(() => {
         <div class="w-full h-screen pt-24 pb-32 mx-2 md:mx-4">
             
             <!-- Cabeçalho e barra de Pesquisa -->
-            <div class="w-full h-14 flex mb-2">
-                <div class="w-4/12 h-14 flex items-center">
-                    <h1 class="text-xl md:text-4xl font-bold">Cidades </h1>
-                    <h1 class="text-lg md:text-2xl text-red-400 font-bold ml-2 md:ml-4">{{ cidades.length }}</h1>
-                </div>
-                
-                <div class="w-10/12 flex justify-end">
-                    <label for="modal-cidade-add" class="w-28 botao-modal text-sm ">+ Nova Cidade</label>
-                </div>
-                
-            </div>
-            <div class="w-full md:w-4/12">
-                <input v-model="pesqCidade" placeholder="Pesquisar Cidade" class="w-full h-10 input input-bordered rounded-none mb-4" type="text" name="pesquisar" id="pesquisar">
-            </div>
+            <HeaderCadastro titulo="Cidades" :dados="cidades" @pesquisa="getPesquisa" />
 
-            <!-- Card dos Regiaos -->
-            <div class="card w-full h-full bg-base-100 shadow-xl overflow-auto rounded-md">
-                <div class="card-body">
-                    <div class="w-full flex flex-col flex-wrap md:flex-row justify-center">
-                        <div v-for="(c, index) in cidadesFiltradas" :key="index" class="card w-full md:w-5/12 bg-base-100 border-2 rounded-md shadow-xl mt-4 md:mr-4">
-                            <div class="card-body">
-                                <div class="w-full flex justify-between flex-wrap mb-4">
-                                    <div class="w-full flex justify-between">
-                                        <h2 class="text-xs md:card-title">Cidade.: {{c.nome}}</h2>
-                                        <h2 class="text-xs md:text-base font-bold text-zinc-400">ID: {{c.id}}</h2>
-                                    </div>
-                                </div>
+            <!-- Card das Cidades -->
+            <CardContainer>
+                <CardRegistro 
+                    :selection="cidadesFiltradas"
+                    imagem='cidade.png'
+                />
+            </CardContainer>
 
-                                <div class="w-full flex justify-center md:justify-start mb-4 md:mb-0">
-                                        <img class="w-20 md:w-32" src="../../../../storage/app/public/img/cidade.png" alt="Regiao">
-                                </div>
 
-                                <div class="w-full card-actions justify-center md:justify-end ">
-                                    <label for="modal-cidade-edit" @click="setRegiaoData(c.id, c.uf_id, c.nome)" class="w-full md:w-28 botao-modal">Ações</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Inclusão de novo Regiao -->
-            <input type="checkbox" id="modal-cidade-add" class="modal-toggle" />
-            <label for="modal-cidade-add" class="modal modal-bottom sm:modal-middle cursor-pointer">
-                <label class="modal-box relative" for="">
-                    <h3 class="font-bold text-lg">Adicionar Nova Cidade</h3>
-                    <form @submit.prevent="cadastraCidade">  
-                        <div class="w-full flex">
-                                <div class="w-full flex flex-col">
-                                    <span class="label-text ml-1">Nome</span>
-                                    <input v-model="formCidadeAdd.nome" class="w-11/12 input input-bordered mb-4" type="text" name="nome_add" id="nome_add">
-                                </div>
-                                <div class="w-full flex flex-col">
-                                    <span class="label-text ml-1">UF</span>
-                                    <select v-model="formCidadeAdd.uf_id" name="uf_id" id="uf_id" class="select select-bordered">
-                                        <option value="0" disabled required>Seleicione a Cidade</option>
-                                        <option v-for="u, index in uf" :key="index" :value="u.id">{{u.nome}}</option>
-                                    </select>
-                                </div>
-                        </div>
-                        <div class="modal-action">
-                            <label @click="cadastraCidade()" for="modal-cidade-add" class="botao-modal">Salvar</label>
-                        </div>
-                    </form>
-
-                </label>
-            </label>
+            <!-- Inclusão de nova cidade -->
+            <CardForm titulo="Adicionar Cidade">
+                <FormAddCidade :dados="formCidadeAdd" :select="uf" @cidadeAdd="cadastraCidade"/>
+            </CardForm>
+            
 
             <!-- Edição / Exclusão de Regiao -->
             <input type="checkbox" id="modal-cidade-edit" class="modal-toggle" />
@@ -158,13 +122,6 @@ const cidadesFiltradas = computed(() => {
                                         <span class="label-text ml-1">Nome</span>
                                         <input v-model="formCidadeEdit.nome_edit" class="w-full input input-bordered mb-4" type="text" >
                                       </div>
-                                      <!-- <div class="w-full flex flex-col">
-                                        <span class="label-text ml-1">Cidade</span>
-                                            <select v-model="formCidadeAdd.uf_id" name="uf_id" id="uf_id" class="select select-bordered">
-                                            <option value="0" disabled selected>Seleicione a Região</option>
-                                            <option v-for="c, index in cidades" :key="index" :value="c.id">{{c.nome}}</option>
-                                        </select>
-                                      </div> -->
                                     </div>
            
                                     

@@ -17,6 +17,7 @@ use App\Http\Controllers\Financeiro\ServicosController;
 use App\Http\Controllers\Financeiro\FuncoesController;
 use App\Http\Controllers\Financeiro\ComissoesController;
 use App\Http\Controllers\Config\UsuarioController;
+use App\Http\Controllers\Config\RolesController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -111,7 +112,7 @@ Route::middleware('auth')->group(function () {
     route::post('/GetBairros', [ReservaController::class, 'getBairros'])->name('get.bairros');
     route::post('/ReservaPainel', [ReservaController::class, 'reservaPainel'])->name('reserva.painel');
     route::post('/CancelaReserva', [ReservaController::class, 'cancelaReserva'])->name('cancela.reserva');
-    
+
 
     // Reseva de painés por cliente
     route::get('/ResPaineisCli', [ReservaController::class, 'reservaPainelIndex'])->name('reserva.paineis.cli');
@@ -138,10 +139,10 @@ Route::middleware('auth')->group(function () {
     // Comissões
     route::get('/Comissoes', [ComissoesController::class, 'index'])->name('/comissoes');
     route::post('/GravaComissaoServico', [ComissoesController::class, 'gravaComissaoservico'])->name('grava.comissao.servico');
-    route::post('/DelComissaoServico', [ComissoesController::class, 'delComissaoServico'])->name('del.comissao.servico');   
+    route::post('/DelComissaoServico', [ComissoesController::class, 'delComissaoServico'])->name('del.comissao.servico');
 
     route::post('/CadastraComissaoUsuario', [ComissoesController::class, 'cadastraComissaoUsuario'])->name('cad.comissao.usuario');
-    route::post('/DeletaComissaoUsuario', [ComissoesController::class, 'deletaComissaoUsuario'])->name('del.comissao.usuario'); 
+    route::post('/DeletaComissaoUsuario', [ComissoesController::class, 'deletaComissaoUsuario'])->name('del.comissao.usuario');
 
 
     // Pi's
@@ -153,8 +154,6 @@ Route::middleware('auth')->group(function () {
     route::get('/Config', [ConfiguracoesController::class, 'index']);
     route::post('/AddAno', [ConfiguracoesController::class, 'AddAno'])->name('add.ano');
 
-
- 
 
         // Relatórios
     // Dispopnibilidade
@@ -183,7 +182,14 @@ Route::middleware('auth')->group(function () {
     route::any('/getRelColagem', [RelColagemController::class, 'getRelColagem']);
 
 
-    
+
+    // Roles
+    Route::get('/roles', [RolesController::class, 'index']);
+    Route::post('/createRole', [RolesController::class, 'createRole']);
+    Route::post('/updateRole', [RolesController::class, 'updateRole']);
+    Route::get('/getRoles', [RolesController::class, 'getRoles']);
+
+
 
 
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

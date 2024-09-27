@@ -1,4 +1,11 @@
 <?php return array (
+  'ahmedsaoud31/laravel-permission-to-vuejs' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'LaravelAndVueJS\\LaravelAndVueJSServiceProvider',
+    ),
+  ),
   'barryvdh/laravel-dompdf' => 
   array (
     'providers' => 
@@ -9,6 +16,13 @@
     array (
       'Pdf' => 'Barryvdh\\DomPDF\\Facade\\Pdf',
       'PDF' => 'Barryvdh\\DomPDF\\Facade\\Pdf',
+    ),
+  ),
+  'devforest/laravel-dynamic-report-generator' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'DevForest\\ReportGeneratorServiceProvider',
     ),
   ),
   'inertiajs/inertia-laravel' => 
@@ -98,6 +112,13 @@
     'aliases' => 
     array (
       'LaravelPdf' => 'Pdf',
+    ),
+  ),
+  'spatie/laravel-permission' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Spatie\\Permission\\PermissionServiceProvider',
     ),
   ),
   'tightenco/ziggy' => 

@@ -21,7 +21,7 @@
     CurrencyDollarIcon
   } from '@heroicons/vue/24/outline'
   import { ChevronDownIcon, PhoneIcon, PlayCircleIcon,GlobeAmericasIcon } from '@heroicons/vue/20/solid'
-  
+
   const enderecos = [
     { name: 'Cidades', description: 'Realize o cadastro / edição de cidades.', href: '/CadCidade', icon: MapIcon  },
     { name: 'Regiões', description: 'Realize o cadastro / edição de regiões.', href: '/CadRegiao', icon: MapIcon },
@@ -50,9 +50,10 @@
     { name: 'Painéis por Cliente', description: 'Relatório geral com a quantidade de painéis por cliente na bi-semana', href: '/PaineisCliente', icon: NewspaperIcon },
     { name: 'Painéis por Bisemana', description: '.', href: 'https://old.sgepequipe.com/relClienteXbisemana', icon: NewspaperIcon },
     { name: 'Clientes por Bisemana', description: '.', href: 'https://old.sgepequipe.com/relClienteXbisemana', icon: NewspaperIcon },
+    { name: 'Gerador de Relatórios', description: '.', href: '/report-generator', icon: NewspaperIcon },
 
   ]
-  
+
   const financeiro = [
     { name: 'Cadastro de Serviços', description: 'Realize o cadastro / edição de serviços.', href: '/Servicos', icon: CurrencyDollarIcon  },
     { name: 'Cadastro de Funções', description: 'Realize o cadastro / edição de funções.', href: '/Funcoes', icon: CurrencyDollarIcon },
@@ -88,7 +89,7 @@
               Endereços
               <ChevronDownIcon class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
             </PopoverButton>
-  
+
             <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
               <PopoverPanel class="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
                 <div class="p-4">
@@ -121,7 +122,7 @@
               Clientes
               <ChevronDownIcon class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
             </PopoverButton>
-  
+
             <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
               <PopoverPanel class="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
                 <div class="p-4">
@@ -138,11 +139,11 @@
                     </div>
                   </div>
                 </div>
-                
-                
+
+
               </PopoverPanel>
             </transition>
-          </Popover> 
+          </Popover>
 
           <!-- Painéis -->
           <Popover class="relative">
@@ -150,7 +151,7 @@
               Painéis
               <ChevronDownIcon class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
             </PopoverButton>
-  
+
             <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
               <PopoverPanel class="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
                 <div class="p-4">
@@ -167,19 +168,19 @@
                     </div>
                   </div>
                 </div>
-               
-                
+
+
               </PopoverPanel>
             </transition>
           </Popover>
-          
+
           <!-- Diponilidades -->
           <Popover class="relative">
             <PopoverButton class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-white">
               Disponilidades
               <ChevronDownIcon class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
             </PopoverButton>
-  
+
             <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
               <PopoverPanel class="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
                 <div class="p-4">
@@ -196,8 +197,8 @@
                     </div>
                   </div>
                 </div>
-               
-                
+
+
               </PopoverPanel>
             </transition>
           </Popover>
@@ -208,7 +209,7 @@
               Relatórios
               <ChevronDownIcon class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
             </PopoverButton>
-  
+
             <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
               <PopoverPanel class="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
                 <div class="p-4">
@@ -225,8 +226,8 @@
                     </div>
                   </div>
                 </div>
-                
-                
+
+
               </PopoverPanel>
             </transition>
           </Popover>
@@ -237,7 +238,7 @@
               Financeiro
               <ChevronDownIcon class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
             </PopoverButton>
-  
+
             <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
               <PopoverPanel class="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
                 <div class="p-4">
@@ -254,8 +255,8 @@
                     </div>
                   </div>
                 </div>
-                
-                
+
+
               </PopoverPanel>
             </transition>
           </Popover>
@@ -266,7 +267,7 @@
               Configuracões
               <ChevronDownIcon class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
             </PopoverButton>
-  
+
             <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
               <PopoverPanel class="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
                 <div class="p-4">
@@ -283,8 +284,8 @@
                     </div>
                   </div>
                 </div>
-                
-                
+
+
               </PopoverPanel>
             </transition>
           </Popover>
@@ -330,5 +331,4 @@
       </Dialog>
     </header>
   </template>
-  
-  
+

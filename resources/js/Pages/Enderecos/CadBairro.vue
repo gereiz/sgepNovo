@@ -4,7 +4,7 @@ import { Head, router } from '@inertiajs/vue3';
 import { useToastr } from '@/Components/toastr';
 import { ref, reactive, onMounted, computed } from 'vue';
 
-const toastr = useToastr(); 
+const toastr = useToastr();
 const props = defineProps(['bairros', 'regioes', 'errors']);
 
 const nomeBairro = ref('');
@@ -15,7 +15,7 @@ const formBairroEdit = reactive({nome_edit: '', id_bairro: ''});
 
 function setBairroData(id, d) {
     nomeBairro.value = d
-    formBairroEdit.nome_edit = d 
+    formBairroEdit.nome_edit = d
     formBairroEdit.id_bairro = id
 }
 
@@ -23,7 +23,7 @@ function cadastraBairro() {
     if(formBairroAdd.nome == '' || formBairroAdd.nome.length < 3) {
         toastr.error('O nome do Bairro deve ter no mínimo 3 caracteres!')
     } else if(formBairroAdd.regiao_id == 0) {
-        toastr.error('O Bairro deve pertencer a uma região!') 
+        toastr.error('O Bairro deve pertencer a uma região!')
         formBairroAdd.regiao_id = 0
     } else {
         router.post('/AddBairro', this.formBairroAdd)
@@ -32,9 +32,9 @@ function cadastraBairro() {
             formBairroAdd.nome = ''
             formBairroAdd.regiao_id = 0
         }
-        
+
     }
-    
+
 };
 
 function editaBairro() {
@@ -46,7 +46,7 @@ function editaBairro() {
         toastr.success('Bairro '+ formBairroEdit.nome_edit +' editado para '+formBairroEdit.nome_edit+ ' !')
     }
 
-    
+
 };
 
 function deletaBairro() {
@@ -66,7 +66,7 @@ const bairrosFiltrados = computed(() => {
 
 // onMounted(() =>{
 //     // toastr.info('Tudo ok')
-    
+
 //     console.log(props.errors.length)
 //     // console.log(bairrosFiltrados.value)
 // })
@@ -79,18 +79,18 @@ const bairrosFiltrados = computed(() => {
 
     <AuthenticatedLayout>
         <div class="w-full h-screen pt-24 pb-32 mx-2 md:mx-4">
-            
+
             <!-- Cabeçalho e barra de Pesquisa -->
             <div class="w-full h-14 flex mb-2">
                 <div class="w-2/12 h-14 flex items-center">
                     <h1 class="text-xl md:text-4xl font-bold">Bairros</h1>
                     <h1 class="text-lg md:text-2xl text-red-400 font-bold ml-2 md:ml-4">{{ bairros.length }}</h1>
                 </div>
-                
+
                 <div class="w-10/12 flex justify-end">
                     <label for="modal-bairro-add" class="w-28 botao-modal text-sm ">+ Novo Bairro</label>
                 </div>
-                
+
             </div>
             <div class="w-full md:w-4/12">
                 <input v-model="pesqBairro" placeholder="Pesquisar Bairro" class="w-full h-10 input input-bordered rounded-none mb-4" type="text" name="pesquisar" id="pesquisar">
@@ -119,7 +119,7 @@ const bairrosFiltrados = computed(() => {
                             </div>
                         </div>
                     </div>
-                </div> 
+                </div>
             </div>
 
             <!-- Inclusão de novo Bairro -->
@@ -127,7 +127,7 @@ const bairrosFiltrados = computed(() => {
             <label for="modal-bairro-add" class="modal modal-bottom sm:modal-middle cursor-pointer">
                 <label class="modal-box relative" for="">
                     <h3 class="font-bold text-lg">Adicionar Novo Bairro</h3>
-                    <form @submit.prevent="cadastraBairro">  
+                    <form @submit.prevent="cadastraBairro">
                         <div class="w-full flex">
                                 <div class="w-full flex flex-col">
                                     <span class="label-text ml-1">Nome</span>

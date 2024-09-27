@@ -25,7 +25,7 @@ watch(openM, (val) =>{
             <SideMenu :menuMobile="openM" class="absolute sm:relative z-50">
             </SideMenu>
             
-            <div class="w-full flex ml-0 bg-stone-200 relative z-0 space-x-2">
+            <div class="w-full flex ml-0 bg-gray-100 relative z-0 space-x-2">
                 <slot />
             </div>
         </div>

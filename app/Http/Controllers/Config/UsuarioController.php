@@ -29,24 +29,34 @@ class UsuarioController extends Controller
 
     public function index()
     {
+        // $this->authorize('create', User::class);
+
         $usuarios = $this->usuarioService->listaUsuarios();
         $funcoes = $this->financeiroService->listaFuncoes();
 
-        return  Inertia::render('Config/Usuarios/ListaUsuarios', compact('usuarios', 'funcoes'));   
+        $can = [
+            'create' => auth()->user()->can('create', User::class),
+            'delete' => auth()->user()->can('delete', User::class),
+            'edit' => auth()->user()->can('edit', User::class),
+        ];
+
+        return  Inertia::render('Config/Usuarios/ListaUsuarios', compact('usuarios', 'funcoes', 'can'));
     }
 
     public function cadastraUsuario(Request $request)
     {
         // dd($request->all());
         $usuario = $this->usuarioService->cadastraUsuario($request);
-        
+
     }
 
     public function deletaUsuario(Request $request)
     {
-        
+
         $usuario = $this->usuarioService->deletaUsuario($request->id_usuario);
     }
+
+
 
 
 }

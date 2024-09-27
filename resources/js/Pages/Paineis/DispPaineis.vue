@@ -7,7 +7,7 @@
     import { getImage, toastr, enviaWpp, getLink } from '@/functions'
     import { ref, reactive, onMounted, computed, watch } from 'vue'
     import Multiselect from 'vue-multiselect'
-    
+
 
     const props = defineProps(['ambiente', 'reservas', 'anos', 'paineis', 'clientes', 'bisemanas', 'cidades', 'regioes', 'bairros', 'whatsapp']);
 
@@ -54,7 +54,7 @@
     const formReserva = reactive({cliente: 0, campanha: '', observ: ''})
 
     const bisemanaSelecionada = computed(() => {
-        
+
         let bisemanaSelecionada = Object.values(props.bisemanas).filter((bisemana) =>{
             return (bisemana.id === idBisemana.value)
         })
@@ -66,7 +66,7 @@
     onMounted(() => {
         getIdent()
 
-    }) 
+    })
 
     function getBisemanas() {
 
@@ -122,7 +122,7 @@
         } else {
 
             axios.post('/GetPaineis', {ano: idAno.value,
-                                   bisemana: idBisemana.value, 
+                                   bisemana: idBisemana.value,
                                    statusPainel: idPainel.value,
                                    cidade: idCidade.value,
                                    regiao: idRegiao.value,
@@ -142,7 +142,7 @@
 
 
     function atualizaPaineis(ev) {
-        
+
         getPaineis()
     }
 
@@ -159,10 +159,10 @@
         }
     }
 
-    
+
     function isChecked(val, painelId, id, painel) {
         const cardPainel = itemRefs.value[val];
-            
+
         // let classes = cardPainel.classList
 
         if(Object.values(checkedPaineis.value).includes(painelId)) {
@@ -191,10 +191,10 @@
         let i = 0;
 
         clearChecked();
-        
+
          pan.value.forEach(painel => {
             let cardPainel = itemRefs.value[i];
-            
+
             checkedPaineis.value.push(painel.identificacao);
             paineisChecked.value.push(painel);
             checkedPaineisId.value.push(painel.id);
@@ -210,7 +210,7 @@
         paineisChecked.value = []
 
         const cardPaineis = itemRefs.value;
-    
+
         cardPaineis.forEach(painel => {
             painel.checked = false
 
@@ -226,7 +226,7 @@
             hidePiModal.value = true
             conf.showModal()
 
-        }          
+        }
 
     }
 
@@ -278,7 +278,7 @@
 
         axios.post('/setData', {numBs: idBisemana.value,
                                 idPaineis: checkedPaineisId.value,
-                                
+
                                 })
             .then((res) => {
 
@@ -323,9 +323,9 @@
     function openPi(val)  {
         if(val == 't') {
             open.value = true
-        } else 
+        } else
         open.value = false
-         
+
     }
 
 
@@ -337,19 +337,19 @@
 
     <AuthenticatedLayout>
         <div class="w-full h-screen pt-20 pb-32 mx-2 sm:mx-4">
-            
+
             <!-- Cabeçalho -->
             <div class="w-full h-14 flex mb-2">
                 <div class="w-2/12 h-14 flex items-center">
                     <h1 class="text-xl sm:text-4xl font-bold">Painéis</h1>
                     <h1 class="text-lg sm:text-2xl text-red-400 font-bold ml-2 sm:ml-4">{{ pan.length }} </h1>
                 </div>
-                
+
             </div>
 
             <!-- Filtros de Pesquisa -->
             <div class="w-full flex flex-row flex-wrap items-center justify-center mb-20 sm:mb-0 ">
- 
+
                 <!-- Ano Bi-semana, Status e Identificação -->
                 <div class="w-full flex items-center sm:justify-center flex-wrap">
 
@@ -368,7 +368,7 @@
                         <select class="select-paineis" name="bi-semana" id="bi-semama" v-model="idBisemana" :disabled="bsDisabled" @change="idPainel = 'T', statusDisabled = false">
                             <option value="0" selected disabled>Selecione</option>
                             <option v-for="(bs, index) in listaBisemana"
-                                :key="index" 
+                                :key="index"
                                 :value="bs.id">BS: {{ bs.num_bisemana }} {{ new Date(bs.inicio).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }} até {{ new Date(bs.fim).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }}
                             </option>
                         </select>
@@ -381,15 +381,15 @@
                             <option value="T">Todos</option>
                             <option value="D">Disponível</option>
                             <option value="R">Reservado</option>
-                        </select>  
+                        </select>
                     </div>
 
-                    <!-- Identifcação --> 
+                    <!-- Identifcação -->
                     <div class="w-full sm:w-4/12 flex flex-col sm:-mt-4 me-4 sm:me-6">
                         <label class="typo__label">Identificação</label>
                         <div class="w-full flex">
                             <div class="w-9/12 me-4">
-                                <multiselect disabled
+                                <!-- <multiselect disabled
                                     v-model="checkedPaineis"
                                     :options="idents"
                                     :multiple="true"
@@ -397,15 +397,15 @@
                                     :show-labels="true"
                                     placeholder="Todos"
                                 >
-                                </multiselect>  
+                                </multiselect>   -->
                             </div>
                             <div class="w-2/12">
                                 <button @click="clearChecked()" class="botao max-h-10 bg-red-700 hover:bg-red-500 ">Limpar</button>
                             </div>
-                        </div>                
+                        </div>
                     </div>
                 </div>
-                
+
                 <!-- Cidades, Regiões e Bairros -->
                 <div class="w-full flex items-center sm:justify-center flex-wrap">
 
@@ -448,7 +448,7 @@
 
                         <div class="dropdown">
                         <label v-if="checkedPaineisId.length > 0 && tipoPainel == 'D'" tabindex="0" class="w-fit botao flex items-center bg-green-700 hover:bg-green-500 px-2 py-[0.7rem]">
-                                <img src="../../../../storage/app/public/img/spinner.png" class="w-4 h-4 me-2 animate-spin" :class="{'hidden': loading}" alt="spinner"> 
+                                <img src="../../../../storage/app/public/img/spinner.png" class="w-4 h-4 me-2 animate-spin" :class="{'hidden': loading}" alt="spinner">
                                  <p id="envia_lista">Enviar Lista</p>
                             </label>
                             <ul tabindex="0" class="w-56 -ml-20 sm:-ml-10 dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box mt-4">
@@ -457,7 +457,7 @@
                                 <li><label @click="relDisponiveis('pdf')">Download do Relatório</label></li>
                             </ul>
                         </div>
-                        
+
                     </div>
                 </div>
 
@@ -467,7 +467,7 @@
             <div class="card w-full max-h-[85%] bg-base-100 shadow-xl overflow-auto rounded-md">
                 <div class="card-body pt-1 sm:pt-2">
                     <div class="w-full flex flex-col flex-wrap sm:flex-row justify-center">
-                        
+
                         <!-- Cards dos Paineis -->
                         <div v-for="(pain, index) in pan "  :key="index" class="card w-full sm:w-5/12 bg-base-100 border-2 rounded-md shadow-xl mt-4 sm:mr-4">
                             <div class="card-body" :id="index" @click="isChecked(index, pain.identificacao, pain.id, pain)">
@@ -491,20 +491,20 @@
                                         <div class="w-full flex justify-between sm:justify-between flex-wrap space-y-4">
                                             <div class="w-full flex flex-wrap justify-between sm:justify-between">
                                                 <h2 class="text-xs sm:card-title">Bairro: {{pain.bnome}}</h2>
-                                                <h2 class="text-xs flex sm:card-title hover:text-red-700">Ver Localização 
+                                                <h2 class="text-xs flex sm:card-title hover:text-red-700">Ver Localização
                                                     <a :href="getLink(pain.latitude, pain.longitude)" target="_blank">
                                                         <img class="w-6 ms-4 sm:w-10 sm:hover:w-14 transition-all duration-500" src="../../../../public/storage/img/regiao.png" alt="Mapa">
-                                                    </a> 
+                                                    </a>
                                                 </h2>
                                             </div>
                                             <div class="w-full flex flex-wrap justify-between sm:justify-between">
                                                     <h2 class="text-xs sm:card-title">Localização: {{pain.logradouro}} - {{ pain.numero }}</h2>
-                                            </div> 
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Botões -->
                             <div class="w-full flex justify-center flex-wrap space-y-2 mb-4">
                                 <button class="w-11/12 sm:w-10/12 botao bg-sky-700 hover:bg-sky-500">Detalhes</button>
@@ -521,7 +521,7 @@
             </div>
 
             <!-- Modal de Reserva Individual -->
-            <input type="checkbox" id="modal-reserva" class="modal-toggle" />          
+            <input type="checkbox" id="modal-reserva" class="modal-toggle" />
             <div class="modal flex items-end md:items-center">
                 <div class="modal-box">
                     <div class="flex mb-4">
@@ -530,15 +530,15 @@
                         <h3 class="font-bold text-lg ml-2 text-red-500">Identificação {{ painelReserva.identificacao }}</h3>
                     </div>
 
-                    <form>  
+                    <form>
                         <div class="w-full flex flex-col sm:flex-row flex-wrap space-y-4 sm:space-y-8">
 
                             <!-- Bi-semana -->
                             <div class="w-7/12 flex flex-col">
                                 <span class="label-text ml-1">Bi-semana</span>
                                 <select name="" id="" class="select select-bordered" disabled>
-                                    <option v-for="(bs, index) in bisemanaSelecionada" 
-                                        :key="index" 
+                                    <option v-for="(bs, index) in bisemanaSelecionada"
+                                        :key="index"
                                         :value="bs.id">BS: {{ bs.num_bisemana }} {{ new Date(bs.inicio).toLocaleDateString() }} até {{ new Date(bs.fim).toLocaleDateString() }}</option>
                                 </select>
                             </div>
@@ -569,10 +569,10 @@
                                 <div class="form-control">
                                     <label class="cursor-pointer">
                                         <span class="label-text text-lg sm:text-xl me-4">Existe P. I. para esta reserva?</span>
-                                        <input type="checkbox" 
-                                               v-model="valPi" 
-                                               @click="valPi = !valPi, confirmaPI()" 
-                                               class="checkbox checkbox-lg checkbox-success border-2 border-gray-400" 
+                                        <input type="checkbox"
+                                               v-model="valPi"
+                                               @click="valPi = !valPi, confirmaPI()"
+                                               class="checkbox checkbox-lg checkbox-success border-2 border-gray-400"
                                                :disabled="formReserva.cliente === 0"
                                         />
                                     </label>
@@ -582,7 +582,7 @@
 
                         <!-- Botão de Confirmação de Reserva -->
                         <div class="modal-action">
-                            <label for="modal-reserva" class="w-full botao-modal" 
+                            <label for="modal-reserva" class="w-full botao-modal"
                                    :class="{'bg-slate-400': idBisemana == 0, 'hover:bg-slate-400': idBisemana == 0}"
                                    @click="reservaPainel(painelReserva.id)">Reservar</label>
                         </div>
@@ -599,16 +599,16 @@
                                 <!-- if there is a button in form, it will close the modal -->
                                 <div class="w-full flex justify-center space-x-4">
                                     <button class="w-5/12 botao-primario" @click="hidePiModal = false, openPi('t')">Confirmar</button>
-                                    <button @click="valPi = false, hidePiModal = false, openPi('f')" class="w-5/12 botao-danger">Ainda não !</button>   
+                                    <button @click="valPi = false, hidePiModal = false, openPi('f')" class="w-5/12 botao-danger">Ainda não !</button>
                                 </div>
-                                
+
                             </div>
                         </form>
                     </dialog>
                 </div>
             </div>
-            
-               
+
+
             <!-- modal  Whatsapp-->
             <ModalWpp :listaClientes="props.clientes" :whatsapp="props.whatsapp" :bisemana="bisemanaSelecionada" :linkrel="linkWpp" />
 
@@ -616,14 +616,14 @@
             <!-- Modal de cancelamento de Reserva-->
             <ModalCancRes :painel="painelReserva" :bisemana="idBisemana"  @atualizaPage="atualizaPaineis"/>
 
-            <ModalPiRes :openPi="open" 
-                        :cliente="formReserva.cliente" 
+            <ModalPiRes :openPi="open"
+                        :cliente="formReserva.cliente"
                         :campanha="formReserva.campanha"
                         :bisemana="bisemanaSelecionada"
                         :painel="painelReserva"
                         @closePi="openPi"
             />
-            
+
 
         </div>
     </AuthenticatedLayout>
