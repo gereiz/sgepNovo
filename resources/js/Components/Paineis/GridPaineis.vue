@@ -8,9 +8,16 @@
     import { QuestionMarkCircleIcon } from '@heroicons/vue/20/solid'
     import Multiselect from 'vue-multiselect'
     import ConfirmaReserva from './ConfirmaReserva.vue'
+    import { useToastr } from '@/Components/toastr';
+    import { usePage } from '@inertiajs/vue3';
 
     const props = defineProps(['tipoPainel', 'cliente', 'bisemana', 'paineis']);
     const emit = defineEmits(['checkedPaineis', 'checkedPaineisId', 'campanha', 'observacoes']);
+    const page = usePage();
+    const toastr = useToastr()
+
+    const liberaReserva = page.props.user.permissions.includes('liberar reserva');
+    const liberaReservaPainel04 = page.props.user.permissions.includes('liberar reserva painel 04');
 
     const pesquisaPainel = ref('')
 
@@ -23,6 +30,10 @@
     const itemRefs = ref([])
     const checkedPaineis = ref([]);
     const checkedPaineisId = ref([]);
+    const paineisNobres = ref([])
+    const paineisConvencionais = ref([])
+
+    const painelSelecionado = ref('')
     let idents = reactive([]);
 
     onMounted(() => {
@@ -59,21 +70,59 @@
     function isChecked(val, painelId, id) {
         cardPainel.value = itemRefs.value[val];
 
-            // console.log(cardPainel.value)
-
         let classes = cardPainel.classList
+
+        painelSelecionado.value = Object.values( paineis.value).find(painel => painel.identificacao === painelId)
+
+
+        if(!liberaReservaPainel04) {
+            if(painelId === 4 && paineisConvencionais.value.length < 4) {
+                toastr.error('O painel 04 não pode ser reservado sem no mínimo 4 painéis convencionais')
+                return
+
+            }
+        }
+
+
+        // Libera a restrição de reservas, se o usuário tiver a permissão
+        if(!liberaReserva) {
+           // se o numero de paineis nobres for menor que 2 vezes o numero de paineis convencionais e o painel selecionado for nobre adiciona a lista de nobres
+            if(painelSelecionado.value.tipo === '2') {
+                paineisConvencionais.value.push(painelSelecionado.value.identificacao)
+            } else {
+                if((paineisNobres.value.length * 2) >= paineisConvencionais.value.length) {
+                    toastr.error('O número de painéis nobres não pode ser maior que o dobro do número de painéis convencionais')
+                    return
+
+                }else if(paineisConvencionais.value.length === 1 && painelSelecionado.value.tipo === '1') {
+
+                toastr.error('O número de painéis convencionais não pode ser menor que 2')
+                    return
+
+                } else if(paineisNobres.value.length === 1 && paineisConvencionais.value.length === 3 && painelSelecionado.value.tipo === '1') {
+                    toastr.error('O número de painéis nobres não pode ser maior que o dobro do número de painéis convencionais')
+                    return
+
+                } else {
+                    paineisNobres.value.push(painelSelecionado.value.identificacao)
+                }
+            }
+
+        }
+
 
         if(Object.values(checkedPaineis.value).includes(painelId)) {
             checkedPaineis.value.splice(checkedPaineis.value.indexOf(painelId), 1)
             checkedPaineisId.value.splice(checkedPaineis.value.indexOf(id), 1)
-            // cardPainel.value.checked = false
 
         } else {
             checkedPaineis.value.push(painelId);
             checkedPaineisId.value.push(id);
             document.getElementById(painelId).classList.add('hidden')
-
         }
+
+
+
         emit('checkedPaineis', checkedPaineis.value)
         emit('checkedPaineisId', checkedPaineisId.value)
 
@@ -108,6 +157,8 @@
     function clearChecked() {
         checkedPaineis.value = [];
         checkedPaineisId.value = [];
+        paineisNobres.value = [];
+        paineisConvencionais.value = [];
 
         campanha.value = ''
 
@@ -138,7 +189,7 @@
 
     <div class="w-full flex flex-wrap sm:flex-none mt-2 space-y-4 sm:space-y-0">
         <!-- Barra de pesquisa -->
-        <div class="sm:w-4/12 w-full justify-center">
+        <div class="sm:w-4/12 w-full justify-center mb-2">
             <div class="w-10/12 ms-10 relative mt-2 rounded-md shadow-sm">
                 <input type="text"
                        v-model="pesquisaPainel"
@@ -154,7 +205,7 @@
             <div class="w-10/12 relative ms-10 sm:ms-0 mt-1 rounded-md shadow-sm">
                 <div class="w-full flex">
                     <div class="w-9/12 me-4">
-                        <!-- <multiselect disabled
+                        <multiselect disabled
                             v-model="checkedPaineis"
                             :options="idents"
                             :multiple="true"
@@ -162,7 +213,7 @@
                             :show-labels="true"
                             placeholder="Painéis Selecionados"
                         >
-                        </multiselect>   -->
+                        </multiselect>
                     </div>
                     <div class="w-2/12">
                         <button @click="clearChecked()" class="botao max-h-10 bg-red-700 hover:bg-red-500 ">Limpar</button>
@@ -189,7 +240,7 @@
     </div>
 
     <!-- Card Principal -->
-    <div class="card w-full h-[28rem] sm:h-[36rem] bg-base-100 border border-base-200 shadow-xl overflow-auto rounded-md">
+    <div class="card w-full h-[28rem] sm:h-[35rem] bg-base-100 border border-base-200 shadow-xl overflow-auto rounded-md">
         <div class="card-body flex flex-col sm:flex-row">
             <!-- Paineis -->
             <div class="w-full flex flex-col flex-wrap md:flex-row">

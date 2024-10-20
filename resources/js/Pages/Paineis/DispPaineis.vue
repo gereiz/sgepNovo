@@ -13,6 +13,10 @@
 
     const loading = ref(true)
 
+
+    const date = new Date();
+    const anoAtual = date.getFullYear();
+
     const linkWpp = ref ('');
 
     const itemRefs = ref([])
@@ -32,6 +36,14 @@
     const baiDisabled = ref(true);
 
     const idAno = ref(0);
+
+    // // busca o id do ano de acordo com o ano atual
+    // const idAnoAtual = Object.values(props.anos).filter((ano) => {
+    //     return (ano.ano_bisemana == anoAtual)
+    // })
+
+    // const idAno = ref(idAnoAtual[0].id);
+
     const idBisemana = ref(0);
     const idPainel = ref('T');
     const idCidade = ref(0);
@@ -48,6 +60,7 @@
     const valPi = ref(false)
     const confPi = ref(null)
     const hidePiModal = ref(false)
+
 
     const open = ref(false);
 
@@ -352,13 +365,17 @@
 
                 <!-- Ano Bi-semana, Status e Identificação -->
                 <div class="w-full flex items-center sm:justify-center flex-wrap">
-
                     <!-- Ano -->
                     <div class="w-5/12 sm:w-1/12 flex flex-col me-4 sm:me-6">
                         <label for="bi-semana">Ano</label>
                         <select class="select-paineis" name="ano" id="ano" v-model="idAno" @change="getBisemanas()">
-                            <option value="0" selected>Selecione</option>
-                            <option v-for="(ano, index) in anos" :key="index" :value="ano.id">{{ ano.ano_bisemana }}</option>
+                            <!-- lista os anos, marcando o ano atual como selected-->
+                            <option value="0" selected disabled>Selecione</option>
+                            <option v-for="(ano, index) in props.anos"
+                                :key="index"
+                                :value="ano.id"
+                                :selected="ano.ano_bisemana == anoAtual ? 'selected' : ''">{{ ano.ano_bisemana }}
+                            </option>
                         </select>
                     </div>
 
@@ -539,7 +556,8 @@
                                 <select name="" id="" class="select select-bordered" disabled>
                                     <option v-for="(bs, index) in bisemanaSelecionada"
                                         :key="index"
-                                        :value="bs.id">BS: {{ bs.num_bisemana }} {{ new Date(bs.inicio).toLocaleDateString() }} até {{ new Date(bs.fim).toLocaleDateString() }}</option>
+                                        :value="bs.id">BS: {{ bs.num_bisemana }} {{ new Date(bs.inicio).toLocaleDateString() }} até {{ new Date(bs.fim).toLocaleDateString() }}
+                                    </option>
                                 </select>
                             </div>
 

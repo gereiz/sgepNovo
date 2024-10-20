@@ -1,12 +1,17 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
 import { useToastr } from '@/Components/toastr';
 import { ref, reactive, onMounted, computed } from 'vue';
 import AddPainel from './Components/AddPainel.vue';
 import DelPainel from './Components/DelPainel.vue';
 
 const props = defineProps(['paineis'])
+const page = usePage();
+
+const criaPainel = page.props.user.permissions.includes('criar painel');
+const editaPainel = page.props.user.permissions.includes('editar painel');
+const excluiPainel = page.props.user.permissions.includes('excluir painel');
 
 const pesqPainel = ref('');
 const open = ref(false);
@@ -41,14 +46,14 @@ function openEdit(val, id) {
             console.error(err)
     })
 
-    
+
     if(val === 't') {
         open.value = true
     } else {
         open.value = false
     }
 
-} 
+}
 
 function openDelelete(val, id){
     painelId.value = id
@@ -73,10 +78,10 @@ const paineisFiltrados = computed(() => {
 
 function getImage(i) {
     // Devenvolvimento
-    var image = 'http://localhost:8000/storage/'+ i 
+    var image = 'http://localhost:8000/storage/'+ i
 
     // Produção
-    var image = '/storage/'+ i 
+    var image = '/storage/'+ i
 
     return image
 }
@@ -89,18 +94,18 @@ function getImage(i) {
 
     <AuthenticatedLayout>
         <div class="w-full h-screen pt-20 sm:pt-4 pb-32 mx-2 sm:mx-4">
-            
+
             <!-- Cabeçalho e barra de Pesquisa -->
-            <div class="w-full h-14 flex mb-2 pe-3 sm:pe-0">
+            <div class="w-full h-14 flex mb-2 pe-3 sm:pe-0 mt-14">
                 <div class="w-2/12 h-14 flex items-center">
                     <h1 class="text-xl sm:text-4xl font-bold">Painéis</h1>
                     <h1 class="text-lg sm:text-2xl text-red-400 font-bold ml-2 sm:ml-4">{{ paineis.length }}</h1>
                 </div>
-                
-                <div class="w-10/12 flex justify-end">
+
+                <div v-if="criaPainel" class="w-10/12 flex justify-end">
                     <label for="modal-painel-add" class="w-28 botao-modal text-sm " @click="openAdd('t')">+ Novo Painel</label>
                 </div>
-                
+
             </div>
 
             <!-- Barra de Pesquisa -->
@@ -112,7 +117,7 @@ function getImage(i) {
             <div class="card w-full h-full bg-base-100 shadow-xl overflow-auto rounded-md">
                 <div class="card-body">
                     <div class="w-full flex flex-col flex-wrap sm:flex-row justify-center">
-                        
+
                         <!-- Cards dos Paineis -->
                         <div v-for="(pain, index) in paineisFiltrados" :key="index" class="card w-full sm:w-5/12 bg-base-100 border-2 rounded-md shadow-xl mt-4 sm:mr-4">
                             <label for="modal-cliente">
@@ -139,12 +144,12 @@ function getImage(i) {
                                         <!-- Botões -->
                                         <div class="w-full sm:w-11/12 flex justify-center flex-wrap space-x-2 mb-4">
                                             <!-- <button class="botao bg-sky-700">Detalhes</button> -->
-                                            <button class="botao bg-yellow-700" @click="openEdit('t', pain.id)">Editar</button>
-                                            <button class="botao bg-red-700" @click="openDelelete('t', pain.id)">Excluir</button>
+                                            <button v-if="editaPainel" class="botao bg-yellow-700" @click="openEdit('t', pain.id)">Editar</button>
+                                            <button v-if="excluiPainel" class="botao bg-red-700" @click="openDelelete('t', pain.id)">Excluir</button>
                                         </div>
 
                                    </div>
-                                
+
                                 </div>
                             </label>
                         </div>

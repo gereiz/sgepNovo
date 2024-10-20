@@ -29,7 +29,7 @@ class PiController extends Controller
 
     public function sessionData(Request $request) {
 
- 
+
         if($request->cliente) {
             session(['cliente' => $request->cliente]);
         }
@@ -44,13 +44,13 @@ class PiController extends Controller
 
 
         return session()->all();
-
+ 
     }
 
 
 
     public function storePi() {
-        
+
         // dd(session('dadosPi'));
         // dd(session()->all());
 
@@ -63,10 +63,10 @@ class PiController extends Controller
         $data_pgto_formated = session('dadosPi')['Two']['dtPgto'];
         $campanha = session('dadosPi')['Two']['campanha'];
         $observacoes = session('dadosPi')['Two']['observacoes'];
-        
+
         if(session('dadosPi')['Two']['servicos'] != []) {
             $detalhes = session('dadosPi')['Two']['servicos'][0]['detalhes'];
-        } 
+        }
 
         $bisemana = Bisemana::where('id', session('dadosPi')['Two']['bisemanaId'])->first();
 
@@ -83,7 +83,7 @@ class PiController extends Controller
         $dt_atual = $dt_atual[2].'/'.$dt_atual[1].'/'.$dt_atual[0];
 
 
-        $bairro = Bairro::where('id', $cliente->bairro)->first();   
+        $bairro = Bairro::where('id', $cliente->bairro)->first();
         $cidade = Cidade::where('id', $cliente->cidade)->first();
         $uf = UF::where('id', $cliente->uf)->first();
 
@@ -109,9 +109,9 @@ class PiController extends Controller
             if($reserva_atual != []) {
 
                 return response()->json(['cod' => 0, 'msg' => 'Painel reservado anteriormente.']);
-            
+
             } else {
-                
+
                 Reserva::create([
                     'cliente_id' => $cliente->id,
                     'outdoor_id' => $painel->id,
@@ -123,8 +123,8 @@ class PiController extends Controller
                     'user_id' => auth()->user()->id
                 ]);
             }
-    
-            
+
+
         }
 
 
@@ -132,7 +132,7 @@ class PiController extends Controller
         ->where('id_bisemana', session('dadosPi')['Two']['bisemanaId'])
         ->orderByDesc('id')
         ->first();
-                
+
         // soma os valores dos serviços
         $vl_total = 0;
         $vlr_unt = 0;
@@ -143,8 +143,8 @@ class PiController extends Controller
             $vlr_desc += $servico['vlr_desc'];
         }
 
-      
-        
+
+
 
         // Cria o PI se não existir
         try {
@@ -164,24 +164,24 @@ class PiController extends Controller
                     'vendedor' => session('dadosPi')['Two']['vendedorId'],
                     'obs' => session('dadosPi')['Two']['servicos'][0]['detalhes']
                 ]);
-        
+
             }
         } catch(\Exception $e) {
             return response()->json(['cod' => 0, 'msg' => $e]);
         }
-        
-        
+
+
         // $pi = Pi::where('id_cliente', session('dadosPi')['One']['clienteId'])
         //         ->where('id_bisemana', session('dadosPi')['Two']['bisemanaId'])
         //     ->orderByDesc('id')
         // ->first();
 
-       
+
 
         if(isset(session('dadosPi')['Three'])) {
             return Pdf::view('relatorios.pi.pi', compact('pi', 'cliente', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
             'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor'
-            
+
             ))
             ->orientation(Orientation::Landscape);
         }
