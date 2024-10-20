@@ -7,18 +7,18 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
 use App\Services\UsuarioService;
-use App\Services\FinanceiroService;
+use App\Services\RolesService;
 
 
 class UsuarioController extends Controller
 {
     private $usuarioService;
-    private $financeiroService;
+    private $rolesService;
 
-    public function __construct(UsuarioService $usuarioService, FinanceiroService $financeiroService)
+    public function __construct(UsuarioService $usuarioService, RolesService $rolesService)
     {
         $this->usuarioService = $usuarioService;
-        $this->financeiroService = $financeiroService;
+        $this->rolesService = $rolesService;
     }
 
     public function getUsuarios()
@@ -27,21 +27,18 @@ class UsuarioController extends Controller
         return response()->json($usuarios);
     }
 
+
     public function index()
     {
         // $this->authorize('create', User::class);
 
         $usuarios = $this->usuarioService->listaUsuarios();
-        $funcoes = $this->financeiroService->listaFuncoes();
+        $funcoes = $this->rolesService->getRoles();
 
-        $can = [
-            'create' => auth()->user()->can('create', User::class),
-            'delete' => auth()->user()->can('delete', User::class),
-            'edit' => auth()->user()->can('edit', User::class),
-        ];
 
-        return  Inertia::render('Config/Usuarios/ListaUsuarios', compact('usuarios', 'funcoes', 'can'));
+        return  Inertia::render('Config/Usuarios/ListaUsuarios', compact('usuarios', 'funcoes'));
     }
+
 
     public function cadastraUsuario(Request $request)
     {
@@ -49,6 +46,7 @@ class UsuarioController extends Controller
         $usuario = $this->usuarioService->cadastraUsuario($request);
 
     }
+
 
     public function deletaUsuario(Request $request)
     {

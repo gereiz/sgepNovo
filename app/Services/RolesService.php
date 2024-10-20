@@ -2,28 +2,32 @@
 
 namespace App\Services;
 
-use App\Models\Config\Roles;
+use App\Models\User;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class RolesService
 {
 
     public function getRoles() {
 
-        return  Roles::all();
+        return  Role::with('permissions')->get();
 
     }
 
+
     public function getRole(Int $id) {
 
-        return Roles::find($id);
+        return Role::find($id);
 
     }
 
 
     public function createRole(Array $data) {
 
-        return Roles::create([
+        return Role::create([
             'name' => $data['name'],
+            'guard_name' => 'web',
         ]);
 
     }
@@ -33,7 +37,7 @@ class RolesService
 
         $acess_levels = [];
 
-        $role = Roles::find($data['permissao']['id_permissao']);
+        $role = Role::find($data['permissao']['id_permissao']);
 
         if (json_decode($role->access_levels) != null) {
             $acess_levels = json_decode($role->access_levels);
@@ -59,5 +63,57 @@ class RolesService
         return $role;
 
     }
+
+
+    public function getPermissions()
+    {
+        return Permission::all();
+    }
+
+
+    public function setPermissions(Array $data)
+    {
+        $role = Role::find($data['role']['id']);
+
+        // dd($role);
+
+        $permissions = [];
+
+        foreach ($data['permissions'] as $permission) {
+            array_push($permissions, $permission['name']);
+        }
+
+        // percorre cada permissão adicioando a regra caso não exista
+        foreach ($permissions as $permission) {
+            // dd($permission);
+            if (!$role->hasPermissionTo($permission)) {
+                $role->givePermissionTo($permission);
+            }
+            else {
+                $role->revokePermissionTo($permission);
+            }
+        }
+
+
+        // dd($data['permissions']['name']);
+
+
+
+        // $role->permissions()->sync($data['permissions']->name);
+
+        return $role;
+    }
+
+    public function setUserRole(Array $data)
+    {
+        $user = User::find($data['user']['id']);
+
+        $role = Role::find($data['role']['id']);
+
+        $user->assignRole($role);
+
+        return $user;
+    }
+
 
 }

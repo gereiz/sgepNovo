@@ -1,15 +1,17 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
 import { useToastr } from '@/Components/toastr';
 import { ref, computed, defineProps } from 'vue';
 
 import GridUsuario from './Components/GridUsuario.vue';
 import AddUsuario from './Components/Add/AddUsuario.vue';
 
+const page = usePage();
+const admin = page.props.user.permissions.includes('admin');
 
 
-const props = defineProps(['usuarios', 'funcoes', 'can'])
+const props = defineProps(['usuarios', 'funcoes'])
 
 const open = ref(false)
 
@@ -42,10 +44,10 @@ function openAdd(val) {
                 </div>
 
                 <div class="w-10/12 flex justify-end">
-                    <label v-if="can.create" for="modal-cliente-add" class="w-32 botao-modal text-sm" @click="openAdd('t')">+ Novo Usuário</label>
+                    <label v-if="admin" for="modal-cliente-add" class="w-32 botao-modal text-sm" @click="openAdd('t')">+ Novo Usuário</label>
                 </div>
-
             </div>
+
             <div class="w-full md:w-4/12">
 
             </div>
@@ -57,7 +59,6 @@ function openAdd(val) {
                         <GridUsuario
                             :usuarios="usuarios"
                             :funcoes="funcoes"
-                            :can="can"
                         >
                         </GridUsuario>
                     </div>

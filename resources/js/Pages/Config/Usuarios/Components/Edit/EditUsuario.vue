@@ -6,7 +6,7 @@ import { vMaska } from 'maska'
 import { usePage } from '@inertiajs/vue3';
 import FormEditUsuario from './FormEditUsuario.vue';
 
-const props = defineProps(['openEdit', 'usuario', 'funcoes']);
+const props = defineProps(['openEdit', 'usuario']);
 const emit = defineEmits(['closeEdit'])
 
 
@@ -36,9 +36,13 @@ watch(() => props.openEdit, (val)  =>{
 function sendFormUsu(val) {
     axios.post('/CadUsuario', val)
     .then((response) => {
-        console.log(response)
-        toastr.success('Usuário cadastrado com sucesso!')
-        openEdit('f')
+        toastr.warning('Usuário atualizado com sucesso!')
+
+        setTimeout(() => {
+            openEdit('f')
+        }, 2000);
+
+
     })
     .catch((error) => {
         console.log(error)
@@ -74,7 +78,6 @@ function sendFormUsu(val) {
                       @closeEdit="openEdit"
                       @sendFormUsu="sendFormUsu"
                       :usuario="props.usuario"
-                      :funcoes="props.funcoes"
                     >
                     </FormEditUsuario>
 
