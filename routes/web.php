@@ -184,10 +184,14 @@ Route::middleware('auth')->group(function () {
 
 
     // Roles
-    Route::get('/roles', [RolesController::class, 'index']);
-    Route::post('/createRole', [RolesController::class, 'createRole']);
-    Route::post('/updateRole', [RolesController::class, 'updateRole']);
-    Route::get('/getRoles', [RolesController::class, 'getRoles']);
+    route::get('/roles', [RolesController::class, 'index']);
+    route::post('/createRole', [RolesController::class, 'createRole']);
+    route::post('/updateRole', [RolesController::class, 'updateRole']);
+    route::get('/getRoles', [RolesController::class, 'getRoles']);
+
+    // Permissions
+    route::get('/getPermissions ', [RolesController::class, 'getPermissions']);
+    route::post('/setPermissions', [RolesController::class, 'setPermissions']);
 
 
 

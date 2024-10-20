@@ -10,11 +10,16 @@ class Roles extends Model
     use HasFactory;
 
     protected $table = 'roles';
-    protected $fillable = ['name', 'access_levels', 'is_active'];
+    protected $fillable = ['name', 'code', 'guard_name'];
 
 
     public function users() {
         return $this->hasMany('App\Models\User');
+    }
+
+
+    public function permissions() {
+        return $this->belongsToMany('App\Models\Config\Permissions', 'role_has_permissions', 'role_id', 'permission_id');
     }
 
 }

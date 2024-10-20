@@ -12,8 +12,8 @@ import CardRegistro from '@/Components/Cards/CardRegistro.vue';
     <AuthenticatedLayout>
         <div class="w-full h-screen flex items-center justify-center">
 
+            {{ $page.props }}
 
-            
         </div>
     </AuthenticatedLayout>
 </template>

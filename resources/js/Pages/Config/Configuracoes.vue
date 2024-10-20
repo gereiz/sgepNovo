@@ -1,15 +1,18 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
 import { useToastr } from '@/Components/toastr';
 import { ref, reactive, onMounted, computed } from 'vue';
 import AddAno from './Gerais/AddAno.vue';
-import AddPermissao from './Gerais/AddPermissao.vue';
+import AddRegra from './Gerais/AddRegra.vue';
+
+
+const page = usePage();
+const permissions = page.props.user.permissions;
 
 const props = defineProps(['anos'])
 
 const toastr = useToastr();
-
 
 
 
@@ -34,6 +37,7 @@ const toastr = useToastr();
             <div class="card flex flex-row w-full h-full bg-base-100 shadow-xl overflow-auto rounded-md p-4">
                 <AddAno :anos="anos" />
 
+                <!-- <a v-if="permissions.includes('admin')" href="/roles" class="botao-primario w-fit px-2 flex items-center">Cadastro de Permissões</a> -->
                 <a href="/roles" class="botao-primario w-fit px-2 flex items-center">Cadastro de Permissões</a>
 
             </div>

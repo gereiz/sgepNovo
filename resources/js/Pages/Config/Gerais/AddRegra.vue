@@ -3,7 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { useToastr } from '@/Components/toastr';
 import { ref, reactive, onMounted, computed } from 'vue';
-import TabelaPermissoes from './TabelaPermissoes.vue';
+import TabelaRegras from './TabelaRegras.vue';
 
 const props = defineProps(['funcoes'])
 
@@ -41,7 +41,7 @@ const AddPermissao = () => {
 </script>
 
 <template>
-    <Head title="Permissões" />
+    <Head title="Regras & Permissões" />
 
     <AuthenticatedLayout>
         <div class="w-full h-screen pt-24 pb-32 mx-2 md:mx-4">
@@ -49,7 +49,7 @@ const AddPermissao = () => {
             <!-- Cabeçalho e barra de Pesquisa -->
             <div class="w-full h-14 flex mb-2">
                 <div class="w-4/12 h-14 flex items-center">
-                    <h1 class="text-xl md:text-4xl font-bold">Permissões</h1>
+                    <h1 class="text-xl md:text-4xl font-bold">Regras & Permissões</h1>
                 </div>
 
             </div>
@@ -61,11 +61,11 @@ const AddPermissao = () => {
                 <div class="w-4/12 flex flex-col border p-4 rounded-xl mr-2">
 
                     <div class="w-full flex mb-4">
-                        <h3 class="font-bold text-lg">Cadastrar Permissao</h3>
+                        <h3 class="font-bold text-lg">Cadastrar Regra</h3>
                     </div>
 
                     <div class="w-full flex justify-center mt-8">
-                        <input type="text" name="nome_permissao" id="nome_permissao" placeholder="Nome da permissão" v-model="permissao.nome_permissao"
+                        <input type="text" name="nome_permissao" id="nome_permissao" placeholder="Nome da regra" v-model="permissao.nome_permissao"
                             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300
                                     placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ps-4" />
 
@@ -82,7 +82,7 @@ const AddPermissao = () => {
                 <!-- tabela de permissões -->
                 <div class="w-8/12 flex flex-col border p-4 rounded-xl overflow-y-auto overflow-x-hidden">
 
-                    <TabelaPermissoes :funcoes="funcoes"/>
+                    <TabelaRegras :funcoes="funcoes"/>
 
                 </div>
 

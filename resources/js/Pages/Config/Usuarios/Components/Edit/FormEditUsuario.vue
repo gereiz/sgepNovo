@@ -5,9 +5,11 @@ import { useToastr } from '@/Components/toastr';
 import { defineProps, defineEmits } from 'vue';
 import { cashBR } from '@/functions';
 
-const props = defineProps(['usuario', 'funcoes'])
+const props = defineProps(['usuario'])
 const emit = defineEmits(['closeEdit', 'sendFormUsu'])
 const toastr = useToastr()
+
+const funcoes = ref([])
 
 const nome_usuario = ref(props.usuario.name)
 const email_usuario = ref(props.usuario.email)
@@ -15,6 +17,9 @@ const senha_usuario = ref(props.usuario.password)
 const funcao_usuario = ref(props.usuario.function)
 const id_usuario = ref(props.usuario.id)
 
+onMounted(() => {
+    getRoles()
+})
 
 function closeAdd(val){
     emit('closeEdit', val)
@@ -38,7 +43,6 @@ function emitStep(val) {
 }
 
 
-
 function sendFormUsu() {
     if(cadUsu.nome_usuario != '' && cadUsu.email_usuario != '' && cadUsu.senha_usuario != '' && cadUsu.funcao_usuario != '') {
         emit('sendFormUsu', cadUsu.value)
@@ -46,6 +50,16 @@ function sendFormUsu() {
 }
 
 
+const getRoles = () => {
+    axios.get('/getRoles')
+    .then((response) => {
+        funcoes.value = response.data
+        console.log(response.data)
+    })
+    .catch((error) => {
+        console.log(error)
+    })
+}
 
 </script>
 
@@ -65,7 +79,6 @@ function sendFormUsu() {
                     />
                 </div>
             </div>
-
             <div class="w-10/12 sm:w-5/12">
                 <label for="email_usuario" class="block text-sm font-medium leading-6 text-gray-900">Email</label>
                 <div class="mt-2">
@@ -98,7 +111,7 @@ function sendFormUsu() {
                 <div class="mt-2">
                     <select v-model="funcao_usuario" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                         <option value="0" disabled selected>Selecione</option>
-                        <option v-for="(func, index) in funcoes" :key="index" :value="func.id">{{ func.cargo }}</option>
+                        <option v-for="(func, index) in funcoes" :key="index" :value="func.id">{{ func.name }}</option>
                     </select>
                 </div>
             </div>

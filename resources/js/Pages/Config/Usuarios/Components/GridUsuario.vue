@@ -3,15 +3,20 @@
 <script setup>
 
     import { ref, reactive, computed, onMounted, watch } from 'vue'
+    import { usePage } from '@inertiajs/vue3';
     import { QuestionMarkCircleIcon } from '@heroicons/vue/20/solid'
     import EditUsuario from './Edit/EditUsuario.vue';
     import DelUsuario from './Del/DelUsuario.vue';
     import AcessosUsuario from './Permissoes/Permissoes.vue';
 
 
-    const props = defineProps(['usuarios', 'funcoes', 'can']);
+    const props = defineProps(['usuarios', 'funcoes']);
+    const page = usePage();
 
     const usuarioSelecionado = ref('')
+
+    const editaUsuario = page.props.user.permissions.includes('editar usuario');
+    const inativaUsuario = page.props.user.permissions.includes('editar usuario');
 
     const can = props.can
 
@@ -53,6 +58,11 @@
         }
     }
 
+ const getFuncao = (id) => {
+        let funcao = props.funcoes.find(f => f.id === id)
+        return funcao.name
+    }
+
 
 </script>
 
@@ -92,16 +102,16 @@
                                     <div class="sm:flex flex-wrap ">
                                         <div class="w-full flex flex-col items-center space-y-3 mt-4">
 
-                                            <p class="text-xs sm:text-base">Função: {{ usuario.funcao.cargo }}</p>
+                                            <p class="text-xs sm:text-base">Função: {{ getFuncao(usuario.function) }}</p>
 
                                         </div>
 
                                         <div class="w-full flex items-center justify-around mt-4 space-x-2">
-                                            <label id="btnSendFunc" class="inline-flex w-10/12 justify-center rounded-md bg-sky-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-500 sm:ml-3 sm:w-3/12" @click="openAcessos('t', usuario)">Permissões
+                                            <!-- <label id="btnSendFunc" class="inline-flex w-10/12 justify-center rounded-md bg-sky-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-500 sm:ml-3 sm:w-3/12" @click="openAcessos('t', usuario)">Permissões
 
-                                            </label>
-                                            <label class="inline-flex w-6/12 justify-center rounded-md bg-amber-500 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-amber-300 sm:mt-0 sm:w-5/12" @click="openEdit('t', usuario)">Editar</label>
-                                            <label class="inline-flex w-6/12 justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-300 sm:ml-3 sm:w-5/12" @click="openDel('t', usuario)">Inativar</label>
+                                            </label>-->
+                                            <label v-if="editaUsuario" class="inline-flex w-6/12 justify-center rounded-md bg-amber-500 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-amber-300 sm:mt-0 sm:w-5/12" @click="openEdit('t', usuario)">Editar</label>
+                                            <label v-if="inativaUsuario" class="inline-flex w-6/12 justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-300 sm:ml-3 sm:w-5/12" @click="openDel('t', usuario)">Inativar</label>
                                         </div>
                                     </div>
                                 </div>
