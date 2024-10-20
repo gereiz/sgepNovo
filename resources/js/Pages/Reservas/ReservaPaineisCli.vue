@@ -10,7 +10,7 @@ import Multiselect from 'vue-multiselect'
 const props = defineProps(['ambiente', 'clientes', 'anos', 'bisemanas', 'paineis'])
 
 const paineis = ref(props.paineis)
-const toastr = useToastr(); 
+const toastr = useToastr();
 
 const reservas = ref([]);
 const itemRefs = ref([])
@@ -61,7 +61,7 @@ function clearChecked() {
 
 function isChecked(val, painelId, id) {
         const cardPainel = itemRefs.value[val];
-            
+
         let classes = cardPainel.classList
 
         if(Object.values(checkedPaineis.value).includes(painelId)) {
@@ -83,11 +83,11 @@ function getImage(i) {
 
     if(props.ambiente == 'local') {
         // Desenvolvimento
-        var image = 'http://localhost:8000/storage/'+ i 
+        var image = 'http://localhost:8000/storage/'+ i
 
     } else {
         // Produção
-        var image = '/storage/'+ i 
+        var image = '/storage/'+ i
 }
 
 return image
@@ -103,7 +103,7 @@ function getBisemanas() {
         idBisemana.value = 0
         reservas.value = []
 
-        
+
 
     })
 
@@ -139,7 +139,7 @@ function getReservasCli(bs) {
     .then((res) => {
 
         reservas.value = res.data.reservas
-        paineis.value = res.data.paineis        
+        paineis.value = res.data.paineis
 
     })
 
@@ -150,7 +150,7 @@ function getReservasCli(bs) {
 }
 
 function cancelaResMulti() {
-    
+
     axios.post('/DelResCliente',  {paineisId: checkedPaineisId.value,
                                     bs: idBisemana.value})
         .then((res) => {
@@ -166,7 +166,7 @@ function cancelaResMulti() {
         })
 
 }
- 
+
 function openAdd(val) {
     if(val === 't') {
         open.value = true
@@ -222,7 +222,7 @@ function openEdit(val) {
                         <select class="select-paineis" name="bi-semana" id="bi-semama" v-model="idBisemana" @change="getReservas(idBisemana)">
                             <option value="0" selected>Selecione</option>
                             <option v-for="(bs, index) in listaBisemana"
-                                :key="index" 
+                                :key="index"
                                 :value="bs.id">BS: {{ bs.num_bisemana }} {{ new Date(bs.inicio).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }} até {{ new Date(bs.fim).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }}
                             </option>
                         </select>
@@ -250,12 +250,12 @@ function openEdit(val) {
                         <!-- <label v-if="idCliente != 0" for="modal-add-painel" class="w-fit botao-modal bg-slate-700 hover:bg-slate-500 px-2 transition-all duration-1000">Gerar PI</label> -->
                         <label v-if="idCliente != 0 && checkedPaineis.length > 0" @click="openEdit('t')" for="modal-add-painel" class="w-fit botao-modal bg-amber-600 hover:bg-amber-400 px-2 transition-all duration-1000">Editar Reservas</label>
                         <label v-if="idCliente != 0 && checkedPaineis.length > 0" for ="modal-canc-res-cli" class="w-fit botao-danger px-2 transition-all duration-1000">Excluir Selecionados</label>
-                        
+
                     </div>
-                   
+
 
                 </div>
-
+ 
             </div>
 
 
@@ -264,7 +264,7 @@ function openEdit(val) {
                 <div class="card-body flex flex-col sm:flex-row">
                     <!-- Paineis -->
                     <div class="w-full flex flex-col flex-wrap md:flex-row">
-                        
+
                         <!-- Cards dos Paineis -->
                         <div v-for="(res, index) in reservas " :key="index" class="card w-full sm:w-[30%] card-reserva-cliente">
                             <div class="card-body flex" :id="index" @click="isChecked(index, res.identificacao, res.id)">
@@ -278,42 +278,42 @@ function openEdit(val) {
                                     <div class="w-7/12 mb-4 ml-4 -mt-4 space-y-2">
                                         <span class="font-bold text-sm text-red-500">Painel: </span>
                                         <span class="font-extrabold text-xs"> {{ res.identificacao }} - {{ res.nome_fantasia ? res.nome_fantasia : res.razao_social }}</span>
-                                        
+
                                         <br>
                                         <span class="font-bold text-sm text-red-500">Campanha: </span> <span class="font-extrabold text-xs">{{ res.campanha }}</span> <br>
                                         <span class="font-bold text-sm text-red-500">Obs.: </span> <span class="font-extrabold text-xs">{{ res.obs }}</span>
                                     </div>
-                                    
-                                   
+
+
                                 </div>
                             </div>
-                            
-                            
+
+
                         </div>
                     </div>
 
-                </div>  
+                </div>
             </div>
 
 
             <!-- Inclusão de novos Paineis -->
-            <AddReserva :openAdd="open" 
+            <AddReserva :openAdd="open"
                         :cliente="idCliente"
-                        :paineis="paineis" 
+                        :paineis="paineis"
                         :bisemana="idBisemana"
-                        @closeAdd="openAdd"> 
+                        @closeAdd="openAdd">
             </AddReserva>
 
             <!-- Edição de painéis -->
-            <EditarReserva :openAdd="openE" 
+            <EditarReserva :openAdd="openE"
                         :cliente="idCliente"
-                        :paineis="paineis" 
+                        :paineis="paineis"
                         :bisemana="idBisemana"
-                        @closeAdd="openAdd"> 
+                        @closeAdd="openAdd">
             </EditarReserva>
 
            <!-- Excluir painéis selecionados -->
-           <input type="checkbox" id="modal-canc-res-cli" class="modal-toggle" />          
+           <input type="checkbox" id="modal-canc-res-cli" class="modal-toggle" />
             <div class="modal flex items-end md:items-center">
                 <form method="dialog" class="modal-box bg-white">
                     <h3 class="font-black text-2xl animate-pulse duration-200 text-center mb-2">Cancelar Reserva: Painéis {{checkedPaineisId}}</h3>
@@ -323,13 +323,13 @@ function openEdit(val) {
 
                     <label for="paineis-del">Painéis Selecionados</label>
                     <textarea class="w-full input input-bordered" type="text" name="paineis-del" id="paineis-del" v-model="checkedPaineis" disabled></textarea>
-                
+
                     <div class="modal-action">
                         <div class="w-full flex justify-center space-x-4">
                             <label for="modal-canc-res-cli" class="w-5/12 text-sm botao-modal bg-gray-700 hover:bg-gray-500">Manter Painéis</label>
                             <label @click="cancelaResMulti()" for="modal-canc-res-cli" class="w-5/12 text-sm botao-modal bg-red-700 hover:bg-red-500">Cancelar Painéis</label>
                         </div>
-                    
+
                     </div>
                 </form>
             </div>

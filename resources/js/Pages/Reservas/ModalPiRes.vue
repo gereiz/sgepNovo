@@ -96,9 +96,24 @@ function submitFormPi() {
     formPi: formPi.value
   })
   .then((res) => {
-      setTimeout(() => {
-        window.open('/storePi', '_blank')
-      }, 2000);
+      if(formPi.value.One && formPi.value.Two && formPi.value.Three) {
+        setTimeout(() => {
+            window.open('/storePi', '_blank')
+        }, 2000);
+      } else {
+        axios.get('/storePi')
+            .then((res) => {
+                toastr.success('Reserva realizada sem emissão da PI')
+
+                setTimeout(() => {
+                    window.location.reload()
+                }, 3000);
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+
+      }
   })
   .catch((err) =>{
     console.log(err)
@@ -114,9 +129,9 @@ function closeM() {
 
 function naviForm(ev) {
   if(ev == 0) {
-    
+
     closeM()
-  
+
   } else if(ev == 1) {
 
     step.value = StepOnePi;
@@ -124,37 +139,37 @@ function naviForm(ev) {
   } else if(ev == 2) {
 
     step.value = StepTwoPi;
-    
+
   } else if(ev == 3) {
 
     step.value = StepThreePi;
 
   } else if(ev == 4) {
-    
+
     step.value = StepFourPi;
 
   } else if(ev == 5) {
-    
+
     submitFormPi()
-    
+
     setTimeout(() => {
       closeM()
     }, 3000);
-    
+
   }
-  
+
 }
 
 </script>
 
 <template>
-    
+
     <TransitionRoot as="template" :show="open">
       <Dialog as="div" class="relative z-10">
         <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100" leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
           <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </TransitionChild>
-       
+
         <div class="fixed inset-0 z-10 overflow-y-auto">
           <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" enter-to="opacity-100 translate-y-0 sm:scale-100" leave="ease-in duration-200" leave-from="opacity-100 translate-y-0 sm:scale-100" leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
@@ -168,12 +183,12 @@ function naviForm(ev) {
                 <div class="sm:flex flex-col sm:items-start">
                   <div class="w-full mt-3 text-center sm:mt-0 sm:text-left">
                       <KeepAlive>
-                          <component :is="step" 
+                          <component :is="step"
                                      :cliente="cliente"
                                      :campanha="campanha"
                                      :paineis="paineis"
                                      :bisemana="bisemana"
-                                     @nextStep="naviForm" 
+                                     @nextStep="naviForm"
                                      @formOne="saveFormOne"
                                      @formTwo="saveFormTwo"
                                      @formThree="saveFormThree">

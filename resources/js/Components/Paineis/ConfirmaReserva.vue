@@ -36,12 +36,12 @@ Campanha e Observações par aconfirmação de reservas e um close (booleano) --
     function closeModal() {
         open.value = false
         emit('closeObs', open.value)
-        
-    
+
+
     }
 
-   
-    
+
+
     function setData() {
         emit('campanha', campanha.value)
         emit('observacoes', observacoes.value)
@@ -57,12 +57,12 @@ Campanha e Observações par aconfirmação de reservas e um close (booleano) --
         <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100" leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
           <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </TransitionChild>
-  
+
         <div class="fixed inset-0 z-10 overflow-y-auto">
           <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" enter-to="opacity-100 translate-y-0 sm:scale-100" leave="ease-in duration-200" leave-from="opacity-100 translate-y-0 sm:scale-100" leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
               <DialogPanel class="relative transform overflow-hidden rounded-lg bg-white w-full sm:w-[42.5%] sm:p-6 sm:ml-[15%] sm:my-4 pb-4 pt-5 text-left shadow-xl transition-all">
-                <div>   
+                <div>
                   <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
                     <ClipboardDocumentCheckIcon class="h-6 w-6 text-green-600" aria-hidden="true" />
                   </div>
@@ -70,7 +70,7 @@ Campanha e Observações par aconfirmação de reservas e um close (booleano) --
                     <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900">
                         Informe a Campanha e Observações sobre a reserva. <span class="text-red-500 font-extrabold"></span>
                     </DialogTitle>
-                    
+
                     <!-- Campos de texto -->
                     <div class="w-full flex flex-col items-center justify-end">
                         <div class="w-11/12 flex flex-col flex-wrap">
@@ -79,11 +79,11 @@ Campanha e Observações par aconfirmação de reservas e um close (booleano) --
                                     (Obrigatório)
                                 </span>
                             </label>
-                            <input type="text" 
+                            <input type="text"
                                 v-model="campanha"
-                                name="campanha" 
+                                name="campanha"
                                 id="campanha" class="block w-full rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                placeholder="Informar campanha" 
+                                placeholder="Informar campanha"
                             />
                         </div>
                     </div>
@@ -95,16 +95,16 @@ Campanha e Observações par aconfirmação de reservas e um close (booleano) --
                                 </span>
                             </label>
                             <div class=" w-full mt-2">
-                                <textarea rows="4" 
-                                          name="obsevacoes" 
+                                <textarea rows="4"
+                                          name="obsevacoes"
                                           :disabled="campanha == ''"
-                                          id="obsevacoes" 
+                                          id="obsevacoes"
                                           v-model="observacoes"
                                           class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                             </div>
                         </div>
                     </div>
-                  
+
 
                     <div class="mt-5 sm:mt-6 w-full space-y-4 space-x-2 border-t border-gray-200 pt-4">
                         <label class="mt-3 inline-flex w-5/12 justify-center rounded-md bg-gray-200 px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-5/12" @click="closeModal(), limparCampos()">
@@ -123,4 +123,4 @@ Campanha e Observações par aconfirmação de reservas e um close (booleano) --
       </Dialog>
     </TransitionRoot>
 </template>
-  
+
