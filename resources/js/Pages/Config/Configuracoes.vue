@@ -38,7 +38,7 @@ const toastr = useToastr();
                 <AddAno :anos="anos" />
 
                 <!-- <a v-if="permissions.includes('admin')" href="/roles" class="botao-primario w-fit px-2 flex items-center">Cadastro de Permissões</a> -->
-                <a href="/roles" class="botao-primario w-fit px-2 flex items-center">Cadastro de Permissões</a>
+                <a href="/roles" class="botao-primario w-fit px-2 flex items-center">Cadastro de Funções</a>
 
             </div>
 

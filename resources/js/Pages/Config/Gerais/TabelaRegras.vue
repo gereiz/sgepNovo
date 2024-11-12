@@ -59,7 +59,7 @@ const getPermissions = () => {
 
     <div class="sm:flex sm:items-center sm:justify-center">
         <div class="sm:flex-auto">
-            <p class="mt-2 font-bold text-xl text-gray-700 text-center mb-4">Regras cadastradas no sistema.</p>
+            <p class="mt-2 font-bold text-xl text-gray-700 text-center mb-4">Funções cadastradas no sistema.</p>
         </div>
     </div>
 
@@ -77,15 +77,15 @@ const getPermissions = () => {
                 </thead>
                 <tbody class="divide-y divide-gray-200 bg-white">
                 <tr v-for="(regra, index) in listRoles" :key="index" class="divide-x divide-gray-200">
-                    <td class="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-2">{{ regra.id }}</td>
-                    <td class="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-2">{{ regra.name }}</td>
-                    <td v-if="regra.permissions.length !== 0" class="whitespace-nowrap p-4 text-sm text-gray-500">
+                    <td class="w-[0.75rem] whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-2">{{ regra.id }}</td>
+                    <td class="w-[5rem] whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-2">{{ regra.name }}</td>
+                    <td v-if="regra.permissions.length !== 0" class="max-w-[8rem] whitespace-nowrap p-4 text-sm text-gray-500 overflow-x-auto">
                         <span v-for="(perm, permIndex) in regra.permissions">
                             {{ perm.name }}, </span> </td>
                     <td v-else class="whitespace-nowrap p-4 text-sm text-gray-500">Nenhuma permissão atribuída</td>
-                    <td class="whitespace-nowrap p-4 text-sm space-x-2">
+                    <td class="w-[5rem] whitespace-nowrap p-4 text-sm space-x-2">
                         <label for="modal-permissao" class="botao bg-green-600 hover:bg-green-500" @click="role = regra">Permissões</label>
-                        <a href="#" class="botao bg-red-600 hover:bg-red-500">Editar Regra</a>
+                        <a href="#" class="botao bg-red-600 hover:bg-red-500">Excluir Função</a>
                     </td>
 
                 </tr>

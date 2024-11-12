@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
 import { ref, reactive, watch } from 'vue';
 import { useToastr } from '@/Components/toastr';
 import AddReserva from './Components/AddReserva.vue';
@@ -8,9 +8,13 @@ import EditarReserva from './Components/EditReserva.vue';
 import Multiselect from 'vue-multiselect'
 
 const props = defineProps(['ambiente', 'clientes', 'anos', 'bisemanas', 'paineis'])
+const page = usePage();
 
 const paineis = ref(props.paineis)
 const toastr = useToastr();
+
+const criaReserva = page.props.user.permissions.includes('criar reserva');
+const excluiReserva = page.props.user.permissions.includes('excluir reserva');
 
 const reservas = ref([]);
 const itemRefs = ref([])
@@ -246,10 +250,10 @@ function openEdit(val) {
 
                     <!-- Botões -->
                     <div class=" w-full sm:w-[20%] flex mt-2 space-x-4">
-                        <label v-if="idCliente != 0" @click="clearChecked(), openAdd('t')" for="modal-add-painel" class="w-fit botao-modal px-2 transition-all duration-1000">Incluir painéis</label>
+                        <label v-if="idCliente != 0, criaReserva" @click="clearChecked(), openAdd('t')" for="modal-add-painel" class="w-fit botao-modal px-2 transition-all duration-1000">Incluir painéis</label>
                         <!-- <label v-if="idCliente != 0" for="modal-add-painel" class="w-fit botao-modal bg-slate-700 hover:bg-slate-500 px-2 transition-all duration-1000">Gerar PI</label> -->
                         <!-- <label v-if="idCliente != 0 && checkedPaineis.length > 0" @click="openEdit('t')" for="modal-add-painel" class="w-fit botao-modal bg-amber-600 hover:bg-amber-400 px-2 transition-all duration-1000">Editar Reservas</label> -->
-                        <label v-if="idCliente != 0 && checkedPaineis.length > 0" for ="modal-canc-res-cli" class="w-fit botao-danger px-2 transition-all duration-1000">Excluir Selecionados</label>
+                        <label v-if="idCliente != 0 && checkedPaineis.length > 0, excluiReserva" for ="modal-canc-res-cli" class="w-fit botao-danger px-2 transition-all duration-1000">Excluir Selecionados</label>
 
                     </div>
 

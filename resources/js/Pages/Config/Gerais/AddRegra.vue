@@ -49,7 +49,7 @@ const AddPermissao = () => {
             <!-- Cabeçalho e barra de Pesquisa -->
             <div class="w-full h-14 flex mb-2">
                 <div class="w-4/12 h-14 flex items-center">
-                    <h1 class="text-xl md:text-4xl font-bold">Regras & Permissões</h1>
+                    <h1 class="text-xl md:text-4xl font-bold">Funções & Permissões</h1>
                 </div>
 
             </div>
@@ -61,7 +61,7 @@ const AddPermissao = () => {
                 <div class="w-4/12 flex flex-col border p-4 rounded-xl mr-2">
 
                     <div class="w-full flex mb-4">
-                        <h3 class="font-bold text-lg">Cadastrar Regra</h3>
+                        <h3 class="font-bold text-lg">Cadastrar Função</h3>
                     </div>
 
                     <div class="w-full flex justify-center mt-8">
