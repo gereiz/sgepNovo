@@ -51,7 +51,7 @@ const sendPermissions = () => {
         <div class="modal-box w-full flex flex-col">
             <div class="w-full flex items-center justify-center mb-4">
                 <label for="modal-permissao" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
-                <h3 v-if="role" class="font-bold text-lg">Incluir Permissões na Regra: <span class="font-semibold text-red-500">{{ role.name }}</span></h3>
+                <h3 v-if="role" class="font-bold text-lg">Incluir Permissões na Função: <span class="font-semibold text-red-500">{{ role.name }}</span></h3>
             </div>
             <!-- {{ role.permissions }} -->
             <!-- Inclusão de nova permissão -->
