@@ -42,7 +42,7 @@ class ComposerStaticInitdbefa4ca5f337c25869081ff1672705f
         '320163ac6b93aebe3dc25b60a0533d56' => __DIR__ . '/..' . '/spatie/laravel-ignition/src/helpers.php',
         '5c6a9495e67e3398fc97ef867ed00846' => __DIR__ . '/..' . '/spatie/laravel-pdf/src/Support/functions.php',
         '101b35f72e0ccb1b5ef72aa86bba3ef9' => __DIR__ . '/..' . '/yoeunes/toastr/src/helpers.php',
-        '381c1f7485be5ec909ca0fe1ede4b928' => __DIR__ . '/../..' . '/app/Helpers/Helpers.php',
+        'd21d43db5f6e840ee7b10744ec7fdf66' => __DIR__ . '/../..' . '/app/Helpers/helpers.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -700,6 +700,7 @@ class ComposerStaticInitdbefa4ca5f337c25869081ff1672705f
         'App\\Models\\Bisemanas\\Bisemana' => __DIR__ . '/../..' . '/app/Models/Bisemanas/Bisemana.php',
         'App\\Models\\Clientes\\Cliente' => __DIR__ . '/../..' . '/app/Models/Clientes/Cliente.php',
         'App\\Models\\Config\\Ano' => __DIR__ . '/../..' . '/app/Models/Config/Ano.php',
+        'App\\Models\\Config\\Permissions' => __DIR__ . '/../..' . '/app/Models/Config/Permissions.php',
         'App\\Models\\Config\\Roles' => __DIR__ . '/../..' . '/app/Models/Config/Roles.php',
         'App\\Models\\Config\\Whatsapp' => __DIR__ . '/../..' . '/app/Models/Config/Whatsapp.php',
         'App\\Models\\Enderecos\\Bairro' => __DIR__ . '/../..' . '/app/Models/Enderecos/Bairro.php',

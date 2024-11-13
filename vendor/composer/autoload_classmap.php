@@ -57,6 +57,7 @@ return array(
     'App\\Models\\Bisemanas\\Bisemana' => $baseDir . '/app/Models/Bisemanas/Bisemana.php',
     'App\\Models\\Clientes\\Cliente' => $baseDir . '/app/Models/Clientes/Cliente.php',
     'App\\Models\\Config\\Ano' => $baseDir . '/app/Models/Config/Ano.php',
+    'App\\Models\\Config\\Permissions' => $baseDir . '/app/Models/Config/Permissions.php',
     'App\\Models\\Config\\Roles' => $baseDir . '/app/Models/Config/Roles.php',
     'App\\Models\\Config\\Whatsapp' => $baseDir . '/app/Models/Config/Whatsapp.php',
     'App\\Models\\Enderecos\\Bairro' => $baseDir . '/app/Models/Enderecos/Bairro.php',
