@@ -26,7 +26,7 @@ const form = useForm({ident: null,
 })
 
 onMounted(() => {
-    if(props.painel.value != {}) {
+    if(Object.keys(props.painel).length > 0) {
         form.idPainel = painelEdit.value[0].id
         form.ident = painelEdit.value[0].identificacao
         form.ident_ant = painelEdit.value[0].ident_antiga
