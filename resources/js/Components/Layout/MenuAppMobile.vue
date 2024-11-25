@@ -4,12 +4,12 @@
 
 <template>
   <div v-if="!showText" class="w-full my-4 flex flex-col space-y-4">
-    
+
     <!-- Endereços -->
     <div class="w-full flex group">
         <div class="w-2/12 md:ml-2.5 text-center">
             <i class="fa-solid fa-map-location-dot text-white text-xl"></i>
-        </div> 
+        </div>
         <div class="w-10/12 flex">
             <div class="">
                 <p  class="text-white mt-1">Endereços</p>
@@ -26,7 +26,7 @@
     <div class="w-full flex">
         <div class="w-2/12 md:ml-2.5 text-center">
             <i class="fa-solid fa-user-plus text-white text-xl"></i>
-        </div> 
+        </div>
         <div class="w-10/12 flex">
             <div class="group">
             <p  class="text-white mt-1">Clientes</p>
@@ -41,7 +41,7 @@
     <div class="w-full flex">
         <div class="w-2/12 md:ml-2.5 text-center">
             <i class="fa-solid fa-solar-panel text-white text-xl"></i>
-        </div> 
+        </div>
         <div class="w-10/12 flex">
             <div class="group">
             <p  class="text-white mt-1">Painéis</p>
@@ -58,7 +58,7 @@
     <div class="w-full flex">
         <div class="w-2/12 md:ml-2.5 text-center">
             <i class="fa-solid fa-square-envelope text-white text-xl"></i>
-        </div> 
+        </div>
         <div class="w-10/12 flex">
             <div class="group">
             <p  class="text-white mt-1">Disponibilidades</p>
@@ -75,7 +75,7 @@
     <div class="w-full flex">
         <div class="w-2/12 md:ml-2.5 text-center">
             <i class="fa-regular fa-file text-white text-xl"></i>
-        </div> 
+        </div>
         <div class="w-10/12 flex">
             <div class="group">
             <p  class="text-white mt-1">Relatórios</p>
@@ -89,13 +89,13 @@
                 </ul>
             </div>
         </div>
-    </div> 
+    </div>
 
     <!-- Financeiro -->
     <div class="w-full flex">
         <div class="w-2/12 md:ml-2.5 text-center">
             <i class="fa-regular fa-file text-white text-xl"></i>
-        </div> 
+        </div>
         <div class="w-10/12 flex">
             <div class="group">
             <p  class="text-white mt-1">Financeiro</p>
@@ -113,7 +113,7 @@
     <div class="w-full flex">
         <div class="w-2/12 md:ml-2.5 text-center">
             <i class="fa-solid fa-gears text-white text-xl"></i>
-        </div> 
+        </div>
         <div class="w-10/12 flex">
             <div class="group">
             <p  class="text-white mt-1">Configurações</p>

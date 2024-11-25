@@ -64,12 +64,10 @@ class RolesService
 
     }
 
-
     public function getPermissions()
     {
         return Permission::all();
     }
-
 
     public function setPermissions(Array $data)
     {
@@ -115,5 +113,13 @@ class RolesService
         return $user;
     }
 
+    public function deleteRole(Array $role)
+    {
+        $role = Role::find($role['role']['id']);
+
+        $role->delete();
+
+        return $role;
+    }
 
 }

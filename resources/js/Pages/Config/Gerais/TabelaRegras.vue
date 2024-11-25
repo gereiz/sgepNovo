@@ -47,7 +47,18 @@ const getPermissions = () => {
 }
 
 
+const deleteRole = (role) => {
 
+    console.log(role)
+    axios.post('/deleteRole', {role: role})
+    .then((res) => {
+        toastr.success('Função excluída com sucesso!')
+        getRoles()
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+}
 
 
 
@@ -85,7 +96,7 @@ const getPermissions = () => {
                     <td v-else class="whitespace-nowrap p-4 text-sm text-gray-500">Nenhuma permissão atribuída</td>
                     <td class="w-[5rem] whitespace-nowrap p-4 text-sm space-x-2">
                         <label for="modal-permissao" class="botao bg-green-600 hover:bg-green-500" @click="role = regra">Permissões</label>
-                        <a href="#" class="botao bg-red-600 hover:bg-red-500">Excluir Função</a>
+                        <label class="botao bg-red-600 hover:bg-red-500" @click="deleteRole(regra)">Excluir Função</label>
                     </td>
 
                 </tr>

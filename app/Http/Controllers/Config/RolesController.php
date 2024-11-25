@@ -76,4 +76,13 @@ class RolesController extends Controller
         return response()->json($role);
     }
 
+    public function deleteRole(Request $request)
+    {
+        $role = $request->all();
+
+        $delete = $this->rolesService->deleteRole($role);
+
+        return response()->json($role);
+    }
+
 }
