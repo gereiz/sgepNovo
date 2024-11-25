@@ -102,6 +102,7 @@ function addPainel() {
         })
         .catch((err) =>{
           console.log(err)
+          console.log('Errou aqui')
         })
 
 }

@@ -35,14 +35,14 @@ onMounted(() => {
         form.dimLona = painelEdit.value[0].dimensao_lona
         form.posicao = painelEdit.value[0].posicao
         form.tipo = painelEdit.value[0].tipo
-       
-    } 
+
+    }
 })
- 
+
 
 function emitStep(val) {
     let btnSendTwo = document.getElementById('btnSendTwo')
-    
+
     btnSendTwo.innerHTML = 'Carregando...'
     setTimeout(() => {
         emit('step2', val)
@@ -143,7 +143,7 @@ function toSubmitStep() {
                 </div>
             </div>
 
-    
+
         </div>
 
         <div class="w-full flex flex-wrap justify-center space-x-0 sm:space-x-6 space-y-8 sm:space-y-0">
@@ -152,7 +152,7 @@ function toSubmitStep() {
                 <label for="dimensao" class="block text-sm font-medium leading-6 text-gray-900">Dimensão</label>
                 <div class="mt-2">
                     <input type="text" name="dimensao" id="dimensao" v-model="form.dim" :disabled="user.id !==1 && user.id !==1"
-                        class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center" 
+                        class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center"
                     />
                 </div>
             </div>
@@ -161,7 +161,7 @@ function toSubmitStep() {
                 <label for="dim_lona" class="block text-sm font-medium leading-6 text-gray-900">Dimensão Lona</label>
                 <div class="mt-2">
                     <input type="text" name="dim_lona" id="dim_lona" v-model="form.dimLona"
-                        class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center" 
+                        class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center"
                     />
                 </div>
             </div>
@@ -170,7 +170,7 @@ function toSubmitStep() {
                 <label for="posicao" class="block text-sm font-medium leading-6 text-gray-900">Posição</label>
                 <div class="mt-2">
                     <input type="text" name="posicao" id="posicao" v-model="form.posicao"
-                        class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center" 
+                        class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center"
                     />
                 </div>
             </div>
@@ -183,11 +183,11 @@ function toSubmitStep() {
                         <option value="0" disabled selected>Selecione</option>
                         <option value="1">Nobre</option>
                         <option value="2">Convencional</option>
-                        
+
                     </select>
                 </div>
             </div>
-           
+
         </div>
 
 
@@ -219,4 +219,4 @@ function toSubmitStep() {
 
     </div>
 </template>
-  
+
