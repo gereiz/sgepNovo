@@ -188,6 +188,7 @@ Route::middleware('auth')->group(function () {
     route::post('/createRole', [RolesController::class, 'createRole']);
     route::post('/updateRole', [RolesController::class, 'updateRole']);
     route::get('/getRoles', [RolesController::class, 'getRoles']);
+    route::post('/deleteRole', [RolesController::class, 'deleteRole']);
 
     // Permissions
     route::get('/getPermissions ', [RolesController::class, 'getPermissions']);

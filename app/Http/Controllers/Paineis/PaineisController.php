@@ -14,7 +14,15 @@ class PaineisController extends Controller
 
     public function index() {
 
-        $paineis = Painel::with('bairro.regiao')->get();
+        // $paineis = Painel::with('bairro.regiao')->get();
+
+        $paineis = Painel::with('bairro.regiao')
+            ->join('bairros', 'outdoors.bairro_id', '=', 'bairros.id')
+            ->join('regioes', 'bairros.regiao_id', '=', 'regioes.id')
+            ->orderBy('regioes.nome') // Ordena por nome da região
+            ->orderBy('bairros.nome') // Ordena por nome do bairro
+            ->select('outdoors.*') // Garante que só os campos de "paineis" sejam retornados
+        ->get();
 
         return Inertia::render('Paineis/ListaPaineis', compact('paineis'));
 
