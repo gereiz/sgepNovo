@@ -69,7 +69,7 @@ function getFormOne(ev) {
 
 function getFormTwo(ev) {
 
-formCliTwo.value.idPainel = props.painel[0].id
+formCliTwo.value.idPainel = ev.idPainel
 formCliTwo.value.ident = ev.ident
 formCliTwo.value.ident_ant = ev.ident_ant
 formCliTwo.value.cadan = ev.cadan
@@ -102,7 +102,6 @@ function addPainel() {
         })
         .catch((err) =>{
           console.log(err)
-          console.log('Errou aqui')
         })
 
 }

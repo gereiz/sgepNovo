@@ -11,30 +11,31 @@ class PainelService
 {
 
     public function storeOrUpdatePainel(Request $request) {
-        
+
         $filname = $request->dados['sTwo']['ident'].'.'.$request->dados['sTwo']['imagem']->extension();
         $path = 'outdoorImages/'.$request->dados['sTwo']['ident'];
-        
+
         $request->dados['sTwo']['imagem']->storeAs('public/'.$path, $filname);
 
+        // dd($request->dados);
 
-        if(!$request->dados['sTwo']['idPainel']) { 
+        if(isset($request->dados['sTwo']['idPainel'])) {
             $messages = [
                 'dados.sTwo.identificacao.unique' => 'Já existe um painel com essa Identificação!',
             ];
-    
-    
-            $validator = Validator::make($request->all(), [ 
+
+
+            $validator = Validator::make($request->all(), [
                 'dados.sTwo.ident' => ['unique:outdoors,identificacao']
             ]);
-    
+
             if ($validator->fails()) {
                 return back()->with('error', $messages);
             }
         }
 
 
-        
+
        $painel = Painel::updateorCreate(['identificacao' => $request->dados['sTwo']['ident']],
        [
             'identificacao' => $request->dados['sTwo']['ident'],
@@ -59,5 +60,5 @@ class PainelService
 
     }
 
-    
+
 }
