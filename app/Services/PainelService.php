@@ -19,20 +19,20 @@ class PainelService
 
         // dd($request->dados);
 
-        if(isset($request->dados['sTwo']['ident'])) {
-            $messages = [
-                'dados.sTwo.identificacao.unique' => 'Já existe um painel com essa Identificação!',
-            ];
+        // if(isset($request->dados['sTwo']['idPainel'])) {
+        //     $messages = [
+        //         'dados.sTwo.identificacao.unique' => 'Já existe um painel com essa Identificação!',
+        //     ];
 
 
-            $validator = Validator::make($request->all(), [
-                'dados.sTwo.ident' => ['unique:outdoors,identificacao']
-            ]);
+        //     $validator = Validator::make($request->all(), [
+        //         'dados.sTwo.ident' => ['unique:outdoors,identificacao']
+        //     ]);
 
-            if ($validator->fails()) {
-                return back()->with('error', $messages);
-            }
-        }
+        //     if ($validator->fails()) {
+        //         return back()->with('error', $messages);
+        //     }
+        // }
 
 
 
