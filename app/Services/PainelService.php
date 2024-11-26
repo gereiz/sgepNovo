@@ -19,7 +19,7 @@ class PainelService
 
         // dd($request->dados);
 
-        if(isset($request->dados['sTwo']['idPainel'])) {
+        if(isset($request->dados['sTwo']['ident'])) {
             $messages = [
                 'dados.sTwo.identificacao.unique' => 'Já existe um painel com essa Identificação!',
             ];
