@@ -140,7 +140,7 @@ class ReservaController extends Controller
                                       'bai.nome AS bnome',
                                       'reg.nome AS rnome',
                                       'cid.nome AS cnome')
-                          ->join('reservas AS res', 'res.outdoor_id', '=', 'outdoors.id')
+                        //   ->join('reservas AS res', 'res.outdoor_id', '=', 'outdoors.id')
                           ->join('bairros AS bai', 'bai.id', '=', 'outdoors.bairro_id')
                           ->join('regioes AS reg', 'reg.id', '=', 'bai.regiao_id')
                           ->join('cidades AS cid', 'cid.id', '=', 'reg.cidade_id')
