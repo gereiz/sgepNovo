@@ -101,8 +101,8 @@
             <p  class="text-white mt-1">Financeiro</p>
                 <ul  class="hidden group-hover:block w-52 text-white ml-1 mt-2 space-y-2">
                     <li class="hover:text-slate-400"><a href="/Servicos" >Cadastro de Serviços</a></li>
-                    <li class="hover:text-slate-400"><a href="/Funcoes" >Cadastro de Funções</a></li>
                     <li class="hover:text-slate-400"><a href="/Comissoes" >Cadastro de Comissões</a></li>
+                    <li class="hover:text-slate-400"><a href="/Caixa" >Controle de Caixa</a></li>
 
                 </ul>
             </div>

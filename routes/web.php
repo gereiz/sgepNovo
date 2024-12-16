@@ -14,10 +14,10 @@ use App\Http\Controllers\Relatorios\RelPainXCliController;
 use App\Http\Controllers\Reserva\PiController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Financeiro\ServicosController;
-use App\Http\Controllers\Financeiro\FuncoesController;
 use App\Http\Controllers\Financeiro\ComissoesController;
 use App\Http\Controllers\Config\UsuarioController;
 use App\Http\Controllers\Config\RolesController;
+use App\Http\Controllers\Financeiro\CaixaController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -130,10 +130,17 @@ Route::middleware('auth')->group(function () {
     route::get('/ListaServicos', [ServicosController::class, 'listaServicos'])->name('lista.servicos');
 
 
-    // Funções
-    route::get('/Funcoes', [FuncoesController::class, 'index'])->name('funcoes');
-    route::post('/CadastraFuncao', [FuncoesController::class, 'cadastraFuncao'])->name('cad.funcao');
-    route::post('/DelFuncao', [FuncoesController::class, 'deletaFuncao'])->name('del.funcao');
+        // Caixa
+    route::get('/Caixa', [CaixaController::class, 'index'])->name('caixa');
+
+    // Centros de custo
+    route::get('/CentrosCusto', [CaixaController::class, 'getCentrosCusto']);
+    route::post('/CentroCusto', [CaixaController::class, 'getCentrosCusto']);
+    route::post('/CreateCentroCusto', [CaixaController::class, 'createCentroCusto']);
+    route::post('/UpdateCentroCusto', [CaixaController::class, 'updateCentroCusto']);
+    route::post('/DeleteCentroCusto', [CaixaController::class, 'deleteCentroCusto']);
+
+
 
 
     // Comissões
