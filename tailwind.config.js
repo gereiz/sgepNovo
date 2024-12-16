@@ -23,10 +23,10 @@ export default {
             },
             important: true,
 
-            
+
         },
     },
 
     // plugins: [require("daisyui")],
-    plugins: [forms, require("daisyui")],
+    plugins: [forms, require("@tailwindcss/typography"), require("daisyui")],
 };

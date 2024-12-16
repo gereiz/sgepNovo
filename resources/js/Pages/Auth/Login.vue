@@ -25,7 +25,7 @@
                             autocomplete="username"
                         />
                         <InputError class="mt-2" :message="form.errors.email" />
-                    
+
 
                         <InputLabel for="password" value="Senha" />
                         <TextInput
@@ -37,7 +37,7 @@
                             autocomplete="current-password"
                         />
                         <InputError class="mt-2" :message="form.errors.password" />
-                        
+
                     </div>
 
                     <!-- <div class="block mt-4">
@@ -56,13 +56,13 @@
                             Forgot your password?
                         </Link> -->
 
-                        <button class="w-full btn bg-cor-primaria hover:bg-sky-600 hover:border-white transition-all duration-1000" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                        <button class="w-full btn btn-info text-white" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                             Entrar
                         </button>
                     </div>
                 </div>
 
-            
+
             </form>
         </div>
     </div>
@@ -98,6 +98,6 @@
             onFinish: () => form.reset('password'),
         });
 
-        
+
     };
 </script>
