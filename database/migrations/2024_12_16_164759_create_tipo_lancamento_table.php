@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('tipo_lancamento', function (Blueprint $table) {
             $table->id();
             $table->string('tipo');
-            $table->timestamp('created_at');
-            $table->timestamp('updated_at');
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

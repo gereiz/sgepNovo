@@ -132,6 +132,7 @@ Route::middleware('auth')->group(function () {
 
         // Caixa
     route::get('/Caixa', [CaixaController::class, 'index'])->name('caixa');
+    route::get('/PainelLancamentos', [CaixaController::class, 'lancamentos'])->name('painel.lancamentos');
 
     // Centros de custo
     route::get('/CentrosCusto', [CaixaController::class, 'getCentrosCusto']);
@@ -141,6 +142,20 @@ Route::middleware('auth')->group(function () {
     route::post('/DeleteCentroCusto', [CaixaController::class, 'deleteCentroCusto']);
 
 
+    // Tipos de lançamentos
+    route::get('/TiposLancamentos', [CaixaController::class, 'getTiposLancamentos']);
+    route::post('/TipoLancamento', [CaixaController::class, 'getTipoLancamento']);
+    route::post('/CreateTipoLancamento', [CaixaController::class, 'createTipoLancamento']);
+    route::post('/UpdateTipoLancamento', [CaixaController::class, 'updateTipoLancamento']);
+    route::post('/DeleteTipoLancamento', [CaixaController::class, 'deleteTipoLancamento']);
+
+
+    // Lançamentos
+    route::get('/Lancamentos', [CaixaController::class, 'getLancamentos']);
+    route::post('/Lancamento', [CaixaController::class, 'getLancamento']);
+    route::post('/CreateLancamento', [CaixaController::class, 'createLancamento']);
+    route::any('/UpdateLancamento', [CaixaController::class, 'updateLancamento']);
+    route::post('/DeleteLancamento', [CaixaController::class, 'deleteLancamento']);
 
 
     // Comissões

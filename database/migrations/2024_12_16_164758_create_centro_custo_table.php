@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('centro_custo', function (Blueprint $table) {
             $table->id();
             $table->string('centro_custo');
-            $table->timestamp('created_at');
-            $table->timestamp('updated_at');
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

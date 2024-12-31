@@ -6,7 +6,7 @@ import { ref, reactive, onMounted, computed } from 'vue';
 import AddPainel from './Components/AddPainel.vue';
 import DelPainel from './Components/DelPainel.vue';
 
-const props = defineProps(['paineis'])
+const props = defineProps(['paineis']) 
 const page = usePage();
 
 const criaPainel = page.props.user.permissions.includes('criar painel');

@@ -134,11 +134,11 @@ return array(
         | For example, if you want to convert Laravel's 'danger' flash
         | messages to PHPFlasher's 'error' notifications, you can add
         | the following entry to the mapping:
-        |     'error' => ['danger'],
+        |     'message' => ['danger'],
         */
         'mapping' => array(
             'success' => array('success'),
-            'error' => array('error', 'danger'),
+            'message' => array('error', 'danger'),
             'warning' => array('warning', 'alarm'),
             'info' => array('info', 'notice', 'alert'),
         ),

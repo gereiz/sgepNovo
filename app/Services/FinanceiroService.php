@@ -105,7 +105,7 @@ class FinanceiroService
     public function deletaFuncao($id)
     {
         if($id == 1) {
-            return response()->json(['error' => 'Não é possível deletar essa função'], 400);
+            return response()->json(['message' => 'Não é possível deletar essa função'], 400);
         } else {
             $funcao = Funcao::find($id);
             $funcao->delete();

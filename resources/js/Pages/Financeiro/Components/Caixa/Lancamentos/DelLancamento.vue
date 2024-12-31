@@ -3,25 +3,25 @@ import { useToastr } from '@/Components/toastr';
 import { ref, reactive, onMounted, computed, watch } from 'vue';
 
 
-const props = defineProps(['centroCusto'])
-const emit = defineEmits(['deleteCentroCusto']);
+const props = defineProps(['lancamento'])
+const emit = defineEmits(['delLancamento']);
 const toastr = useToastr();
 
-const centros = ref(props.centrosCusto)
+const lancamentoL = ref(props.lancamento)
 
 const deleteCentroCusto = () => {
-    axios.post('/DeleteCentroCusto', { centroCusto: props.centroCusto })
+    axios.post('/DeleteLancamento', { lancamento: props.lancamento })
     .then(response => {
-        toastr.success('Centro de Custo excluído com sucesso!')
+        toastr.success('Lançamento excluído com sucesso!')
 
         setTimeout(() => {
-            const dialog = document.getElementById('del_centro_custo')
+            const dialog = document.getElementById('del_lancamento')
             dialog.close()
-            emit('deleteCentroCusto', 'T')
+            emit('delLancamento', 'T')
         }, 1000)
 
     }).catch(error => {
-        toastr.error(error.response.data.message)
+        toastr.error('Erro ao excluir Lançamento!')
     })
 }
 
@@ -31,14 +31,14 @@ const deleteCentroCusto = () => {
 
 
 <template>
-    <dialog id="del_centro_custo" class="modal modal-bottom sm:modal-middle">
+    <dialog id="del_lancamento" class="modal modal-bottom sm:modal-middle">
         <div class="modal-box">
             <form method="dialog">
                 <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
             </form>
 
             <div class="w-full flex flex-col items-center p-4">
-                <h3 class="text-lg font-bold">Excluir Centro de Custo: <span class="text-red-500 font-semibold">{{ centroCusto.centro_custo }}</span> </h3>
+                <h3 class="text-lg font-bold">Excluir Lançamento: <span class="text-red-500 font-semibold">{{ lancamento.descricao }}</span> </h3>
                 <p class="py-4">Essa exclusão não é reversível!</p>
             </div>
 
