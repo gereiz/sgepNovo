@@ -194,7 +194,7 @@ function openEdit(val) {
     <Head title="Painéis" />
 
     <AuthenticatedLayout>
-        <div class="w-full h-screen pt-20 pb-32 mx-2 md:mx-4">
+        <div class="w-full h-screen sm:pt-20 pb-32 mx-2 md:mx-4">
 
             <!-- Cabeçalho e barra de Pesquisa -->
             <div class="w-full h-14 flex mb-2">
@@ -205,25 +205,25 @@ function openEdit(val) {
             </div>
 
             <!-- Filtros de Pesquisa -->
-            <div class="w-full flex flex-row flex-wrap items-center justify-center mb-20 sm:mb-0 ">
+            <div class="w-full flex flex-row flex-wrap items-center justify-center mb-10 sm:mb-0 ">
 
 
                 <!-- Ano Bi-semana, e CLiente -->
                 <div class="w-full flex items-center sm:justify-center flex-wrap">
 
                      <!-- Anos -->
-                     <div class="w-[30%] sm:w-[8%] flex flex-col me-4 sm:me-6">
+                     <div class="w-[30%] sm:w-[8%] flex flex-col me-4 sm:me-6 -mt-6 mb-2">
                         <label for="bi-semana">Ano</label>
-                        <select class="select-paineis" name="ano" id="ano" v-model="idAno" @change="getBisemanas()">
+                        <select class="select select-bordered" name="ano" id="ano" v-model="idAno" @change="getBisemanas()">
                             <option value="0" selected>Selecione</option>
                             <option v-for="(ano, index) in anos" :key="index" :value="ano.id">{{ ano.ano_bisemana }}</option>
                         </select>
                     </div>
 
                     <!-- Bi-semanas -->
-                    <div class="w-[61%] sm:w-[20%] flex flex-col me-4 sm:me-6">
+                    <div class="w-[61%] sm:w-[20%] flex flex-col me-4 sm:me-6 -mt-6 mb-2">
                         <label for="bi-semana">Bi-Semana</label>
-                        <select class="select-paineis" name="bi-semana" id="bi-semama" v-model="idBisemana" @change="getReservas(idBisemana)">
+                        <select class="select select-bordered" name="bi-semana" id="bi-semama" v-model="idBisemana" @change="getReservas(idBisemana)">
                             <option value="0" selected>Selecione</option>
                             <option v-for="(bs, index) in listaBisemana"
                                 :key="index"
@@ -233,8 +233,8 @@ function openEdit(val) {
                     </div>
 
                      <!-- Clientes -->
-                     <div class="w-full sm:w-[20%] flex flex-col sm:-mt-5 me-4 sm:me-6">
-                        <label for="status">Cliente</label>
+                     <div class="w-full sm:w-[20%] flex flex-col sm:-mt-5 me-4 sm:me-6 mb-2">
+                        <label for="cliente">Cliente</label>
                         <multiselect :disabled="idBisemana == 0"
                             v-model="idCliente"
                             :options="clientes"
@@ -244,16 +244,17 @@ function openEdit(val) {
                             :close-on-select="true"
                             :show-labels="true"
                             placeholder="Selecione o Cliente"
+
                         >
                         </multiselect>
                     </div>
 
                     <!-- Botões -->
-                    <div class=" w-full sm:w-[20%] flex mt-2 space-x-4">
-                        <label v-if="idCliente != 0, criaReserva" @click="clearChecked(), openAdd('t')" for="modal-add-painel" class="w-fit botao-modal px-2 transition-all duration-1000">Incluir painéis</label>
-                        <!-- <label v-if="idCliente != 0" for="modal-add-painel" class="w-fit botao-modal bg-slate-700 hover:bg-slate-500 px-2 transition-all duration-1000">Gerar PI</label> -->
-                        <!-- <label v-if="idCliente != 0 && checkedPaineis.length > 0" @click="openEdit('t')" for="modal-add-painel" class="w-fit botao-modal bg-amber-600 hover:bg-amber-400 px-2 transition-all duration-1000">Editar Reservas</label> -->
-                        <label v-if="idCliente != 0 && checkedPaineis.length > 0, excluiReserva" for ="modal-canc-res-cli" class="w-fit botao-danger px-2 transition-all duration-1000">Excluir Selecionados</label>
+                    <div class=" w-full sm:w-[20%] flex justify-center sm:justify-start mt-2 space-x-4 mb-2">
+                        <button v-if="idCliente != 0 && criaReserva" @click="clearChecked(), openAdd('t')" for="modal-add-painel" class="w-4/12 h-10 btn btn-info text-white -mt-1">Incluir painéis</button>
+                        <!-- <button v-if="idCliente != 0" for="modal-add-painel" class="w-fit botao-modal bg-slate-700 hover:bg-slate-500 px-2 transition-all duration-1000">Gerar PI</button> -->
+                        <!-- <button v-if="idCliente != 0 && checkedPaineis.length > 0" @click="openEdit('t')" for="modal-add-painel" class="w-fit botao-modal bg-amber-600 hover:bg-amber-400 px-2 transition-all duration-1000">Editar Reservas</button> -->
+                        <button v-if="idCliente != 0 && checkedPaineis.length > 0 && excluiReserva" for ="modal-canc-res-cli" class="w-4/12 h-10 btn btn-error text-white -mt-1">Excluir Selecionados</button>
 
                     </div>
 
@@ -264,7 +265,7 @@ function openEdit(val) {
 
 
             <!-- Card Principal -->
-            <div class="card w-full h-full max-h-[97%] bg-base-100 shadow-xl overflow-auto rounded-md">
+            <div class="card w-full h-full max-h-[65%] sm:max-h-[97%] bg-base-100 shadow-xl overflow-auto rounded-md">
                 <div class="card-body flex flex-col sm:flex-row">
                     <!-- Paineis -->
                     <div class="w-full flex flex-col flex-wrap md:flex-row">

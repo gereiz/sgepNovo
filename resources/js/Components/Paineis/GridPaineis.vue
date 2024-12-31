@@ -194,7 +194,7 @@
                 <input type="text"
                        v-model="pesquisaPainel"
                        name="pesquisa_painel"
-                       id="pesquisa_painel" class="block w-full rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                       id="pesquisa_painel" class="input input-bordered w-full h-11 -mt-1 mb-2"
                        placeholder="Pesquisar Painel"
                 />
             </div>
@@ -216,7 +216,7 @@
                         </multiselect>
                     </div>
                     <div class="w-2/12">
-                        <button @click="clearChecked()" class="botao max-h-10 bg-red-700 hover:bg-red-500 ">Limpar</button>
+                        <button @click="clearChecked()" class="w-full h-6 btn btn-error text-white">Limpar</button>
                     </div>
                 </div>
             </div>

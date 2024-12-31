@@ -56,7 +56,7 @@
                             Forgot your password?
                         </Link> -->
 
-                        <button class="w-full btn btn-info text-white" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                        <button class="w-full btn btn-primary text-white" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                             Entrar
                         </button>
                     </div>

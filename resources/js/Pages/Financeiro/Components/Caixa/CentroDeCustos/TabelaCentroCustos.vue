@@ -1,15 +1,19 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
 import { useToastr } from '@/Components/toastr';
 import { ref, reactive, onMounted, computed, watch } from 'vue';
 
 import DelCentroCusto from './DelCentroCusto.vue';
 import EditCentroCusto from './EditCentroCusto.vue';
 
-
+const page = usePage();
 const props = defineProps(['centrosCusto'])
 
+
+const criaFinanceiro = page.props.user.permissions.includes('criar financeiro');
+const editaFinanceiro = page.props.user.permissions.includes('editar financeiro');
+const excluiFinanceiro = page.props.user.permissions.includes('excluir financeiro');
 const centrosC = ref(props.centrosCusto)
 const centroCusto = ref({})
 
@@ -66,14 +70,18 @@ const updateCentros = (val) => {
             <tr class="divide-x divide-gray-200" v-for="centro in centrosC" :key="centro.id">
                 <td class="w-1/12 whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-2">{{ centro.id }}</td>
                 <td class="w-8/12 whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-2">{{ centro.centro_custo }}</td>
-                <td class="w-3/12 whitespace-nowrap flex p-4 text-sm space-x-2">
-                    <label class="btn btn-sm btn-square btn-warning text-white" title="Editar" @click="openEdit(centro)">
+                <td v-if="centro.id != 1" class="w-3/12 whitespace-nowrap flex p-4 text-sm space-x-2">
+                    <label v-if="editaFinanceiro" class="btn btn-sm btn-square btn-warning text-white" title="Editar" @click="openEdit(centro)">
                         <i class="fa-solid fa-pen-to-square"></i>
                     </label>
 
-                    <label class="btn btn-sm btn-square btn-error text-white" @click="openDelete(centro)" title="Excluir">
+                    <label v-if="excluiFinanceiro" class="btn btn-sm btn-square btn-error text-white" @click="openDelete(centro)" title="Excluir">
                         <i class="fa-solid fa-trash"></i>
                     </label>
+                </td>
+
+                <td v-else class="w-3/12 whitespace-nowrap flex p-4 text-sm space-x-2 text-center">
+                  <p class="text-red-500 font-black">Não pode ser excluído !</p>
                 </td>
             </tr>
             </tbody>

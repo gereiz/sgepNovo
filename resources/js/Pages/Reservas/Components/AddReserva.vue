@@ -121,12 +121,12 @@ function closePi() {
                     </GridPaineis>
 
                     <div class="mt-5 sm:mt-6 w-full space-y-4 space-x-2 border-t border-gray-200 pt-4">
-                        <label class="mt-3 inline-flex w-5/12 justify-center rounded-md bg-gray-200 px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-5/12" @click="closeAdd()">
+                        <button class="w-5/12 btn btn-default bg-slate-400 text-white mt-4" @click="closeAdd()">
                             Cancelar
-                        </label>
-                        <label class="inline-flex w-5/12 justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-5/12" @click="reservaPaineis()">
+                        </button>
+                        <button class="w-5/12 btn btn-success text-white mt-4" @click="reservaPaineis()">
                             Criar Reserva ou PI
-                        </label>
+                        </button>
                     </div>
                   </div>
                 </div>

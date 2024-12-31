@@ -17,15 +17,16 @@ return new class extends Migration
             $table->id();
             $table->string('descricao');
             $table->decimal('valor');
+            $table->smallInteger('parcelas');
             $table->date('dt_faturamento');
             $table->unsignedBigInteger('centro_custo');
             $table->foreign('centro_custo')->references('id')->on('centro_custo');
             $table->unsignedBigInteger('tipo_lancamento');
             $table->foreign('tipo_lancamento')->references('id')->on('tipo_lancamento');
             $table->integer('id_reserva');
-            $table->text('observacoes');
-            $table->timestamp('created_at');
-            $table->timestamp('updated_at');
+            $table->text('observacoes')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();
