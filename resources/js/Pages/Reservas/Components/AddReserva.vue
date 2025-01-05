@@ -135,7 +135,6 @@ function closePi() {
                     <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900">
                         Reservar painéis para o cliente: <span class="text-red-500 font-extrabold">{{ cliente.nome_fantasia ? cliente.nome_fantasia : cliente.razao_social}}</span>
                     </DialogTitle>
-                      {{checkedPaineisId}}
                     <!-- Grid de Painéis -->
                     <GridPaineis tipoPainel="D"
                                  :bisemana="bisemana"
