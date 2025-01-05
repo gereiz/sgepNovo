@@ -1,9 +1,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { useToastr } from '@/Components/toastr';
 import { ref, computed } from 'vue';
 import AddCliente from './Components/AddCliente.vue';
+import DelCliente from "./Components/DelCliente.vue";
 
 const props = defineProps(['clientes'])
 
@@ -13,6 +13,7 @@ const codCli = ref('');
 const cliente = ref({})
 
 const open = ref(false)
+const openD = ref(false)
 
 function openAdd(val) {
     if(val === 't') {
@@ -31,7 +32,7 @@ function openEdit(val) {
         .catch((err) => {
             console.error(err)
     })
-    
+
     if(val === 't') {
         open.value = true
     } else {
@@ -40,22 +41,23 @@ function openEdit(val) {
 
 }
 
+function openDel(val, cli) {
+    if(val === 't') {
+        openD.value = true
+        cliente.value = cli
+    } else {
+        openD.value = false
+    }
+
+}
+
 function setClienteData (id, nome) {
-    codCli.value = id; 
+    codCli.value = id;
     nomeCli.value = nome;
 
 }
 
-function excluirCliente(id) {
-    axios.post('/DelCliente', {idCliente: id})
-        .then((res) =>{
-            useToastr('success', 'Cliente excluído com sucesso!')
-            location.reload()
-        })
-        .catch((err) => {
-            console.error(err)
-    })
-}
+
 
 const clientesFiltrados = computed(() => {
     let clientesFiltrados = Object.values(props.clientes).filter((cliente) => {
@@ -74,18 +76,18 @@ const clientesFiltrados = computed(() => {
 
     <AuthenticatedLayout>
         <div class="w-full h-screen pt-24 pb-32 mx-2 md:mx-4">
-            
+
             <!-- Cabeçalho e barra de Pesquisa -->
             <div class="w-full h-14 flex mb-2">
                 <div class="w-2/12 h-14 flex items-center">
                     <h1 class="text-xl md:text-4xl font-bold">Clientes</h1>
                     <h1 class="text-lg md:text-2xl text-red-400 font-bold ml-2 md:ml-4">{{ clientes.length }}</h1>
                 </div>
-                
-                <div class="w-10/12 flex justify-end"> 
-                    <label for="modal-cliente-add" class="w-28 botao-modal text-sm" @click="openAdd('t')">+ Novo Cliente</label>
+
+                <div class="w-10/12 flex justify-end">
+                    <label for="modal-cliente-add" class="btn btn-primary" @click="openAdd('t')">+ Novo Cliente</label>
                 </div>
-                
+
             </div>
             <div class="w-full md:w-4/12">
                 <input v-model="pesqCliente" placeholder="Pesquisar Cliente" class="w-full h-10 input input-bordered rounded-none mb-4" type="text" name="pesquisar" id="pesquisar">
@@ -95,7 +97,7 @@ const clientesFiltrados = computed(() => {
             <div class="card w-full h-full bg-base-100 shadow-xl overflow-auto rounded-md">
                 <div class="card-body">
                     <div class="w-full flex flex-col flex-wrap md:flex-row justify-center">
-                        
+
                         <div v-for="(cli, index) in clientesFiltrados" :key="index" class="card w-full md:w-5/12 bg-base-100 border-2 rounded-md shadow-xl mt-4 md:mr-4">
                             <label for="modal-cliente">
                                 <div class="card-body">
@@ -114,8 +116,14 @@ const clientesFiltrados = computed(() => {
                             </label>
 
                             <div class="w-full flex justify-center py-4 space-x-4">
-                                <label @click="setClienteData(cli.id, (cli.nome_fantasia ? cli.nome_fantasia : cli.razao_social)), openEdit('t')" class="w-5/12 px-3 py-2 text-center text-sm font-semibold text-gray-900 rounded-md bg-amber-500 hover:bg-amber-400 ring-amber-300 shadow-sm ring-1 ring-inset">Editar</label>
-                                <label @click="excluirCliente(cli.id)" class="w-5/12 px-3 py-2 text-center text-sm font-semibold text-white rounded-md bg-red-500 hover:bg-red-400 ring-red-300 shadow-sm ring-1 ring-inset">Excluir</label>
+                                <button @click="setClienteData(cli.id, (cli.nome_fantasia ? cli.nome_fantasia : cli.razao_social)), openEdit('t')"
+                                       class="w-4/12 btn btn-warning text-white">
+                                    Editar
+                                </button>
+                                <button @click="openDel('t', cli)"
+                                       class="w-4/12 btn btn-error text-white">
+                                    Excluir
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -124,7 +132,9 @@ const clientesFiltrados = computed(() => {
 
             <AddCliente :openAdd="open" :clienteEdit="cliente" @CloseAdd="openAdd"/>
 
-        </div> 
+            <DelCliente :openDel="openD" :clienteDel="cliente" @CloseDel="openDel"/>
+
+        </div>
     </AuthenticatedLayout>
 </template>
 
