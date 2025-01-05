@@ -5,7 +5,7 @@ import {ClipboardDocumentCheckIcon } from '@heroicons/vue/24/outline'
 import { vMaska } from 'maska'
 import { usePage } from '@inertiajs/vue3';
 import GridPaineis from '../../../Components/Paineis/GridPaineis.vue';
-import ModalPiRes from '../ModalPiRes.vue';
+import ModalPiRes from './ModalPiRes.vue';
 
 const props = defineProps(['openAdd', 'cliente', 'bisemana', 'paineis']);
 const emit = defineEmits(['closeAdd']);
@@ -60,15 +60,40 @@ function getObservacoes(val) {
 
 function reservaPaineis() {
 
-  if(campanha.value === '') {
-    toastr.error('É obrigatório Informar a campanha!')
-    return
-  }
+    if (campanha.value === '') {
+        toastr.error('É obrigatório Informar a campanha!')
+        return
+    }
 
-  openAdd('t')
+    axios.post('/ResPaineisCli', {
+        clienteId: props.cliente.id,
+        idPaineis: checkedPaineisId.value,
+        campanha: campanha.value,
+        obs: observacoes.value,
+        bsId: bisemana.value.id
+    })
+    .then(res => {
+            toastr.success(res.data.message)
+            closeAdd()
+    })
+    .catch(err => {
+        toastr.error(err.response.data.message)
+    })
 
 
 }
+
+// function reservaPaineis() {
+//
+//   if(campanha.value === '') {
+//     toastr.error('É obrigatório Informar a campanha!')
+//     return
+//   }
+//
+//   openAdd('t')
+//
+//
+// }
 
 function openAdd(val) {
     if(val === 't') {
@@ -110,6 +135,7 @@ function closePi() {
                     <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900">
                         Reservar painéis para o cliente: <span class="text-red-500 font-extrabold">{{ cliente.nome_fantasia ? cliente.nome_fantasia : cliente.razao_social}}</span>
                     </DialogTitle>
+                      {{checkedPaineisId}}
                     <!-- Grid de Painéis -->
                     <GridPaineis tipoPainel="D"
                                  :bisemana="bisemana"
@@ -125,7 +151,7 @@ function closePi() {
                             Cancelar
                         </button>
                         <button class="w-5/12 btn btn-success text-white mt-4" @click="reservaPaineis()">
-                            Criar Reserva ou PI
+                            Criar Pré-Reserva
                         </button>
                     </div>
                   </div>
@@ -137,15 +163,15 @@ function closePi() {
       </Dialog>
     </TransitionRoot>
 
-    <ModalPiRes :openPi="openPi"
-                :paineis="checkedPaineis"
-                :campanha="campanha"
-                :observacoes="observacoes"
-                @closePi="closePi"
-                @closeAdd="closeAdd"
-                :cliente="cliente"
-                :bisemana="bisemana"
+<!--    <ModalPiRes :openPi="openPi"-->
+<!--                :paineis="checkedPaineis"-->
+<!--                :campanha="campanha"-->
+<!--                :observacoes="observacoes"-->
+<!--                @closePi="closePi"-->
+<!--                @closeAdd="closeAdd"-->
+<!--                :cliente="cliente"-->
+<!--                :bisemana="bisemana"-->
 
-    />
+<!--    />-->
 </template>
 
