@@ -2,7 +2,7 @@
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import ModalCancRes from '@/Pages/Paineis/Components/ModalCancelRes.vue'
     import ModalWpp from '@/Pages/Paineis/Components/ModalWpp.vue'
-    import ModalPiRes from '../Reservas/ModalPiRes.vue';
+    import ModalPiRes from '../Reservas/Components/ModalPiRes.vue';
     import { Head, router } from '@inertiajs/vue3';
     import { getImage, toastr, enviaWpp, getLink } from '@/functions'
     import { ref, reactive, onMounted, computed, watch } from 'vue'
@@ -95,7 +95,6 @@
 
     }
 
-
     function getRegiao() {
 
         axios.post('/GetRegioes', {idCid: idCidade.value})
@@ -110,7 +109,6 @@
 
     }
 
-
     function getBairro() {
 
         axios.post('/GetBairros', {idReg: idRegiao.value})
@@ -120,7 +118,6 @@
         })
 
     }
-
 
     function getPaineis() {
 
@@ -153,12 +150,10 @@
 
     }
 
-
     function atualizaPaineis(ev) {
 
         getPaineis()
     }
-
 
     function getPainelReserva(val) {
 
@@ -171,7 +166,6 @@
            }, 500);
         }
     }
-
 
     function isChecked(val, painelId, id, painel) {
         const cardPainel = itemRefs.value[val];
@@ -199,7 +193,6 @@
 
     }
 
-
     function checkAll() {
         let i = 0;
 
@@ -216,7 +209,6 @@
         });
     }
 
-
     function clearChecked() {
         checkedPaineis.value = [];
         checkedPaineisId.value = [];
@@ -231,7 +223,6 @@
 
     }
 
-
     function confirmaPI() {
 
         if(valPi.value) {
@@ -243,7 +234,6 @@
 
     }
 
-
     function getIdent() {
         pan.value.forEach(painel => {
 
@@ -251,7 +241,6 @@
         });
 
     }
-
 
     function reservaPainel(pan) {
 
@@ -639,8 +628,8 @@
                         :campanha="formReserva.campanha"
                         :bisemana="bisemanaSelecionada"
                         :painel="painelReserva"
-                        @closePi="openPi"
-            />
+                        @closePi="openPi">
+            </ModalPiRes>
 
 
         </div>

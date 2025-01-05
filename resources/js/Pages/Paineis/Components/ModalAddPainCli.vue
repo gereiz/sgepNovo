@@ -4,14 +4,14 @@ import { ref, reactive, onMounted, computed } from 'vue';
 import { useToastr } from '@/Components/toastr';
 import Multiselect from 'vue-multiselect';
 
-const toastr = useToastr(); 
+const toastr = useToastr();
 
 const props =  defineProps(['clienteSel', 'idBisemana', 'idents'])
 
 const emit = defineEmits(['atualizaPage'])
 
 const enviaEmit = (val) => {
-    
+
     emit('atualizaPage', val)
 
 }
@@ -33,45 +33,45 @@ function confirmaPI() {
         hidePiModal.value = true
         conf.showModal()
 
-    }          
+    }
 
 }
- 
-function reservaPainel() {
-    
-    formReserva.cliente = props.clienteSel.id
 
-    axios.post('/ResPaineisCli', {clienteId: formReserva.cliente,
-                                outdoorId: paineisLista.value,
-                                bsId: props.idBisemana,
-                                campanha: formReserva.campanha,
-                                obs: formReserva.observ,
-                                checkPi: valPi.value
-    })
-    .then((res) => {
-        if(res.data.cod === 0) {
-            toastr.error(res.data.msg)
-        } else if(res.data.cod == 1) {
-            toastr.success(res.data.msg)
-
-
-            formReserva.cliente = ''
-            formReserva.campanha = ''
-            formReserva.observ = ''
-            paineisLista.value = []
-            valPi.value = false
- 
-           
-        }
-    })
-
-
-}
+// function reservaPainel() {
+//
+//     formReserva.cliente = props.clienteSel.id
+//
+//     axios.post('/ResPaineisCli', {clienteId: formReserva.cliente,
+//                                 outdoorId: paineisLista.value,
+//                                 bsId: props.idBisemana,
+//                                 campanha: formReserva.campanha,
+//                                 obs: formReserva.observ,
+//                                 checkPi: valPi.value
+//     })
+//     .then((res) => {
+//         if(res.data.cod === 0) {
+//             toastr.error(res.data.msg)
+//         } else if(res.data.cod == 1) {
+//             toastr.success(res.data.msg)
+//
+//
+//             formReserva.cliente = ''
+//             formReserva.campanha = ''
+//             formReserva.observ = ''
+//             paineisLista.value = []
+//             valPi.value = false
+//
+//
+//         }
+//     })
+//
+//
+// }
 
 </script>
 
 <template >
-    
+
     <!-- Inclusão de novos Paineis -->
     <input type="checkbox" id="modal-add-painel" class="modal-toggle" />
     <div class="modal flex items-end md:items-center">
@@ -91,7 +91,7 @@ function reservaPainel() {
                     <label for="cliente" class="mb-2">Cliente</label>
                     <input type="text" class="input input-bordered" name="cliente" :value="clienteSel.nome_fantasia ? clienteSel.nome_fantasia : clienteSel.razao_social" id="cliente" disabled>
                 </div>
-            
+
                 <!-- Painéis -->
                 <div class="w-full flex flx-col flex-wrap mt-4">
                     <label for="paineis" class="mb-2">Painéis</label>
@@ -107,7 +107,7 @@ function reservaPainel() {
                         placeholder="Todos"
                         name="Paineis"
                     >
-                    </multiselect>  
+                    </multiselect>
                 </div>
 
                 <!-- Campanha -->
@@ -128,10 +128,10 @@ function reservaPainel() {
                     <div class="form-control">
                         <label class="cursor-pointer">
                             <span class="label-text text-lg sm:text-xl me-4">Existe P. I. para esta reserva?</span>
-                            <input type="checkbox" 
-                                    v-model="valPi" 
-                                    @click="valPi = !valPi, confirmaPI()" 
-                                    class="checkbox checkbox-lg checkbox-success border-2 border-gray-400" 
+                            <input type="checkbox"
+                                    v-model="valPi"
+                                    @click="valPi = !valPi, confirmaPI()"
+                                    class="checkbox checkbox-lg checkbox-success border-2 border-gray-400"
                             />
                         </label>
                     </div>
@@ -148,9 +148,9 @@ function reservaPainel() {
                         <!-- Se houver um botão no formulário, ele fechará o modal -->
                         <div class="w-full flex justify-center space-x-4">
                             <button class="w-5/12 botao-primario" @click="hidePiModal = false">Confirmar</button>
-                            <button @click="valPi = false, hidePiModal = false" class="w-5/12 botao-danger">Ainda não !</button>   
+                            <button @click="valPi = false, hidePiModal = false" class="w-5/12 botao-danger">Ainda não !</button>
                         </div>
-                        
+
                         </div>
                     </form>
                 </dialog>

@@ -1,11 +1,13 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, usePage } from '@inertiajs/vue3';
-import { ref, reactive, watch } from 'vue';
+import {ref, reactive, watch, computed} from 'vue';
 import { useToastr } from '@/Components/toastr';
 import AddReserva from './Components/AddReserva.vue';
-import EditarReserva from './Components/EditReserva.vue';
+import DelReserva from "@/Pages/Reservas/Components/DelReserva.vue";
 import Multiselect from 'vue-multiselect'
+import GridPaineisReserva from "@/Pages/Reservas/Components/GridPaineisReserva.vue";
+import ModalPiRes from "@/Pages/Reservas/Components/ModalPiRes.vue";
 
 const props = defineProps(['ambiente', 'clientes', 'anos', 'bisemanas', 'paineis'])
 const page = usePage();
@@ -16,6 +18,7 @@ const toastr = useToastr();
 const criaReserva = page.props.user.permissions.includes('criar reserva');
 const excluiReserva = page.props.user.permissions.includes('excluir reserva');
 
+const cliente = ref('');
 const reservas = ref([]);
 const itemRefs = ref([])
 const checkedPaineis = ref([]);
@@ -30,11 +33,15 @@ let clienteSel = ref('');
 const idBisemana = ref(0);
 
 const open = ref(false)
-const openE = ref(false)
+const openD = ref(false)
+const openP = ref(false)
 
 watch(idCliente, (val) => {
     getReservasCli(idBisemana.value)
     clearChecked()
+
+
+
 })
 
 function clienteLista({id, nome_fantasia, razao_social}) {
@@ -61,40 +68,6 @@ function clearChecked() {
 
     })
 
-}
-
-function isChecked(val, painelId, id) {
-        const cardPainel = itemRefs.value[val];
-
-        let classes = cardPainel.classList
-
-        if(Object.values(checkedPaineis.value).includes(painelId)) {
-            checkedPaineis.value.splice(checkedPaineis.value.indexOf(painelId), 1)
-            checkedPaineisId.value.splice(checkedPaineis.value.indexOf(id), 1)
-            cardPainel.checked = false
-
-        } else {
-            checkedPaineis.value.push(painelId);
-            checkedPaineisId.value.push(id);
-            cardPainel.checked = true
-
-        }
-
-
-}
-
-function getImage(i) {
-
-    if(props.ambiente == 'local') {
-        // Desenvolvimento
-        var image = 'http://localhost:8000/storage/'+ i
-
-    } else {
-        // Produção
-        var image = '/storage/'+ i
-}
-
-return image
 }
 
 function getBisemanas() {
@@ -145,6 +118,12 @@ function getReservasCli(bs) {
         reservas.value = res.data.reservas
         paineis.value = res.data.paineis
 
+        // console.log(res.data)
+    })
+    .catch((err) => {
+        reservas.value = []
+        // paineis.value = []
+        console.log(err)
     })
 
     axios.post('/GetCliente', {cliente:idCliente})
@@ -153,21 +132,12 @@ function getReservasCli(bs) {
     })
 }
 
-function cancelaResMulti() {
 
-    axios.post('/DelResCliente',  {paineisId: checkedPaineisId.value,
-                                    bs: idBisemana.value})
-        .then((res) => {
-            // console.log(res.data)
-            getReservasCli(idBisemana.value)
-
-            if(res.data.cod === 0) {
-                toastr.error(res.data.msg)
-            } else if(res.data.cod == 1) {
-                toastr.success(res.data.msg)
-            }
-            clearChecked()
-        })
+function openPi(val)  {
+    if(val == 't') {
+        openP.value = true
+    } else
+        openP.value = false
 
 }
 
@@ -176,16 +146,59 @@ function openAdd(val) {
         open.value = true
     } else {
         open.value = false
+        getReservasCli(idBisemana.value)
     }
 }
 
-function openEdit(val) {
+const openDel = (val) => {
     if(val === 't') {
-        openE.value = true
+        openD.value = true
     } else {
-        openE.value = false
+        openD.value = false
+        getReservasCli(idBisemana.value)
     }
 }
+
+const getChecked = (ev) => {
+    checkedPaineis.value = ev
+    console.log(checkedPaineis.value)
+    console.log(idCliente.value)
+}
+
+const getCheckedId = (ev) => {
+    checkedPaineisId.value = ev
+    console.log(checkedPaineisId.value)
+}
+
+const getItemsRef = (ev) => {
+    itemRefs.value = ev
+
+}
+
+const bisemanaSelecionada = computed(() => {
+
+    let bisemanaSelecionada = Object.values(props.bisemanas).filter((bisemana) =>{
+        return (bisemana.id === idBisemana.value)
+    })
+
+    return bisemanaSelecionada
+})
+
+const reservasIdent = computed(() => {
+    let reservasIdent = reservas.value.map((reserva) => {
+        return reserva.identificacao
+    })
+
+    return reservasIdent
+})
+
+const reservasCampanha = computed(() => {
+    let reservasCampanha = reservas.value.map((reserva) => {
+        return reserva.campanha
+    })
+
+    return reservasCampanha
+})
 
 
 </script>
@@ -194,10 +207,10 @@ function openEdit(val) {
     <Head title="Painéis" />
 
     <AuthenticatedLayout>
-        <div class="w-full h-screen sm:pt-20 pb-32 mx-2 md:mx-4">
+        <div class="w-full h-screen sm:pt-20 lg:pb-32 mx-2 md:mx-4">
 
             <!-- Cabeçalho e barra de Pesquisa -->
-            <div class="w-full h-14 flex mb-2">
+            <div class="w-full h-14 flex mb-4">
                 <div class="sm:w-2/12 h-14 flex items-center">
                     <h1 class="titulo">Reservas por Cliente </h1> <p class="text-red-500 font-bold ml-2">{{ reservas.length }}</p>
                     <!-- <h1 class="text-lg md:text-2xl text-red-400 font-bold ml-2 md:ml-4">{{ paineis.length }}</h1> -->
@@ -205,14 +218,13 @@ function openEdit(val) {
             </div>
 
             <!-- Filtros de Pesquisa -->
-            <div class="w-full flex flex-row flex-wrap items-center justify-center mb-10 sm:mb-0 ">
-
+            <div class="w-full flex flex-row flex-wrap items-center lg:mb-4">
 
                 <!-- Ano Bi-semana, e CLiente -->
-                <div class="w-full flex items-center sm:justify-center flex-wrap">
+                <div class="w-full lg:w-6/12 flex items-center sm:justify-start flex-wrap lg:flex-nowrap">
 
                      <!-- Anos -->
-                     <div class="w-[30%] sm:w-[8%] flex flex-col me-4 sm:me-6 -mt-6 mb-2">
+                     <div class="w-[23%] lg:w-[11%] flex flex-col me-4 sm:me-6 -mt-6 mb-2">
                         <label for="bi-semana">Ano</label>
                         <select class="select select-bordered" name="ano" id="ano" v-model="idAno" @change="getBisemanas()">
                             <option value="0" selected>Selecione</option>
@@ -221,7 +233,7 @@ function openEdit(val) {
                     </div>
 
                     <!-- Bi-semanas -->
-                    <div class="w-[61%] sm:w-[20%] flex flex-col me-4 sm:me-6 -mt-6 mb-2">
+                    <div class="w-[66%] lg:w-[30%] flex flex-col me-4 sm:me-6 -mt-6 mb-2">
                         <label for="bi-semana">Bi-Semana</label>
                         <select class="select select-bordered" name="bi-semana" id="bi-semama" v-model="idBisemana" @change="getReservas(idBisemana)">
                             <option value="0" selected>Selecione</option>
@@ -233,7 +245,7 @@ function openEdit(val) {
                     </div>
 
                      <!-- Clientes -->
-                     <div class="w-full sm:w-[20%] flex flex-col sm:-mt-5 me-4 sm:me-6 mb-2">
+                     <div class="w-full lg:w-[35%] flex flex-col sm:-mt-5 me-4 sm:me-6 mb-2">
                         <label for="cliente">Cliente</label>
                         <multiselect :disabled="idBisemana == 0"
                             v-model="idCliente"
@@ -250,52 +262,59 @@ function openEdit(val) {
                     </div>
 
                     <!-- Botões -->
-                    <div class=" w-full sm:w-[20%] flex justify-center sm:justify-start mt-2 space-x-4 mb-2">
-                        <button v-if="idCliente != 0 && criaReserva" @click="clearChecked(), openAdd('t')" for="modal-add-painel" class="w-4/12 h-10 btn btn-info text-white -mt-1">Incluir painéis</button>
+                    <div class=" w-full lg:w-[25%] flex justify-center sm:justify-start mt-2 space-x-4 mb-2">
+
+                        <button v-if="idCliente && criaReserva"
+                                @click="clearChecked(), openAdd('t')"
+                                class="btn btn-square btn-info text-white -mt-1 tooltip tooltip-left" data-tip="Adicionar Painéis">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+
                         <!-- <button v-if="idCliente != 0" for="modal-add-painel" class="w-fit botao-modal bg-slate-700 hover:bg-slate-500 px-2 transition-all duration-1000">Gerar PI</button> -->
                         <!-- <button v-if="idCliente != 0 && checkedPaineis.length > 0" @click="openEdit('t')" for="modal-add-painel" class="w-fit botao-modal bg-amber-600 hover:bg-amber-400 px-2 transition-all duration-1000">Editar Reservas</button> -->
-                        <button v-if="idCliente != 0 && checkedPaineis.length > 0 && excluiReserva" for ="modal-canc-res-cli" class="w-4/12 h-10 btn btn-error text-white -mt-1">Excluir Selecionados</button>
 
+                        <button v-if="idCliente && checkedPaineis.length > 0 && excluiReserva"
+                                @click="openDel('t')"
+                                class="btn btn-square btn-error text-white -mt-1 tooltip tooltip-left" data-tip="Excluir Painéis">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+
+                        <button v-if="idCliente && reservas[0] ? reservas[0].pi_ok == 1 : false"
+                                class="btn btn-square btn-success text-white -mt-1 tooltip tooltip-left" data-tip="Reserva já possui PI">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </button>
+
+                        <button v-if="idCliente && reservas[0] ? reservas[0].pi_ok == 0 : false"
+                                @click="openPi('t')"
+                                class="btn btn-square btn-warning text-white -mt-1 tooltip tooltip-left animate-pulse" data-tip="Gerar PI para Reserva">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </button>
                     </div>
-
-
                 </div>
+
 
             </div>
 
-
             <!-- Card Principal -->
-            <div class="card w-full h-full max-h-[65%] sm:max-h-[97%] bg-base-100 shadow-xl overflow-auto rounded-md">
+            <div class="card w-full h-full max-h-[75%] sm:max-h-[97%] bg-base-100 shadow-xl overflow-auto rounded-md">
                 <div class="card-body flex flex-col sm:flex-row">
+
                     <!-- Paineis -->
-                    <div class="w-full flex flex-col flex-wrap md:flex-row">
+                    <GridPaineisReserva :reservas="reservas"
+                                        @paineisChecked="getChecked"
+                                        @paineisCheckedId="getCheckedId"
+                                        @itemRefs="getItemsRef">
 
-                        <!-- Cards dos Paineis -->
-                        <div v-for="(res, index) in reservas " :key="index" class="card w-full sm:w-[30%] card-reserva-cliente">
-                            <div class="card-body flex" :id="index" @click="isChecked(index, res.identificacao, res.id)">
-                                <div class="w-full -mt-6 flex justify-end">
-                                    <input type="checkbox" ref="itemRefs" class="border-0 checkbox checkbox-success"/>
-                                </div>
-                                <div class="w-full flex">
-                                    <div class="w-5/12 mb-4 -ml-6 -mt-4">
-                                        <img class="w-36 h-24" :src="getImage(res.image_url)" alt="Foto-painel">
-                                    </div>
-                                    <div class="w-7/12 mb-4 ml-4 -mt-4 space-y-2">
-                                        <span class="font-bold text-sm text-red-500">Painel: </span>
-                                        <span class="font-extrabold text-xs"> {{ res.identificacao }} - {{ res.nome_fantasia ? res.nome_fantasia : res.razao_social }}</span>
-
-                                        <br>
-                                        <span class="font-bold text-sm text-red-500">Campanha: </span> <span class="font-extrabold text-xs">{{ res.campanha }}</span> <br>
-                                        <span class="font-bold text-sm text-red-500">Obs.: </span> <span class="font-extrabold text-xs">{{ res.obs }}</span>
-                                    </div>
+                    </GridPaineisReserva>
 
 
-                                </div>
-                            </div>
-
-
-                        </div>
-                    </div>
+                    <ModalPiRes :openPi="openP"
+                                :cliente="clienteSel"
+                                :campanha="reservasCampanha"
+                                :bisemana="bisemanaSelecionada"
+                                :paineis="reservasIdent"
+                                @closePi="openPi">
+                    </ModalPiRes>
 
                 </div>
             </div>
@@ -309,35 +328,16 @@ function openEdit(val) {
                         @closeAdd="openAdd">
             </AddReserva>
 
-            <!-- Edição de painéis -->
-            <EditarReserva :openAdd="openE"
-                        :cliente="idCliente"
-                        :paineis="paineis"
+
+            <!-- Excluir Reserva -->
+            <DelReserva :openDel="openD"
                         :bisemana="idBisemana"
-                        @closeAdd="openAdd">
-            </EditarReserva>
+                        :cliente="idCliente"
+                        :paineis="checkedPaineis"
+                        :paineisId="checkedPaineisId"
+                        @closeDel="openDel">
+            </DelReserva>
 
-           <!-- Excluir painéis selecionados -->
-           <input type="checkbox" id="modal-canc-res-cli" class="modal-toggle" />
-            <div class="modal flex items-end md:items-center">
-                <form method="dialog" class="modal-box bg-white">
-                    <h3 class="font-black text-2xl animate-pulse duration-200 text-center mb-2">Cancelar Reserva: Painéis {{checkedPaineisId}}</h3>
-                    <h3 class="font-black text-2xl text-red-700 animate-pulse duration-200 text-center">ATENÇÃO!</h3>
-                    <p class="py-4">Ao cancelar esta reserva, o painel ficará disponível na Bi-semana selecionada, e poderá ser reservado imadiatamente.</p>
-                    <p class="py-4 text-center">Confirme somente se tiver certeza do cancelamento!</p>
-
-                    <label for="paineis-del">Painéis Selecionados</label>
-                    <textarea class="w-full input input-bordered" type="text" name="paineis-del" id="paineis-del" v-model="checkedPaineis" disabled></textarea>
-
-                    <div class="modal-action">
-                        <div class="w-full flex justify-center space-x-4">
-                            <label for="modal-canc-res-cli" class="w-5/12 text-sm botao-modal bg-gray-700 hover:bg-gray-500">Manter Painéis</label>
-                            <label @click="cancelaResMulti()" for="modal-canc-res-cli" class="w-5/12 text-sm botao-modal bg-red-700 hover:bg-red-500">Cancelar Painéis</label>
-                        </div>
-
-                    </div>
-                </form>
-            </div>
 
         </div>
     </AuthenticatedLayout>

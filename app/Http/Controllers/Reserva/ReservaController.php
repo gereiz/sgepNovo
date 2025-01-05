@@ -253,6 +253,7 @@ class ReservaController extends Controller
                                 'outdoors.image_url',
                                 'res.campanha AS campanha',
                                 'res.observacao AS obs',
+                                'res.pi_ok AS pi_ok',
                                 'cli.razao_social AS razao_social',
                                 'cli.nome_fantasia AS nome_fantasia')
             ->join('reservas AS res', 'res.outdoor_id', '=', 'outdoors.id')
@@ -278,6 +279,7 @@ class ReservaController extends Controller
                                 'outdoors.ponto_referencia',
                                 'res.campanha AS campanha',
                                 'res.observacao AS obs',
+            'res.pi_ok AS pi_ok',
                                 'cli.razao_social AS razao_social',
                                 'cli.nome_fantasia AS nome_fantasia')
             ->join('reservas AS res', 'res.outdoor_id', '=', 'outdoors.id')
@@ -302,13 +304,12 @@ class ReservaController extends Controller
 
 
     public function reservaPaineisCliente(Request $request) {
-        $paineis = $request->outdoorId[0];
+
+        $paineis = $request->idPaineis[0];
         $idPaineis = [];
 
         foreach($paineis as $painel) {
-
             array_push($idPaineis, intval(substr($painel, -3)));
-
         }
 
         foreach($idPaineis as $idPainel) {
@@ -337,7 +338,7 @@ class ReservaController extends Controller
 
         }
 
-        return response()->json(['cod' => 1, 'msg' => 'Painel reservado!']);
+        return response()->json(['cod' => 1, 'message' => 'Painel reservado!']);
 
 
     }
@@ -350,11 +351,9 @@ class ReservaController extends Controller
 
 
     public function delResCliente(Request $request) {
-
         $paineisId = $request->paineisId;
         $bs = $request->bs;
 
-        // dd($request->all());
 
         foreach ($paineisId as $pId) {
             $reserva = Reserva::where([['outdoor_id', $pId], ['bisemana_id', $bs], ['user_id', auth()->user()->id]])->first();
@@ -363,7 +362,6 @@ class ReservaController extends Controller
            if($reserva) {
                $reserva->delete();
 
-            //    return response()->json(['cod' => 1, 'msg' => 'Painéis Excluidos!']);
 
            } else {
                return response()->json(['cod' => 0, 'msg' => 'O reserva do painel  '.$painel->identificacao.' só pode ser cancelada pelo usuário que o reservou!']);

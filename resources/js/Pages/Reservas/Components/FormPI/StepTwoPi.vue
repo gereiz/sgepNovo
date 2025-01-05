@@ -39,15 +39,7 @@ const detalhes = ref('')
 const dtPgto = ref(date.toLocaleDateString())
 const dtReserva = ref()
 
-// onMounted(() =>{
-
-
-// })
-
-
 watch((vlrUnit), (val) => {
-
-
 
     vlrUnit.value = val
     formTwo.vlr_unit = val
@@ -188,7 +180,7 @@ function removeServicoPago(index) {
 
 const formTwo = reactive({
     paineis: props.paineis,
-    campanha: props.campanha,
+    campanha: props.campanha[0],
     servicos: servicosPagos,
     formaPgto: 0,
     pgto: '',
@@ -642,7 +634,7 @@ function changeEdit() {
         <!-- Avançar / Voltar -->
         <div class="w-full sm:flex sm:flex-row-reverse">
             <label class="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto" @click="nextStep(3)">Avançar</label>
-            <label v-if="liberaEmissaoPi" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto" @click="nextStep(5)">Reservar sem PI</label>
+<!--            <label v-if="liberaEmissaoPi" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto" @click="nextStep(5)">Reservar sem PI</label>-->
             <label class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" @click="nextStep(1)">Voltar</label>
 
         </div>

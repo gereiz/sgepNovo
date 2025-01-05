@@ -8,7 +8,8 @@ import GridUsuario from './Components/GridUsuario.vue';
 import AddUsuario from './Components/Add/AddUsuario.vue';
 
 const page = usePage();
-const admin = page.props.user.permissions.includes('admin');
+const criaUsuario = page.props.user.permissions.includes('criar usuario');
+
 
 
 const props = defineProps(['usuarios', 'funcoes'])
@@ -44,7 +45,7 @@ function openAdd(val) {
                 </div>
 
                 <div class="w-10/12 flex justify-end">
-                    <label v-if="admin" for="modal-cliente-add" class="w-32 botao-modal text-sm" @click="openAdd('t')">+ Novo Usuário</label>
+                    <label v-if="criaUsuario" for="modal-cliente-add" class="w-32 botao-modal text-sm" @click="openAdd('t')">+ Novo Usuário</label>
                 </div>
             </div>
 

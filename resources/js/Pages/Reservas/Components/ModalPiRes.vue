@@ -1,10 +1,10 @@
 <script setup>
 import { ref, watch, shallowRef } from 'vue'
-import { useToastr } from '@/Components/toastr';
-import StepOnePi from './Components/FormPI/StepOnePi.vue'
-import StepTwoPi from './Components/FormPI/StepTwoPi.vue';
-import StepThreePi from './Components/FormPI/StepThreePi.vue';
-import StepFourPi from './Components/FormPI/StepFourPi.vue';
+import { useToastr } from '@/Components/toastr.js';
+import StepOnePi from './FormPI/StepOnePi.vue'
+import StepTwoPi from './FormPI/StepTwoPi.vue';
+import StepThreePi from './FormPI/StepThreePi.vue';
+import StepFourPi from './FormPI/StepFourPi.vue';
 
 
 import { XMarkIcon } from '@heroicons/vue/24/outline'
@@ -15,7 +15,7 @@ const toastr = useToastr();
 
 const emit = defineEmits(['closePi', 'closeAdd'])
 
-const props = defineProps(['paineis', 'bisemana', 'openPi', 'cliente', 'campanha', 'observacoes', 'painel'])
+const props = defineProps(['paineis', 'bisemana', 'openPi', 'cliente', 'campanha', 'observacoes'])
 
 const step = shallowRef(StepOnePi)
 const open = ref(false)
