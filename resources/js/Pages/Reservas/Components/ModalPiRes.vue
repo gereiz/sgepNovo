@@ -15,7 +15,7 @@ const toastr = useToastr();
 
 const emit = defineEmits(['closePi', 'closeAdd'])
 
-const props = defineProps(['paineis', 'bisemana', 'openPi', 'cliente', 'campanha', 'observacoes'])
+const props = defineProps(['paineis', 'bisemana', 'openPi', 'cliente', 'campanha', 'dataReserva'])
 
 const step = shallowRef(StepOnePi)
 const open = ref(false)
@@ -188,6 +188,7 @@ function naviForm(ev) {
                                      :campanha="campanha"
                                      :paineis="paineis"
                                      :bisemana="bisemana"
+                                     :dataReserva="dataReserva"
                                      @nextStep="naviForm"
                                      @formOne="saveFormOne"
                                      @formTwo="saveFormTwo"
