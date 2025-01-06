@@ -18,11 +18,11 @@ const toastr = useToastr();
 const criaReserva = page.props.user.permissions.includes('criar reserva');
 const excluiReserva = page.props.user.permissions.includes('excluir reserva');
 
-const cliente = ref('');
+// const cliente = ref('');
 const reservas = ref([]);
 const itemRefs = ref([])
 const checkedPaineis = ref([]);
-const listaClientes = ref(Object.keys(props.clientes).map(nome_fantasia => props.clientes[nome_fantasia]))
+// const listaClientes = ref(Object.keys(props.clientes).map(nome_fantasia => props.clientes[nome_fantasia]))
 let idents = reactive([]);
 
 const checkedPaineisId = ref([]);
@@ -126,12 +126,14 @@ function getReservasCli(bs) {
         console.log(err)
     })
 
-    axios.post('/GetCliente', {cliente:idCliente})
+    axios.post('/GetCliente', {cliente:idCliente.value})
         .then((res) => {
             clienteSel.value = res.data
+
+            console.log(idCliente.value)
+            console.log(res.data)
     })
 }
-
 
 function openPi(val)  {
     if(val == 't') {
@@ -198,6 +200,14 @@ const reservasCampanha = computed(() => {
     })
 
     return reservasCampanha
+})
+
+const reservaData = computed(() => {
+    let reservaData = reservas.value.map((reserva) => {
+        return reserva.dt_reserva
+    })
+
+    return reservaData[reservaData.length - 1]
 })
 
 
@@ -298,7 +308,6 @@ const reservasCampanha = computed(() => {
             <!-- Card Principal -->
             <div class="card w-full h-full max-h-[75%] sm:max-h-[97%] bg-base-100 shadow-xl overflow-auto rounded-md">
                 <div class="card-body flex flex-col sm:flex-row">
-
                     <!-- Paineis -->
                     <GridPaineisReserva :reservas="reservas"
                                         @paineisChecked="getChecked"
@@ -313,6 +322,7 @@ const reservasCampanha = computed(() => {
                                 :campanha="reservasCampanha"
                                 :bisemana="bisemanaSelecionada"
                                 :paineis="reservasIdent"
+                                :dataReserva="reservaData"
                                 @closePi="openPi">
                     </ModalPiRes>
 

@@ -8,7 +8,7 @@ import axios from 'axios';
 
 const toastr = useToastr()
 
-const props = defineProps(['cliente', 'campanha', 'paineis','bisemana'])
+const props = defineProps(['cliente', 'campanha', 'paineis','bisemana', 'dataReserva'])
 const emit = defineEmits(['nextStep','formTwo']);
 
 const edit = ref(false)
@@ -17,9 +17,6 @@ const page = usePage()
 const liberaEmissaoPi = page.props.user.permissions.includes('liberar emissao pi');
 
 const usuario = ref ()
-
-const date = new Date();
-const dataAtual = date.toLocaleDateString()
 
 const usuarios = ref()
 
@@ -35,9 +32,9 @@ const vlrDesc = ref(0)
 const vlrTotal = ref()
 const detalhes = ref('')
 
-
-const dtPgto = ref(date.toLocaleDateString())
-const dtReserva = ref()
+const dataAtual = new Date().toISOString().slice(0, 10);
+const dtPgto = ref(dataAtual)
+const dtReserva = ref(props.dataReserva)
 
 watch((vlrUnit), (val) => {
 
@@ -185,7 +182,7 @@ const formTwo = reactive({
     formaPgto: 0,
     pgto: '',
     dtPgto: dtPgto.value,
-    dtReserva: dtReserva.value,
+    dtReserva: props.dataReserva,
     vendedorId: '',
     vendedor: ''
 
@@ -580,12 +577,11 @@ function changeEdit() {
                 <div class="mt-2">
                     <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
-                        <input type="text"
+                        <input type="date"
                             v-model="formTwo.dtPgto"
                             :disabled="edit == false"
                             class="h-9 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs"
-                            v-maska
-                            data-maska="##/##/####"
+
                         />
                     </div>
                 </div>
@@ -600,8 +596,8 @@ function changeEdit() {
                 <div class="mt-2">
                     <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 bg-gray-200">
                         <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
-                        <input type="text"
-                            v-model="dataAtual"
+                        <input type="date"
+                            v-model="dtReserva"
                             disabled
                             class="h-9 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs"
 

@@ -42,7 +42,9 @@ class ReservaController extends Controller
 
         $ambiente = env('APP_ENV');
 
-        $clientes = Cliente::orderBy('razao_social')->get();
+        $clientes = Cliente::orderBy('razao_social')
+        ->where('ativo', 1)
+        ->get();
 
         $whatsapp = Whatsapp::all();
 
@@ -223,7 +225,9 @@ class ReservaController extends Controller
 
     public function reservaPainelIndex() {
 
-        $clientes = Cliente::orderBy('razao_social')->get();
+        $clientes = Cliente::orderBy('razao_social')
+            ->where('ativo', 1)
+            ->get();
 
         $anos = Ano::all();
 
@@ -254,6 +258,7 @@ class ReservaController extends Controller
                                 'res.campanha AS campanha',
                                 'res.observacao AS obs',
                                 'res.pi_ok AS pi_ok',
+                                'res.dt_reserva AS dt_reserva',
                                 'cli.razao_social AS razao_social',
                                 'cli.nome_fantasia AS nome_fantasia')
             ->join('reservas AS res', 'res.outdoor_id', '=', 'outdoors.id')
@@ -279,7 +284,8 @@ class ReservaController extends Controller
                                 'outdoors.ponto_referencia',
                                 'res.campanha AS campanha',
                                 'res.observacao AS obs',
-            'res.pi_ok AS pi_ok',
+                                'res.pi_ok AS pi_ok',
+                                'res.dt_reserva AS dt_reserva',
                                 'cli.razao_social AS razao_social',
                                 'cli.nome_fantasia AS nome_fantasia')
             ->join('reservas AS res', 'res.outdoor_id', '=', 'outdoors.id')
@@ -346,7 +352,11 @@ class ReservaController extends Controller
 
     public function getCliente(Request $request) {
 
-        return Cliente::find($request->cliente)->last();
+        $id_cliente = intval($request->cliente['id']);
+        $cliente = Cliente::where('id', $id_cliente)->first();
+
+        return $cliente;
+
     }
 
 
