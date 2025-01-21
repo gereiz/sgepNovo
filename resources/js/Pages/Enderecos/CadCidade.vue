@@ -16,7 +16,7 @@ const props = defineProps(['cidades', 'uf', 'errors']);
 
 const nomeCidade = ref('');
 const pesqCidade = ref('');
-const formCidadeAdd = reactive({nome: '', uf_id: 0}); 
+const formCidadeAdd = reactive({nome: '', uf_id: 0});
 const formCidadeEdit = reactive({nome_edit: '', id_cidade: ''});
 
 const cidades = ref(props.cidades);
@@ -40,9 +40,9 @@ function cadastraCidade(ev) {
             toastr.error('Erro ao adicionar Cidade!')
         })
     router.reload()
-   
 
-  
+
+
 };
 
 function editaCidade() {
@@ -53,7 +53,7 @@ function editaCidade() {
         router.post('/EditCidade', formCidadeEdit)
         toastr.success('Cidade '+ formCidadeEdit.nome_edit +' editada para '+formCidadeEdit.nome_edit+ ' !')
     }
-    
+
 
 };
 
@@ -87,24 +87,50 @@ const getPesquisa = (pesq) => {
 
     <AuthenticatedLayout>
         <div class="w-full h-screen pt-24 pb-32 mx-2 md:mx-4">
-            
+
             <!-- Cabeçalho e barra de Pesquisa -->
             <HeaderCadastro titulo="Cidades" :dados="cidades" @pesquisa="getPesquisa" />
 
             <!-- Card das Cidades -->
-            <CardContainer>
-                <CardRegistro 
+            <div class="card w-full h-full bg-base-100 shadow-xl overflow-auto rounded-md">
+                <div class="card-body">
+                    <div class="w-full flex flex-col flex-wrap md:flex-row justify-center">
+                        <div v-for="(c, index) in cidadesFiltradas" :key="index" class="card w-full md:w-5/12 bg-base-100 border-2 rounded-md shadow-xl mt-4 md:mr-4">
+                            <div class="card-body">
+                                <div class="w-full flex justify-between flex-wrap mb-4">
+                                    <div class="w-full flex justify-between">
+                                        <h2 class="text-xs md:card-title">Cidade.: {{c.nome}}</h2>
+                                        <h2 class="text-xs md:text-base font-bold text-zinc-400">ID: {{c.id}}</h2>
+                                    </div>
+                                </div>
+
+                                <div class="w-full flex justify-center md:justify-start mb-4 md:mb-0">
+                                        <img class="w-20 md:w-32" src="../../../../storage/app/public/img/regiao.png" alt="Regiao">
+                                </div>
+
+                                <div class="w-full card-actions justify-center md:justify-end ">
+                                    <label for="modal-cidade-edit" @click="setRegiaoData(c.id, c.uf_id, c.nome)" class="w-full md:w-28 botao-modal">Ações</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- <CardContainer>
+                <CardRegistro
                     :selection="cidadesFiltradas"
                     imagem='cidade.png'
                 />
-            </CardContainer>
+            </CardContainer> -->
 
 
             <!-- Inclusão de nova cidade -->
             <CardForm titulo="Adicionar Cidade">
                 <FormAddCidade :dados="formCidadeAdd" :select="uf" @cidadeAdd="cadastraCidade"/>
             </CardForm>
-            
+
 
             <!-- Edição / Exclusão de Regiao -->
             <input type="checkbox" id="modal-cidade-edit" class="modal-toggle" />
@@ -123,8 +149,8 @@ const getPesquisa = (pesq) => {
                                         <input v-model="formCidadeEdit.nome_edit" class="w-full input input-bordered mb-4" type="text" >
                                       </div>
                                     </div>
-           
-                                    
+
+
                                     <label @click="editaCidade()" for="modal-cidade-edit" class="botao-modal w-full bg-amber-500 hover:bg-amber-700 mb-4">Salvar Edição</label>
                                 </form>
                                 <span class="card-title justify-center mb-4">ou</span>

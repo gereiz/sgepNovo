@@ -374,7 +374,7 @@ class ReservaController extends Controller
 
 
            } else {
-               return response()->json(['cod' => 0, 'msg' => 'O reserva do painel  '.$painel->identificacao.' só pode ser cancelada pelo usuário que o reservou!']);
+               return response()->json(['cod' => 0, 'msg' => 'A reserva do painel  '.$painel->identificacao.' só pode ser cancelada pelo usuário que o reservou!']);
            }
         }
 

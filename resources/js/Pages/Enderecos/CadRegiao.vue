@@ -21,7 +21,7 @@ function setRegiaoData(rid,cid, d) {
 }
 
 function cadastraRegiao() {
-    
+
     if(formRegiaoAdd.nome.length < 3) {
         toastr.error('O nome da Região deve ter no mínimo 3 caracteres!')
     } else if(formRegiaoAdd.cidade_id == 0) {
@@ -33,7 +33,7 @@ function cadastraRegiao() {
         formRegiaoAdd.nome = ''
         formRegiaoAdd.cidade_id = 0
     }
-    
+
 };
 
 function editaRegiao() {
@@ -44,7 +44,7 @@ function editaRegiao() {
         router.post('/EditRegiao', formRegiaoEdit)
         toastr.success('Região '+ formRegiaoEdit.nome_edit +' editada para '+formRegiaoEdit.nome_edit+ ' !')
     }
-   
+
 
 };
 
@@ -73,18 +73,18 @@ const regioesFiltradas = computed(() => {
 
     <AuthenticatedLayout>
         <div class="w-full h-screen pt-24 pb-32 mx-2 md:mx-4">
-            
+
             <!-- Cabeçalho e barra de Pesquisa -->
             <div class="w-full h-14 flex mb-2">
                 <div class="w-2/12 h-14 flex items-center">
                     <h1 class="text-xl md:text-4xl font-bold">Regiões</h1>
                     <h1 class="text-lg md:text-2xl text-red-400 font-bold ml-2 md:ml-4">{{ regioes.length }}</h1>
                 </div>
-                
+
                 <div class="w-10/12 flex justify-end">
                     <label for="modal-regiao-add" class="w-28 botao-modal text-sm ">+ Nova Região</label>
                 </div>
-                
+
             </div>
             <div class="w-full md:w-4/12">
                 <input v-model="pesquRegiao" placeholder="Pesquisar Região" class="w-full h-10 input input-bordered rounded-none mb-4" type="text" name="pesquisar" id="pesquisar">
@@ -121,7 +121,7 @@ const regioesFiltradas = computed(() => {
             <label for="modal-regiao-add" class="modal modal-bottom sm:modal-middle cursor-pointer">
                 <label class="modal-box relative" for="">
                     <h3 class="font-bold text-lg">Adicionar Nova Região</h3>
-                    <form @submit.prevent="cadastraRegiao">  
+                    <form @submit.prevent="cadastraRegiao">
                         <div class="w-full flex">
                                 <div class="w-full flex flex-col">
                                     <span class="label-text ml-1">Nome</span>
@@ -167,8 +167,8 @@ const regioesFiltradas = computed(() => {
                                         </select>
                                       </div> -->
                                     </div>
-           
-                                    
+
+
                                     <label @click="editaRegiao()" for="modal-regiao-edit" class="botao-modal w-full bg-amber-500 hover:bg-amber-700 mb-4">Salvar Edição</label>
                                 </form>
                                 <span class="card-title justify-center mb-4">ou</span>
