@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Enderecos;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RegiaoRequest; 
+use App\Http\Requests\RegiaoRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use DB;
@@ -13,7 +13,7 @@ use App\Models\Enderecos\Cidade;
 class RegiaoController extends Controller
 {
     public function index() {
-        
+
         $regioes = Regiao::with('cidade')->orderBy('nome')->get();
         $cidades = Cidade::orderBy('nome')->get();
 
@@ -22,7 +22,7 @@ class RegiaoController extends Controller
 
 
     public function cadastraRegiao(RegiaoRequest $request) {
-        
+        dd($request->all());
         Regiao::create($request->validated());
 
         return to_route('cad.regiao');
@@ -40,7 +40,7 @@ class RegiaoController extends Controller
 
 
     public function deletaRegiao(Request $request) {
-        
+
         $regiao = Regiao::find($request->id_regiao)->delete();
 
         return to_route('cad.regiao');
