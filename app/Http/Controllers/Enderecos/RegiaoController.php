@@ -22,7 +22,7 @@ class RegiaoController extends Controller
 
 
     public function cadastraRegiao(RegiaoRequest $request) {
-        dd($request->all());
+
         Regiao::create($request->validated());
 
         return to_route('cad.regiao');

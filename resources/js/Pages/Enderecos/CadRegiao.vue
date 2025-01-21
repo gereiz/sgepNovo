@@ -10,39 +10,39 @@ const props = defineProps(['regioes', 'cidades', 'errors']);
 
 const nomeRegiao = ref('');
 const pesquRegiao = ref('');
-const formRegiaoAdd = reactive({nome: '', cidade_id: 0});
-const formRegiaoEdit = reactive({nome_edit: '', id_regiao: '', id_cidade: ''});
+const formRegiaoAdd = ref({nome: '', cidade_id: 0});
+const formRegiaoEdit = ref({nome_edit: '', id_regiao: '', id_cidade: ''});
 
 function setRegiaoData(rid,cid, d) {
     nomeRegiao.value = d
-    formRegiaoEdit.nome_edit = d
-    formRegiaoEdit.id_regiao = rid
-    formRegiaoEdit.id_cidade = cid
+    formRegiaoEdit.value.nome_edit = d
+    formRegiaoEdit.value.id_regiao = rid
+    formRegiaoEdit.value.id_cidade = cid
 }
 
 function cadastraRegiao() {
 
-    if(formRegiaoAdd.nome.length < 3) {
+    if(formRegiaoAdd.value.nome.length < 3) {
         toastr.error('O nome da Região deve ter no mínimo 3 caracteres!')
-    } else if(formRegiaoAdd.cidade_id == 0) {
+    } else if(formRegiaoAdd.value.cidade_id == 0) {
         toastr.error('A Região deve pertencer a uma Cidade!')
     } else {
         router.post('/AddRegiao', this.formRegiaoAdd)
-        toastr.success('Região '+ formRegiaoAdd.nome +' cadastrada!')
+        toastr.success('Região '+ formRegiaoAdd.value.nome +' cadastrada!')
 
-        formRegiaoAdd.nome = ''
-        formRegiaoAdd.cidade_id = 0
+        formRegiaoAdd.value.nome = ''
+        formRegiaoAdd.value.cidade_id = 0
     }
 
 };
 
 function editaRegiao() {
 
-    if(formRegiaoEdit.nome_edit.length < 3) {
+    if(formRegiaoEdit.value.nome_edit.length < 3) {
         toastr.error('O nome da Região deve ter no mínimo 3 caracteres!')
     } else {
         router.post('/EditRegiao', formRegiaoEdit)
-        toastr.success('Região '+ formRegiaoEdit.nome_edit +' editada para '+formRegiaoEdit.nome_edit+ ' !')
+        toastr.success('Região '+ formRegiaoEdit.value.nome_edit +' editada para '+formRegiaoEdit.value.nome_edit+ ' !')
     }
 
 
