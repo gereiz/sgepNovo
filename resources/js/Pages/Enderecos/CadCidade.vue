@@ -30,8 +30,6 @@ function setRegiaoData(cid,ufid, d) {
 
 function cadastraCidade(ev) {
 
-    console.log(ev)
-
     axios.post('/AddCidade', ev)
         .then((res) => {
             toastr.success('Cidade '+ ev.nome +' adicionada com sucesso!')

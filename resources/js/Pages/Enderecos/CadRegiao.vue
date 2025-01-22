@@ -21,18 +21,18 @@ function setRegiaoData(rid,cid, d) {
 }
 
 function cadastraRegiao() {
-    console.log(formRegiaoAdd)
-    // if(formRegiaoAdd.value.nome.length < 3) {
-    //     toastr.error('O nome da Região deve ter no mínimo 3 caracteres!')
-    // } else if(formRegiaoAdd.value.cidade_id == 0) {
-    //     toastr.error('A Região deve pertencer a uma Cidade!')
-    // } else {
+
+    if(formRegiaoAdd.nome.length < 3) {
+        toastr.error('O nome da Região deve ter no mínimo 3 caracteres!')
+    } else if(formRegiaoAdd.cidade_id == 0) {
+        toastr.error('A Região deve pertencer a uma Cidade!')
+    } else {
         router.post('/AddRegiao', formRegiaoAdd)
         toastr.success('Região '+ formRegiaoAdd.nome +' cadastrada!')
 
         formRegiaoAdd.nome = ''
         formRegiaoAdd.cidade_id = 0
-//     }
+    }
 
 };
 
