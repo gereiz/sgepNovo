@@ -21,18 +21,18 @@ function setRegiaoData(rid,cid, d) {
 }
 
 function cadastraRegiao() {
-
-    if(formRegiaoAdd.value.nome.length < 3) {
-        toastr.error('O nome da Região deve ter no mínimo 3 caracteres!')
-    } else if(formRegiaoAdd.value.cidade_id == 0) {
-        toastr.error('A Região deve pertencer a uma Cidade!')
-    } else {
+    console.log(formRegiaoAdd.value)
+    // if(formRegiaoAdd.value.nome.length < 3) {
+    //     toastr.error('O nome da Região deve ter no mínimo 3 caracteres!')
+    // } else if(formRegiaoAdd.value.cidade_id == 0) {
+    //     toastr.error('A Região deve pertencer a uma Cidade!')
+    // } else {
         router.post('/AddRegiao', this.formRegiaoAdd)
         toastr.success('Região '+ formRegiaoAdd.value.nome +' cadastrada!')
 
         formRegiaoAdd.value.nome = ''
         formRegiaoAdd.value.cidade_id = 0
-    }
+//     }
 
 };
 
@@ -82,7 +82,9 @@ const regioesFiltradas = computed(() => {
                 </div>
 
                 <div class="w-10/12 flex justify-end">
-                    <label for="modal-regiao-add" class="w-28 botao-modal text-sm ">+ Nova Região</label>
+                    <label for="modal-regiao-add" class="btn btn-square flex btn-info text-white -mt-1 tooltip tooltip-left" data-tip="Adicionar Painéis">
+                        <i class="fa-solid fa-plus"></i>
+                    </label>
                 </div>
 
             </div>
@@ -130,7 +132,7 @@ const regioesFiltradas = computed(() => {
                                 <div class="w-full flex flex-col">
                                     <span class="label-text ml-1">Cidade</span>
                                     <select v-model="formRegiaoAdd.cidade_id" name="cidade_id" id="cidade_id" class="select select-bordered">
-                                        <option value="0" disabled selected>Seleicione a Região</option>
+                                        <option value="0" disabled selected>Seleicione a Cidade</option>
                                         <option v-for="c, index in cidades" :key="index" :value="c.id">{{c.nome}}</option>
                                     </select>
                                 </div>

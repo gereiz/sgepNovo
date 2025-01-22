@@ -22,16 +22,17 @@ watch(pesqCidade, (newValue, oldValue) => {
         <div class="w-full md:w-4/12 hidden sm:flex items-center justify-center">
             <input v-model="pesqCidade" placeholder="Pesquisar Cidade" class="w-full flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600" type="text" name="pesquisar" id="pesquisar">
         </div>
-        
+
         <div class="w-4/12 flex items-center justify-end">
-            <label for="modal-cidade-add" class="w-28 botao-modal text-sm ">Add Novo</label>
+            <label for="modal-cidade-add" class="btn btn-square flex btn-info text-white -mt-1 tooltip tooltip-left" data-tip="Adicionar Painéis">
+                <i class="fa-solid fa-plus"></i>
+            </label>
         </div>
-        
     </div>
 
     <div class="w-full md:w-4/12 sm:hidden mb-4">
         <input v-model="pesqCidade" placeholder="Pesquisar Cidade" class="w-full flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600" type="text" name="pesquisar" id="pesquisar">
     </div>
-    
-    
+
+
 </template>
