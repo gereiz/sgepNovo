@@ -27,7 +27,7 @@ function cadastraRegiao() {
     // } else if(formRegiaoAdd.value.cidade_id == 0) {
     //     toastr.error('A Região deve pertencer a uma Cidade!')
     // } else {
-        router.post('/AddRegiao', this.formRegiaoAdd)
+        router.post('/AddRegiao', this.formRegiaoAdd.value)
         toastr.success('Região '+ formRegiaoAdd.value.nome +' cadastrada!')
 
         formRegiaoAdd.value.nome = ''
