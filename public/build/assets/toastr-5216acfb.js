@@ -1,1 +1,0 @@
-import{t as o}from"./toastr-3dd95a21.js";/* empty css                   */function r(){return o.options.positionClass="toast-top-right",o.options.closeButton=!1,o.options.progressBar=!0,o}export{r as u};
