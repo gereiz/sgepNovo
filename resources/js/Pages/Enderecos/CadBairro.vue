@@ -26,7 +26,7 @@ function cadastraBairro() {
         toastr.error('O Bairro deve pertencer a uma região!')
         formBairroAdd.regiao_id = 0
     } else {
-        router.post('/AddBairro', this.formBairroAdd)
+        router.post('/AddBairro', formBairroAdd)
         if(props.errors.regiao_id == undefined && props.errors.nome == undefined) {
             toastr.success('Bairro '+ formBairroAdd.nome +' cadastrado!')
             formBairroAdd.nome = ''
