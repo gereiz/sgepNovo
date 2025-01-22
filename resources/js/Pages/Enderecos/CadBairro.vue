@@ -88,7 +88,9 @@ const bairrosFiltrados = computed(() => {
                 </div>
 
                 <div class="w-10/12 flex justify-end">
-                    <label for="modal-bairro-add" class="w-28 botao-modal text-sm ">+ Novo Bairro</label>
+                    <label for="modal-bairro-add" class="btn btn-square flex btn-info text-white -mt-1 tooltip tooltip-left" data-tip="Adicionar Painéis">
+                        <i class="fa-solid fa-plus"></i>
+                    </label>
                 </div>
 
             </div>
