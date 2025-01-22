@@ -30,8 +30,8 @@ function cadastraRegiao() {
         router.post('/AddRegiao', formRegiaoAdd)
         toastr.success('Região '+ formRegiaoAdd.nome +' cadastrada!')
 
-        formRegiaoAdd.value.nome = ''
-        formRegiaoAdd.value.cidade_id = 0
+        formRegiaoAdd.nome = ''
+        formRegiaoAdd.cidade_id = 0
 //     }
 
 };
