@@ -44,7 +44,7 @@ class PiController extends Controller
 
 
         return session()->all();
- 
+
     }
 
 
@@ -54,15 +54,18 @@ class PiController extends Controller
         // dd(session('dadosPi'));
         // dd(session()->all());
 
-        $idPaineis = session('dadosPi')['Two']['paineis'][0];
+        $idPaineis = session('dadosPi')['Two']['paineis'];
         $bsId = session('dadosPi')['Two']['bisemanaId'];
 
+
         $cliente = $this->clienteService->getCliente(session('dadosPi')['One']['clienteId']);
-        $dt_pgto = explode('/', session('dadosPi')['Two']['dtPgto']);
-        $data_pgto = $dt_pgto[2].'-'. $dt_pgto[1].'-'.$dt_pgto[0];
-        $data_pgto_formated = session('dadosPi')['Two']['dtPgto'];
+        // $dt_pgto = explode('/', session('dadosPi')['Two']['dtPgto']);
+        // $data_pgto = $dt_pgto[2].'-'. $dt_pgto[1].'-'.$dt_pgto[0];
+        // dd($dt_pgto);
+        $data_pgto_formated = explode('-', session('dadosPi')['Two']['dtPgto']);
+        $data_pgto_formated = $data_pgto_formated[2].'/'.$data_pgto_formated[1].'/'.$data_pgto_formated[0];
         $campanha = session('dadosPi')['Two']['campanha'];
-        $observacoes = session('dadosPi')['Two']['observacoes'];
+        // $observacoes = session('dadosPi')['Two']['observacoes'];
 
         if(session('dadosPi')['Two']['servicos'] != []) {
             $detalhes = session('dadosPi')['Two']['servicos'][0]['detalhes'];
@@ -96,33 +99,33 @@ class PiController extends Controller
             $faturamento = session('dadosPi')['Three'];
         }
 
-
-
         $vendedor = session('dadosPi')['Two']['vendedor'];
 
+        // dd($vendedor);
         // Grava as reservas
         foreach($idPaineis as $idPainel) {
             $painel = Painel::where('identificacao', $idPainel)->first();
             // Verifica se o painel já foi reservado
-            $reserva_atual = Reserva::where([['outdoor_id', $painel->id],['bisemana_id', $bsId]])->first();
+            // $reserva_atual = Reserva::where([['outdoor_id', $painel->id],['bisemana_id', $bsId]])->first(); // Código alterado com a separação de emissão de PI e reserva de painéis
 
-            if($reserva_atual != []) {
+            // if($reserva_atual != []) {
 
-                return response()->json(['cod' => 0, 'msg' => 'Painel reservado anteriormente.']);
+            //     return response()->json(['cod' => 0, 'msg' => 'Painel reservado anteriormente.']);
 
-            } else {
+            // } else {
 
-                Reserva::create([
+                Reserva::updateOrCreate(['cliente_id' => $cliente->id, 'outdoor_id' => $painel->id, 'bisemana_id' => $bsId],
+                [
                     'cliente_id' => $cliente->id,
                     'outdoor_id' => $painel->id,
                     'bisemana_id' => $bsId,
                     'dt_reserva' => Carbon::now()->toDateString(),
                     'campanha' => $campanha,
-                    'observacao' => $observacoes,
-                    'pi_ok' => 1, //$request->checkPi,
+                    // 'observacao' => $observacoes,
+                    'pi_ok' => 1,
                     'user_id' => auth()->user()->id
                 ]);
-            }
+            // }
 
 
         }
@@ -159,7 +162,7 @@ class PiController extends Controller
                     'vl_desc' => $vlr_desc,
                     'vl_total' => $vl_total,
                     'pago' => session('dadosPi')['Two']['pgto'],
-                    'dt_pgto' => $data_pgto,
+                    'dt_pgto' => $data_pgto_formated,
                     'forma_pagamento' => session('dadosPi')['Two']['formaPgto'],
                     'vendedor' => session('dadosPi')['Two']['vendedorId'],
                     'obs' => session('dadosPi')['Two']['servicos'][0]['detalhes']

@@ -2,12 +2,12 @@
 import { ref, reactive, onMounted, computed } from 'vue';
 import { vMaska } from "maska"
 import { UserCircleIcon  } from '@heroicons/vue/24/outline'
-import { usePage, useForm } from '@inertiajs/vue3';    
+import { usePage, useForm } from '@inertiajs/vue3';
 
 const props = defineProps(['cliente', 'campanha', 'painel', 'bisemana'])
 const emit = defineEmits(['nextStep']);
 
-const edit = ref(false) 
+const edit = ref(false)
 const page = usePage()
 const user = computed(() => page.props.auth.user)
 
@@ -27,20 +27,20 @@ emit('nextStep', val);
             <h1 as="h3" class="text-base font-semibold leading-6 text-gray-900">Pedido de Inserção </h1>
             <div class="flex mt-2">
                 <p class="text-sm text-gray-500 mb-4">Confira os dados para criação do Pedido de Inserção.</p>
-                <!-- <button  class="w-8 h-8 flex items-center justify-center bg-amber-700 -mt-1 text-sm font-semibold text-white shadow-sm hover:bg-amber-500 sm:ml-3 rounded-full duration-1000" 
+                <!-- <button  class="w-8 h-8 flex items-center justify-center bg-amber-700 -mt-1 text-sm font-semibold text-white shadow-sm hover:bg-amber-500 sm:ml-3 rounded-full duration-1000"
                         v-if="!edit"
                         @click="changeEdit()"
                         title="Ativar Edição">
                 <UserCircleIcon class="h-6 w-6" aria-hidden="true" />
                 </button>
 
-                <button v-else  class="w-8 h-8 flex items-center justify-center bg-green-700 -mt-1 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 rounded-full duration-1000" 
+                <button v-else  class="w-8 h-8 flex items-center justify-center bg-green-700 -mt-1 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 rounded-full duration-1000"
                         @click="changeEdit()"
                         title="Edição Ativada">
                 <UserCircleIcon class="h-6 w-6" aria-hidden="true" />
                 </button> -->
             </div>
-            <p class="text-xs font-bold text-red-500">Bi-Semana: {{ bisemana.num_bisemana }} {{ new Date(bisemana.inicio).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }} até {{ new Date(bisemana.fim).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }}</p>
+            <p class="text-xs font-bold text-red-500 text-center">Bi-Semana: {{ bisemana[0].num_bisemana }} {{ new Date(bisemana[0].inicio).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }} até {{ new Date(bisemana[0].fim).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }}</p>
         </div>
 
         <div>

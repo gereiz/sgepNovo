@@ -117,22 +117,22 @@ function getCidadeCli(uf) {
         <!-- Botão de Editar contato -->
         <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
             <h1 as="h3" class="text-base font-semibold leading-6 text-gray-900">Pedido de Inserção</h1>
-            <div class="flex mt-2">
-                <p class="text-sm text-gray-500 mb-4">Confira os dados para criação do Pedido de Inserção.</p>
-                <button  class="w-8 h-8 flex items-center justify-center bg-amber-700 -mt-1 text-sm font-semibold text-white shadow-sm hover:bg-amber-500 sm:ml-3 rounded-full duration-1000"
+            <div class="w-full flex mt-2 ">
+                <p class="w-full text-sm text-gray-500 mb-4 text-center">Confira os dados para criação do Pedido de Inserção.</p>
+                <!-- <button  class="w-8 h-8 flex items-center justify-center bg-amber-700 -mt-1 text-sm font-semibold text-white shadow-sm hover:bg-amber-500 sm:ml-3 rounded-full duration-1000"
                         v-if="!edit"
                         @click="changeEdit()"
                         title="Ativar Edição">
-                <UserCircleIcon class="h-6 w-6" aria-hidden="true" />
+                    <UserCircleIcon class="h-6 w-6" aria-hidden="true" />
                 </button>
 
                 <button v-else  class="w-8 h-8 flex items-center justify-center bg-green-700 -mt-1 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 rounded-full duration-1000"
                         @click="changeEdit()"
                         title="Edição Ativada">
-                <UserCircleIcon class="h-6 w-6" aria-hidden="true" />
-                </button>
+                    <UserCircleIcon class="h-6 w-6" aria-hidden="true" />
+                </button> -->
             </div>
-            <p class="text-xs font-bold text-red-500 text-center">Bi-Semana: {{ bisemana.num_bisemana }} {{ new Date(bisemana.inicio).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }} até {{ new Date(bisemana.fim).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }}</p>
+            <p class="text-xs font-bold text-red-500 text-center">Bi-Semana: {{ bisemana[0].num_bisemana }} {{ new Date(bisemana[0].inicio).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }} até {{ new Date(bisemana[0].fim).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }}</p>
         </div>
 
         <!--Razão Social / CNPJ -->
@@ -140,7 +140,7 @@ function getCidadeCli(uf) {
             <div class="sm:col-span-4">
                 <label class="block text-sm font-medium leading-6 text-gray-900">Cliente</label>
                 <div class="mt-2">
-                    <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                    <div class="flex bg-gray-200 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
                         <input type="text"
                             v-model="formOne.clienteNome"
@@ -153,7 +153,7 @@ function getCidadeCli(uf) {
             <div class="sm:col-span-4">
                 <label class="block text-sm font-medium leading-6 text-gray-900">CPF / CNPJ</label>
                 <div class="mt-2">
-                    <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                    <div class="flex bg-gray-200 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
                         <input type="text"
                             v-model="formOne.cnpj"
@@ -174,7 +174,7 @@ function getCidadeCli(uf) {
             <div class="sm:col-span-4">
                 <label class="block text-sm font-medium leading-6 text-gray-900">Endereço</label>
                 <div class="mt-2">
-                    <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                    <div class="flex bg-gray-200 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
                         <input type="text"
                             v-model="formOne.endereco"
@@ -187,7 +187,7 @@ function getCidadeCli(uf) {
             <div class="sm:col-span-4">
                 <label class="block text-sm font-medium leading-6 text-gray-900">CEP</label>
                 <div class="mt-2">
-                    <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                    <div class="flex bg-gray-200 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
                         <input type="text"
                             v-model="formOne.cep"
@@ -206,7 +206,7 @@ function getCidadeCli(uf) {
                 <label for="uf" class="block text-sm font-medium leading-6 text-gray-900">UF</label>
                 <div class="mt-2">
                     <select id="uf" name="uf" v-model="formOne.uf" @change="getCidadeCli(formOne.uf)"
-                            class="block w-full lg:w-10/12 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                            class="block w-full lg:w-10/12 bg-gray-200 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                             :disabled="edit == false">
                         <option value="0" disabled selected>Selecione</option>
                         <option v-for="(uf, index) in ufs" :key="index" :value="uf.id">{{ uf.nome }}</option>
@@ -218,7 +218,7 @@ function getCidadeCli(uf) {
                 <label for="cidade" class="block text-sm font-medium leading-6 text-gray-900">Cidade</label>
                 <div class="mt-2">
                     <select id="cidade" name="cidade" v-model="formOne.cidade"
-                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                            class="block w-full lg:w-11/12 bg-gray-200 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                             :disabled="edit == false">
                         <option value="0" disabled selected>Selecione</option>
                         <option v-for="(cid, index) in cidades" :key="index" :value="cid.id">{{ cid.nome }}</option>
@@ -234,7 +234,7 @@ function getCidadeCli(uf) {
             <div class="sm:col-span-4">
                 <label class="block text-sm font-medium leading-6 text-gray-900">Celular</label>
                 <div class="mt-2">
-                    <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                    <div class="flex bg-gray-200 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
                         <input type="text"
                             v-model="formOne.celular"
@@ -249,7 +249,7 @@ function getCidadeCli(uf) {
             <div class="sm:col-span-4">
                 <label class="block text-sm font-medium leading-6 text-gray-900">Insc. Estadual</label>
                 <div class="mt-2">
-                    <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                    <div class="flex bg-gray-200 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
                         <input type="text"
                             v-model="formOne.inscEst"
@@ -265,7 +265,7 @@ function getCidadeCli(uf) {
             <div class="sm:col-span-4">
                 <label class="block text-sm font-medium leading-6 text-gray-900">Responsável</label>
                 <div class="mt-2">
-                    <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                    <div class="flex bg-gray-200 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
                         <input type="text"
                             v-model="formOne.responsavel"
@@ -278,7 +278,7 @@ function getCidadeCli(uf) {
             <div class="sm:col-span-4">
                 <label class="block text-sm font-medium leading-6 text-gray-900">E-mail</label>
                 <div class="mt-2">
-                    <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                    <div class="flex bg-gray-200 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
                         <input type="text"
                             v-model="formOne.email"
