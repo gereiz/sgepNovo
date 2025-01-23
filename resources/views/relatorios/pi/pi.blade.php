@@ -1,6 +1,6 @@
 <html lang="en">
 <head>
-    <title>Invoice</title>
+    <title>PI Reserva</title>
     <script src="https://cdn.tailwindcss.com"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">

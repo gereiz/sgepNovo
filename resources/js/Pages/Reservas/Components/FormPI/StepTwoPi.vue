@@ -27,7 +27,7 @@ const id_servico = ref(0)
 const servicoSelecionado = ref('')
 const servicosPagos = ref([])
 
-const vlrUnit = ref()
+const vlrUnit = ref('')
 const vlrDesc = ref(0)
 const vlrTotal = ref()
 const detalhes = ref('')
@@ -148,19 +148,20 @@ function ListaServicosPagos() {
     }
 
     // verifica se a quantidade é menor que 1
-    if(parseInt(quantidade.value) < 1) {
+    if(parseInt(quantidade.value) < 1 || quantidade.value == '') {
         toastr.error('Quantidade do serviço não pode ser menor que 1 !')
         return
     }
 
-    vlrUnit.value = vlrUnit.value.replace('R$ ', '')
-    vlrDesc.value = vlrDesc.value.replace('R$ ', '')
-
-
     // verifica se o valor unitário é menor que 1
-    if(parseFloat(vlrUnit.value) < 1) {
+    if(parseFloat(vlrUnit.value) < 1 || vlrUnit.value == '') {
         toastr.error('Valor Unitário do serviço não pode ser menor que R$ 1.00 !')
         return
+    }
+
+    // verifica se o valor do desconto é vazio
+    if(vlrDesc.value == '') {
+        vlrDesc.value = 0
     }
 
     // verifica se o valor unitário é menor que o valor do desconto
@@ -180,7 +181,7 @@ function ListaServicosPagos() {
     })
 
     servico.value = 0
-    quantidade.value = 1
+    quantidade.value = props.paineis.length
     vlrUnit.value = 0
     vlrDesc.value = 0
 
@@ -469,7 +470,7 @@ function changeEdit() {
                 </div>
 
                 <!-- Detalhes -->
-                <div class="w-full pt-4">
+                <!-- <div class="w-full pt-4">
                     <label for="detalhes" class="block text-sm font-medium leading-6 text-gray-900">Detalhes</label>
                     <div class="mt-2">
                         <textarea name="detalhes" id="detalhes" rows="2" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset
@@ -478,7 +479,7 @@ function changeEdit() {
                             v-model="detalhes"
                         ></textarea>
                     </div>
-                </div>
+                </div> -->
 
             </div>
 
