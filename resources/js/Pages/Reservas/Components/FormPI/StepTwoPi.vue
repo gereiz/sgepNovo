@@ -22,12 +22,12 @@ const usuarios = ref()
 
 const servicos = ref()
 const servico = ref(0)
-const quantidade = ref(1)
+const quantidade = ref(props.paineis.length)
 const id_servico = ref(0)
 const servicoSelecionado = ref('')
 const servicosPagos = ref([])
 
-const vlrUnit = ref(0)
+const vlrUnit = ref()
 const vlrDesc = ref(0)
 const vlrTotal = ref()
 const detalhes = ref('')
@@ -35,6 +35,21 @@ const detalhes = ref('')
 const dataAtual = new Date().toISOString().slice(0, 10);
 const dtPgto = ref(dataAtual)
 const dtReserva = ref(props.dataReserva)
+
+const formTwo = reactive({
+    paineis: props.paineis,
+    campanha: props.campanha[0],
+    servicos: servicosPagos,
+    formaPgto: 0,
+    pgto: '',
+    parcelado: '',
+    qtdParcelas: 1,
+    dtPgto: dtPgto.value,
+    dtReserva: props.dataReserva,
+    vendedorId: '',
+    vendedor: ''
+
+})
 
 watch((vlrUnit), (val) => {
 
@@ -127,7 +142,7 @@ function getServicos() {
 function ListaServicosPagos() {
 
     // verifica se a quantidade é maior que a quantidade de painéis
-    if(parseInt(quantidade.value) > parseInt(props.paineis[0].length)) {
+    if(parseInt(quantidade.value) > parseInt(props.paineis.length)) {
         toastr.error('Quantidade do serviço é maior que a quantidade de Painéis disponíveis!')
         return
     }
@@ -138,9 +153,13 @@ function ListaServicosPagos() {
         return
     }
 
+    vlrUnit.value = vlrUnit.value.replace('R$ ', '')
+    vlrDesc.value = vlrDesc.value.replace('R$ ', '')
+
+
     // verifica se o valor unitário é menor que 1
     if(parseFloat(vlrUnit.value) < 1) {
-        toastr.error('Valor Unitário do serviço não pode ser menor que 1.00 !')
+        toastr.error('Valor Unitário do serviço não pode ser menor que R$ 1.00 !')
         return
     }
 
@@ -174,19 +193,6 @@ function removeServicoPago(index) {
 
     getServicos()
 }
-
-const formTwo = reactive({
-    paineis: props.paineis,
-    campanha: props.campanha[0],
-    servicos: servicosPagos,
-    formaPgto: 0,
-    pgto: '',
-    dtPgto: dtPgto.value,
-    dtReserva: props.dataReserva,
-    vendedorId: '',
-    vendedor: ''
-
-})
 
 const nextStep = (val) => {
 
@@ -290,15 +296,15 @@ function changeEdit() {
                 <UserCircleIcon class="h-6 w-6" aria-hidden="true" />
                 </button>
             </div>
-            <p class="text-xs font-bold text-red-500 text-center">Bi-Semana: {{ bisemana.num_bisemana }} {{ new Date(bisemana.inicio).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }} até {{ new Date(bisemana.fim).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }}</p>
+            <p class="text-xs font-bold text-red-500 text-center">Bi-Semana: {{ bisemana[0].num_bisemana }} {{ new Date(bisemana[0].inicio).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }} até {{ new Date(bisemana[0].fim).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }}</p>
         </div>
 
         <!--Painéis / Campanha -->
         <div class="flex w-full space-x-6">
-            <div class="sm:w-5/12">
+            <div class="sm:w-8/12">
                 <label class="block text-sm font-medium leading-6 text-gray-900">Painéis</label>
                 <div class="mt-2">
-                    <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                    <div class="flex bg-gray-200 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                         <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
                         <input type="text"
                             v-model="formTwo.paineis"
@@ -308,7 +314,7 @@ function changeEdit() {
                 </div>
             </div>
 
-            <div class="w-6/12">
+            <div class="w-4/12">
                 <label class="block text-sm font-medium leading-6 text-gray-900">Campanha</label>
                 <div class="mt-2">
                     <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
@@ -324,10 +330,9 @@ function changeEdit() {
 
         </div>
 
-        <!-- Serviços -->
-        <div class="flex w-full space-x-6">
-
-            <div class="w-full">
+        <!-- Serviços / Pago? / Data Pgto -->
+        <div class="flex space-x-4">
+            <div class="w-full md:w-6/12">
                 <label for="" class="block text-sm font-medium leading-6 text-gray-900">Serviço:</label>
                 <select v-model="servico" @change=getServico(servico) class="w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset
                                 ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" :disabled="edit == false">
@@ -337,14 +342,36 @@ function changeEdit() {
                 </select>
             </div>
 
+            <div class="w-5/12 md:w-2/12">
+                <label class="block text-sm font-medium leading-6 text-gray-900">Pago</label>
+                    <select id="pagamento" name="pagamento"
+                    v-model="formTwo.pgto"
+                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 md:max-w-xs md:text-sm md:leading-6"
+                            :disabled="edit == false">
+                        <option value="" disabled selected>SEL...</option>
+                        <option value="0">NÃO</option>
+                        <option value="1">SIM</option>
+                    </select>
+            </div>
 
+            <div class="w-5/12 md:w-3/12">
+                <label class="block text-sm font-medium leading-6 text-gray-900">Data Pagamento</label>
+                <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                    <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
+                    <input type="date"
+                        v-model="formTwo.dtPgto"
+                        :disabled="edit == false"
+                        class="h-9 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs"
+
+                    />
+                </div>
+            </div>
         </div>
+
         <!--Quantidade / Valor Unitário / Desconto / Valor Total -->
         <div :class="{'hidden': servico == 0}" class="flex w-full space-x-6">
 
-            <div class="w-11/12 flex flex-wrap space-x-0 sm:space-x-6 space-y-4 sm:space-y-0
-                border sm:border-0 border-sky-300 rounded-lg py-4 mb-2 sm:mb-0"
-            >
+            <div class="w-11/12 flex flex-wrap space-x-0 sm:space-x-6 space-y-4 border sm:border-0 border-sky-300 rounded-lg mb-2 sm:mb-0">
 
                 <!-- Serviço -->
                 <div class="w-10/12 sm:w-8/12">
@@ -363,7 +390,6 @@ function changeEdit() {
                 <!-- Quantidade -->
                 <div class="w-10/12 sm:w-3/12">
                     <label for="quantidade" class="block text-sm font-medium leading-6 text-gray-900">Quantidade</label>
-                    <div class="mt-2">
                         <input type="text"
                             name="quantidade"
                             id="quantidade"
@@ -371,7 +397,6 @@ function changeEdit() {
                             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset
                                 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center"
                         />
-                    </div>
                 </div>
 
                 <!-- Valores -->
@@ -380,8 +405,7 @@ function changeEdit() {
                     <!-- Valor Unit. -->
                     <div class="w-10/12 sm:w-3/12">
                         <label for="vlr_unit" class="block text-sm font-medium leading-6 text-gray-900">Valor Unit.</label>
-                        <div class="mt-2">
-                            <input type="text"
+                            <input type="text" placeholder="R$ 0.00"
                                 name="vlr_unit"
                                 id="vlr_unit"
                                 v-model="vlrUnit"
@@ -390,20 +414,18 @@ function changeEdit() {
                                 v-maska
                                 data-maska=
                                 "[
-                                    'R$ ##.##',
-                        ' R$ ###.##',
-                        ' R$ ####.##',
-                        ' R$ #####.##'
+                                     '##.##',
+                                    '###.##',
+                                    '####.##',
+                                    '#####.##'
                                 ]"
                             />
-                        </div>
                     </div>
 
                     <!-- Descontos -->
                     <div class="w-10/12 sm:w-3/12">
                         <label for="vlr_desc" class="block text-sm font-medium leading-6 text-gray-900">Desc. Unit.</label>
-                        <div class="mt-2">
-                            <input type="text"
+                            <input type="text" placeholder="R$ 0.00"
                                 name="vlr_desc"
                                 id="vlr_desc"
                                 v-model="vlrDesc"
@@ -412,20 +434,18 @@ function changeEdit() {
                                 v-maska
                                 data-maska=
                                 "[
-                                    'R$ ##.##',
-                        ' R$ ###.##',
-                        ' R$ ####.##',
-                        ' R$ #####.##'
+                                     '##.##',
+                                    '###.##',
+                                    '####.##',
+                                    '#####.##'
                                 ]"
                             />
-                        </div>
                     </div>
 
                     <!-- Valor Total -->
                     <div class="w-10/12 sm:w-3/12">
                         <label for="vlr_total" class="block text-sm font-medium leading-6 text-gray-900">Valor Total</label>
-                        <div class="mt-2">
-                            <input type="text" disabled
+                            <input type="text" disabled placeholder="R$ 0.00"
                                 name="vlr_total"
                                 id="vlr_total"
                                 v-model="vlrTotal"
@@ -434,17 +454,16 @@ function changeEdit() {
                                 v-maska
                                 data-maska=
                                 "[
-                                    'R$ ##.##',
-                        ' R$ ###.##',
-                        ' R$ ####.##',
-                        ' R$ #####.##'
+                                     '##.##',
+                                    '###.##',
+                                    '####.##',
+                                    '#####.##'
                                 ]"
                             />
-                        </div>
                     </div>
 
                     <!-- Botão OK -->
-                    <div class="w-10/12 sm:w-1/12 pt-[1.95rem]">
+                    <div class="w-10/12 sm:w-1/12 pt-[1.5rem]">
                         <button @click="ListaServicosPagos()" class="flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500">OK</button>
                     </div>
                 </div>
@@ -501,7 +520,7 @@ function changeEdit() {
                 </div>
 
                 <!-- Valor Total -->
-                <div class="w-10/12 sm:w-[20%]">
+                <div class="w-10/12 md:w-3/12">
                     <label for="vlr_total" class="block text-sm font-medium leading-6 text-gray-900">Valor Total</label>
                     <div class="">
                         <input type="text" disabled
@@ -532,60 +551,59 @@ function changeEdit() {
 
         </div>
 
-        <!-- Forma de Pagamento / Pago ?-->
-        <div class="w-full flex flex-wrap justify-center sm:space-x-6 space-y-6 sm:space-y-0">
+        <!-- Forma de Pagamento / Parcelado / Parcelas-->
+        <div class="w-full flex flex-wrap justify-center sm:space-x-4 space-y-6 sm:space-y-0">
+
             <div class="w-full sm:w-5/12">
                 <label class="block text-sm font-medium leading-6 text-gray-900">Forma de Pagamento</label>
-                <div class="mt-2">
-                    <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                        <select id="uf" name="uf"
+                <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                    <select id="forma_pagamento" name="forma_pagamento"
                         v-model="formTwo.formaPgto"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                                :disabled="edit == false">
-                            <option value="0" disabled selected>SELECIONE</option>
-                            <option value="1">A VISTA DINHEIRO</option>
-                            <option value="2">A VISTA PIX</option>
-                            <option value="3">CARTÃO</option>
-                            <option value="4">BOLETO</option>
-                            <option value="5">DEPÓSITO</option>
-
-                        </select>
-                    </div>
+                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                            :disabled="edit == false">
+                        <option value="0" disabled selected>SELECIONE</option>
+                        <option value="1">A VISTA DINHEIRO</option>
+                        <option value="2">A VISTA PIX</option>
+                        <option value="3">CARTÃO</option>
+                        <option value="4">BOLETO</option>
+                        <option value="5">DEPÓSITO</option>
+                    </select>
                 </div>
             </div>
 
-            <div class="w-5/12 sm:w-[20%] me-6">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Pago</label>
-                <div class="mt-2">
-                    <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-
-                        <select id="pagamento" name="pagamento"
-                        v-model="formTwo.pgto"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                                :disabled="edit == false">
-                            <option value="" disabled selected>SEL...</option>
-                            <option value="0">NÃO</option>
-                            <option value="1">SIM</option>
-
-                        </select>
-                    </div>
-                </div>
+            <div class="w-5/12 md:w-3/12">
+                <label class="block text-sm font-medium leading-6 text-gray-900">Parcelado</label>
+                    <select id="parcelado" name="parcelado" v-if="formTwo.formaPgto > 2"
+                    v-model="formTwo.parcelado"
+                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 md:max-w-xs md:text-sm md:leading-6"
+                            :disabled="edit == false">
+                        <option value="" disabled selected>SEL...</option>
+                        <option value="0">NÃO</option>
+                        <option value="1">SIM</option>
+                    </select>
             </div>
 
-            <div class="w-5/12 sm:w-3/12">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Data Pagamento</label>
-                <div class="mt-2">
-                    <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                        <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
-                        <input type="date"
-                            v-model="formTwo.dtPgto"
-                            :disabled="edit == false"
-                            class="h-9 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs"
-
-                        />
-                    </div>
-                </div>
+            <div class="w-5/12 md:w-3/12">
+                <label class="block text-sm font-medium leading-6 text-gray-900">Parcelas</label>
+                    <select id="qtdparcelas" name="qtdparcelas" v-if="formTwo.formaPgto > 2 && formTwo.parcelado == 1"
+                            v-model="formTwo.qtdParcelas"
+                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 md:max-w-xs md:text-sm md:leading-6"
+                            :disabled="edit == false">
+                        <option value="1" disabled selected>SEL...</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                    </select>
             </div>
+
         </div>
 
         <!-- Data da Reserva / Vendedor-->

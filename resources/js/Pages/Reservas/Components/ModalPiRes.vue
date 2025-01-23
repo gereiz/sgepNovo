@@ -49,18 +49,18 @@ function saveFormOne(ev) {
 
   localStorage.setItem('piFormOne', JSON.stringify(getFormPiOne.value))
 
-  // console.log(JSON.parse(localStorage.getItem('piFormOne')))
-
 }
 
 function saveFormTwo(ev) {
     getFormPiTwo.value.paineis = ev.paineis
-    getFormPiTwo.value.bisemanaId = props.bisemana.id
+    getFormPiTwo.value.bisemanaId = props.bisemana[0].id
     getFormPiTwo.value.campanha = ev.campanha
     getFormPiTwo.value.observacoes = props.observacoes
     getFormPiTwo.value.servicos = ev.servicos
     getFormPiTwo.value.formaPgto = ev.formaPgto
     getFormPiTwo.value.pgto = ev.pgto
+    getFormPiTwo.value.parcelado = ev.parcelado
+    getFormPiTwo.value.qtdParcelas = ev.qtdParcelas
     getFormPiTwo.value.dtPgto = ev.dtPgto
     getFormPiTwo.value.dReserva = ev.dtReserva
     getFormPiTwo.value.vendedorId = ev.vendedorId
