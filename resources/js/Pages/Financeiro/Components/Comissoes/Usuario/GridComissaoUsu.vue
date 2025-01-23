@@ -3,15 +3,17 @@
 <script setup>
 
     import { ref, reactive, computed, onMounted, watch } from 'vue'
+    import { usePage } from '@inertiajs/vue3';
     import { QuestionMarkCircleIcon } from '@heroicons/vue/20/solid'
 
-    import EditComissaoUsu from './EditComissaoUsu.vue';    
+    import EditComissaoUsu from './EditComissaoUsu.vue';
     import DelComissaoUsu from './DelComissaoUsu.vue';
-    
+
     const props = defineProps(['usuarios', 'funcoes', 'servicos', 'comissoes']);
 
     const usuarioSelecionado = ref('')
 
+    const user = usePage().props.auth.user;
     const openE = ref(false)
     const openD = ref(false)
 
@@ -51,15 +53,15 @@
         <div class="card-body flex flex-col sm:flex-row">
             <!-- Paineis -->
             <div class="w-full flex flex-col flex-wrap md:flex-row">
-                
+
                 <!-- Cards dos Paineis -->
                 <div v-for="(usuario, index) in usuarios" :key="index" :id="usuario.id" class="card w-full sm:w-[24%] h-[18rem] bg-base-100 border-2 rounded-md shadow-xl mt-4 sm:mr-4 hover:scale-[1.1] hover:z-50 transition-all duration-500">
                     <div class="card-body flex" :id="index">
                         <div class="w-full flex-col sm:flex sm:flex-wrap">
                             <div class="w-full flex justify-center">
                                 <div class="w-4/12">
-                                    <img class="w-[5rem] h-[5rem] hover:scale-150 transition-all duration-1000 rounded-md" 
-                                        src="../../../../../../../storage/app/public/img/funcionario.png" 
+                                    <img class="w-[5rem] h-[5rem] hover:scale-150 transition-all duration-1000 rounded-md"
+                                        src="../../../../../../../storage/app/public/img/funcionario.png"
                                         alt="Foto-painel"
                                     >
                                 </div>
@@ -71,15 +73,15 @@
                                     </p>
 
                                 </div>
-                            </div>                            
+                            </div>
 
                             <div class="w-full flex flex-wrap sm:flex-nowrap justify-center my-2 space-x-2">
                                 <div class="w-full">
-                                    <div class="sm:flex flex-wrap ">   
+                                    <div class="sm:flex flex-wrap ">
                                         <div class="w-full flex flex-col items-center space-y-3 mt-4">
-                                            
-                                            <p class="text-xs sm:text-base">Função: {{ usuario.funcao.cargo }}</p>
 
+                                            <!-- <p class="text-xs sm:text-base">Função: {{ usuario.roles }}</p> -->
+                                            <!-- {{ usuario }} -->
                                         </div>
 
                                         <div class="w-full flex items-center justify-around space-x-2 mt-14">
@@ -92,19 +94,19 @@
                             </div>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
-        
-            
-        <EditComissaoUsu :openEdit="openE" 
-                         @closeEdit="openEdit" 
+
+
+        <EditComissaoUsu :openEdit="openE"
+                         @closeEdit="openEdit"
                          :usuario="usuarioSelecionado"
                          :servicos="props.servicos"
                          :comissoes="props.comissoes">
         </EditComissaoUsu>
 
-    
+
         </div>
     </div>
 
