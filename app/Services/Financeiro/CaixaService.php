@@ -146,8 +146,14 @@ class CaixaService
         return Lancamento::find($id);
     }
 
+    public function getLancamentosReserva($id_reserva)
+    {
+        return Lancamento::where('id_reserva', $id_reserva)->first();
+    }
+
     public function createLancamento(Request $request)
     {
+
         $lancamento = $request->all();
         $validator = Validator::make($request->all(), [
             'descricao' => 'required',
@@ -171,10 +177,23 @@ class CaixaService
         //Transforma a data para o formato do banco de dados
         $lancamento['data_lancamento'] = date('Y-m-d', strtotime($lancamento['data_lancamento']));
 
+        if($lancamento['id_reserva'] == null) {
+            $lancamento = Lancamento::updateOrCreate([
+                'descricao' => $lancamento['descricao'],
+                'valor' => $lancamento['valor'],
+                'parcelas' => $lancamento['parcelas'],
+                'dt_faturamento' => $lancamento['data_lancamento'],
+                'centro_custo' => $lancamento['centro_custo'],
+                'tipo_lancamento' => $lancamento['tipo_lancamento'],
+                'id_reserva' => $lancamento['id_reserva'],
+                'observacoes' => $lancamento['observacoes'],
+            ]);
+        }
+
         $lancamento = Lancamento::create([
             'descricao' => $lancamento['descricao'],
             'valor' => $lancamento['valor'],
-            'parcelas' => intval($lancamento['parcelas']),
+            'parcelas' => $lancamento['parcelas'],
             'dt_faturamento' => $lancamento['data_lancamento'],
             'centro_custo' => $lancamento['centro_custo'],
             'tipo_lancamento' => $lancamento['tipo_lancamento'],

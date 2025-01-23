@@ -16,6 +16,7 @@ use App\Services\UsuarioService;
 use Spatie\LaravelPdf\Facades\Pdf;
 use \Spatie\LaravelPdf\Enums\Orientation;
 use App\Models\Reservas\Reserva;
+use App\Services\Financeiro\CaixaService;
 
 class PiController extends Controller
 {
@@ -50,9 +51,6 @@ class PiController extends Controller
 
 
     public function storePi() {
-
-        // dd(session('dadosPi'));
-        // dd(session()->all());
 
         $idPaineis = session('dadosPi')['Two']['paineis'];
         $bsId = session('dadosPi')['Two']['bisemanaId'];
@@ -101,7 +99,6 @@ class PiController extends Controller
 
         $vendedor = session('dadosPi')['Two']['vendedor'];
 
-        // dd($vendedor);
         // Grava as reservas
         foreach($idPaineis as $idPainel) {
             $painel = Painel::where('identificacao', $idPainel)->first();
@@ -136,7 +133,7 @@ class PiController extends Controller
         ->orderByDesc('id')
         ->first();
 
-        // soma os valores dos serviços
+        // // soma os valores dos serviços
         $vl_total = 0;
         $vlr_unt = 0;
         $vlr_desc = 0;
@@ -147,14 +144,54 @@ class PiController extends Controller
         }
 
 
+        // grava o lançamento no banco de dados
+        $caixaService = new CaixaService();
 
+        // dd(session('dadosPi'));
+
+        if (session('dadosPi')['Two']['parcelado'] == 1) {
+            $qtdParcelas = session('dadosPi')['Two']['qtdParcelas'];
+            $vl_parcela = $vl_total / $qtdParcelas;
+
+            // verifica se o lançamento já existe
+            $lancamento_existe = $caixaService->getLancamentosReserva($pi->id);
+
+
+            for ($i = 1; $i <= $qtdParcelas; $i++) {
+                $lancamento = [
+                    'descricao' => 'Faturamento PI nº ' . $pi->id . ' Cliente: ' . $cliente->razao_social ?
+                        'Faturamento PI nº ' . $pi->id . ' Cliente: '.$cliente->razao_social :
+                        'Faturamento PI nº ' . $pi->id . ' Cliente: '.$cliente->nome_fantasia,
+
+                    'valor' => $vl_parcela,
+                    'parcelas' => $i . '/' . $qtdParcelas,
+                    'data_lancamento' => date('Y-m-d', strtotime(session('dadosPi')['Two']['dtPgto'] . ' + ' . $i . ' month')),
+                    'centro_custo' => 1,
+                    'tipo_lancamento' => 1,
+                    'id_reserva' => $pi->id,
+                    'observacoes' => $detalhes,
+                ];
+
+                // Cria o Request manualmente
+                $request_lancamento = new \Illuminate\Http\Request();
+                $request_lancamento->replace($lancamento);
+
+                if(!$lancamento_existe) {
+                    // Chama o método do serviço com o objeto Request
+                    $caixaService->createLancamento($request_lancamento);
+                } else {
+                    $lancamento_existe->update($lancamento);
+                }
+
+            }
+        }
 
         // Cria o PI se não existir
         try {
             if(!$pi) {
-                $pi = Pi::create([
+                $pi = Pi::updateOrCreate([
                     'id_cliente' => session('dadosPi')['One']['clienteId'],
-                    'id_paineis' => json_encode(session('dadosPi')['Two']['paineis'][0]),
+                    'id_paineis' => json_encode(session('dadosPi')['Two']['paineis']),
                     'contato' => session('dadosPi')['One']['responsavel'],
                     'campanha' => session('dadosPi')['Two']['campanha'],
                     'id_bisemana' => session('dadosPi')['Two']['bisemanaId'],
@@ -170,7 +207,7 @@ class PiController extends Controller
 
             }
         } catch(\Exception $e) {
-            return response()->json(['cod' => 0, 'msg' => $e]);
+            return response()->json(['cod' => 0, 'msg' => 'Erro ao gravar PI.']);
         }
 
 
@@ -183,9 +220,7 @@ class PiController extends Controller
 
         if(isset(session('dadosPi')['Three'])) {
             return Pdf::view('relatorios.pi.pi', compact('pi', 'cliente', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
-            'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor'
-
-            ))
+            'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor', 'dt_atual'))
             ->orientation(Orientation::Landscape);
         }
 

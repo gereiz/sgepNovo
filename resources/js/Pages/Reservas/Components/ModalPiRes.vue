@@ -100,6 +100,9 @@ function submitFormPi() {
         setTimeout(() => {
             window.open('/storePi', '_blank')
         }, 2000);
+        setTimeout(() => {
+            window.location.reload()
+        }, 3000);
       } else {
         axios.get('/storePi')
             .then((res) => {

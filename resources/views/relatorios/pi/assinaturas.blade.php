@@ -2,14 +2,14 @@
     <div class="w-6/12">
         <div class="w-full flex flex-col items-center justify-center">
             <p>_____________________________________</p>
-            <p>Cliente</p>
+            <p class="text-xs">Cliente</p>
         </div>
     </div>
 
     <div class="w-6/12">
         <div class="w-full flex flex-col items-center justify-center">
             <p>_____________________________________</p>
-            <p>Equipe Comunicação LTDA</p>
+            <p class="text-xs">Equipe Comunicação LTDA</p>
         </div>
     </div>
 </div>
