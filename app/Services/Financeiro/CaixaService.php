@@ -251,6 +251,7 @@ class CaixaService
     {
         $id = $request['lancamento']['id'];
         $lancamento = Lancamento::find($id);
+        // dd($lancamento);
         $lancamento->delete();
 
         return response()->json(null, 204);
