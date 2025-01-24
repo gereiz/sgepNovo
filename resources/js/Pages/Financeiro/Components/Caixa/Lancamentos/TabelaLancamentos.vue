@@ -110,11 +110,19 @@ const updateLanc = (val) => {
 
                 <td class="w-[7%] whitespace-nowrap flex p-4 text-sm space-x-2">
 
-                    <button v-if="editaLancamento" class=" btn btn-sm btn-square btn-warning text-white tooltip tooltip-left" data-tip="Editar" @click="openEdit(lancamento)">
+                    <button v-if="editaLancamento && lancamento.centro_custo.id != 1" class=" btn btn-sm btn-square btn-warning text-white tooltip tooltip-left" data-tip="Editar" @click="openEdit(lancamento)">
                         <i class="fa-solid fa-pen-to-square"></i>
                     </button>
 
-                    <button v-if="excluiLancamento" class="btn btn-sm btn-square btn-error text-white tooltip tooltip-left" data-tip="Excluir" @click="openDelete(lancamento)">
+                    <button v-if="excluiLancamento && lancamento.centro_custo.id != 1" class="btn btn-sm btn-square btn-error text-white tooltip tooltip-left" data-tip="Excluir" @click="openDelete(lancamento)">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+
+                    <button v-if="editaLancamento && lancamento.centro_custo.id == 1" class=" btn btn-active btn-sm btn-square btn-default text-white tooltip tooltip-left" data-tip="Lançamentos automáticos de reservas não podem ser editados">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+
+                    <button v-if="excluiLancamento && lancamento.centro_custo.id == 1" class="btn btn-active btn-sm btn-square btn-default text-white tooltip tooltip-left" data-tip="Lançamentos automáticos de reservas não podem ser excluídos">
                         <i class="fa-solid fa-trash"></i>
                     </button>
 

@@ -17,10 +17,18 @@ use App\Models\Clientes\Cliente;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use App\Models\Financeiro\Lancamento;
+use App\Models\PI\Pi;
+use App\Services\Financeiro\CaixaService;
 
 
 class ReservaController extends Controller
 {
+    private $caixaService;
+
+    public function __construct(CaixaService $caixaService) {
+        $this->caixaService = $caixaService;
+    }
 
     public function index() {
 
@@ -369,13 +377,34 @@ class ReservaController extends Controller
             $reserva = Reserva::where([['outdoor_id', $pId], ['bisemana_id', $bs], ['user_id', auth()->user()->id]])->first();
             $painel = Painel::find($pId);
 
-           if($reserva) {
-               $reserva->delete();
+            if($reserva) {
+                // exclui a reserva
+                $reserva->delete();
+
+                // exclui a PI
+                $pi = Pi::where('id_cliente', $reserva->cliente_id)
+                        ->where('id_bisemana', $reserva->bisemana_id)
+                        ->orderByDesc('id')
+                        ->first();
+
+                if($pi) {
+                    $pi->delete();
+                }
+
+                // exclui os lançamentos referentes aos painéis
+                $lancamento = Lancamento::where('id_reserva', $reserva->pi_id)->first();
+
+                //cria uma request para deletar o lançamento
+                $request_lancamento = new Request();
+                $request_lancamento->replace(['lancamento' => $lancamento]);
+
+                $this->caixaService->deleteLancamento($request_lancamento);
 
 
-           } else {
-               return response()->json(['cod' => 0, 'msg' => 'A reserva do painel  '.$painel->identificacao.' só pode ser cancelada pelo usuário que o reservou!']);
-           }
+            } else {
+                return response()->json(['cod' => 0, 'msg' => 'A reserva do painel  '.$painel->identificacao.' só pode ser cancelada pelo usuário que o reservou!']);
+            }
+
         }
 
         return response()->json(['cod' => 1, 'msg' => 'Painéis Excluidos!']);

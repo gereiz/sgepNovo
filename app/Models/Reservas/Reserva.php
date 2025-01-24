@@ -25,21 +25,22 @@ class Reserva extends Model
                             'campanha',
                             'observacao',
                             'pi_ok',
+                            'pi_id',
                             'user_id'
                         ];
- 
+
     public function cliente()
     {
         return $this->belongsTo(Cliente::class, 'cliente_id', 'id');
     }
-    
+
 
     public function bairro()
     {
         return $this->hasOne(Bairro::class, 'bairro_id', 'id');
     }
 
- 
+
     public function painel()
     {
         return $this->belongsTo(Painel::class, 'outdoor_id', 'id');

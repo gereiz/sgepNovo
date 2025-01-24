@@ -127,11 +127,10 @@ function getReservasCli(bs) {
     })
 
     axios.post('/GetCliente', {cliente:idCliente.value})
-        .then((res) => {
-            clienteSel.value = res.data
+    .then((res) => {
+        clienteSel.value = res.data
 
-            console.log(idCliente.value)
-            console.log(res.data)
+
     })
 }
 
@@ -161,15 +160,23 @@ const openDel = (val) => {
     }
 }
 
+const delReservaPI = () => {
+    console.log(checkedPaineisId.value.length, reservas.value.length)
+
+    if(checkedPaineisId.value.length == reservas.value.length) {
+        openD.value = true
+    } else {
+        toastr.error('Painéis com PI só podem ser exlcuídos, se forem todos os painéis da reserva')
+    }
+}
+
 const getChecked = (ev) => {
     checkedPaineis.value = ev
-    console.log(checkedPaineis.value)
-    console.log(idCliente.value)
+
 }
 
 const getCheckedId = (ev) => {
     checkedPaineisId.value = ev
-    console.log(checkedPaineisId.value)
 }
 
 const getItemsRef = (ev) => {
@@ -274,21 +281,28 @@ const reservaData = computed(() => {
                     <!-- Botões -->
                     <div class=" w-full lg:w-[25%] flex justify-center sm:justify-start mt-2 space-x-4 mb-2">
 
+                        <!-- Criar reserva -->
                         <button v-if="idCliente && criaReserva"
                                 @click="clearChecked(), openAdd('t')"
                                 class="btn btn-square btn-info text-white -mt-1 tooltip tooltip-left" data-tip="Adicionar Painéis">
                             <i class="fa-solid fa-plus"></i>
                         </button>
 
-                        <!-- <button v-if="idCliente != 0" for="modal-add-painel" class="w-fit botao-modal bg-slate-700 hover:bg-slate-500 px-2 transition-all duration-1000">Gerar PI</button> -->
-                        <!-- <button v-if="idCliente != 0 && checkedPaineis.length > 0" @click="openEdit('t')" for="modal-add-painel" class="w-fit botao-modal bg-amber-600 hover:bg-amber-400 px-2 transition-all duration-1000">Editar Reservas</button> -->
-
-                        <button v-if="idCliente && checkedPaineis.length > 0 && excluiReserva"
+                        <!-- Excluir Reserva -->
+                        <button v-if="idCliente && checkedPaineis.length > 0 && excluiReserva && reservas[0] ? reservas[0].pi_ok == 0 : false"
                                 @click="openDel('t')"
                                 class="btn btn-square btn-error text-white -mt-1 tooltip tooltip-left" data-tip="Excluir Painéis">
                             <i class="fa-solid fa-trash"></i>
                         </button>
 
+                        <button v-if="idCliente && checkedPaineis.length > 0 && excluiReserva && reservas[0] ? reservas[0].pi_ok == 1 : false"
+                                @click="delReservaPI()"
+                                class="btn btn-active btn-square btn-default text-white -mt-1 tooltip tooltip-left"
+                                data-tip="Painéis com PI só podem ser exlcuídos, se forem todos os painéis da reserva">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+
+                        <!-- Gerar PI -->
                         <button v-if="idCliente && reservas[0] ? reservas[0].pi_ok == 1 : false"
                                 class="btn btn-square btn-success text-white -mt-1 tooltip tooltip-left" data-tip="Reserva já possui PI">
                             <i class="fa-solid fa-triangle-exclamation"></i>

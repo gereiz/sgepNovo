@@ -102,28 +102,18 @@ class PiController extends Controller
         // Grava as reservas
         foreach($idPaineis as $idPainel) {
             $painel = Painel::where('identificacao', $idPainel)->first();
-            // Verifica se o painel já foi reservado
-            // $reserva_atual = Reserva::where([['outdoor_id', $painel->id],['bisemana_id', $bsId]])->first(); // Código alterado com a separação de emissão de PI e reserva de painéis
 
-            // if($reserva_atual != []) {
-
-            //     return response()->json(['cod' => 0, 'msg' => 'Painel reservado anteriormente.']);
-
-            // } else {
-
-                Reserva::updateOrCreate(['cliente_id' => $cliente->id, 'outdoor_id' => $painel->id, 'bisemana_id' => $bsId],
-                [
-                    'cliente_id' => $cliente->id,
-                    'outdoor_id' => $painel->id,
-                    'bisemana_id' => $bsId,
-                    'dt_reserva' => Carbon::now()->toDateString(),
-                    'campanha' => $campanha,
-                    // 'observacao' => $observacoes,
-                    'pi_ok' => 1,
-                    'user_id' => auth()->user()->id
-                ]);
-            // }
-
+            Reserva::updateOrCreate(['cliente_id' => $cliente->id, 'outdoor_id' => $painel->id, 'bisemana_id' => $bsId],
+            [
+                'cliente_id' => $cliente->id,
+                'outdoor_id' => $painel->id,
+                'bisemana_id' => $bsId,
+                'dt_reserva' => Carbon::now()->toDateString(),
+                'campanha' => $campanha,
+                // 'observacao' => $observacoes,
+                'pi_ok' => 1,
+                'user_id' => auth()->user()->id
+            ]);
 
         }
 
@@ -149,42 +139,7 @@ class PiController extends Controller
 
         // dd(session('dadosPi'));
 
-        if (session('dadosPi')['Two']['parcelado'] == 1) {
-            $qtdParcelas = session('dadosPi')['Two']['qtdParcelas'];
-            $vl_parcela = $vl_total / $qtdParcelas;
 
-            // verifica se o lançamento já existe
-            $lancamento_existe = $caixaService->getLancamentosReserva($pi->id);
-
-
-            for ($i = 1; $i <= $qtdParcelas; $i++) {
-                $lancamento = [
-                    'descricao' => 'Faturamento PI nº ' . $pi->id . ' Cliente: ' . $cliente->razao_social ?
-                        'Faturamento PI nº ' . $pi->id . ' Cliente: '.$cliente->razao_social :
-                        'Faturamento PI nº ' . $pi->id . ' Cliente: '.$cliente->nome_fantasia,
-
-                    'valor' => $vl_parcela,
-                    'parcelas' => $i . '/' . $qtdParcelas,
-                    'data_lancamento' => date('Y-m-d', strtotime(session('dadosPi')['Two']['dtPgto'] . ' + ' . $i . ' month')),
-                    'centro_custo' => 1,
-                    'tipo_lancamento' => 1,
-                    'id_reserva' => $pi->id,
-                    'observacoes' => $detalhes,
-                ];
-
-                // Cria o Request manualmente
-                $request_lancamento = new \Illuminate\Http\Request();
-                $request_lancamento->replace($lancamento);
-
-                if(!$lancamento_existe) {
-                    // Chama o método do serviço com o objeto Request
-                    $caixaService->createLancamento($request_lancamento);
-                } else {
-                    $lancamento_existe->update($lancamento);
-                }
-
-            }
-        }
 
         // Cria o PI se não existir
         try {
@@ -205,17 +160,57 @@ class PiController extends Controller
                     'obs' => session('dadosPi')['Two']['servicos'][0]['detalhes']
                 ]);
 
+                //atualiza o campo pi_id na reserva
+                $reserva = Reserva::where('cliente_id', session('dadosPi')['One']['clienteId'])
+                ->where('bisemana_id', session('dadosPi')['Two']['bisemanaId'])
+                ->where('pi_ok', 1)
+                ->get();
+
+                if (session('dadosPi')['Two']['parcelado'] == 1) {
+                    $qtdParcelas = session('dadosPi')['Two']['qtdParcelas'];
+                    $vl_parcela = $vl_total / $qtdParcelas;
+
+                    // verifica se o lançamento já existe
+                    $lancamento_existe = $caixaService->getLancamentosReserva($pi->id);
+
+
+                    for ($i = 1; $i <= $qtdParcelas; $i++) {
+                        $lancamento = [
+                            'descricao' => 'Faturamento PI nº ' . $pi->id . ' Cliente: ' . $cliente->razao_social ?
+                                'Faturamento PI nº ' . $pi->id . ' Cliente: '.$cliente->razao_social :
+                                'Faturamento PI nº ' . $pi->id . ' Cliente: '.$cliente->nome_fantasia,
+
+                            'valor' => $vl_parcela,
+                            'parcelas' => $i . '/' . $qtdParcelas,
+                            'data_lancamento' => date('Y-m-d', strtotime(session('dadosPi')['Two']['dtPgto'] . ' + ' . $i . ' month')),
+                            'centro_custo' => 1,
+                            'tipo_lancamento' => 1,
+                            'id_reserva' => $pi->id,
+                            'observacoes' => $detalhes,
+                        ];
+
+                        // Cria o Request manualmente
+                        $request_lancamento = new \Illuminate\Http\Request();
+                        $request_lancamento->replace($lancamento);
+
+                        if(!$lancamento_existe) {
+                            // Chama o método do serviço com o objeto Request
+                            $caixaService->createLancamento($request_lancamento);
+                        } else {
+                            $lancamento_existe->update($lancamento);
+                        }
+
+                    }
+                }
+
+                foreach($reserva as $res) {
+                    $res->update(['pi_id' => $pi->id]);
+                }
+
             }
         } catch(\Exception $e) {
             return response()->json(['cod' => 0, 'msg' => 'Erro ao gravar PI.']);
         }
-
-
-        // $pi = Pi::where('id_cliente', session('dadosPi')['One']['clienteId'])
-        //         ->where('id_bisemana', session('dadosPi')['Two']['bisemanaId'])
-        //     ->orderByDesc('id')
-        // ->first();
-
 
 
         if(isset(session('dadosPi')['Three'])) {
