@@ -401,7 +401,11 @@ class ReservaController extends Controller
                 $request_lancamento = new Request();
                 $request_lancamento->replace(['lancamento' => $lancamento]);
 
-                $this->caixaService->deleteLancamento($request_lancamento);
+                if($lancamento) {
+                    $this->caixaService->deleteLancamento($request_lancamento);
+                }
+
+                // $this->caixaService->deleteLancamento($request_lancamento);
 
 
             } else {

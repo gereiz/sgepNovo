@@ -34,7 +34,10 @@ function cancelaResMulti() {
                 toastr.error(res.data.msg)
             } else if(res.data.cod == 1) {
                 toastr.success(res.data.msg)
-                closeDel()
+                // closeDel()
+                setTimeout(() => {
+                    location.reload()
+                }, 1500)
             }
 
         })
