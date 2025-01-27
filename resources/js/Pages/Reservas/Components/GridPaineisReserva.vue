@@ -60,7 +60,7 @@ function getImage(i) {
     <div class="w-full flex flex-wrap items-center justify-center">
         <!-- Cards dos Paineis -->
         <div v-for="(res, index) in reservas" :key="index"
-             class="w-full lg:w-[22vw] h-[35vh] card flex bg-base-100 border border-gray-200 shadow-xl m-2 hover:scale-110 transition-all duration-500">
+             class="w-full lg:w-[22vw] h-[38vh] card flex bg-base-100 border border-gray-200 shadow-xl m-2 hover:scale-110 transition-all duration-500">
             <div class="flex" :id="index" @click="isChecked(index, res.identificacao, res.id)">
                 <div class="w-full flex flex-col flex-wrap">
                     <div class="relative w-full mb-3">
@@ -69,7 +69,6 @@ function getImage(i) {
                         <!-- Imagem -->
                         <img class="w-full h-[25vh] object-cover rounded-t-xl z-10" :src="getImage(res.image_url)" alt="Foto-painel">
                     </div>
-
                     <div class="w-full flex justify-around px-2 mb-2">
                         <span class="font-bold text-md text-red-500">Painel:
                             <span class="font-extrabold text-md text-black"> {{ res.identificacao }} </span>
@@ -97,6 +96,13 @@ function getImage(i) {
                             </button>
                         </span>
                     </div>
+
+                    <div class="w-full flex justify-around px-2 mb-3">
+                        <span class="font-bold text-sm ">Reservado por:
+                            {{ res.user_name }}
+                        </span>
+                    </div>
+
                 </div>
             </div>
         </div>

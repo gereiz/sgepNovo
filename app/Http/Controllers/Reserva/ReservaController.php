@@ -267,10 +267,13 @@ class ReservaController extends Controller
                                 'res.observacao AS obs',
                                 'res.pi_ok AS pi_ok',
                                 'res.dt_reserva AS dt_reserva',
+                                'res.user_id AS user_id',
+                                'user.name AS user_name',
                                 'cli.razao_social AS razao_social',
                                 'cli.nome_fantasia AS nome_fantasia')
             ->join('reservas AS res', 'res.outdoor_id', '=', 'outdoors.id')
             ->join('clientes AS cli', 'cli.id', '=', 'res.cliente_id')
+            ->join('users AS user', 'user.id', '=', 'res.user_id')
             ->where('res.bisemana_id','=', $bisemana)
             ->when($cliente, function(Builder $query, $cliente) {
                 $query->where('res.cliente_id', $cliente);
