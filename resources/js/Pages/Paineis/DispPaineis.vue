@@ -311,7 +311,7 @@
                             // console.log('Relatório não gerado')
                         })
 
-                }, 2000);
+                }, 10000);
             })
             .catch((err) => {
                 console.log('Dados não Enviados')
