@@ -125,10 +125,12 @@
 
                                             imagejpeg($image, 'storage/outdoorImages/'.$p->id."/CompressedJpgImage.jpg", 5);
                                             $reportImage = public_path('storage/outdoorImages/'.$p->id."/CompressedJpgImage.jpg");
+                                        } else {
+                                            $reportImage = $originalImage;
                                         }
 
                                         ?>
-                                        <img class="img-relatorio" src="{{$originalImage}}" alt="imagem_painel">
+                                        <img class="img-relatorio" src="{{$reportImage}}" alt="imagem_painel">
                                     </div>
                                 </div>
 
