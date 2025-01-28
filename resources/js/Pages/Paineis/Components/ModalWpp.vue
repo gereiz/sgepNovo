@@ -5,7 +5,7 @@ import { useToastr } from '@/Components/toastr';
 import { enviaWpp } from '@/functions';
 import Multiselect from 'vue-multiselect'
 
-const toastr = useToastr(); 
+const toastr = useToastr();
 
 const props = defineProps(['listaClientes', 'whatsapp', 'bisemana', 'linkrel'])
 
@@ -35,7 +35,7 @@ function clienteLista({id, nome_fantasia, razao_social}) {
 
 <template lang="">
     <!-- Modal Whatsapp -->
-    <input type="checkbox" id="modal-wpp" class="modal-toggle" />          
+    <input type="checkbox" id="modal-wpp" class="modal-toggle" />
     <div class="modal flex items-end md:items-center">
         <div class="modal-box">
             <div class="flex mb-4">
@@ -44,7 +44,7 @@ function clienteLista({id, nome_fantasia, razao_social}) {
                 <h3 class="font-bold text-lg ml-2 text-red-500">Bi-semana {{bisemana[0]?.num_bisemana}} {{paineis}}</h3>
             </div>
 
-            <form>  
+            <form>
                 <div class="w-full flex flex-col sm:flex-row flex-wrap space-y-4 sm:space-y-8">
 
                     <!-- Cliente -->
@@ -68,7 +68,7 @@ function clienteLista({id, nome_fantasia, razao_social}) {
                         <div class="w-6/12 flex flex-col me-4">
                             <span class="label-text ml-1">Telefone</span>
                             <input v-model="telefone" class="input input-bordered" disabled />
-                              
+
                         </div>
                         <div class="w-6/12 flex flex-col">
                             <span class="label-text ml-1">Mensagem</span>

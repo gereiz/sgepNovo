@@ -287,31 +287,26 @@
                 btn.innerHTML = 'Carregando...'
 
                 setTimeout(() => {
-
                     axios.post('/relDisponiveis', {tpEnvio: tp})
                         .then((res) => {
                             // console.log('Relatório gerado')
-
                             if(tp == 'wpp') {
-
                                 linkWpp.value = res.data
-
                             } else if(tp == 'pdf') {
-
                                 window.open('/relDisponiveis', '_blank')
-
                             }
-
 
                             btn.innerHTML = 'Enviar Lista'
                             loading.value = true
-
+                            document.getElementById('modal-wpp').checked = true
                         })
                         .catch((err) => {
-                            // console.log('Relatório não gerado')
+                            toastr.error('Erro ao gerar o relatório')
+                            console.error(err)
                         })
+                    // abre o modal
 
-                }, 10000);
+                }, 2000);
             })
             .catch((err) => {
                 console.log('Dados não Enviados')
@@ -453,12 +448,12 @@
                         </button>
 
                         <div class="dropdown">
-                        <label v-if="checkedPaineisId.length > 0 && tipoPainel == 'D'" tabindex="0" class="w-fit botao flex items-center bg-green-700 hover:bg-green-500 px-2 py-[0.7rem]">
+                            <label v-if="checkedPaineisId.length > 0 && tipoPainel == 'D'" tabindex="0" class="w-fit botao flex items-center bg-green-700 hover:bg-green-500 px-2 py-[0.7rem]">
                                 <img src="../../../../storage/app/public/img/spinner.png" class="w-4 h-4 me-2 animate-spin" :class="{'hidden': loading}" alt="spinner">
                                  <p id="envia_lista">Enviar Lista</p>
                             </label>
                             <ul tabindex="0" class="w-56 -ml-20 sm:-ml-10 dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box mt-4">
-                                <li><label @click="relDisponiveis('wpp')" for="modal-wpp">Envio por Whatsapp</label></li>
+                                <li><label @click="relDisponiveis('wpp')">Envio por Whatsapp</label></li>
                                 <li><a>Envio por Email</a></li>
                                 <li><label @click="relDisponiveis('pdf')">Download do Relatório</label></li>
                             </ul>

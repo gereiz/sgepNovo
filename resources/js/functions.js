@@ -17,15 +17,15 @@ export function getImage(amb, i) {
 
     if(amb == 'local') {
         // Desenvolvimento
-        var image = 'http://localhost:8000/storage/'+ i 
+        var image = 'http://localhost:8000/storage/'+ i
 
     } else {
         // Produção
-        var image = '/storage/'+ i 
+        var image = '/storage/'+ i
     }
-    
+
     return image
-} 
+}
 
 
 export function enviaWpp(tel, msg, urlRel) {
@@ -42,17 +42,19 @@ export function enviaWpp(tel, msg, urlRel) {
         url_wpp = "https://web.whatsapp.com/send?phone="+telwpp+"&text="+msgwpp+"%0a"+ urlRel;
 
      }
-     
 
-    if(telwpp == '' || msgwpp == '') 
+
+    if(telwpp == '' || msgwpp == '')
     {
         alert('Informe o telefone e a mensagem')
-        return 
+        return
     }
 
-    
 
-    window.open(url_wpp);
+
+    setTimeout(() => {
+        window.open(url_wpp, '_blank');
+    }, 10000);
 
 }
 
