@@ -110,6 +110,7 @@
                                         <?php
                                         $filePath = 'storage/'.$p->image_url;
                                         $originalImage = public_path($filePath);
+                                        $reportImage = $originalImage;
                                         //if(pathinfo('storage/'.$p->image_url, PATHINFO_EXTENSION) != "png" || mime_content_type($filePath) != "image/png"){
                                         if(filesize($filePath) > 15000000){
                                             $info = getimagesize($filePath);
@@ -125,8 +126,6 @@
 
                                             imagejpeg($image, 'storage/outdoorImages/'.$p->id."/CompressedJpgImage.jpg", 5);
                                             $reportImage = public_path('storage/outdoorImages/'.$p->id."/CompressedJpgImage.jpg");
-                                        } else {
-                                            $reportImage = $originalImage;
                                         }
 
                                         ?>
