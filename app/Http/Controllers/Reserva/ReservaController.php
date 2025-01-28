@@ -405,7 +405,6 @@ class ReservaController extends Controller
                     $this->caixaService->deleteLancamento($request_lancamento);
                 }
 
-                // $this->caixaService->deleteLancamento($request_lancamento);
 
 
             } else {

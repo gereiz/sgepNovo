@@ -27,7 +27,7 @@
         border: 1px solid;
         padding-top: -7%;
     }
- 
+
     .relatorio-body {
         display: flex;
     }
@@ -59,7 +59,7 @@
     }
 
 </style>
- 
+
 <div id="tabletitulo">
     <img class="login_logo" src="{{public_path('storage/img/logo.png')}}" alt="Logo">
     <h4 style="margin-top:-3%;">Painéis Disponíveis</h4>
@@ -90,7 +90,7 @@
                     <div class="card-body relatorio-body">
                         <div class="row d-flex">
                             <div class="col-md-12">
-                               
+
                                {{-- informações --}}
                                 <div class="d-inline col-md-6">
                                     <div class="endereco-relatorio">
@@ -111,22 +111,22 @@
                                         $filePath = 'storage/'.$p->image_url;
                                         $originalImage = public_path($filePath);
                                         //if(pathinfo('storage/'.$p->image_url, PATHINFO_EXTENSION) != "png" || mime_content_type($filePath) != "image/png"){
-                                        if(filesize($filePath) > 50000){
+                                        if(filesize($filePath) > 15000000){
                                             $info = getimagesize($filePath);
-                            
-                                            if ($info['mime'] == 'image/jpeg') 
+
+                                            if ($info['mime'] == 'image/jpeg')
                                                 $image = @imagecreatefromjpeg($filePath);
-                                        
-                                            elseif ($info['mime'] == 'image/gif') 
+
+                                            elseif ($info['mime'] == 'image/gif')
                                                 $image = @imagecreatefromgif($filePath);
-                                        
-                                            elseif ($info['mime'] == 'image/png') 
+
+                                            elseif ($info['mime'] == 'image/png')
                                                 $image = @imagecreatefrompng($filePath);
-                                        
+
                                             imagejpeg($image, 'storage/outdoorImages/'.$p->id."/CompressedJpgImage.jpg", 5);
                                             $reportImage = public_path('storage/outdoorImages/'.$p->id."/CompressedJpgImage.jpg");
                                         }
-                                    
+
                                         ?>
                                         <img class="img-relatorio" src="{{$reportImage}}" alt="imagem_painel">
                                     </div>
@@ -134,9 +134,9 @@
 
 
                             </div>
-                            
+
                         </div>
-                        
+
                         {{-- <div class="d-inline row">
                             <p class="d-inline card-text">{{$p->localizacao}}</p>
                         </div> --}}

@@ -12,10 +12,6 @@ class PainelService
 
     public function storeOrUpdatePainel(Request $request) {
 
-        $filname = $request->dados['sTwo']['ident'].'.'.$request->dados['sTwo']['imagem']->extension();
-        $path = 'outdoorImages/'.$request->dados['sTwo']['ident'];
-
-        $request->dados['sTwo']['imagem']->storeAs('public/'.$path, $filname);
 
         // dd($request->dados);
 
@@ -51,9 +47,18 @@ class PainelService
             'ponto_referencia' => $request->dados['sOne']['referencia'],
             'latitude' => $request->dados['sOne']['latitude'],
             'longitude' => $request->dados['sOne']['longitude'],
-            'image_url' => $path.'/'.$filname
+            // 'image_url' => $path.'/'.$filname
 
        ]);
+
+
+       $filname = $request->dados['sTwo']['ident'].'.'.$request->dados['sTwo']['imagem']->extension();
+       $path = 'outdoorImages/'.$painel->id;
+
+       $request->dados['sTwo']['imagem']->storeAs('public/'.$path, $filname);
+
+         $painel->image_url = $path.'/'.$filname;
+        $painel->save();
 
        return back()->with('success', 'Painel Cadastrado com sucesso.');
 
