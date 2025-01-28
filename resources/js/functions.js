@@ -54,7 +54,7 @@ export function enviaWpp(tel, msg, urlRel) {
 
     setTimeout(() => {
         window.open(url_wpp, '_blank');
-    }, 10000);
+    }, 2000);
 
 }
 
