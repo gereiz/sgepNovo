@@ -128,7 +128,7 @@
                                         }
 
                                         ?>
-                                        <img class="img-relatorio" src="{{$reportImage}}" alt="imagem_painel">
+                                        <img class="img-relatorio" src="{{$originalImage}}" alt="imagem_painel">
                                     </div>
                                 </div>
 
