@@ -47,13 +47,12 @@ class PainelService
             'ponto_referencia' => $request->dados['sOne']['referencia'],
             'latitude' => $request->dados['sOne']['latitude'],
             'longitude' => $request->dados['sOne']['longitude'],
-            // 'image_url' => $path.'/'.$filname
 
        ]);
 
 
-       $filname = $request->dados['sTwo']['ident'].'.'.$request->dados['sTwo']['imagem']->extension();
        $path = 'outdoorImages/'.$painel->id;
+       $filname = $painel->id.'.'.$request->dados['sTwo']['imagem']->extension();
 
        $request->dados['sTwo']['imagem']->storeAs('public/'.$path, $filname);
 
