@@ -287,7 +287,7 @@
                                 })
             .then((res) => {
 
-                btn.innerHTML = 'Carregando...'
+                // btn.innerHTML = 'Carregando...'
 
                 setTimeout(() => {
                     axios.post('/relDisponiveis', {tpEnvio: tp})
@@ -299,7 +299,7 @@
                                 window.open('/relDisponiveis', '_blank')
                             }
 
-                            btn.innerHTML = 'Enviar Lista'
+                            // btn.innerHTML = 'Enviar Lista'
                             loading.value = true
                             document.getElementById('modal-wpp').checked = true
                         })
@@ -307,50 +307,56 @@
                             toastr.error('Erro ao gerar o relatório')
                             console.error(err)
                         })
-                    // abre o modal
-
-                }, 2000);
-            })
-            .catch((err) => {
-                console.log('Dados não Enviados')
-            })
-
-
-
-
-    }
-
-    function relPaineis(tp) {
-
-        axios.post('/setData', {numBs: idBisemana.value,
-                                idPaineis: checkedPaineisId.value,
-
-                                })
-            .then((res) => {
-                setTimeout(() => {
-                    axios.post('/relPaineis', {tpEnvio: tp})
-                        .then((res) => {
-                            // console.log('Relatório gerado')
-                            if(tp == 'wpp') {
-                                linkWpp.value = res.data
-                            } else if(tp == 'pdf') {
-                                window.open('/relPaineis', '_blank')
-                            }
-
-                            loading.value = true
-                            document.getElementById('modal-wpp').checked = true
-                        })
-                        .catch((err) => {
-                            toastr.error('Erro ao gerar o relatório')
-                            console.error(err)
-                    })
                     // abre o modal
 
                 }, 2000);
             })
             .catch((err) => {
                 console.log(err)
-        })
+            })
+
+
+    }
+
+    function relPaineis(tp) {
+
+        let btn = document.getElementById('envia_all')
+        loading.value = false
+
+        axios.post('/setData', {numBs: idBisemana.value,
+                                idPaineis: checkedPaineisId.value,
+
+                                })
+            .then((res) => {
+
+                // btn.innerHTML = ''
+
+                setTimeout(() => {
+                    axios.post('/relPaineis', {tpEnvio: tp})
+                        .then((res) => {
+                            // console.log('Relatório gerado')
+                            if(tp == 'wpp') {
+                                linkWpp.value = res.data
+                                document.getElementById('modal-wpp').checked = true
+                            } else if(tp == 'pdf') {
+                                window.open('/relPaineis', '_blank')
+                            }
+
+                            // btn.innerHTML = 'Enviar Lista'
+                            loading.value = true
+
+                        })
+                        .catch((err) => {
+                            toastr.error('Erro ao gerar o relatório')
+                            console.error(err)
+                        })
+                    // abre o modal
+
+                }, 2000);
+            })
+            .catch((err) => {
+                console.log(err)
+            })
 
     }
 
@@ -428,11 +434,12 @@
                                 <div class="w-full space-x-4">
 
                                     <div class="dropdown">
-                                        <button v-if="tipoPainel =='T' && idBisemana != 0"
+                                        <button v-if="tipoPainel =='T' && idBisemana != 0" id="envia_all"
                                                 tabindex="0"
                                                 class="btn btn-sm btn-square btn-accent text-white tooltip tooltip-left" data-tip="Enviar Lista de Todos os Painéis">
                                             <!-- <img src="../../../../storage/app/public/img/spinner.png" class="w-4 h-4 me-2 animate-spin" :class="{'hidden': loading}" alt="spinner"> -->
-                                            <i class="fa-solid fa-share-from-square"></i>
+                                            <i class="fa-solid fa-share-from-square" :class="{'hidden': !loading}"></i>
+                                            <i class="fa-solid fa-spinner animate-spin" :class="{'hidden': loading}"></i>
                                         </button>
                                         <ul tabindex="0" class="w-56 -ml-20 md:-ml-10 dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box mt-4">
                                             <li><label @click="relPaineis('wpp')">Envio por Whatsapp</label></li>
@@ -459,8 +466,9 @@
                                         <button v-if="checkedPaineisId.length > 0 && tipoPainel == 'D'"
                                                 tabindex="0"
                                                 class="btn btn-sm btn-square btn-success text-white tooltip tooltip-left" data-tip="Enviar Disponibilidade">
-                                            <img src="../../../../storage/app/public/img/spinner.png" class="w-4 h-4 me-2 animate-spin" :class="{'hidden': loading}" alt="spinner">
-                                            <i class="fa-solid fa-paper-plane"></i>
+                                            <!-- <img src="../../../../storage/app/public/img/spinner.png" class="w-4 h-4 me-2 animate-spin" :class="{'hidden': loading}" alt="spinner"> -->
+                                            <i class="fa-solid fa-paper-plane" :class="{'hidden': !loading}"></i>
+                                            <i class="fa-solid fa-spinner animate-spin" :class="{'hidden': loading}"></i>
                                         </button>
                                         <ul tabindex="0" class="w-56 -ml-20 md:-ml-10 dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box mt-4">
                                             <li><label @click="relDisponiveis('wpp')">Envio por Whatsapp</label></li>
@@ -524,11 +532,12 @@
                         <div class="w-full flex">
                             <div class="w-full space-x-4">
                                 <div class="dropdown">
-                                    <button v-if="tipoPainel =='T' && idBisemana != 0"
+                                    <button v-if="tipoPainel =='T' && idBisemana != 0" id="envia_all"
                                             tabindex="0"
                                             class="btn btn-sm btn-square btn-accent text-white tooltip tooltip-left" data-tip="Enviar Lista de Todos os Painéis">
                                         <!-- <img src="../../../../storage/app/public/img/spinner.png" class="w-4 h-4 me-2 animate-spin" :class="{'hidden': loading}" alt="spinner"> -->
-                                        <i class="fa-solid fa-share-from-square"></i>
+                                        <i class="fa-solid fa-share-from-square" :class="{'hidden': !loading}"></i>
+                                        <i class="fa-solid fa-spinner animate-spin" :class="{'hidden': loading}"></i>
                                     </button>
                                     <ul tabindex="0" class="w-56 -ml-20 md:-ml-10 dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box mt-4">
                                         <li><label @click="relPaineis('wpp')">Envio por Whatsapp</label></li>
@@ -555,8 +564,9 @@
                                     <button v-if="checkedPaineisId.length > 0 && tipoPainel == 'D'"
                                             tabindex="0"
                                             class="btn btn-sm btn-square btn-success text-white tooltip tooltip-left" data-tip="Enviar Disponibilidade">
-                                        <img src="../../../../storage/app/public/img/spinner.png" class="w-4 h-4 me-2 animate-spin" :class="{'hidden': loading}" alt="spinner">
-                                        <i class="fa-solid fa-paper-plane"></i>
+                                        <!-- <img src="../../../../storage/app/public/img/spinner.png" class="w-4 h-4 me-2 animate-spin" :class="{'hidden': loading}" alt="spinner"> -->
+                                        <i class="fa-solid fa-paper-plane" :class="{'hidden': !loading}"></i>
+                                        <i class="fa-solid fa-spinner animate-spin" :class="{'hidden': loading}"></i>
                                     </button>
                                     <ul tabindex="0" class="w-56 -ml-20 md:-ml-10 dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box mt-4">
                                         <li><label @click="relDisponiveis('wpp')">Envio por Whatsapp</label></li>
