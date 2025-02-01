@@ -448,7 +448,7 @@
                                         </ul>
                                     </div>
 
-                                    <button @click="clearChecked()" class="btn btn-sm btn-square btn-error text-white tooltip tooltip-left" data-tip="Limpar Seleção">
+                                    <button v-if="checkedPaineisId.length > 0 && tipoPainel == 'D'" @click="clearChecked()" class="btn btn-sm btn-square btn-error text-white tooltip tooltip-left" data-tip="Limpar Seleção">
                                             <i class="fa-solid fa-broom"></i>
                                     </button>
 
@@ -546,7 +546,7 @@
                                     </ul>
                                 </div>
 
-                                <button @click="clearChecked()" class="btn btn-sm btn-square btn-error text-white tooltip tooltip-left" data-tip="Limpar Seleção">
+                                <button v-if="checkedPaineisId.length > 0 && tipoPainel == 'D'" @click="clearChecked()" class="btn btn-sm btn-square btn-error text-white tooltip tooltip-left" data-tip="Limpar Seleção">
                                         <i class="fa-solid fa-broom"></i>
                                 </button>
 
