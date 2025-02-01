@@ -181,6 +181,8 @@ Route::middleware('auth')->group(function () {
     // Dispopnibilidade
     route::post('/setData', [RelatoriosController::class, 'setData']);
     route::any('/relDisponiveis', [RelatoriosController::class, 'relDisponiveis']);
+    route::any('/relPaineis', [RelatoriosController::class, 'relPaineis']);
+
 
     // Reservas x CLiente
     route::get('/ReservaCliente', [RelatoriosController::class, 'RelReservaCliente']);
@@ -217,11 +219,6 @@ Route::middleware('auth')->group(function () {
     route::post('/setPermissions', [RolesController::class, 'setPermissions']);
 
 
-
-
-    // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 require __DIR__.'/auth.php';

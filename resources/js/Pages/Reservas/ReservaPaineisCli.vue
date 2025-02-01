@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, usePage } from '@inertiajs/vue3';
-import {ref, reactive, watch, computed} from 'vue';
+import {ref, reactive, watch, computed, onMounted} from 'vue';
 import { useToastr } from '@/Components/toastr';
 import AddReserva from './Components/AddReserva.vue';
 import DelReserva from "@/Pages/Reservas/Components/DelReserva.vue";
@@ -27,7 +27,10 @@ let idents = reactive([]);
 
 const checkedPaineisId = ref([]);
 const listaBisemana = ref(0);
-const idAno = ref(0);
+
+const anoAtual = new Date().getFullYear(); // Obtém o ano atual
+const idAno = ref(0); // Inicializa a variável reativa
+
 let idCliente = ref('');
 let clienteSel = ref('');
 const idBisemana = ref(0);
@@ -35,6 +38,18 @@ const idBisemana = ref(0);
 const open = ref(false)
 const openD = ref(false)
 const openP = ref(false)
+
+onMounted(() => {
+     // Procura o ID do ano atual na lista de anos disponíveis
+     const anoEncontrado = props.anos.find(ano => ano.ano_bisemana == anoAtual);
+        if (anoEncontrado) {
+            idAno.value = anoEncontrado.id;
+        }
+})
+
+watch(idAno, (val) => {
+    getBisemanas()
+})
 
 watch(idCliente, (val) => {
     getReservasCli(idBisemana.value)

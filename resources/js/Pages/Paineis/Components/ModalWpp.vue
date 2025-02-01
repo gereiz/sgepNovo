@@ -34,9 +34,8 @@ function clienteLista({id, nome_fantasia, razao_social}) {
 
 
 <template lang="">
-    <!-- Modal Whatsapp -->
     <input type="checkbox" id="modal-wpp" class="modal-toggle" />
-    <div class="modal flex items-end md:items-center">
+    <div class="w-full modal flex items-end md:items-center justify-center">
         <div class="modal-box">
             <div class="flex mb-4">
                 <label for="modal-wpp" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>

@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, usePage } from '@inertiajs/vue3'; 
+import { Head, usePage } from '@inertiajs/vue3';
 import { vMaska } from "maska"
 import TabelaLancamentos from './TabelaLancamentos.vue';
 import { ref, defineProps } from 'vue';
