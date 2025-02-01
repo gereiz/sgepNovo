@@ -13,10 +13,6 @@
 
     const loading = ref(true)
 
-
-    const date = new Date();
-    const anoAtual = date.getFullYear();
-
     const linkWpp = ref ('');
 
     const itemRefs = ref([])
@@ -26,7 +22,7 @@
     const pan = ref(props.paineis);
     const idents = reactive([]);
     const listaClientes = ref('');
-    const tipoPainel = ref('');
+    const tipoPainel = ref('T');
 
     const cliente = ref ('');
 
@@ -35,7 +31,8 @@
     const regDisabled = ref(true);
     const baiDisabled = ref(true);
 
-    const idAno = ref(0);
+    const anoAtual = new Date().getFullYear(); // Obtém o ano atual
+    const idAno = ref(0); // Inicializa a variável reativa
 
     // // busca o id do ano de acordo com o ano atual
     // const idAnoAtual = Object.values(props.anos).filter((ano) => {
@@ -79,6 +76,16 @@
     onMounted(() => {
         getIdent()
 
+        // Procura o ID do ano atual na lista de anos disponíveis
+        const anoEncontrado = props.anos.find(ano => ano.ano_bisemana == anoAtual);
+            if (anoEncontrado) {
+                idAno.value = anoEncontrado.id;
+            }
+
+    })
+
+    watch(idAno, () => {
+        getBisemanas()
     })
 
     function getBisemanas() {
@@ -125,10 +132,6 @@
 
             toastr.error('É necessário informar uma Bi-semana')
 
-        } else if(idPainel.value === 'T') {
-
-            toastr.error('É necessário informar um Status')
-
         } else {
 
             axios.post('/GetPaineis', {ano: idAno.value,
@@ -155,17 +158,17 @@
         getPaineis()
     }
 
-    function getPainelReserva(val) {
+    // function getPainelReserva(val) {
 
-        painelReserva.value = val
-        listaClientes.value = props.clientes
+    //     painelReserva.value = val
+    //     listaClientes.value = props.clientes
 
-        if(idBisemana.value === 0) {
-           setTimeout(() => {
-                toastr.error('É necessário infrmar a Bi-semana Primeiro')
-           }, 500);
-        }
-    }
+    //     if(idBisemana.value === 0) {
+    //        setTimeout(() => {
+    //             toastr.error('É necessário infrmar a Bi-semana Primeiro')
+    //        }, 500);
+    //     }
+    // }
 
     function isChecked(val, painelId, id, painel) {
         const cardPainel = itemRefs.value[val];
@@ -317,6 +320,40 @@
 
     }
 
+    function relPaineis(tp) {
+
+        axios.post('/setData', {numBs: idBisemana.value,
+                                idPaineis: checkedPaineisId.value,
+
+                                })
+            .then((res) => {
+                setTimeout(() => {
+                    axios.post('/relPaineis', {tpEnvio: tp})
+                        .then((res) => {
+                            // console.log('Relatório gerado')
+                            if(tp == 'wpp') {
+                                linkWpp.value = res.data
+                            } else if(tp == 'pdf') {
+                                window.open('/relPaineis', '_blank')
+                            }
+
+                            loading.value = true
+                            document.getElementById('modal-wpp').checked = true
+                        })
+                        .catch((err) => {
+                            toastr.error('Erro ao gerar o relatório')
+                            console.error(err)
+                    })
+                    // abre o modal
+
+                }, 2000);
+            })
+            .catch((err) => {
+                console.log(err)
+        })
+
+    }
+
     function openPi(val)  {
         if(val == 't') {
             open.value = true
@@ -333,40 +370,39 @@
     <Head title="Reservas" />
 
     <AuthenticatedLayout>
-        <div class="w-full h-screen pt-20 pb-32 mx-2 sm:mx-4">
+        <div class="w-full h-screen md:pt-20 pb-32 mx-2 md:mx-4">
 
             <!-- Cabeçalho -->
             <div class="w-full h-14 flex mb-2">
                 <div class="w-2/12 h-14 flex items-center">
-                    <h1 class="text-xl sm:text-4xl font-bold">Painéis</h1>
-                    <h1 class="text-lg sm:text-2xl text-red-400 font-bold ml-2 sm:ml-4">{{ pan.length }} </h1>
+                    <h1 class="text-xl md:text-4xl font-bold">Painéis</h1>
+                    <h1 class="text-lg md:text-2xl text-red-400 font-bold ml-2 md:ml-4">{{ pan.length }} </h1>
                 </div>
 
             </div>
 
             <!-- Filtros de Pesquisa -->
-            <div class="w-full flex flex-row flex-wrap items-center justify-center mb-20 sm:mb-0 ">
+            <div class="w-full flex flex-row flex-wrap items-center justify-center mb-4">
 
                 <!-- Ano Bi-semana, Status e Identificação -->
-                <div class="w-full flex items-center sm:justify-center flex-wrap">
+                <div class="w-full flex items-center md:justify-center flex-wrap sm:space-x-4">
                     <!-- Ano -->
-                    <div class="w-5/12 sm:w-1/12 flex flex-col me-4 sm:me-6">
+                    <div class="w-[25%] md:w-[5%] flex flex-col me-4 md:me-0">
                         <label for="bi-semana">Ano</label>
-                        <select class="select-paineis" name="ano" id="ano" v-model="idAno" @change="getBisemanas()">
-                            <!-- lista os anos, marcando o ano atual como selected-->
-                            <option value="0" selected disabled>Selecione</option>
+                        <select class="select select-bordered" name="ano" id="ano" v-model="idAno">
+                            <option value="0" disabled>Selecione</option>
                             <option v-for="(ano, index) in props.anos"
                                 :key="index"
-                                :value="ano.id"
-                                :selected="ano.ano_bisemana == anoAtual ? 'selected' : ''">{{ ano.ano_bisemana }}
+                                :value="ano.id">
+                                {{ ano.ano_bisemana }}
                             </option>
                         </select>
                     </div>
 
                     <!-- Bi-semanas -->
-                    <div class="w-5/12 sm:w-[20%] flex flex-col me-4 sm:me-6">
+                    <div class="w-[70%] md:w-[15%] flex flex-col">
                         <label for="bi-semana">Bi-Semana</label>
-                        <select class="select-paineis" name="bi-semana" id="bi-semama" v-model="idBisemana" :disabled="bsDisabled" @change="idPainel = 'T', statusDisabled = false">
+                        <select class="select select-bordered " name="bi-semana" id="bi-semama" v-model="idBisemana"  @change="idPainel = 'T', statusDisabled = false">
                             <option value="0" selected disabled>Selecione</option>
                             <option v-for="(bs, index) in listaBisemana"
                                 :key="index"
@@ -376,130 +412,202 @@
                     </div>
 
                     <!-- Status -->
-                    <div class="w-full sm:w-1/12 flex flex-col me-4 sm:me-6">
+                    <div class="w-[7%] hidden md:flex flex-col me-4">
                         <label for="status">Status</label>
-                        <select class="select-paineis" name="status" id="status" :disabled="statusDisabled" v-model="idPainel" @change="getPaineis(), clearChecked()">
+                        <select class="select select-bordered " name="status" id="status" :disabled="statusDisabled" v-model="idPainel" @change="getPaineis(), clearChecked()">
                             <option value="T">Todos</option>
                             <option value="D">Disponível</option>
                             <option value="R">Reservado</option>
                         </select>
                     </div>
 
-                    <!-- Identifcação -->
-                    <div class="w-full sm:w-4/12 flex flex-col sm:-mt-4 me-4 sm:me-6">
-                        <label class="typo__label">Identificação</label>
-                        <div class="w-full flex">
-                            <div class="w-9/12 me-4">
-                                <!-- <multiselect disabled
-                                    v-model="checkedPaineis"
-                                    :options="idents"
-                                    :multiple="true"
-                                    :close-on-select="true"
-                                    :show-labels="true"
-                                    placeholder="Todos"
-                                >
-                                </multiselect>   -->
-                            </div>
-                            <div class="w-2/12">
-                                <button @click="clearChecked()" class="botao max-h-10 bg-red-700 hover:bg-red-500 ">Limpar</button>
+                    <!-- Botões -->
+                    <div class="hidden md:flex w-[10%] items-center justify-center flex-wrap sm:space-x-4">
+                        <div class="w-full flex mt-5">
+                            <div class="w-full flex">
+                                <div class="w-full space-x-4">
+
+                                    <div class="dropdown">
+                                        <button v-if="tipoPainel =='T' && idBisemana != 0"
+                                                tabindex="0"
+                                                class="btn btn-sm btn-square btn-accent text-white tooltip tooltip-left" data-tip="Enviar Lista de Todos os Painéis">
+                                            <!-- <img src="../../../../storage/app/public/img/spinner.png" class="w-4 h-4 me-2 animate-spin" :class="{'hidden': loading}" alt="spinner"> -->
+                                            <i class="fa-solid fa-share-from-square"></i>
+                                        </button>
+                                        <ul tabindex="0" class="w-56 -ml-20 md:-ml-10 dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box mt-4">
+                                            <li><label @click="relPaineis('wpp')">Envio por Whatsapp</label></li>
+                                            <li><a>Envio por Email</a></li>
+                                            <li><label @click="relPaineis('pdf')">Download do Relatório</label></li>
+                                        </ul>
+                                    </div>
+
+                                    <button @click="clearChecked()" class="btn btn-sm btn-square btn-error text-white tooltip tooltip-left" data-tip="Limpar Seleção">
+                                            <i class="fa-solid fa-broom"></i>
+                                    </button>
+
+                                    <button v-if="idCidade != 0 && tipoPainel != 'T'" class="btn btn-sm btn-square btn-info text-white tooltip tooltip-left" data-tip="Filtrar" @click="getPaineis(), clearChecked()">
+                                        <i class="fa-solid fa-filter"></i>
+                                    </button>
+
+                                    <button v-if="tipoPainel == 'D'"
+                                            @click="checkAll()"
+                                            class="btn btn-sm btn-square btn-secondary text-white tooltip tooltip-left" data-tip="Selecionar Todos os Disponíveis">
+                                            <i class="fa-solid fa-list-check"></i>
+                                    </button>
+
+                                    <div class="dropdown">
+                                        <button v-if="checkedPaineisId.length > 0 && tipoPainel == 'D'"
+                                                tabindex="0"
+                                                class="btn btn-sm btn-square btn-success text-white tooltip tooltip-left" data-tip="Enviar Disponibilidade">
+                                            <img src="../../../../storage/app/public/img/spinner.png" class="w-4 h-4 me-2 animate-spin" :class="{'hidden': loading}" alt="spinner">
+                                            <i class="fa-solid fa-paper-plane"></i>
+                                        </button>
+                                        <ul tabindex="0" class="w-56 -ml-20 md:-ml-10 dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box mt-4">
+                                            <li><label @click="relDisponiveis('wpp')">Envio por Whatsapp</label></li>
+                                            <li><a>Envio por Email</a></li>
+                                            <li><label @click="relDisponiveis('pdf')">Download do Relatório</label></li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
 
-                <!-- Cidades, Regiões e Bairros -->
-                <div class="w-full flex items-center sm:justify-center flex-wrap">
+                <!-- Cidades, Regiões, Bairros e Status -->
+                <div class="w-full flex items-center md:justify-center flex-wrap sm:space-x-4">
 
                     <!-- Cidades -->
-                    <div class="w-5/12 sm:w-[15%] flex flex-col me-4 sm:me-6">
+                    <div class="w-[45%] md:w-[15%] flex flex-col me-4 mt-4">
                         <label for="cidades">Cidades</label>
-                        <select class="select-paineis" name="cidades" id="cidades" :disabled="bsDisabled" v-model="idCidade" @change="regDisabled = false, getRegiao()">
-                            <option value="0" selectedd>Todas as Cidades</option>
+                        <select class="select select-bordered" name="cidades" id="cidades" :disabled="bsDisabled" v-model="idCidade" @change="regDisabled = false, getRegiao()">
+                            <option value="0" selectedd>Todas</option>
                             <option v-for="(c, index) in cidades" :key="index" :value="c.id">{{ c.nome }}</option>
                         </select>
                     </div>
 
                     <!-- Regiões -->
-                    <div class="w-5/12 sm:w-[13%] flex flex-col me-4 sm:me-6">
+                    <div class="w-[50%] md:w-[13%] flex flex-col mt-4">
                         <label for="regioes">Regiões</label>
-                        <select class="select-paineis" name="regioes" id="regioes" :disabled="regDisabled" v-model="idRegiao" @change="baiDisabled = false, getBairro()">
-                            <option value="0" selected>Todas as Regiões</option>
+                        <select class="select select-bordered " name="regioes" id="regioes" :disabled="regDisabled" v-model="idRegiao" @change="baiDisabled = false, getBairro()">
+                            <option value="0" selected>Todas</option>
                             <option v-for="(r, index) in listaRegiao" :key="index" :value="r.id">{{ r.nome }}</option>
                         </select>
                     </div>
 
                     <!-- Bairros -->
-                    <div class="w-full sm:w-[20%] flex flex-col me-4 sm:me-6">
+                    <div class="w-[50%] md:w-[20%] flex flex-col me-4 mt-4">
                         <label for="bairros">Bairros</label>
-                        <select class="select-paineis" name="bairros" id="bairros" :disabled="baiDisabled" v-model="idBairro">
-                            <option value="0" selected>Todos os Bairros</option>
+                        <select class="select select-bordered " name="bairros" id="bairros" :disabled="baiDisabled" v-model="idBairro">
+                            <option value="0" selected>Todos</option>
                             <option v-for="(b, index) in listaBairro" :key="index" :value="b.id">{{ b.nome }}</option>
                         </select>
                     </div>
 
-                    <!-- Botões -->
-                    <div class="space-x-4 mt-3.5 mb-2">
-                        <button class="botao bg-sky-700 hover:bg-sky-500" @click="getPaineis(), clearChecked()">
-                            Filtrar
-                        </button>
-
-                        <button v-if="tipoPainel == 'D'" @click="checkAll()" class="botao w-32 max-h-10 bg-fuchsia-700 hover:bg-fuchsia-500 ">
-                            Marcar Todos
-                        </button>
-
-                        <div class="dropdown">
-                            <label v-if="checkedPaineisId.length > 0 && tipoPainel == 'D'" tabindex="0" class="w-fit botao flex items-center bg-green-700 hover:bg-green-500 px-2 py-[0.7rem]">
-                                <img src="../../../../storage/app/public/img/spinner.png" class="w-4 h-4 me-2 animate-spin" :class="{'hidden': loading}" alt="spinner">
-                                 <p id="envia_lista">Enviar Lista</p>
-                            </label>
-                            <ul tabindex="0" class="w-56 -ml-20 sm:-ml-10 dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box mt-4">
-                                <li><label @click="relDisponiveis('wpp')">Envio por Whatsapp</label></li>
-                                <li><a>Envio por Email</a></li>
-                                <li><label @click="relDisponiveis('pdf')">Download do Relatório</label></li>
-                            </ul>
-                        </div>
-
+                    <!-- Status MOBILE -->
+                    <div class="md:hidden w-[30%] md:w-[7%] flex flex-col me-4 mt-4">
+                        <label for="status">Status</label>
+                        <select class="select select-bordered " name="status" id="status" :disabled="statusDisabled" v-model="idPainel" @change="getPaineis(), clearChecked()">
+                            <option value="T">Todos</option>
+                            <option value="D">Disponível</option>
+                            <option value="R">Reservado</option>
+                        </select>
                     </div>
+                </div>
+
+                <!-- Botões MOBILE -->
+                <div class="md:hidden w-full flex items-center justify-center flex-wrap sm:space-x-4">
+
+                    <div class="w-[65%] md:w-4/12 flex mt-5">
+                        <!-- Botões -->
+                        <div class="w-full flex">
+                            <div class="w-full space-x-4">
+                                <div class="dropdown">
+                                    <button v-if="tipoPainel =='T' && idBisemana != 0"
+                                            tabindex="0"
+                                            class="btn btn-sm btn-square btn-accent text-white tooltip tooltip-left" data-tip="Enviar Lista de Todos os Painéis">
+                                        <!-- <img src="../../../../storage/app/public/img/spinner.png" class="w-4 h-4 me-2 animate-spin" :class="{'hidden': loading}" alt="spinner"> -->
+                                        <i class="fa-solid fa-share-from-square"></i>
+                                    </button>
+                                    <ul tabindex="0" class="w-56 -ml-20 md:-ml-10 dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box mt-4">
+                                        <li><label @click="relPaineis('wpp')">Envio por Whatsapp</label></li>
+                                        <li><a>Envio por Email</a></li>
+                                        <li><label @click="relPaineis('pdf')">Download do Relatório</label></li>
+                                    </ul>
+                                </div>
+
+                                <button @click="clearChecked()" class="btn btn-sm btn-square btn-error text-white tooltip tooltip-left" data-tip="Limpar Seleção">
+                                        <i class="fa-solid fa-broom"></i>
+                                </button>
+
+                                <button v-if="idCidade != 0 && tipoPainel != 'T'" class="btn btn-sm btn-square btn-info text-white tooltip tooltip-left" data-tip="Filtrar" @click="getPaineis(), clearChecked()">
+                                    <i class="fa-solid fa-filter"></i>
+                                </button>
+
+                                <button v-if="tipoPainel == 'D'"
+                                        @click="checkAll()"
+                                        class="btn btn-sm btn-square btn-secondary text-white tooltip tooltip-left" data-tip="Selecionar Todos os Disponíveis">
+                                        <i class="fa-solid fa-list-check"></i>
+                                </button>
+
+                                <div class="dropdown">
+                                    <button v-if="checkedPaineisId.length > 0 && tipoPainel == 'D'"
+                                            tabindex="0"
+                                            class="btn btn-sm btn-square btn-success text-white tooltip tooltip-left" data-tip="Enviar Disponibilidade">
+                                        <img src="../../../../storage/app/public/img/spinner.png" class="w-4 h-4 me-2 animate-spin" :class="{'hidden': loading}" alt="spinner">
+                                        <i class="fa-solid fa-paper-plane"></i>
+                                    </button>
+                                    <ul tabindex="0" class="w-56 -ml-20 md:-ml-10 dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box mt-4">
+                                        <li><label @click="relDisponiveis('wpp')">Envio por Whatsapp</label></li>
+                                        <li><a>Envio por Email</a></li>
+                                        <li><label @click="relDisponiveis('pdf')">Download do Relatório</label></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
 
             <!-- Card Principal -->
             <div class="card w-full max-h-[85%] bg-base-100 shadow-xl overflow-auto rounded-md">
-                <div class="card-body pt-1 sm:pt-2">
-                    <div class="w-full flex flex-col flex-wrap sm:flex-row justify-center">
+                <div class="card-body pt-1 md:pt-2">
+                    <div class="w-full flex flex-col flex-wrap md:flex-row justify-center">
 
                         <!-- Cards dos Paineis -->
-                        <div v-for="(pain, index) in pan "  :key="index" class="card w-full sm:w-5/12 bg-base-100 border-2 rounded-md shadow-xl mt-4 sm:mr-4">
+                        <div v-for="(pain, index) in pan "  :key="index" class="card w-full md:w-5/12 bg-base-100 border-2 rounded-md shadow-xl mt-4 md:mr-4">
                             <div class="card-body" :id="index" @click="isChecked(index, pain.identificacao, pain.id, pain)">
                                 <div class="flex justify-between">
-                                    <img v-if="pain.tipo === '1'" class="w-10 ms-4 sm:w-14 sm:hover:w-20 transition-all duration-500" src="../../../../public/storage/img/painel_nobre.png"
+                                    <img v-if="pain.tipo === '1'" class="w-10 ms-4 md:w-14 md:hover:w-20 transition-all duration-500" src="../../../../public/storage/img/painel_nobre.png"
                                                 alt="Painel Nobre" title="Painel Nobre">
-                                    <img v-else class="w-10 ms-4 sm:w-14 sm:hover:w-20 transition-all duration-500" src="../../../../public/storage/img/painel_conv.png"
+                                    <img v-else class="w-10 ms-4 md:w-14 md:hover:w-20 transition-all duration-500" src="../../../../public/storage/img/painel_conv.png"
                                                 alt="Painel Convêncional" title="Painel Convêncional">
-                                    <h2 class="text-xs sm:card-title text-red-500">Identificação.: {{pain.identificacao}}</h2>
+                                    <h2 class="text-xs md:card-title text-red-500">Identificação.: {{pain.identificacao}}</h2>
                                 </div>
                                 <div class="w-full flex justify-end">
                                     <input type="checkbox" ref="itemRefs" class="w-14 h-14 border-0 checkbox checkbox-success" />
                                 </div>
                                 <div class="w-full flex flex-col items-center">
-                                    <div class="w-full mb-4 sm:-ml-4">
+                                    <div class="w-full mb-4 md:-ml-4">
                                         <img class="img-painel" :src="getImage(props.ambiente ,pain.image_url)" alt="Bairro">
                                     </div>
 
                                     <!-- Informações -->
-                                    <div class="w-full sm:w-11/12 flex justify-center flex-wrap">
-                                        <div class="w-full flex justify-between sm:justify-between flex-wrap space-y-4">
-                                            <div class="w-full flex flex-wrap justify-between sm:justify-between">
-                                                <h2 class="text-xs sm:card-title">Bairro: {{pain.bnome}}</h2>
-                                                <h2 class="text-xs flex sm:card-title hover:text-red-700">Ver Localização
+                                    <div class="w-full md:w-11/12 flex justify-center flex-wrap">
+                                        <div class="w-full flex justify-between md:justify-between flex-wrap space-y-4">
+                                            <div class="w-full flex flex-wrap justify-between md:justify-between">
+                                                <h2 class="text-xs md:card-title">Bairro: {{pain.bnome}}</h2>
+                                                <h2 class="text-xs flex md:card-title hover:text-red-700">Ver Localização
                                                     <a :href="getLink(pain.latitude, pain.longitude)" target="_blank">
-                                                        <img class="w-6 ms-4 sm:w-10 sm:hover:w-14 transition-all duration-500" src="../../../../public/storage/img/regiao.png" alt="Mapa">
+                                                        <img class="w-6 ms-4 md:w-10 md:hover:w-14 transition-all duration-500" src="../../../../public/storage/img/regiao.png" alt="Mapa">
                                                     </a>
                                                 </h2>
                                             </div>
-                                            <div class="w-full flex flex-wrap justify-between sm:justify-between">
-                                                    <h2 class="text-xs sm:card-title">Localização: {{pain.logradouro}} - {{ pain.numero }}</h2>
+                                            <div class="w-full flex flex-wrap justify-between md:justify-between">
+                                                    <h2 class="text-xs md:card-title">Localização: {{pain.logradouro}} - {{ pain.numero }}</h2>
                                             </div>
                                         </div>
                                     </div>
@@ -508,11 +616,11 @@
 
                             <!-- Botões -->
                             <div class="w-full flex justify-center flex-wrap space-y-2 mb-4">
-                                <button class="w-11/12 sm:w-10/12 botao bg-sky-700 hover:bg-sky-500">Detalhes</button>
-                                <!-- <label for="modal-reserva" v-if="tipoPainel == 1" class="w-11/12 sm:w-10/12 h-10 botao-modal bg-green-700 hover:bg-green-500" @click="getPainelReserva(pain)">
+                                <button class="w-11/12 md:w-10/12 botao bg-sky-700 hover:bg-sky-500">Detalhes</button>
+                                <!-- <label for="modal-reserva" v-if="tipoPainel == 1" class="w-11/12 md:w-10/12 h-10 botao-modal bg-green-700 hover:bg-green-500" @click="getPainelReserva(pain)">
                                     Reservar
                                 </label>
-                                <label @click="getPainelReserva(pain)" for="modal-canc-reserva" v-if="tipoPainel == 2" class="w-11/12 sm:w-10/12 h-10 botao-modal bg-red-700 hover:bg-red-500">
+                                <label @click="getPainelReserva(pain)" for="modal-canc-reserva" v-if="tipoPainel == 2" class="w-11/12 md:w-10/12 h-10 botao-modal bg-red-700 hover:bg-red-500">
                                     Cancelar
                                 </label> -->
                             </div>
@@ -532,7 +640,7 @@
                     </div>
 
                     <form>
-                        <div class="w-full flex flex-col sm:flex-row flex-wrap space-y-4 sm:space-y-8">
+                        <div class="w-full flex flex-col md:flex-row flex-wrap space-y-4 md:space-y-8">
 
                             <!-- Bi-semana -->
                             <div class="w-7/12 flex flex-col">
@@ -546,7 +654,7 @@
                             </div>
 
                             <!-- Cliente -->
-                            <div class="w-full sm:w-6/12 flex flex-col me-4">
+                            <div class="w-full md:w-6/12 flex flex-col me-4">
                                 <span class="label-text ml-1">Cliente</span>
                                 <select v-model="formReserva.cliente" name="" id="" class="select select-bordered" :disabled="idBisemana == 0">
                                     <option value="0" selected>Selecione o cliente</option>
@@ -555,7 +663,7 @@
                             </div>
 
                             <!-- Campanha -->
-                            <div class="w-full sm:w-5/12 flex flex-col">
+                            <div class="w-full md:w-5/12 flex flex-col">
                                 <span class="label-text ml-1">Campanha</span>
                                 <input v-model="formReserva.campanha" type="text" name="" id="" class="input input-bordered" :disabled="idBisemana == 0">
                             </div>
@@ -570,7 +678,7 @@
                             <div class="w-full flex flex-col">
                                 <div class="form-control">
                                     <label class="cursor-pointer">
-                                        <span class="label-text text-lg sm:text-xl me-4">Existe P. I. para esta reserva?</span>
+                                        <span class="label-text text-lg md:text-xl me-4">Existe P. I. para esta reserva?</span>
                                         <input type="checkbox"
                                                v-model="valPi"
                                                @click="valPi = !valPi, confirmaPI()"

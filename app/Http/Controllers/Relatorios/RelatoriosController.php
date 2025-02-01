@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Inertia\Inertia;
 use PDF;
- 
+
 
 
 class RelatoriosController extends Controller
@@ -28,7 +28,7 @@ class RelatoriosController extends Controller
             session(['paineis' => Painel::whereIn('id', $request->idPaineis)->get()]);
         }
 
-        
+
     }
 
 
@@ -51,7 +51,7 @@ class RelatoriosController extends Controller
                                                                             'status',
                                                                             'user'
                                                                         ));
-       
+
 
 
         if($envio === 'wpp') {
@@ -64,6 +64,37 @@ class RelatoriosController extends Controller
 
     }
 
+    public function relPaineis(Request $request) {
+        $tZone = new \DateTimeZone('America/Sao_paulo');
+        $user = auth()->user()->name;
+        $paineis = Painel::all();
+        $status = 'Disponíveis';
+        $bisemana = Bisemana::where('id', session('num_bs'))->first();
+        $numBisemana = $bisemana->num_bisemana;
+        $periodo = date('d/m/Y',  strtotime($bisemana->inicio)).' a '.date('d/m/Y',  strtotime($bisemana->fim));
+        $envio = $request->tpEnvio;
+        $time = Carbon::now($tZone)->toTimeString();
+        $fileName = 'Paineis_Disponiveis_Bi-semana_'.$numBisemana.'_'.$time.'.pdf';
+
+
+        $pdf = PDF::loadView('relatorios.paineis.rel_paineis', compact('numBisemana',
+                                                                            'periodo',
+                                                                            'paineis',
+                                                                            'status',
+                                                                            'user'
+                                                                        ));
+
+
+
+        if($envio === 'wpp') {
+            Storage::put(('public/pdf/'.$fileName), $pdf->output());
+            return env('APP_URL').Storage::url('pdf/'.$fileName);
+
+        }
+
+        return $pdf->download('Paineis_disponiveis_'.$periodo.'_'.$time.'.pdf');
+
+    }
 
     public function RelReservaCliente() {
 
@@ -115,7 +146,7 @@ class RelatoriosController extends Controller
         $time = Carbon::now($tZone)->toTimeString();
 
         $paineis = Reserva::with('painel.bairro.regiao.cidade')->where([['bisemana_id', session('num_bs')], ['cliente_id', session('cliente')]])->get();
- 
+
 
 
         $pdf = PDF::loadView('relatorios.paineis.rel_paineis_x_cliente', compact('numBisemana',
@@ -124,7 +155,7 @@ class RelatoriosController extends Controller
                                                                             'cliente',
                                                                             'user'
                 ));
-       
+
                 // $orientacao = (session('orientacao') === 'R') ? '' : 'landscape';
 
 
