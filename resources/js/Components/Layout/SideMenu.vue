@@ -13,7 +13,7 @@ import {
 } from '@heroicons/vue/24/outline'
 import VueAvatar from "@webzlodimir/vue-avatar";
 import "@webzlodimir/vue-avatar/dist/style.css";
-import { usePage } from '@inertiajs/vue3' 
+import { usePage } from '@inertiajs/vue3'
 import MenuApp from '@/Components/Layout/MenuApp.vue';
 import ModalAlteraSenha from '@/Components/Layout/ModalAlteraSenha.vue';
 import MenuAppMobile from './MenuAppMobile.vue';
@@ -29,9 +29,9 @@ function openPi(val)  {
     // console.log(val)
         if(val == 't') {
             open.value = true
-        } else 
+        } else
         open.value = false
-         
+
 }
 
 </script>
@@ -63,7 +63,7 @@ function openPi(val)  {
                     <nav class="flex flex-1 flex-col">
                         <MenuAppMobile/>
                     </nav>
-                </div> 
+                </div>
                 </DialogPanel>
             </TransitionChild>
             </div>
@@ -105,7 +105,7 @@ function openPi(val)  {
             </div>
         </div> -->
 
-        
+
         <!-- Menu Mobile -->
         <div class="sticky w-screen top-0 z-40 flex items-center gap-x-6 bg-gray-900 px-4 py-3 shadow-sm sm:px-6 md:hidden">
             <button type="button" class="-m-2.5 p-2.5 text-gray-400 lg:hidden" @click="sidebarOpen = true">

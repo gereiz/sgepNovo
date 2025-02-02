@@ -29,7 +29,5 @@ watch(openM, (val) =>{
                 <slot />
             </div>
         </div>
-
-
     </div>
 </template>

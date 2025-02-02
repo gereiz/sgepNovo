@@ -37,6 +37,7 @@
     { name: 'Lista de Painéis', description: 'Realize o cadastro / edição de painéis.', href: '/Paineis', icon: PhotoIcon  },
     { name: 'Envio de Disponibilidades', description: 'Consulte painéis disponíveis, reservados e envie disponibilidades.', href: '/ResPaineis', icon: PhotoIcon },
     { name: 'Reserva de Painéis', description: 'Realize a reserva / cancelamento de reserva para  clientes.', href: '/ResPaineisCli', icon: PhotoIcon },
+    { name: 'Reservas sem PI', description: 'Verifique as reservas sem PI na Bi-Semana selecionada.', href: '/ReservaSemPi', icon: PhotoIcon },
 
   ]
 
