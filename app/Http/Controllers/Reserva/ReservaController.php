@@ -254,6 +254,96 @@ class ReservaController extends Controller
     }
 
 
+    public function reservaSemPi() {
+
+        $clientes = Cliente::orderBy('razao_social')
+            ->where('ativo', 1)
+            ->get();
+
+        $anos = Ano::all();
+
+        $bisemanas = Bisemana::all();
+
+        $reservas = Reserva::where('pi_ok', 1)->get();
+
+        $ambiente = env('APP_ENV');
+
+        return Inertia::render('Reservas/ReservaSemPi', compact('clientes',
+                                                                    'anos',
+                                                                    'bisemanas',
+                                                                    'reservas',
+                                                                    'ambiente',
+                                                                ));
+    }
+
+    public function getReservaSemPI(Request $request) {
+
+        $bisemana = $request->bsId;
+        $cliente = $request->cliente;
+
+        $reservas = Painel::select('outdoors.id',
+                                'outdoors.identificacao',
+                                'outdoors.bairro_id',
+                                'outdoors.image_url',
+                                'res.campanha AS campanha',
+                                'res.observacao AS obs',
+                                'res.pi_ok AS pi_ok',
+                                'res.dt_reserva AS dt_reserva',
+                                'res.user_id AS user_id',
+                                'user.name AS user_name',
+                                'cli.id AS cliente_id',
+                                'cli.razao_social AS razao_social',
+                                'cli.nome_fantasia AS nome_fantasia')
+            ->join('reservas AS res', 'res.outdoor_id', '=', 'outdoors.id')
+            ->join('clientes AS cli', 'cli.id', '=', 'res.cliente_id')
+            ->join('users AS user', 'user.id', '=', 'res.user_id')
+            ->where('res.bisemana_id','=', $bisemana)
+            ->where('res.pi_ok', 0)
+            ->when($cliente, function(Builder $query, $cliente) {
+                $query->where('res.cliente_id', $cliente);
+            })
+
+
+            ->groupBY('outdoors.id')
+            ->orderBy('outdoors.identificacao')
+            ->distinct()
+        ->get();
+
+
+        $paineis = Painel::select('outdoors.id',
+                                'outdoors.identificacao',
+                                'outdoors.bairro_id',
+                                'outdoors.image_url',
+                                'outdoors.logradouro',
+                                'outdoors.numero',
+                                'outdoors.ponto_referencia',
+                                'res.campanha AS campanha',
+                                'res.observacao AS obs',
+                                'res.pi_ok AS pi_ok',
+                                'res.dt_reserva AS dt_reserva',
+                                'cli.id AS cliente_id',
+                                'cli.razao_social AS razao_social',
+                                'cli.nome_fantasia AS nome_fantasia')
+            ->join('reservas AS res', 'res.outdoor_id', '=', 'outdoors.id')
+            ->join('clientes AS cli', 'cli.id', '=', 'res.cliente_id')
+            ->whereNotIn('outdoors.id', $reservas->pluck('id'))
+            ->where('res.pi_ok', 0)
+            ->when($cliente, function(Builder $query, $cliente) {
+            $query->where('res.cliente_id', $cliente);
+            })
+
+
+            ->groupBY('outdoors.id')
+            ->orderBy('outdoors.identificacao')
+            ->distinct()
+        ->get();
+
+
+        return response()->json(['reservas' => $reservas, 'paineis' => $paineis]);
+
+    }
+
+
     public function getPaineisCliente(Request $request) {
 
         $bisemana = $request->bsId;
@@ -311,8 +401,6 @@ class ReservaController extends Controller
             ->orderBy('outdoors.identificacao')
             ->distinct()
         ->get();
-
-
 
 
         return response()->json(['reservas' => $reservas, 'paineis' => $paineis]);

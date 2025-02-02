@@ -113,6 +113,9 @@ Route::middleware('auth')->group(function () {
     route::post('/ReservaPainel', [ReservaController::class, 'reservaPainel'])->name('reserva.painel');
     route::post('/CancelaReserva', [ReservaController::class, 'cancelaReserva'])->name('cancela.reserva');
 
+    //Reservas sem PI
+    route::get('/ReservaSemPi', [ReservaController::class, 'reservaSemPi'])->name('get.reservas.sem.pi');
+    route::post('/GetResSemPi', [ReservaController::class, 'getReservaSemPI'])->name('get.reservas.sem.pi');
 
     // Reseva de painés por cliente
     route::get('/ResPaineisCli', [ReservaController::class, 'reservaPainelIndex'])->name('reserva.paineis.cli');
