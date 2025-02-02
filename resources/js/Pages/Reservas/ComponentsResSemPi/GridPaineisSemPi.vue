@@ -52,7 +52,7 @@ function getPaineisCliente() {
 </script>
 
 <template>
-    <div class="w-full md:w-7/12 flex flex-col flex-wrap items-center md:items-start">
+    <div v-if="clientesOrdenados.length > 0" class="w-full md:w-7/12 flex flex-col flex-wrap items-center md:items-start">
         <!-- Cards dos Paineis -->
         <div v-for="(cli, index) in clientesOrdenados" :key="index"
              class="w-full h-[15vh] md:h-[10vh] card flex bg-base-100 border border-gray-200 shadow-xl m-2 p-4">
@@ -76,6 +76,12 @@ function getPaineisCliente() {
 
 
             </div>
+        </div>
+    </div>
+
+    <div v-else class="w-full flex flex-col flex-wrap items-center md:items-start">
+        <div class="w-full h-full flex items-center justify-center">
+            <p class="w-full text-center font-semibold text-red-500 text-2xl">Nenhuma Reserva sem PI encontrada na Bi-semana informada.</p>
         </div>
     </div>
 
