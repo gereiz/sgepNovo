@@ -55,7 +55,7 @@ class RelatoriosController extends Controller
 
 
         if($envio === 'wpp') {
-            Storage::put(('public/pdf/'.$fileName), $pdf->output());
+            Storage::put(('public/pdf/disp'.$fileName), $pdf->output());
             return env('APP_URL').Storage::url('pdf/'.$fileName);
 
         }
@@ -87,7 +87,7 @@ class RelatoriosController extends Controller
 
 
         if($envio === 'wpp') {
-            Storage::put(('public/pdf/'.$fileName), $pdf->output());
+            Storage::put(('public/pdf/disp'.$fileName), $pdf->output());
             return env('APP_URL').Storage::url('pdf/'.$fileName);
 
         }

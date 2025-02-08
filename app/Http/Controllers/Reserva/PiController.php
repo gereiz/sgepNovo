@@ -17,6 +17,8 @@ use Spatie\LaravelPdf\Facades\Pdf;
 use \Spatie\LaravelPdf\Enums\Orientation;
 use App\Models\Reservas\Reserva;
 use App\Services\Financeiro\CaixaService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PiController extends Controller
 {
@@ -144,6 +146,8 @@ class PiController extends Controller
         // Cria o PI se não existir
         try {
             if(!$pi) {
+                DB::beginTransaction();
+
                 $pi = Pi::updateOrCreate([
                     'id_cliente' => session('dadosPi')['One']['clienteId'],
                     'id_paineis' => json_encode(session('dadosPi')['Two']['paineis']),
@@ -162,8 +166,8 @@ class PiController extends Controller
 
                 //atualiza o campo pi_id na reserva
                 $reserva = Reserva::where('cliente_id', session('dadosPi')['One']['clienteId'])
-                ->where('bisemana_id', session('dadosPi')['Two']['bisemanaId'])
-                ->where('pi_ok', 1)
+                    ->where('bisemana_id', session('dadosPi')['Two']['bisemanaId'])
+                    ->where('pi_ok', 1)
                 ->get();
 
                 if (session('dadosPi')['Two']['parcelado'] == 1) {
@@ -208,20 +212,37 @@ class PiController extends Controller
                 }
 
             }
+
+            if(isset(session('dadosPi')['Three'])) {
+
+
+                $cliente_nome = $cliente->nome_fantasia ? $cliente->nome_fantasia : $cliente->razao_social;
+                $dt_pi = Carbon::today()->toDateString();
+
+                $pi =  Pdf::view('relatorios.pi.pi', compact('pi', 'cliente', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
+                'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor', 'dt_atual'))
+                ->orientation(Orientation::Landscape)->save(storage_path('app/public/pdf/pi' .'pi_'.$cliente_nome.'_'.$dt_pi.'.pdf'));
+
+                // Storage::move('pi_'.$cliente_nome.'_'.$dt_pi.'.pdf', 'public/pdf/pi/pi_'.$cliente_nome.'_'.$dt_pi.'.pdf');
+
+
+                return $pi;
+            }
+
+            DB::commit();
+
         } catch(\Exception $e) {
-            return response()->json(['cod' => 0, 'msg' => 'Erro ao gravar PI.']);
+            return response()->json(['cod' => 0, 'msg' => $e->getMessage()]);
         }
 
 
-        if(isset(session('dadosPi')['Three'])) {
-            return Pdf::view('relatorios.pi.pi', compact('pi', 'cliente', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
-            'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor', 'dt_atual'))
-            ->orientation(Orientation::Landscape);
-        }
+
+
+
 
 
             return response()->json(['cod' => 1, 'msg' => 'Paineis reservados!']);
-        }
+    }
 
 
 }

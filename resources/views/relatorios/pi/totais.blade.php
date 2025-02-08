@@ -37,7 +37,7 @@
             <td class="w-[15%] text-xs">
                 @if($faturamento['enviar_faturamento'] == '1')
                     Cliente
-                @elseif($faturamento['faturar_contra'] == '2')
+                @elseif($faturamento['enviar_faturamento'] == '2')
                     Agência
                 @endif
             </td>
@@ -46,7 +46,7 @@
 
 </table>
 
-<div class="w-full mt-2 ms-1 mt-2">
+<div class="w-full mt-2 ms-1">
     <p class="text-sm">OBSERVAÇÕES</p>
 
     <hr class=" mt-8 border-b border-gray-300">

@@ -33,7 +33,7 @@
                         @elseif($forma_pagamento == '4')
                             Boleto
                         @elseif($forma_pagamento == '5')
-                            Depoósito
+                            Depósito
                         @endif
                     </td>
                     <td class="w-[9%] ps-2 border-2 border-l-0 border-t-0 font-light text-xs">{{formataCash($serv['vlr_unit'] * $serv['quantidade'])}}</td>
