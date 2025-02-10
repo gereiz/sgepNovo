@@ -1,59 +1,59 @@
 {
-  "_AuthenticatedLayout-3d6f8bbd.js": {
+  "_AuthenticatedLayout-7285b9ce.js": {
     "assets": [
       "assets/logo-black-621cf057.png"
     ],
     "css": [
       "assets/style-1feaece4.css"
     ],
-    "file": "assets/AuthenticatedLayout-3d6f8bbd.js",
+    "file": "assets/AuthenticatedLayout-7285b9ce.js",
     "imports": [
       "resources/js/app.js",
-      "_transition-d7925d1f.js",
-      "_XMarkIcon-d9f13e53.js",
-      "_toastr-53c2eed2.js"
+      "_transition-ac15a836.js",
+      "_XMarkIcon-5b57bbe8.js",
+      "_toastr-5a9dd9ee.js"
     ]
   },
-  "_CheckIcon-68f28f74.js": {
-    "file": "assets/CheckIcon-68f28f74.js",
+  "_CheckIcon-5a60ea34.js": {
+    "file": "assets/CheckIcon-5a60ea34.js",
     "imports": [
       "resources/js/app.js"
     ]
   },
-  "_ClipboardDocumentCheckIcon-7a5a0423.js": {
-    "file": "assets/ClipboardDocumentCheckIcon-7a5a0423.js",
+  "_ClipboardDocumentCheckIcon-db577f67.js": {
+    "file": "assets/ClipboardDocumentCheckIcon-db577f67.js",
     "imports": [
       "resources/js/app.js"
     ]
   },
-  "_GuestLayout-55919e06.js": {
-    "file": "assets/GuestLayout-55919e06.js",
-    "imports": [
-      "__plugin-vue_export-helper-c27b6911.js",
-      "resources/js/app.js"
-    ]
-  },
-  "_PrimaryButton-100899cc.js": {
-    "file": "assets/PrimaryButton-100899cc.js",
+  "_GuestLayout-7248f568.js": {
+    "file": "assets/GuestLayout-7248f568.js",
     "imports": [
       "__plugin-vue_export-helper-c27b6911.js",
       "resources/js/app.js"
     ]
   },
-  "_TextInput-69203893.js": {
-    "file": "assets/TextInput-69203893.js",
+  "_PrimaryButton-23254104.js": {
+    "file": "assets/PrimaryButton-23254104.js",
+    "imports": [
+      "__plugin-vue_export-helper-c27b6911.js",
+      "resources/js/app.js"
+    ]
+  },
+  "_TextInput-e24c0285.js": {
+    "file": "assets/TextInput-e24c0285.js",
     "imports": [
       "resources/js/app.js"
     ]
   },
-  "_UserCircleIcon-3123f00c.js": {
-    "file": "assets/UserCircleIcon-3123f00c.js",
+  "_UserCircleIcon-17f69a48.js": {
+    "file": "assets/UserCircleIcon-17f69a48.js",
     "imports": [
       "resources/js/app.js"
     ]
   },
-  "_XMarkIcon-d9f13e53.js": {
-    "file": "assets/XMarkIcon-d9f13e53.js",
+  "_XMarkIcon-5b57bbe8.js": {
+    "file": "assets/XMarkIcon-5b57bbe8.js",
     "imports": [
       "resources/js/app.js"
     ]
@@ -67,29 +67,29 @@
     ],
     "file": "assets/funcionario-b96a7293.js"
   },
-  "_functions-787f1fef.js": {
-    "file": "assets/functions-787f1fef.js",
+  "_functions-2f7756a7.js": {
+    "file": "assets/functions-2f7756a7.js",
     "imports": [
-      "_toastr-53c2eed2.js",
-      "_html2pdf-045be88f.js",
+      "_toastr-5a9dd9ee.js",
+      "_html2pdf-2a8706af.js",
       "resources/js/app.js"
     ]
   },
-  "_html2canvas-7b655d12.js": {
-    "file": "assets/html2canvas-7b655d12.js",
+  "_html2canvas-b12087ee.js": {
+    "file": "assets/html2canvas-b12087ee.js",
     "imports": [
       "resources/js/app.js",
-      "_html2pdf-045be88f.js"
+      "_html2pdf-2a8706af.js"
     ],
     "isDynamicEntry": true
   },
-  "_html2pdf-045be88f.js": {
+  "_html2pdf-2a8706af.js": {
     "dynamicImports": [
-      "_html2canvas-7b655d12.js",
+      "_html2canvas-b12087ee.js",
       "node_modules/dompurify/dist/purify.es.js",
       "node_modules/canvg/lib/index.es.js"
     ],
-    "file": "assets/html2pdf-045be88f.js",
+    "file": "assets/html2pdf-2a8706af.js",
     "imports": [
       "resources/js/app.js"
     ]
@@ -116,29 +116,29 @@
     ],
     "file": "assets/servico-a17c8dc2.js"
   },
-  "_toastr-53c2eed2.js": {
+  "_toastr-5a9dd9ee.js": {
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/toastr-53c2eed2.js",
+    "file": "assets/toastr-5a9dd9ee.js",
     "imports": [
-      "_toastr-7ac6e837.js"
+      "_toastr-fa624f44.js"
     ]
   },
-  "_toastr-7ac6e837.js": {
-    "file": "assets/toastr-7ac6e837.js",
-    "imports": [
-      "resources/js/app.js"
-    ]
-  },
-  "_transition-d7925d1f.js": {
-    "file": "assets/transition-d7925d1f.js",
+  "_toastr-fa624f44.js": {
+    "file": "assets/toastr-fa624f44.js",
     "imports": [
       "resources/js/app.js"
     ]
   },
-  "_vue-multiselect.esm-511dc78f.js": {
-    "file": "assets/vue-multiselect.esm-511dc78f.js",
+  "_transition-ac15a836.js": {
+    "file": "assets/transition-ac15a836.js",
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
+  "_vue-multiselect.esm-8c3cd0e8.js": {
+    "file": "assets/vue-multiselect.esm-8c3cd0e8.js",
     "imports": [
       "resources/js/app.js"
     ]
@@ -176,10 +176,10 @@
     "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-v4compatibility.woff2"
   },
   "node_modules/canvg/lib/index.es.js": {
-    "file": "assets/index.es-172753da.js",
+    "file": "assets/index.es-5b371ad2.js",
     "imports": [
       "resources/js/app.js",
-      "_html2pdf-045be88f.js"
+      "_html2pdf-2a8706af.js"
     ],
     "isDynamicEntry": true,
     "src": "node_modules/canvg/lib/index.es.js"
@@ -190,24 +190,24 @@
     "src": "node_modules/dompurify/dist/purify.es.js"
   },
   "resources/js/Pages/Auth/ConfirmPassword.vue": {
-    "file": "assets/ConfirmPassword-1730c5d2.js",
+    "file": "assets/ConfirmPassword-1ca2502b.js",
     "imports": [
       "resources/js/app.js",
-      "_GuestLayout-55919e06.js",
-      "_TextInput-69203893.js",
-      "_PrimaryButton-100899cc.js",
+      "_GuestLayout-7248f568.js",
+      "_TextInput-e24c0285.js",
+      "_PrimaryButton-23254104.js",
       "__plugin-vue_export-helper-c27b6911.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Auth/ConfirmPassword.vue"
   },
   "resources/js/Pages/Auth/ForgotPassword.vue": {
-    "file": "assets/ForgotPassword-3eabb591.js",
+    "file": "assets/ForgotPassword-f68c72f9.js",
     "imports": [
       "resources/js/app.js",
-      "_GuestLayout-55919e06.js",
-      "_TextInput-69203893.js",
-      "_PrimaryButton-100899cc.js",
+      "_GuestLayout-7248f568.js",
+      "_TextInput-e24c0285.js",
+      "_PrimaryButton-23254104.js",
       "__plugin-vue_export-helper-c27b6911.js"
     ],
     "isDynamicEntry": true,
@@ -217,44 +217,44 @@
     "assets": [
       "assets/logo-d61f7a73.png"
     ],
-    "file": "assets/Login-46dcf6b8.js",
+    "file": "assets/Login-ba401084.js",
     "imports": [
       "resources/js/app.js",
-      "_TextInput-69203893.js"
+      "_TextInput-e24c0285.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Auth/Login.vue"
   },
   "resources/js/Pages/Auth/Register.vue": {
-    "file": "assets/Register-bee61009.js",
+    "file": "assets/Register-9e019b78.js",
     "imports": [
       "resources/js/app.js",
-      "_GuestLayout-55919e06.js",
-      "_TextInput-69203893.js",
-      "_PrimaryButton-100899cc.js",
+      "_GuestLayout-7248f568.js",
+      "_TextInput-e24c0285.js",
+      "_PrimaryButton-23254104.js",
       "__plugin-vue_export-helper-c27b6911.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Auth/Register.vue"
   },
   "resources/js/Pages/Auth/ResetPassword.vue": {
-    "file": "assets/ResetPassword-6cb134ea.js",
+    "file": "assets/ResetPassword-c10243ff.js",
     "imports": [
       "resources/js/app.js",
-      "_GuestLayout-55919e06.js",
-      "_TextInput-69203893.js",
-      "_PrimaryButton-100899cc.js",
+      "_GuestLayout-7248f568.js",
+      "_TextInput-e24c0285.js",
+      "_PrimaryButton-23254104.js",
       "__plugin-vue_export-helper-c27b6911.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Auth/ResetPassword.vue"
   },
   "resources/js/Pages/Auth/VerifyEmail.vue": {
-    "file": "assets/VerifyEmail-2f101f80.js",
+    "file": "assets/VerifyEmail-7c39e1ce.js",
     "imports": [
       "resources/js/app.js",
-      "_GuestLayout-55919e06.js",
-      "_PrimaryButton-100899cc.js",
+      "_GuestLayout-7248f568.js",
+      "_PrimaryButton-23254104.js",
       "__plugin-vue_export-helper-c27b6911.js"
     ],
     "isDynamicEntry": true,
@@ -264,17 +264,17 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/AddCliente-fdd115e2.js",
+    "file": "assets/AddCliente-f7f2cb75.js",
     "imports": [
       "resources/js/Pages/Clientes/Components/FormAdd/StepOne.vue",
       "resources/js/Pages/Clientes/Components/FormAdd/StepTwo.vue",
       "resources/js/Pages/Clientes/Components/FormAdd/StepThree.vue",
-      "_toastr-7ac6e837.js",
-      "_transition-d7925d1f.js",
-      "_CheckIcon-68f28f74.js",
+      "_toastr-fa624f44.js",
+      "_transition-ac15a836.js",
+      "_CheckIcon-5a60ea34.js",
       "resources/js/app.js",
       "_maska-1eacf752.js",
-      "_toastr-53c2eed2.js"
+      "_toastr-5a9dd9ee.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Clientes/Components/AddCliente.vue"
@@ -283,23 +283,23 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/DelCliente-257eae5f.js",
+    "file": "assets/DelCliente-70f1b23c.js",
     "imports": [
-      "_toastr-53c2eed2.js",
+      "_toastr-5a9dd9ee.js",
       "resources/js/app.js",
-      "_transition-d7925d1f.js",
-      "_toastr-7ac6e837.js"
+      "_transition-ac15a836.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Clientes/Components/DelCliente.vue"
   },
   "resources/js/Pages/Clientes/Components/FormAdd/DelComissaoServ.vue": {
-    "file": "assets/DelComissaoServ-681a5898.js",
+    "file": "assets/DelComissaoServ-90cd88ee.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-7ac6e837.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js"
+      "_toastr-fa624f44.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Clientes/Components/FormAdd/DelComissaoServ.vue"
@@ -308,12 +308,12 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/StepOne-1eadd7c0.js",
+    "file": "assets/StepOne-795aa6e4.js",
     "imports": [
       "resources/js/app.js",
       "_maska-1eacf752.js",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Clientes/Components/FormAdd/StepOne.vue"
@@ -322,12 +322,12 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/StepThree-ffcb993e.js",
+    "file": "assets/StepThree-16374df7.js",
     "imports": [
       "resources/js/app.js",
       "_maska-1eacf752.js",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Clientes/Components/FormAdd/StepThree.vue"
@@ -336,12 +336,12 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/StepTwo-2b86fb8b.js",
+    "file": "assets/StepTwo-0878cf56.js",
     "imports": [
       "resources/js/app.js",
       "_maska-1eacf752.js",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Clientes/Components/FormAdd/StepTwo.vue"
@@ -354,21 +354,21 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/ListaClientes-eb13166a.js",
+    "file": "assets/ListaClientes-98ca2692.js",
     "imports": [
       "resources/js/app.js",
-      "_AuthenticatedLayout-3d6f8bbd.js",
+      "_AuthenticatedLayout-7285b9ce.js",
       "resources/js/Pages/Clientes/Components/AddCliente.vue",
       "resources/js/Pages/Clientes/Components/DelCliente.vue",
-      "_transition-d7925d1f.js",
-      "_XMarkIcon-d9f13e53.js",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js",
+      "_transition-ac15a836.js",
+      "_XMarkIcon-5b57bbe8.js",
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js",
       "resources/js/Pages/Clientes/Components/FormAdd/StepOne.vue",
       "_maska-1eacf752.js",
       "resources/js/Pages/Clientes/Components/FormAdd/StepTwo.vue",
       "resources/js/Pages/Clientes/Components/FormAdd/StepThree.vue",
-      "_CheckIcon-68f28f74.js"
+      "_CheckIcon-5a60ea34.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Clientes/ListaClientes.vue"
@@ -378,15 +378,15 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/Configuracoes-ea2de6fe.js",
+    "file": "assets/Configuracoes-4cd7940b.js",
     "imports": [
-      "_AuthenticatedLayout-3d6f8bbd.js",
+      "_AuthenticatedLayout-7285b9ce.js",
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
+      "_toastr-5a9dd9ee.js",
       "resources/js/Pages/Config/Gerais/AddAno.vue",
-      "_transition-d7925d1f.js",
-      "_XMarkIcon-d9f13e53.js",
-      "_toastr-7ac6e837.js"
+      "_transition-ac15a836.js",
+      "_XMarkIcon-5b57bbe8.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Config/Configuracoes.vue"
@@ -396,11 +396,11 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/AddAno-3e66b4e1.js",
+    "file": "assets/AddAno-f05891f9.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Config/Gerais/AddAno.vue"
@@ -410,11 +410,11 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/AddPermissao copy-66d64f7f.js",
+    "file": "assets/AddPermissao copy-c5340479.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Config/Gerais/AddPermissao copy.vue"
@@ -424,15 +424,15 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/AddRegra-66b41439.js",
+    "file": "assets/AddRegra-b3e5bb03.js",
     "imports": [
       "resources/js/app.js",
-      "_AuthenticatedLayout-3d6f8bbd.js",
-      "_toastr-53c2eed2.js",
+      "_AuthenticatedLayout-7285b9ce.js",
+      "_toastr-5a9dd9ee.js",
       "resources/js/Pages/Config/Gerais/TabelaRegras.vue",
-      "_transition-d7925d1f.js",
-      "_XMarkIcon-d9f13e53.js",
-      "_toastr-7ac6e837.js",
+      "_transition-ac15a836.js",
+      "_XMarkIcon-5b57bbe8.js",
+      "_toastr-fa624f44.js",
       "resources/js/Pages/Config/Gerais/Regras/AddPermissaoRegra.vue"
     ],
     "isDynamicEntry": true,
@@ -443,11 +443,11 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/AddPermissaoRegra-48bbafaf.js",
+    "file": "assets/AddPermissaoRegra-08636233.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Config/Gerais/Regras/AddPermissaoRegra.vue"
@@ -457,12 +457,12 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/TabelaRegras-ac1178a1.js",
+    "file": "assets/TabelaRegras-41dce6c6.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
+      "_toastr-5a9dd9ee.js",
       "resources/js/Pages/Config/Gerais/Regras/AddPermissaoRegra.vue",
-      "_toastr-7ac6e837.js"
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Config/Gerais/TabelaRegras.vue"
@@ -471,16 +471,16 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/AddUsuario-a7a5e1ea.js",
+    "file": "assets/AddUsuario-5fac131e.js",
     "imports": [
       "resources/js/app.js",
       "resources/js/Pages/Config/Usuarios/Components/Add/FormAddUsuario.vue",
-      "_toastr-7ac6e837.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js",
-      "_toastr-53c2eed2.js",
-      "_functions-787f1fef.js",
-      "_html2pdf-045be88f.js"
+      "_toastr-fa624f44.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js",
+      "_toastr-5a9dd9ee.js",
+      "_functions-2f7756a7.js",
+      "_html2pdf-2a8706af.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Config/Usuarios/Components/Add/AddUsuario.vue"
@@ -489,24 +489,24 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/FormAddUsuario-33656931.js",
+    "file": "assets/FormAddUsuario-8235e018.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
-      "_functions-787f1fef.js",
-      "_toastr-7ac6e837.js",
-      "_html2pdf-045be88f.js"
+      "_toastr-5a9dd9ee.js",
+      "_functions-2f7756a7.js",
+      "_toastr-fa624f44.js",
+      "_html2pdf-2a8706af.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Config/Usuarios/Components/Add/FormAddUsuario.vue"
   },
   "resources/js/Pages/Config/Usuarios/Components/Del/DelUsuario.vue": {
-    "file": "assets/DelUsuario-b5e51d31.js",
+    "file": "assets/DelUsuario-a6c0d7be.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-7ac6e837.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js"
+      "_toastr-fa624f44.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Config/Usuarios/Components/Del/DelUsuario.vue"
@@ -515,16 +515,16 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/EditUsuario-fe88d559.js",
+    "file": "assets/EditUsuario-197242fa.js",
     "imports": [
       "resources/js/app.js",
       "resources/js/Pages/Config/Usuarios/Components/Edit/FormEditUsuario.vue",
-      "_toastr-7ac6e837.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js",
-      "_toastr-53c2eed2.js",
-      "_functions-787f1fef.js",
-      "_html2pdf-045be88f.js"
+      "_toastr-fa624f44.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js",
+      "_toastr-5a9dd9ee.js",
+      "_functions-2f7756a7.js",
+      "_html2pdf-2a8706af.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Config/Usuarios/Components/Edit/EditUsuario.vue"
@@ -533,13 +533,13 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/FormEditUsuario-833213c5.js",
+    "file": "assets/FormEditUsuario-6281f350.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
-      "_functions-787f1fef.js",
-      "_toastr-7ac6e837.js",
-      "_html2pdf-045be88f.js"
+      "_toastr-5a9dd9ee.js",
+      "_functions-2f7756a7.js",
+      "_toastr-fa624f44.js",
+      "_html2pdf-2a8706af.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Config/Usuarios/Components/Edit/FormEditUsuario.vue"
@@ -548,7 +548,7 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/GridUsuario-587763c7.js",
+    "file": "assets/GridUsuario-3fa1f1a0.js",
     "imports": [
       "_funcionario-b96a7293.js",
       "resources/js/app.js",
@@ -556,12 +556,12 @@
       "resources/js/Pages/Config/Usuarios/Components/Del/DelUsuario.vue",
       "resources/js/Pages/Config/Usuarios/Components/Permissoes/Permissoes.vue",
       "resources/js/Pages/Config/Usuarios/Components/Edit/FormEditUsuario.vue",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js",
-      "_functions-787f1fef.js",
-      "_html2pdf-045be88f.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js",
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js",
+      "_functions-2f7756a7.js",
+      "_html2pdf-2a8706af.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js",
       "resources/js/Pages/Config/Usuarios/Components/Permissoes/FormPermissoes.vue"
     ],
     "isDynamicEntry": true,
@@ -571,13 +571,13 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/FormPermissoes-535a6660.js",
+    "file": "assets/FormPermissoes-2693d182.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
-      "_functions-787f1fef.js",
-      "_toastr-7ac6e837.js",
-      "_html2pdf-045be88f.js"
+      "_toastr-5a9dd9ee.js",
+      "_functions-2f7756a7.js",
+      "_toastr-fa624f44.js",
+      "_html2pdf-2a8706af.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Config/Usuarios/Components/Permissoes/FormPermissoes.vue"
@@ -586,16 +586,16 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/Permissoes-53c6a068.js",
+    "file": "assets/Permissoes-1a645d63.js",
     "imports": [
       "resources/js/app.js",
       "resources/js/Pages/Config/Usuarios/Components/Permissoes/FormPermissoes.vue",
-      "_toastr-7ac6e837.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js",
-      "_toastr-53c2eed2.js",
-      "_functions-787f1fef.js",
-      "_html2pdf-045be88f.js"
+      "_toastr-fa624f44.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js",
+      "_toastr-5a9dd9ee.js",
+      "_functions-2f7756a7.js",
+      "_html2pdf-2a8706af.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Config/Usuarios/Components/Permissoes/Permissoes.vue"
@@ -605,22 +605,22 @@
       "assets/toastr-b6a82ad0.css",
       "assets/style-1feaece4.css"
     ],
-    "file": "assets/ListaUsuarios-fccb5417.js",
+    "file": "assets/ListaUsuarios-ecb67993.js",
     "imports": [
-      "_AuthenticatedLayout-3d6f8bbd.js",
+      "_AuthenticatedLayout-7285b9ce.js",
       "resources/js/app.js",
-      "_toastr-7ac6e837.js",
+      "_toastr-fa624f44.js",
       "resources/js/Pages/Config/Usuarios/Components/GridUsuario.vue",
       "resources/js/Pages/Config/Usuarios/Components/Add/AddUsuario.vue",
-      "_transition-d7925d1f.js",
-      "_XMarkIcon-d9f13e53.js",
-      "_toastr-53c2eed2.js",
+      "_transition-ac15a836.js",
+      "_XMarkIcon-5b57bbe8.js",
+      "_toastr-5a9dd9ee.js",
       "_funcionario-b96a7293.js",
       "resources/js/Pages/Config/Usuarios/Components/Edit/EditUsuario.vue",
       "resources/js/Pages/Config/Usuarios/Components/Edit/FormEditUsuario.vue",
-      "_functions-787f1fef.js",
-      "_html2pdf-045be88f.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
+      "_functions-2f7756a7.js",
+      "_html2pdf-2a8706af.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
       "resources/js/Pages/Config/Usuarios/Components/Del/DelUsuario.vue",
       "resources/js/Pages/Config/Usuarios/Components/Permissoes/Permissoes.vue",
       "resources/js/Pages/Config/Usuarios/Components/Permissoes/FormPermissoes.vue",
@@ -634,14 +634,14 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/Dashboard-924bcc7e.js",
+    "file": "assets/Dashboard-fa6ebdad.js",
     "imports": [
-      "_AuthenticatedLayout-3d6f8bbd.js",
+      "_AuthenticatedLayout-7285b9ce.js",
       "resources/js/app.js",
-      "_transition-d7925d1f.js",
-      "_XMarkIcon-d9f13e53.js",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js"
+      "_transition-ac15a836.js",
+      "_XMarkIcon-5b57bbe8.js",
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Dashboard.vue"
@@ -654,14 +654,14 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/CadBairro-e900c3b8.js",
+    "file": "assets/CadBairro-06aebddc.js",
     "imports": [
       "resources/js/app.js",
-      "_AuthenticatedLayout-3d6f8bbd.js",
-      "_toastr-53c2eed2.js",
-      "_transition-d7925d1f.js",
-      "_XMarkIcon-d9f13e53.js",
-      "_toastr-7ac6e837.js"
+      "_AuthenticatedLayout-7285b9ce.js",
+      "_toastr-5a9dd9ee.js",
+      "_transition-ac15a836.js",
+      "_XMarkIcon-5b57bbe8.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Enderecos/CadBairro.vue"
@@ -671,16 +671,16 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/CadCidade-a115d519.js",
+    "file": "assets/CadCidade-ded71d80.js",
     "imports": [
       "resources/js/app.js",
       "_regiao-35565801.js",
-      "_AuthenticatedLayout-3d6f8bbd.js",
-      "_toastr-53c2eed2.js",
+      "_AuthenticatedLayout-7285b9ce.js",
+      "_toastr-5a9dd9ee.js",
       "resources/js/Pages/Enderecos/Components/FormAddCidade.vue",
-      "_transition-d7925d1f.js",
-      "_XMarkIcon-d9f13e53.js",
-      "_toastr-7ac6e837.js"
+      "_transition-ac15a836.js",
+      "_XMarkIcon-5b57bbe8.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Enderecos/CadCidade.vue"
@@ -690,15 +690,15 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/CadRegiao-d5a703af.js",
+    "file": "assets/CadRegiao-f077006f.js",
     "imports": [
       "resources/js/app.js",
       "_regiao-35565801.js",
-      "_AuthenticatedLayout-3d6f8bbd.js",
-      "_toastr-53c2eed2.js",
-      "_transition-d7925d1f.js",
-      "_XMarkIcon-d9f13e53.js",
-      "_toastr-7ac6e837.js"
+      "_AuthenticatedLayout-7285b9ce.js",
+      "_toastr-5a9dd9ee.js",
+      "_transition-ac15a836.js",
+      "_XMarkIcon-5b57bbe8.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Enderecos/CadRegiao.vue"
@@ -707,11 +707,11 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/FormAddCidade-ecd7ccee.js",
+    "file": "assets/FormAddCidade-2cb00b6c.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Enderecos/Components/FormAddCidade.vue"
@@ -721,12 +721,12 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/AddCentroCusto-265b7125.js",
+    "file": "assets/AddCentroCusto-2bd01c89.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
+      "_toastr-5a9dd9ee.js",
       "resources/js/Pages/Financeiro/Components/Caixa/CentroDeCustos/TabelaCentroCustos.vue",
-      "_toastr-7ac6e837.js",
+      "_toastr-fa624f44.js",
       "resources/js/Pages/Financeiro/Components/Caixa/CentroDeCustos/DelCentroCusto.vue",
       "resources/js/Pages/Financeiro/Components/Caixa/CentroDeCustos/EditCentroCusto.vue"
     ],
@@ -737,11 +737,11 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/DelCentroCusto-bd76a61b.js",
+    "file": "assets/DelCentroCusto-ff95e534.js",
     "imports": [
-      "_toastr-53c2eed2.js",
+      "_toastr-5a9dd9ee.js",
       "resources/js/app.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Caixa/CentroDeCustos/DelCentroCusto.vue"
@@ -750,11 +750,11 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/EditCentroCusto-4d46e0df.js",
+    "file": "assets/EditCentroCusto-42da682b.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Caixa/CentroDeCustos/EditCentroCusto.vue"
@@ -764,13 +764,13 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/TabelaCentroCustos-9c5ddcbf.js",
+    "file": "assets/TabelaCentroCustos-36b78233.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-7ac6e837.js",
+      "_toastr-fa624f44.js",
       "resources/js/Pages/Financeiro/Components/Caixa/CentroDeCustos/DelCentroCusto.vue",
       "resources/js/Pages/Financeiro/Components/Caixa/CentroDeCustos/EditCentroCusto.vue",
-      "_toastr-53c2eed2.js"
+      "_toastr-5a9dd9ee.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Caixa/CentroDeCustos/TabelaCentroCustos.vue"
@@ -780,13 +780,13 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/AddLancamentos-45191bf7.js",
+    "file": "assets/AddLancamentos-29be6bfb.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
+      "_toastr-5a9dd9ee.js",
       "_maska-1eacf752.js",
       "resources/js/Pages/Financeiro/Components/Caixa/Lancamentos/TabelaLancamentos.vue",
-      "_toastr-7ac6e837.js",
+      "_toastr-fa624f44.js",
       "resources/js/Pages/Financeiro/Components/Caixa/Lancamentos/EditLancamento.vue",
       "resources/js/Pages/Financeiro/Components/Caixa/Lancamentos/DelLancamento.vue"
     ],
@@ -797,11 +797,11 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/DelLancamento-5646c4e5.js",
+    "file": "assets/DelLancamento-084bbfc8.js",
     "imports": [
-      "_toastr-53c2eed2.js",
+      "_toastr-5a9dd9ee.js",
       "resources/js/app.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Caixa/Lancamentos/DelLancamento.vue"
@@ -810,12 +810,12 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/EditLancamento-8674ff42.js",
+    "file": "assets/EditLancamento-8ae99d06.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
+      "_toastr-5a9dd9ee.js",
       "_maska-1eacf752.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Caixa/Lancamentos/EditLancamento.vue"
@@ -825,13 +825,13 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/TabelaLancamentos-e31b6d7f.js",
+    "file": "assets/TabelaLancamentos-1ecbb3ee.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
+      "_toastr-5a9dd9ee.js",
       "resources/js/Pages/Financeiro/Components/Caixa/Lancamentos/EditLancamento.vue",
       "resources/js/Pages/Financeiro/Components/Caixa/Lancamentos/DelLancamento.vue",
-      "_toastr-7ac6e837.js",
+      "_toastr-fa624f44.js",
       "_maska-1eacf752.js"
     ],
     "isDynamicEntry": true,
@@ -842,12 +842,12 @@
       "assets/toastr-b6a82ad0.css",
       "assets/style-1feaece4.css"
     ],
-    "file": "assets/AddTipoLancamento-a0522e53.js",
+    "file": "assets/AddTipoLancamento-3da4859a.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
+      "_toastr-5a9dd9ee.js",
       "resources/js/Pages/Financeiro/Components/Caixa/TipoLancamento/TabelaTipoLancamento.vue",
-      "_toastr-7ac6e837.js",
+      "_toastr-fa624f44.js",
       "resources/js/Pages/Financeiro/Components/Caixa/TipoLancamento/EditTipoLancamento.vue",
       "resources/js/Pages/Financeiro/Components/Caixa/TipoLancamento/DelTipoLancamento.vue"
     ],
@@ -858,11 +858,11 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/DelTipoLancamento-d8a6fb09.js",
+    "file": "assets/DelTipoLancamento-a5baa636.js",
     "imports": [
-      "_toastr-53c2eed2.js",
+      "_toastr-5a9dd9ee.js",
       "resources/js/app.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Caixa/TipoLancamento/DelTipoLancamento.vue"
@@ -871,11 +871,11 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/EditTipoLancamento-7f7d2c35.js",
+    "file": "assets/EditTipoLancamento-5a61d13f.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Caixa/TipoLancamento/EditTipoLancamento.vue"
@@ -885,24 +885,24 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/TabelaTipoLancamento-7139bd6d.js",
+    "file": "assets/TabelaTipoLancamento-4a8d1bf8.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-7ac6e837.js",
+      "_toastr-fa624f44.js",
       "resources/js/Pages/Financeiro/Components/Caixa/TipoLancamento/EditTipoLancamento.vue",
       "resources/js/Pages/Financeiro/Components/Caixa/TipoLancamento/DelTipoLancamento.vue",
-      "_toastr-53c2eed2.js"
+      "_toastr-5a9dd9ee.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Caixa/TipoLancamento/TabelaTipoLancamento.vue"
   },
   "resources/js/Pages/Financeiro/Components/Comissoes/AddComissao.vue": {
-    "file": "assets/AddComissao-1614a75d.js",
+    "file": "assets/AddComissao-03372277.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-7ac6e837.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js"
+      "_toastr-fa624f44.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Comissoes/AddComissao.vue"
@@ -911,23 +911,23 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/FormAddComissao-b4fdad17.js",
+    "file": "assets/FormAddComissao-19592636.js",
     "imports": [
       "resources/js/app.js",
       "_maska-1eacf752.js",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Comissoes/FormAddComissao.vue"
   },
   "resources/js/Pages/Financeiro/Components/Comissoes/Servico/DelComissaoServ.vue": {
-    "file": "assets/DelComissaoServ-c626c0ee.js",
+    "file": "assets/DelComissaoServ-488b5e42.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-7ac6e837.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js"
+      "_toastr-fa624f44.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Comissoes/Servico/DelComissaoServ.vue"
@@ -936,17 +936,17 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/EditComissaoServ-8685f720.js",
+    "file": "assets/EditComissaoServ-f67aaeaf.js",
     "imports": [
       "resources/js/app.js",
       "resources/js/Pages/Financeiro/Components/Comissoes/Servico/FormEditComissaoServ.vue",
-      "_toastr-7ac6e837.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js",
+      "_toastr-fa624f44.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js",
       "_maska-1eacf752.js",
-      "_toastr-53c2eed2.js",
-      "_functions-787f1fef.js",
-      "_html2pdf-045be88f.js"
+      "_toastr-5a9dd9ee.js",
+      "_functions-2f7756a7.js",
+      "_html2pdf-2a8706af.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Comissoes/Servico/EditComissaoServ.vue"
@@ -955,14 +955,14 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/FormEditComissaoServ-08f14f82.js",
+    "file": "assets/FormEditComissaoServ-1dc137b4.js",
     "imports": [
       "resources/js/app.js",
       "_maska-1eacf752.js",
-      "_toastr-53c2eed2.js",
-      "_functions-787f1fef.js",
-      "_toastr-7ac6e837.js",
-      "_html2pdf-045be88f.js"
+      "_toastr-5a9dd9ee.js",
+      "_functions-2f7756a7.js",
+      "_toastr-fa624f44.js",
+      "_html2pdf-2a8706af.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Comissoes/Servico/FormEditComissaoServ.vue"
@@ -971,31 +971,31 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/GridComissaoServ-e3d3d590.js",
+    "file": "assets/GridComissaoServ-1f8fbe09.js",
     "imports": [
       "_servico-a17c8dc2.js",
-      "_functions-787f1fef.js",
+      "_functions-2f7756a7.js",
       "resources/js/Pages/Financeiro/Components/Comissoes/Servico/EditComissaoServ.vue",
       "resources/js/Pages/Financeiro/Components/Comissoes/Servico/DelComissaoServ.vue",
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js",
-      "_html2pdf-045be88f.js",
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js",
+      "_html2pdf-2a8706af.js",
       "resources/js/Pages/Financeiro/Components/Comissoes/Servico/FormEditComissaoServ.vue",
       "_maska-1eacf752.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js"
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Comissoes/Servico/GridComissaoServ.vue"
   },
   "resources/js/Pages/Financeiro/Components/Comissoes/Usuario/DelComissaoUsu.vue": {
-    "file": "assets/DelComissaoUsu-aef188c8.js",
+    "file": "assets/DelComissaoUsu-b7ea96ed.js",
     "imports": [
-      "_toastr-7ac6e837.js",
+      "_toastr-fa624f44.js",
       "resources/js/app.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js"
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Comissoes/Usuario/DelComissaoUsu.vue"
@@ -1004,17 +1004,17 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/EditComissaoUsu-1019659b.js",
+    "file": "assets/EditComissaoUsu-dfd06460.js",
     "imports": [
       "resources/js/app.js",
       "resources/js/Pages/Financeiro/Components/Comissoes/Usuario/FormEditComissaoUsu.vue",
-      "_toastr-7ac6e837.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js",
+      "_toastr-fa624f44.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js",
       "_maska-1eacf752.js",
-      "_toastr-53c2eed2.js",
-      "_functions-787f1fef.js",
-      "_html2pdf-045be88f.js",
+      "_toastr-5a9dd9ee.js",
+      "_functions-2f7756a7.js",
+      "_html2pdf-2a8706af.js",
       "resources/js/Pages/Financeiro/Components/Comissoes/Usuario/DelComissaoUsu.vue"
     ],
     "isDynamicEntry": true,
@@ -1024,17 +1024,17 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/FormEditComissaoUsu-0aebf06f.js",
+    "file": "assets/FormEditComissaoUsu-6a464f45.js",
     "imports": [
       "resources/js/app.js",
       "_maska-1eacf752.js",
-      "_toastr-53c2eed2.js",
-      "_functions-787f1fef.js",
+      "_toastr-5a9dd9ee.js",
+      "_functions-2f7756a7.js",
       "resources/js/Pages/Financeiro/Components/Comissoes/Usuario/DelComissaoUsu.vue",
-      "_toastr-7ac6e837.js",
-      "_html2pdf-045be88f.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js"
+      "_toastr-fa624f44.js",
+      "_html2pdf-2a8706af.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Comissoes/Usuario/FormEditComissaoUsu.vue"
@@ -1043,20 +1043,20 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/GridComissaoUsu-89f16b23.js",
+    "file": "assets/GridComissaoUsu-5306065c.js",
     "imports": [
       "_funcionario-b96a7293.js",
       "resources/js/app.js",
       "resources/js/Pages/Financeiro/Components/Comissoes/Usuario/EditComissaoUsu.vue",
-      "_toastr-7ac6e837.js",
+      "_toastr-fa624f44.js",
       "resources/js/Pages/Financeiro/Components/Comissoes/Usuario/FormEditComissaoUsu.vue",
       "_maska-1eacf752.js",
-      "_toastr-53c2eed2.js",
-      "_functions-787f1fef.js",
-      "_html2pdf-045be88f.js",
+      "_toastr-5a9dd9ee.js",
+      "_functions-2f7756a7.js",
+      "_html2pdf-2a8706af.js",
       "resources/js/Pages/Financeiro/Components/Comissoes/Usuario/DelComissaoUsu.vue",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js"
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Comissoes/Usuario/GridComissaoUsu.vue"
@@ -1065,25 +1065,25 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/AddFuncao-1412a012.js",
+    "file": "assets/AddFuncao-21a3dcab.js",
     "imports": [
       "resources/js/app.js",
       "resources/js/Pages/Financeiro/Components/Funcoes_/FormAddFuncao.vue",
-      "_toastr-7ac6e837.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js",
-      "_toastr-53c2eed2.js"
+      "_toastr-fa624f44.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js",
+      "_toastr-5a9dd9ee.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Funcoes_/AddFuncao.vue"
   },
   "resources/js/Pages/Financeiro/Components/Funcoes_/DelFuncao.vue": {
-    "file": "assets/DelFuncao-af2acda7.js",
+    "file": "assets/DelFuncao-b62d8734.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-7ac6e837.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js"
+      "_toastr-fa624f44.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Funcoes_/DelFuncao.vue"
@@ -1092,16 +1092,16 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/EditFuncao-b3709d3c.js",
+    "file": "assets/EditFuncao-14186f7b.js",
     "imports": [
       "resources/js/app.js",
       "resources/js/Pages/Financeiro/Components/Funcoes_/FormEditFuncao.vue",
-      "_toastr-7ac6e837.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js",
-      "_toastr-53c2eed2.js",
-      "_functions-787f1fef.js",
-      "_html2pdf-045be88f.js"
+      "_toastr-fa624f44.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js",
+      "_toastr-5a9dd9ee.js",
+      "_functions-2f7756a7.js",
+      "_html2pdf-2a8706af.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Funcoes_/EditFuncao.vue"
@@ -1110,11 +1110,11 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/FormAddFuncao-43aed068.js",
+    "file": "assets/FormAddFuncao-c1fa506a.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Funcoes_/FormAddFuncao.vue"
@@ -1123,13 +1123,13 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/FormEditFuncao-81bfb261.js",
+    "file": "assets/FormEditFuncao-dadc4c31.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
-      "_functions-787f1fef.js",
-      "_toastr-7ac6e837.js",
-      "_html2pdf-045be88f.js"
+      "_toastr-5a9dd9ee.js",
+      "_functions-2f7756a7.js",
+      "_toastr-fa624f44.js",
+      "_html2pdf-2a8706af.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Funcoes_/FormEditFuncao.vue"
@@ -1141,18 +1141,18 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/GridFuncao-dce37147.js",
+    "file": "assets/GridFuncao-77cb6cbd.js",
     "imports": [
       "resources/js/Pages/Financeiro/Components/Funcoes_/EditFuncao.vue",
       "resources/js/Pages/Financeiro/Components/Funcoes_/DelFuncao.vue",
       "resources/js/app.js",
       "resources/js/Pages/Financeiro/Components/Funcoes_/FormEditFuncao.vue",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js",
-      "_functions-787f1fef.js",
-      "_html2pdf-045be88f.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js"
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js",
+      "_functions-2f7756a7.js",
+      "_html2pdf-2a8706af.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Funcoes_/GridFuncao.vue"
@@ -1161,15 +1161,15 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/AddServico-84248638.js",
+    "file": "assets/AddServico-d73ad75d.js",
     "imports": [
       "resources/js/app.js",
       "resources/js/Pages/Financeiro/Components/Servicos/FormAddServico.vue",
-      "_toastr-7ac6e837.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js",
+      "_toastr-fa624f44.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js",
       "_maska-1eacf752.js",
-      "_toastr-53c2eed2.js"
+      "_toastr-5a9dd9ee.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Servicos/AddServico.vue"
@@ -1178,15 +1178,15 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/DelServico-b661124e.js",
+    "file": "assets/DelServico-3152c82c.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-7ac6e837.js",
-      "_functions-787f1fef.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js",
-      "_toastr-53c2eed2.js",
-      "_html2pdf-045be88f.js"
+      "_toastr-fa624f44.js",
+      "_functions-2f7756a7.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js",
+      "_toastr-5a9dd9ee.js",
+      "_html2pdf-2a8706af.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Servicos/DelServico.vue"
@@ -1195,17 +1195,17 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/EditServico-66053a6a.js",
+    "file": "assets/EditServico-ef7fc8a2.js",
     "imports": [
       "resources/js/app.js",
       "resources/js/Pages/Financeiro/Components/Servicos/FormEditServico.vue",
-      "_toastr-7ac6e837.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js",
+      "_toastr-fa624f44.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js",
       "_maska-1eacf752.js",
-      "_toastr-53c2eed2.js",
-      "_functions-787f1fef.js",
-      "_html2pdf-045be88f.js"
+      "_toastr-5a9dd9ee.js",
+      "_functions-2f7756a7.js",
+      "_html2pdf-2a8706af.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Servicos/EditServico.vue"
@@ -1214,12 +1214,12 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/FormAddServico-09a7ed0b.js",
+    "file": "assets/FormAddServico-aed8377d.js",
     "imports": [
       "resources/js/app.js",
       "_maska-1eacf752.js",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Servicos/FormAddServico.vue"
@@ -1228,14 +1228,14 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/FormEditServico-11ff5ebb.js",
+    "file": "assets/FormEditServico-3ba31490.js",
     "imports": [
       "resources/js/app.js",
       "_maska-1eacf752.js",
-      "_toastr-53c2eed2.js",
-      "_functions-787f1fef.js",
-      "_toastr-7ac6e837.js",
-      "_html2pdf-045be88f.js"
+      "_toastr-5a9dd9ee.js",
+      "_functions-2f7756a7.js",
+      "_toastr-fa624f44.js",
+      "_html2pdf-2a8706af.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Servicos/FormEditServico.vue"
@@ -1244,20 +1244,20 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/GridServico-4b916e93.js",
+    "file": "assets/GridServico-c9605405.js",
     "imports": [
       "_servico-a17c8dc2.js",
-      "_functions-787f1fef.js",
+      "_functions-2f7756a7.js",
       "resources/js/Pages/Financeiro/Components/Servicos/EditServico.vue",
       "resources/js/Pages/Financeiro/Components/Servicos/DelServico.vue",
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js",
-      "_html2pdf-045be88f.js",
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js",
+      "_html2pdf-2a8706af.js",
       "resources/js/Pages/Financeiro/Components/Servicos/FormEditServico.vue",
       "_maska-1eacf752.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js"
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Components/Servicos/GridServico.vue"
@@ -1267,17 +1267,17 @@
       "assets/toastr-b6a82ad0.css",
       "assets/style-1feaece4.css"
     ],
-    "file": "assets/ControleCaixa-0c24db57.js",
+    "file": "assets/ControleCaixa-b8f41ae3.js",
     "imports": [
-      "_AuthenticatedLayout-3d6f8bbd.js",
+      "_AuthenticatedLayout-7285b9ce.js",
       "resources/js/app.js",
-      "_toastr-7ac6e837.js",
+      "_toastr-fa624f44.js",
       "resources/js/Pages/Financeiro/Components/Caixa/CentroDeCustos/AddCentroCusto.vue",
       "resources/js/Pages/Financeiro/Components/Caixa/Lancamentos/AddLancamentos.vue",
       "resources/js/Pages/Financeiro/Components/Caixa/TipoLancamento/AddTipoLancamento.vue",
-      "_transition-d7925d1f.js",
-      "_XMarkIcon-d9f13e53.js",
-      "_toastr-53c2eed2.js",
+      "_transition-ac15a836.js",
+      "_XMarkIcon-5b57bbe8.js",
+      "_toastr-5a9dd9ee.js",
       "resources/js/Pages/Financeiro/Components/Caixa/CentroDeCustos/TabelaCentroCustos.vue",
       "resources/js/Pages/Financeiro/Components/Caixa/CentroDeCustos/DelCentroCusto.vue",
       "resources/js/Pages/Financeiro/Components/Caixa/CentroDeCustos/EditCentroCusto.vue",
@@ -1297,14 +1297,14 @@
       "assets/toastr-b6a82ad0.css",
       "assets/style-1feaece4.css"
     ],
-    "file": "assets/Lancamentos-d94cc0d2.js",
+    "file": "assets/Lancamentos-1eb138bc.js",
     "imports": [
-      "_AuthenticatedLayout-3d6f8bbd.js",
+      "_AuthenticatedLayout-7285b9ce.js",
       "resources/js/app.js",
-      "_toastr-7ac6e837.js",
-      "_transition-d7925d1f.js",
-      "_XMarkIcon-d9f13e53.js",
-      "_toastr-53c2eed2.js"
+      "_toastr-fa624f44.js",
+      "_transition-ac15a836.js",
+      "_XMarkIcon-5b57bbe8.js",
+      "_toastr-5a9dd9ee.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Financeiro/Lancamentos.vue"
@@ -1314,23 +1314,23 @@
       "assets/toastr-b6a82ad0.css",
       "assets/style-1feaece4.css"
     ],
-    "file": "assets/ListaComissoes-d1b443aa.js",
+    "file": "assets/ListaComissoes-c3ad99c3.js",
     "imports": [
       "resources/js/app.js",
-      "_AuthenticatedLayout-3d6f8bbd.js",
-      "_toastr-7ac6e837.js",
+      "_AuthenticatedLayout-7285b9ce.js",
+      "_toastr-fa624f44.js",
       "resources/js/Pages/Financeiro/Components/Comissoes/Servico/GridComissaoServ.vue",
       "resources/js/Pages/Financeiro/Components/Comissoes/Usuario/GridComissaoUsu.vue",
-      "_transition-d7925d1f.js",
-      "_XMarkIcon-d9f13e53.js",
-      "_toastr-53c2eed2.js",
+      "_transition-ac15a836.js",
+      "_XMarkIcon-5b57bbe8.js",
+      "_toastr-5a9dd9ee.js",
       "_servico-a17c8dc2.js",
-      "_functions-787f1fef.js",
-      "_html2pdf-045be88f.js",
+      "_functions-2f7756a7.js",
+      "_html2pdf-2a8706af.js",
       "resources/js/Pages/Financeiro/Components/Comissoes/Servico/EditComissaoServ.vue",
       "resources/js/Pages/Financeiro/Components/Comissoes/Servico/FormEditComissaoServ.vue",
       "_maska-1eacf752.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
       "resources/js/Pages/Financeiro/Components/Comissoes/Servico/DelComissaoServ.vue",
       "_funcionario-b96a7293.js",
       "resources/js/Pages/Financeiro/Components/Comissoes/Usuario/EditComissaoUsu.vue",
@@ -1345,23 +1345,23 @@
       "assets/toastr-b6a82ad0.css",
       "assets/style-1feaece4.css"
     ],
-    "file": "assets/ListaServicos-9e9a3e8f.js",
+    "file": "assets/ListaServicos-ff598f71.js",
     "imports": [
-      "_AuthenticatedLayout-3d6f8bbd.js",
+      "_AuthenticatedLayout-7285b9ce.js",
       "resources/js/app.js",
-      "_toastr-7ac6e837.js",
+      "_toastr-fa624f44.js",
       "resources/js/Pages/Financeiro/Components/Servicos/GridServico.vue",
       "resources/js/Pages/Financeiro/Components/Servicos/AddServico.vue",
-      "_transition-d7925d1f.js",
-      "_XMarkIcon-d9f13e53.js",
-      "_toastr-53c2eed2.js",
+      "_transition-ac15a836.js",
+      "_XMarkIcon-5b57bbe8.js",
+      "_toastr-5a9dd9ee.js",
       "_servico-a17c8dc2.js",
-      "_functions-787f1fef.js",
-      "_html2pdf-045be88f.js",
+      "_functions-2f7756a7.js",
+      "_html2pdf-2a8706af.js",
       "resources/js/Pages/Financeiro/Components/Servicos/EditServico.vue",
       "resources/js/Pages/Financeiro/Components/Servicos/FormEditServico.vue",
       "_maska-1eacf752.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
       "resources/js/Pages/Financeiro/Components/Servicos/DelServico.vue",
       "resources/js/Pages/Financeiro/Components/Servicos/FormAddServico.vue"
     ],
@@ -1372,25 +1372,25 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/AddPainel-dbcff92a.js",
+    "file": "assets/AddPainel-f752eb69.js",
     "imports": [
       "resources/js/app.js",
       "resources/js/Pages/Paineis/Components/FormAddPainel/StepOnePainel.vue",
       "resources/js/Pages/Paineis/Components/FormAddPainel/StepTwoPainel.vue",
-      "_toastr-7ac6e837.js",
-      "_CheckIcon-68f28f74.js",
-      "_transition-d7925d1f.js",
-      "_toastr-53c2eed2.js"
+      "_toastr-fa624f44.js",
+      "_CheckIcon-5a60ea34.js",
+      "_transition-ac15a836.js",
+      "_toastr-5a9dd9ee.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Paineis/Components/AddPainel.vue"
   },
   "resources/js/Pages/Paineis/Components/DelPainel.vue": {
-    "file": "assets/DelPainel-26bae6f5.js",
+    "file": "assets/DelPainel-b6df9e2b.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-7ac6e837.js",
-      "_transition-d7925d1f.js"
+      "_toastr-fa624f44.js",
+      "_transition-ac15a836.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Paineis/Components/DelPainel.vue"
@@ -1399,11 +1399,11 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/StepOnePainel-14077f64.js",
+    "file": "assets/StepOnePainel-26a1b7ac.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Paineis/Components/FormAddPainel/StepOnePainel.vue"
@@ -1412,11 +1412,11 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/StepTwoPainel-a27a5253.js",
+    "file": "assets/StepTwoPainel-d2f86e8b.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Paineis/Components/FormAddPainel/StepTwoPainel.vue"
@@ -1425,12 +1425,12 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/ModalAddPainCli-32a21963.js",
+    "file": "assets/ModalAddPainCli-603bdf7c.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
-      "_vue-multiselect.esm-511dc78f.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-5a9dd9ee.js",
+      "_vue-multiselect.esm-8c3cd0e8.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Paineis/Components/ModalAddPainCli.vue"
@@ -1439,11 +1439,11 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/ModalCancelRes-ada8328f.js",
+    "file": "assets/ModalCancelRes-532eb8c3.js",
     "imports": [
-      "_toastr-53c2eed2.js",
+      "_toastr-5a9dd9ee.js",
       "resources/js/app.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Paineis/Components/ModalCancelRes.vue"
@@ -1452,14 +1452,14 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/ModalWpp-844ff8bf.js",
+    "file": "assets/ModalWpp-53346634.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
-      "_functions-787f1fef.js",
-      "_vue-multiselect.esm-511dc78f.js",
-      "_toastr-7ac6e837.js",
-      "_html2pdf-045be88f.js"
+      "_toastr-5a9dd9ee.js",
+      "_functions-2f7756a7.js",
+      "_vue-multiselect.esm-8c3cd0e8.js",
+      "_toastr-fa624f44.js",
+      "_html2pdf-2a8706af.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Paineis/Components/ModalWpp.vue"
@@ -1469,26 +1469,26 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/DispPaineis-42e764d4.js",
+    "file": "assets/DispPaineis-0c7aa91c.js",
     "imports": [
       "resources/js/app.js",
       "_painel_conv-45a82d16.js",
       "_regiao-35565801.js",
-      "_AuthenticatedLayout-3d6f8bbd.js",
+      "_AuthenticatedLayout-7285b9ce.js",
       "resources/js/Pages/Paineis/Components/ModalCancelRes.vue",
       "resources/js/Pages/Paineis/Components/ModalWpp.vue",
       "resources/js/Pages/Reservas/Components/ModalPiRes.vue",
-      "_functions-787f1fef.js",
-      "_vue-multiselect.esm-511dc78f.js",
-      "_transition-d7925d1f.js",
-      "_XMarkIcon-d9f13e53.js",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js",
-      "_html2pdf-045be88f.js",
+      "_functions-2f7756a7.js",
+      "_vue-multiselect.esm-8c3cd0e8.js",
+      "_transition-ac15a836.js",
+      "_XMarkIcon-5b57bbe8.js",
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js",
+      "_html2pdf-2a8706af.js",
       "resources/js/Pages/Reservas/Components/FormPI/StepOnePi.vue",
       "_maska-1eacf752.js",
       "resources/js/Pages/Reservas/Components/FormPI/StepTwoPi.vue",
-      "_UserCircleIcon-3123f00c.js",
+      "_UserCircleIcon-17f69a48.js",
       "resources/js/Pages/Reservas/Components/FormPI/StepThreePi.vue",
       "resources/js/Pages/Reservas/Components/FormPI/StepFourPi.vue"
     ],
@@ -1500,20 +1500,20 @@
       "assets/toastr-b6a82ad0.css",
       "assets/style-1feaece4.css"
     ],
-    "file": "assets/ListaPaineis-16df8800.js",
+    "file": "assets/ListaPaineis-5d17681d.js",
     "imports": [
       "resources/js/app.js",
       "_painel_conv-45a82d16.js",
-      "_AuthenticatedLayout-3d6f8bbd.js",
-      "_toastr-7ac6e837.js",
+      "_AuthenticatedLayout-7285b9ce.js",
+      "_toastr-fa624f44.js",
       "resources/js/Pages/Paineis/Components/AddPainel.vue",
       "resources/js/Pages/Paineis/Components/DelPainel.vue",
-      "_transition-d7925d1f.js",
-      "_XMarkIcon-d9f13e53.js",
-      "_toastr-53c2eed2.js",
+      "_transition-ac15a836.js",
+      "_XMarkIcon-5b57bbe8.js",
+      "_toastr-5a9dd9ee.js",
       "resources/js/Pages/Paineis/Components/FormAddPainel/StepOnePainel.vue",
       "resources/js/Pages/Paineis/Components/FormAddPainel/StepTwoPainel.vue",
-      "_CheckIcon-68f28f74.js"
+      "_CheckIcon-5a60ea34.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Paineis/ListaPaineis.vue"
@@ -1523,51 +1523,51 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/Edit-8c17ec49.js",
+    "file": "assets/Edit-34e20d57.js",
     "imports": [
-      "_AuthenticatedLayout-3d6f8bbd.js",
+      "_AuthenticatedLayout-7285b9ce.js",
       "resources/js/Pages/Profile/Partials/DeleteUserForm.vue",
       "resources/js/Pages/Profile/Partials/UpdatePasswordForm.vue",
       "resources/js/Pages/Profile/Partials/UpdateProfileInformationForm.vue",
       "resources/js/app.js",
-      "_transition-d7925d1f.js",
-      "_XMarkIcon-d9f13e53.js",
-      "_toastr-53c2eed2.js",
-      "_toastr-7ac6e837.js",
+      "_transition-ac15a836.js",
+      "_XMarkIcon-5b57bbe8.js",
+      "_toastr-5a9dd9ee.js",
+      "_toastr-fa624f44.js",
       "__plugin-vue_export-helper-c27b6911.js",
-      "_TextInput-69203893.js",
-      "_PrimaryButton-100899cc.js"
+      "_TextInput-e24c0285.js",
+      "_PrimaryButton-23254104.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Profile/Edit.vue"
   },
   "resources/js/Pages/Profile/Partials/DeleteUserForm.vue": {
-    "file": "assets/DeleteUserForm-fecbffe1.js",
+    "file": "assets/DeleteUserForm-af37ad9d.js",
     "imports": [
       "resources/js/app.js",
       "__plugin-vue_export-helper-c27b6911.js",
-      "_TextInput-69203893.js"
+      "_TextInput-e24c0285.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Profile/Partials/DeleteUserForm.vue"
   },
   "resources/js/Pages/Profile/Partials/UpdatePasswordForm.vue": {
-    "file": "assets/UpdatePasswordForm-0faf1716.js",
+    "file": "assets/UpdatePasswordForm-1fbf6ab1.js",
     "imports": [
       "resources/js/app.js",
-      "_TextInput-69203893.js",
-      "_PrimaryButton-100899cc.js",
+      "_TextInput-e24c0285.js",
+      "_PrimaryButton-23254104.js",
       "__plugin-vue_export-helper-c27b6911.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Profile/Partials/UpdatePasswordForm.vue"
   },
   "resources/js/Pages/Profile/Partials/UpdateProfileInformationForm.vue": {
-    "file": "assets/UpdateProfileInformationForm-933dac34.js",
+    "file": "assets/UpdateProfileInformationForm-1030abb4.js",
     "imports": [
       "resources/js/app.js",
-      "_TextInput-69203893.js",
-      "_PrimaryButton-100899cc.js",
+      "_TextInput-e24c0285.js",
+      "_PrimaryButton-23254104.js",
       "__plugin-vue_export-helper-c27b6911.js"
     ],
     "isDynamicEntry": true,
@@ -1578,14 +1578,14 @@
       "assets/toastr-b6a82ad0.css",
       "assets/style-1feaece4.css"
     ],
-    "file": "assets/RelPainXCli-b065d018.js",
+    "file": "assets/RelPainXCli-50f7b414.js",
     "imports": [
       "resources/js/app.js",
-      "_AuthenticatedLayout-3d6f8bbd.js",
-      "_toastr-7ac6e837.js",
-      "_transition-d7925d1f.js",
-      "_XMarkIcon-d9f13e53.js",
-      "_toastr-53c2eed2.js"
+      "_AuthenticatedLayout-7285b9ce.js",
+      "_toastr-fa624f44.js",
+      "_transition-ac15a836.js",
+      "_XMarkIcon-5b57bbe8.js",
+      "_toastr-5a9dd9ee.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Relatorios/PaineisXClientes/RelPainXCli.vue"
@@ -1598,11 +1598,11 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/RelPi-50584592.js",
+    "file": "assets/RelPi-4568009e.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-7ac6e837.js",
-      "_html2pdf-045be88f.js"
+      "_toastr-fa624f44.js",
+      "_html2pdf-2a8706af.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Relatorios/Pi/RelPi.vue"
@@ -1612,14 +1612,14 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/RelColagem-4c390c5d.js",
+    "file": "assets/RelColagem-f9a4a07a.js",
     "imports": [
       "resources/js/app.js",
-      "_AuthenticatedLayout-3d6f8bbd.js",
-      "_toastr-53c2eed2.js",
-      "_transition-d7925d1f.js",
-      "_XMarkIcon-d9f13e53.js",
-      "_toastr-7ac6e837.js"
+      "_AuthenticatedLayout-7285b9ce.js",
+      "_toastr-5a9dd9ee.js",
+      "_transition-ac15a836.js",
+      "_XMarkIcon-5b57bbe8.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Relatorios/RelColagem.vue"
@@ -1629,14 +1629,14 @@
       "assets/toastr-b6a82ad0.css",
       "assets/style-1feaece4.css"
     ],
-    "file": "assets/RelReservaCliente-65cf7b04.js",
+    "file": "assets/RelReservaCliente-15b33da4.js",
     "imports": [
       "resources/js/app.js",
-      "_AuthenticatedLayout-3d6f8bbd.js",
-      "_toastr-7ac6e837.js",
-      "_transition-d7925d1f.js",
-      "_XMarkIcon-d9f13e53.js",
-      "_toastr-53c2eed2.js"
+      "_AuthenticatedLayout-7285b9ce.js",
+      "_toastr-fa624f44.js",
+      "_transition-ac15a836.js",
+      "_XMarkIcon-5b57bbe8.js",
+      "_toastr-5a9dd9ee.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Relatorios/RelReservaCliente.vue"
@@ -1645,18 +1645,18 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/AddReserva-d253cb88.js",
+    "file": "assets/AddReserva-ea19400e.js",
     "imports": [
       "resources/js/app.js",
       "_painel_conv-45a82d16.js",
       "_regiao-35565801.js",
-      "_functions-787f1fef.js",
-      "_vue-multiselect.esm-511dc78f.js",
-      "_toastr-7ac6e837.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
-      "_transition-d7925d1f.js",
-      "_toastr-53c2eed2.js",
-      "_html2pdf-045be88f.js"
+      "_functions-2f7756a7.js",
+      "_vue-multiselect.esm-8c3cd0e8.js",
+      "_toastr-fa624f44.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
+      "_transition-ac15a836.js",
+      "_toastr-5a9dd9ee.js",
+      "_html2pdf-2a8706af.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Reservas/Components/AddReserva.vue"
@@ -1665,32 +1665,32 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/DelReserva-4931b2de.js",
+    "file": "assets/DelReserva-de4526ce.js",
     "imports": [
       "resources/js/app.js",
-      "_functions-787f1fef.js",
-      "_vue-multiselect.esm-511dc78f.js",
-      "_toastr-7ac6e837.js",
-      "_transition-d7925d1f.js",
-      "_toastr-53c2eed2.js",
-      "_html2pdf-045be88f.js"
+      "_functions-2f7756a7.js",
+      "_vue-multiselect.esm-8c3cd0e8.js",
+      "_toastr-fa624f44.js",
+      "_transition-ac15a836.js",
+      "_toastr-5a9dd9ee.js",
+      "_html2pdf-2a8706af.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Reservas/Components/DelReserva.vue"
   },
   "resources/js/Pages/Reservas/Components/EditReserva.vue": {
-    "file": "assets/EditReserva-419f6710.js",
+    "file": "assets/EditReserva-0f9dd7a9.js",
     "imports": [
-      "_toastr-7ac6e837.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
+      "_toastr-fa624f44.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
       "resources/js/app.js",
-      "_transition-d7925d1f.js"
+      "_transition-ac15a836.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Reservas/Components/EditReserva.vue"
   },
   "resources/js/Pages/Reservas/Components/FormPI/StepFourPi.vue": {
-    "file": "assets/StepFourPi-99b467ff.js",
+    "file": "assets/StepFourPi-5f4a42e3.js",
     "imports": [
       "resources/js/app.js"
     ],
@@ -1698,11 +1698,11 @@
     "src": "resources/js/Pages/Reservas/Components/FormPI/StepFourPi.vue"
   },
   "resources/js/Pages/Reservas/Components/FormPI/StepOnePi.vue": {
-    "file": "assets/StepOnePi-1c372e80.js",
+    "file": "assets/StepOnePi-1b20ac4e.js",
     "imports": [
       "resources/js/app.js",
       "_maska-1eacf752.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Reservas/Components/FormPI/StepOnePi.vue"
@@ -1711,12 +1711,12 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/StepThreePi-da70971d.js",
+    "file": "assets/StepThreePi-879db896.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-53c2eed2.js",
-      "_UserCircleIcon-3123f00c.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-5a9dd9ee.js",
+      "_UserCircleIcon-17f69a48.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Reservas/Components/FormPI/StepThreePi.vue"
@@ -1725,13 +1725,13 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/StepTwoPi-7e825564.js",
+    "file": "assets/StepTwoPi-46c4518b.js",
     "imports": [
       "resources/js/app.js",
       "_maska-1eacf752.js",
-      "_toastr-53c2eed2.js",
-      "_UserCircleIcon-3123f00c.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-5a9dd9ee.js",
+      "_UserCircleIcon-17f69a48.js",
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Reservas/Components/FormPI/StepTwoPi.vue"
@@ -1740,10 +1740,10 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/GridPaineisReserva-e4ec61de.js",
+    "file": "assets/GridPaineisReserva-9234aa8f.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Reservas/Components/GridPaineisReserva.vue"
@@ -1752,19 +1752,19 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/ModalPiRes-71437e4e.js",
+    "file": "assets/ModalPiRes-467d7e25.js",
     "imports": [
-      "_toastr-53c2eed2.js",
+      "_toastr-5a9dd9ee.js",
       "resources/js/Pages/Reservas/Components/FormPI/StepOnePi.vue",
       "resources/js/Pages/Reservas/Components/FormPI/StepTwoPi.vue",
       "resources/js/Pages/Reservas/Components/FormPI/StepThreePi.vue",
       "resources/js/Pages/Reservas/Components/FormPI/StepFourPi.vue",
-      "_XMarkIcon-d9f13e53.js",
+      "_XMarkIcon-5b57bbe8.js",
       "resources/js/app.js",
-      "_transition-d7925d1f.js",
-      "_toastr-7ac6e837.js",
+      "_transition-ac15a836.js",
+      "_toastr-fa624f44.js",
       "_maska-1eacf752.js",
-      "_UserCircleIcon-3123f00c.js"
+      "_UserCircleIcon-17f69a48.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Reservas/Components/ModalPiRes.vue"
@@ -1773,10 +1773,10 @@
     "css": [
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/GridPaineisSemPi-0d410a2c.js",
+    "file": "assets/GridPaineisSemPi-00dc354b.js",
     "imports": [
       "resources/js/app.js",
-      "_toastr-7ac6e837.js"
+      "_toastr-fa624f44.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Reservas/ComponentsResSemPi/GridPaineisSemPi.vue"
@@ -1786,28 +1786,28 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/ReservaPaineisCli-bc6524d4.js",
+    "file": "assets/ReservaPaineisCli-a7a6ecc7.js",
     "imports": [
       "resources/js/app.js",
-      "_AuthenticatedLayout-3d6f8bbd.js",
-      "_toastr-53c2eed2.js",
+      "_AuthenticatedLayout-7285b9ce.js",
+      "_toastr-5a9dd9ee.js",
       "resources/js/Pages/Reservas/Components/AddReserva.vue",
       "resources/js/Pages/Reservas/Components/DelReserva.vue",
-      "_vue-multiselect.esm-511dc78f.js",
+      "_vue-multiselect.esm-8c3cd0e8.js",
       "resources/js/Pages/Reservas/Components/GridPaineisReserva.vue",
       "resources/js/Pages/Reservas/Components/ModalPiRes.vue",
-      "_transition-d7925d1f.js",
-      "_XMarkIcon-d9f13e53.js",
-      "_toastr-7ac6e837.js",
+      "_transition-ac15a836.js",
+      "_XMarkIcon-5b57bbe8.js",
+      "_toastr-fa624f44.js",
       "_painel_conv-45a82d16.js",
       "_regiao-35565801.js",
-      "_functions-787f1fef.js",
-      "_html2pdf-045be88f.js",
-      "_ClipboardDocumentCheckIcon-7a5a0423.js",
+      "_functions-2f7756a7.js",
+      "_html2pdf-2a8706af.js",
+      "_ClipboardDocumentCheckIcon-db577f67.js",
       "resources/js/Pages/Reservas/Components/FormPI/StepOnePi.vue",
       "_maska-1eacf752.js",
       "resources/js/Pages/Reservas/Components/FormPI/StepTwoPi.vue",
-      "_UserCircleIcon-3123f00c.js",
+      "_UserCircleIcon-17f69a48.js",
       "resources/js/Pages/Reservas/Components/FormPI/StepThreePi.vue",
       "resources/js/Pages/Reservas/Components/FormPI/StepFourPi.vue"
     ],
@@ -1819,24 +1819,24 @@
       "assets/style-1feaece4.css",
       "assets/toastr-b6a82ad0.css"
     ],
-    "file": "assets/ReservaSemPi-1a8d35e2.js",
+    "file": "assets/ReservaSemPi-a328e001.js",
     "imports": [
       "resources/js/app.js",
-      "_AuthenticatedLayout-3d6f8bbd.js",
-      "_toastr-53c2eed2.js",
-      "_functions-787f1fef.js",
-      "_vue-multiselect.esm-511dc78f.js",
-      "_toastr-7ac6e837.js",
+      "_AuthenticatedLayout-7285b9ce.js",
+      "_toastr-5a9dd9ee.js",
+      "_functions-2f7756a7.js",
+      "_vue-multiselect.esm-8c3cd0e8.js",
+      "_toastr-fa624f44.js",
       "resources/js/Pages/Reservas/ComponentsResSemPi/GridPaineisSemPi.vue",
-      "_transition-d7925d1f.js",
-      "_XMarkIcon-d9f13e53.js",
-      "_html2pdf-045be88f.js"
+      "_transition-ac15a836.js",
+      "_XMarkIcon-5b57bbe8.js",
+      "_html2pdf-2a8706af.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Reservas/ReservaSemPi.vue"
   },
   "resources/js/app.css": {
-    "file": "assets/app-aebb5b2b.css",
+    "file": "assets/app-ca6a6fd7.css",
     "src": "resources/js/app.css"
   },
   "resources/js/app.js": {
@@ -1852,7 +1852,7 @@
       "assets/login_bg-1a8d7d49.jpg"
     ],
     "css": [
-      "assets/app-aebb5b2b.css"
+      "assets/app-ca6a6fd7.css"
     ],
     "dynamicImports": [
       "resources/js/Pages/Auth/ConfirmPassword.vue",
@@ -1956,7 +1956,7 @@
       "resources/js/Pages/Reservas/ReservaPaineisCli.vue",
       "resources/js/Pages/Reservas/ReservaSemPi.vue"
     ],
-    "file": "assets/app-f41b932e.js",
+    "file": "assets/app-2663ccdc.js",
     "isEntry": true,
     "src": "resources/js/app.js"
   },
