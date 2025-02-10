@@ -15,6 +15,7 @@ class Pi extends Model
     protected $table="pi";
 
     protected $fillable = ['id_cliente',
+                            'arquivo',
                             'id_paineis',
                             'contato',
                             'campanha',
@@ -29,6 +30,7 @@ class Pi extends Model
                             'obs'
     ];
 
+    public $timestamps = true;
 
     public function cliente()
     {

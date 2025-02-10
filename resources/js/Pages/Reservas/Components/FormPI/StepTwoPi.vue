@@ -42,7 +42,7 @@ const formTwo = reactive({
     servicos: servicosPagos,
     formaPgto: 0,
     pgto: '',
-    parcelado: '',
+    parcelado: 0,
     qtdParcelas: 1,
     dtPgto: dtPgto.value,
     dtReserva: props.dataReserva,
@@ -578,8 +578,8 @@ function changeEdit() {
                     v-model="formTwo.parcelado"
                             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 md:max-w-xs md:text-sm md:leading-6"
                             :disabled="edit == false">
-                        <option value="" disabled selected>SEL...</option>
-                        <option value="0">NÃO</option>
+                        <!-- <option value="" disabled selected>SEL...</option> -->
+                        <option value="0" selected>NÃO</option>
                         <option value="1">SIM</option>
                     </select>
             </div>
