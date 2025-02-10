@@ -257,8 +257,6 @@
                     </div>
                   </div>
                 </div>
-
-
               </PopoverPanel>
             </transition>
           </Popover>

@@ -59,13 +59,9 @@ class PiController extends Controller
 
 
         $cliente = $this->clienteService->getCliente(session('dadosPi')['One']['clienteId']);
-        // $dt_pgto = explode('/', session('dadosPi')['Two']['dtPgto']);
-        // $data_pgto = $dt_pgto[2].'-'. $dt_pgto[1].'-'.$dt_pgto[0];
-        // dd($dt_pgto);
         $data_pgto_formated = explode('-', session('dadosPi')['Two']['dtPgto']);
         $data_pgto_formated = $data_pgto_formated[2].'/'.$data_pgto_formated[1].'/'.$data_pgto_formated[0];
         $campanha = session('dadosPi')['Two']['campanha'];
-        // $observacoes = session('dadosPi')['Two']['observacoes'];
 
         if(session('dadosPi')['Two']['servicos'] != []) {
             $detalhes = session('dadosPi')['Two']['servicos'][0]['detalhes'];
@@ -125,7 +121,8 @@ class PiController extends Controller
         ->orderByDesc('id')
         ->first();
 
-        // // soma os valores dos serviços
+
+        // soma os valores dos serviços
         $vl_total = 0;
         $vlr_unt = 0;
         $vlr_desc = 0;
@@ -136,21 +133,16 @@ class PiController extends Controller
         }
 
 
-        // grava o lançamento no banco de dados
-        $caixaService = new CaixaService();
-
-        // dd(session('dadosPi'));
-
-
-
-        // Cria o PI se não existir
+        // Cria a PI se não existir
         try {
             if(!$pi) {
                 DB::beginTransaction();
 
+                // Cria a PI
                 $pi = Pi::updateOrCreate([
                     'id_cliente' => session('dadosPi')['One']['clienteId'],
                     'id_paineis' => json_encode(session('dadosPi')['Two']['paineis']),
+                    'arquivo' => 'pi_'.$cliente->nome_fantasia.'_'.Carbon::today()->toDateString().'.pdf',
                     'contato' => session('dadosPi')['One']['responsavel'],
                     'campanha' => session('dadosPi')['Two']['campanha'],
                     'id_bisemana' => session('dadosPi')['Two']['bisemanaId'],
@@ -164,54 +156,60 @@ class PiController extends Controller
                     'obs' => session('dadosPi')['Two']['servicos'][0]['detalhes']
                 ]);
 
-                //atualiza o campo pi_id na reserva
-                $reserva = Reserva::where('cliente_id', session('dadosPi')['One']['clienteId'])
-                    ->where('bisemana_id', session('dadosPi')['Two']['bisemanaId'])
-                    ->where('pi_ok', 1)
-                ->get();
+            }
 
-                if (session('dadosPi')['Two']['parcelado'] == 1) {
-                    $qtdParcelas = session('dadosPi')['Two']['qtdParcelas'];
-                    $vl_parcela = $vl_total / $qtdParcelas;
+            //atualiza o campo pi_id na reserva
+            $reserva = Reserva::where('cliente_id', session('dadosPi')['One']['clienteId'])
+            ->where('bisemana_id', session('dadosPi')['Two']['bisemanaId'])
+            ->where('pi_ok', 1)->get();
 
-                    // verifica se o lançamento já existe
-                    $lancamento_existe = $caixaService->getLancamentosReserva($pi->id);
+            // grava o lançamento no banco de dados
+            $caixaService = new CaixaService();
 
 
-                    for ($i = 1; $i <= $qtdParcelas; $i++) {
-                        $lancamento = [
-                            'descricao' => 'Faturamento PI nº ' . $pi->id . ' Cliente: ' . $cliente->razao_social ?
-                                'Faturamento PI nº ' . $pi->id . ' Cliente: '.$cliente->razao_social :
-                                'Faturamento PI nº ' . $pi->id . ' Cliente: '.$cliente->nome_fantasia,
+            // Cria o lançamento no caixa
 
-                            'valor' => $vl_parcela,
-                            'parcelas' => $i . '/' . $qtdParcelas,
-                            'data_lancamento' => date('Y-m-d', strtotime(session('dadosPi')['Two']['dtPgto'] . ' + ' . $i . ' month')),
-                            'centro_custo' => 1,
-                            'tipo_lancamento' => 1,
-                            'id_reserva' => $pi->id,
-                            'observacoes' => $detalhes,
-                        ];
+            $qtdParcelas = session('dadosPi')['Two']['qtdParcelas'];
+            $vl_parcela = $vl_total / $qtdParcelas;
 
-                        // Cria o Request manualmente
-                        $request_lancamento = new \Illuminate\Http\Request();
-                        $request_lancamento->replace($lancamento);
+            // verifica se o lançamento já existe
+            $lancamento_existe = $caixaService->getLancamentosReserva($pi->id);
 
-                        if(!$lancamento_existe) {
-                            // Chama o método do serviço com o objeto Request
-                            $caixaService->createLancamento($request_lancamento);
-                        } else {
-                            $lancamento_existe->update($lancamento);
-                        }
 
-                    }
-                }
+            for ($i = 1; $i <= $qtdParcelas; $i++) {
+                $lancamento = [
+                    'descricao' => 'Faturamento PI nº ' . $pi->id . ' Cliente: ' . $cliente->razao_social ?
+                        'Faturamento PI nº ' . $pi->id . ' Cliente: '.$cliente->razao_social :
+                        'Faturamento PI nº ' . $pi->id . ' Cliente: '.$cliente->nome_fantasia,
 
-                foreach($reserva as $res) {
-                    $res->update(['pi_id' => $pi->id]);
+                    'valor' => $vl_parcela,
+                    'parcelas' => $i . '/' . $qtdParcelas,
+                    'data_lancamento' => date('Y-m-d', strtotime(session('dadosPi')['Two']['dtPgto'] . ' + ' . $i . ' month')),
+                    'centro_custo' => 1,
+                    'tipo_lancamento' => 1,
+                    'id_reserva' => $pi->id,
+                    'observacoes' => $detalhes,
+                ];
+
+                // Cria o Request manualmente
+                $request_lancamento = new \Illuminate\Http\Request();
+                $request_lancamento->replace($lancamento);
+
+                if(!$lancamento_existe) {
+                    // Chama o método do serviço com o objeto Request
+                    $caixaService->createLancamento($request_lancamento);
+                } else {
+                    $lancamento_existe->update($lancamento);
                 }
 
             }
+
+
+            foreach($reserva as $res) {
+                $res->update(['pi_id' => $pi->id]);
+            }
+
+            DB::commit();
 
             if(isset(session('dadosPi')['Three'])) {
 
@@ -223,25 +221,18 @@ class PiController extends Controller
                 'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor', 'dt_atual'))
                 ->orientation(Orientation::Landscape)->save(storage_path('app/public/pdf/pi' .'pi_'.$cliente_nome.'_'.$dt_pi.'.pdf'));
 
-                // Storage::move('pi_'.$cliente_nome.'_'.$dt_pi.'.pdf', 'public/pdf/pi/pi_'.$cliente_nome.'_'.$dt_pi.'.pdf');
-
 
                 return $pi;
             }
 
-            DB::commit();
+
 
         } catch(\Exception $e) {
             return response()->json(['cod' => 0, 'msg' => $e->getMessage()]);
         }
 
 
-
-
-
-
-
-            return response()->json(['cod' => 1, 'msg' => 'Paineis reservados!']);
+        return response()->json(['cod' => 1, 'msg' => 'Paineis reservados!']);
     }
 
 
