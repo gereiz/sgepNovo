@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Arquivos\ArquivosController;
 use App\Http\Controllers\Clientes\ClienteController;
 use App\Http\Controllers\Config\ConfiguracoesController;
 use App\Http\Controllers\Data\DataController;
@@ -221,6 +222,10 @@ Route::middleware('auth')->group(function () {
     route::get('/getPermissions ', [RolesController::class, 'getPermissions']);
     route::post('/setPermissions', [RolesController::class, 'setPermissions']);
 
+
+    // Arquivos
+    route::get('/PisGeradas', [ArquivosController::class, 'index']);
+    route::post('/getPiBs', [ArquivosController::class, 'getPiBs']);
 
 });
 
