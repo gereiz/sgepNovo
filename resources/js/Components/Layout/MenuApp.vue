@@ -43,7 +43,7 @@
 
   const arquivos = [
     { name: 'Disponibilidades Enviadas', description: 'Em Breve.', href: '#', icon: ViewColumnsIcon   },
-    { name: 'Pi\'s Geradas', description: 'Em Breve.', href: '#', icon: ViewColumnsIcon   },
+    { name: 'Pi\'s Geradas', description: 'Exibe todas as Pi\'s geradas nos ultimos 60 dias', href: '/PisGeradas', icon: ViewColumnsIcon   },
   ]
 
   const relatorios = [
