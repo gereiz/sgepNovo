@@ -112,7 +112,7 @@
                                         $originalImage = public_path($filePath);
                                         $reportImage = $originalImage;
                                         //if(pathinfo('storage/'.$p->image_url, PATHINFO_EXTENSION) != "png" || mime_content_type($filePath) != "image/png"){
-                                        if(filesize($filePath) > 15000000){
+                                        if(filesize($filePath) > 500000){
                                             $info = getimagesize($filePath);
 
                                             if ($info['mime'] == 'image/jpeg')
