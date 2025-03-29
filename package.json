@@ -28,10 +28,12 @@
         "@heroicons/vue": "^2.0.18",
         "@tailwindcss/typography": "^0.5.15",
         "@webzlodimir/vue-avatar": "^0.0.8",
+        "chart.js": "^4.4.8",
         "html2pdf.js": "^0.10.2",
         "maska": "^2.1.10",
         "puppeteer": "^22.14.0",
         "toastr": "^2.1.4",
+        "vue-chartjs": "^5.3.2",
         "vue-multiselect": "^3.0.0-beta.2",
         "vue-toastification": "^2.0.0-rc.5"
     }

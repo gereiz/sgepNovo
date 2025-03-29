@@ -3,8 +3,9 @@ import { Head, usePage } from '@inertiajs/vue3';
 import { ref, reactive, watch, computed } from 'vue';
 import { useToastr } from '@/Components/toastr';
 
-const props = defineProps(['reservas', 'clientes']);
-const emit = defineEmits(['paineisChecked', 'paineisCheckedId', 'itemRefs']);
+const props = defineProps(['paineis', 'reservas', 'clientes', 'clienteSel']);
+const emit = defineEmits(['itemRefs', 'geraPi', 'clienteSel']);
+
 
 const clientesOrdenados = computed(() => {
     return props.clientes.sort((a, b) => {
@@ -71,10 +72,11 @@ function getPaineisCliente() {
                     <div class="md:w-4/12">
                         <p class="text-sm text-gray-600 font-semibold">Campanha: <span class="text-red-500">{{ cli.nome_fantasia == getPaineisCliente()[index].nome_fantasia ? getPaineisCliente()[index].campanha : '-'}}</span></p>
                     </div>
+
+                    <div v-if="clienteSel" class="md:w-4/12">
+                        <p class="text-sm text-gray-600 font-semibold">Painéis: <span class="text-red-500">{{ reservas.length }}</span></p>
+                    </div>
                 </div>
-
-
-
             </div>
         </div>
     </div>
@@ -87,6 +89,3 @@ function getPaineisCliente() {
 
 </template>
 
-<style scoped>
-
-</style>

@@ -663,6 +663,7 @@ class ComposerStaticInitdbefa4ca5f337c25869081ff1672705f
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\Api\\LoginControllerDomains' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/LoginControllerDomains.php',
+        'App\\Http\\Controllers\\Arquivos\\ArquivosController' => __DIR__ . '/../..' . '/app/Http/Controllers/Arquivos/ArquivosController.php',
         'App\\Http\\Controllers\\Auth\\AuthenticatedSessionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/AuthenticatedSessionController.php',
         'App\\Http\\Controllers\\Auth\\ConfirmablePasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ConfirmablePasswordController.php',
         'App\\Http\\Controllers\\Auth\\EmailVerificationNotificationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/EmailVerificationNotificationController.php',

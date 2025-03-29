@@ -18,6 +18,7 @@ use App\Http\Controllers\Financeiro\ServicosController;
 use App\Http\Controllers\Financeiro\ComissoesController;
 use App\Http\Controllers\Config\UsuarioController;
 use App\Http\Controllers\Config\RolesController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Financeiro\CaixaController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -44,14 +45,10 @@ route::get('/home', function() {
 })->middleware(['auth', 'verified'])->name('home');
 
 
-
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-
-
-Route::middleware('auth')->group(function () {
+route::middleware(['auth', 'verified'])->group(function () {
+    // Dashboard
+    route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    route::post('/getClienteReservas', [DashboardController::class, 'getClienteReservas']);
 
     // Usuários
     route::get('/ListaUsuarios', [UsuarioController::class, 'index'])->name('lista.usuarios');
@@ -200,6 +197,37 @@ Route::middleware('auth')->group(function () {
     route::get('/PaineisCliente', [RelPainXCliController::class, 'index']);
     route::any('/setPaineisCliente', [RelPainXCliController::class, 'setRelPainXCli']);
     route::any('/getPaineisCliente', [RelPainXCliController::class, 'getRelPainXCli']);
+
+
+    // Relatório de Colagem
+    route::get('/RelColagem', [RelColagemController::class, 'relColagem']);
+    route::post('/setRelColagem', [RelColagemController::class, 'setRelColagem']);
+    route::post('/setRegioes', [RelColagemController::class, 'setRegioes']);
+    route::post('/setBairros', [RelColagemController::class, 'setBairros']);
+    route::any('/getRelColagem', [RelColagemController::class, 'getRelColagem']);
+
+
+
+    // Roles
+    route::get('/roles', [RolesController::class, 'index']);
+    route::post('/createRole', [RolesController::class, 'createRole']);
+    route::post('/updateRole', [RolesController::class, 'updateRole']);
+    route::get('/getRoles', [RolesController::class, 'getRoles']);
+    route::post('/deleteRole', [RolesController::class, 'deleteRole']);
+
+    // Permissions
+    route::get('/getPermissions ', [RolesController::class, 'getPermissions']);
+    route::post('/setPermissions', [RolesController::class, 'setPermissions']);
+
+
+    // Arquivos
+    route::get('/PisGeradas', [ArquivosController::class, 'index']);
+    route::post('/getPiBs', [ArquivosController::class, 'getPiBs']);
+
+    // Painéis x Bisemanas
+    route::get('/RelPainelBisemana', [App\Http\Controllers\Relatorios\RelPainelBisemanaController::class, 'index']);
+    route::post('/setRelPainelBisemana', [App\Http\Controllers\Relatorios\RelPainelBisemanaController::class, 'setRelPainelBisemana']);
+    route::any('/getRelPainelBisemana', [App\Http\Controllers\Relatorios\RelPainelBisemanaController::class, 'getRelPainelBisemana']);
 
 
     // Relatório de Colagem

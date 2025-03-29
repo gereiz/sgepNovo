@@ -1,0 +1,398 @@
+/* Base styles */
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+/* Header styles */
+header {
+    width: 100%;
+}
+
+.header-container {
+    width: 100%;
+    display: flex;
+    border: 1px solid #000;
+}
+
+.logo-container {
+    width: 16.666667%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.logo-image {
+    width: 100%;
+    max-width: 150px;
+}
+
+.header-info {
+    width: 66.666667%;
+    text-align: center;
+    color: #000;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    padding: 10px 0;
+}
+
+.header-info p {
+    margin: 2px 0;
+}
+
+.header-title {
+    font-size: 1.1rem;
+    color: #000;
+    margin: 5px 0;
+    font-weight: bold;
+}
+
+.doc-info {
+    width: 16.666667%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    border-left: 1px solid #000;
+    color: #FF0000;
+    font-weight: 600;
+    padding: 10px 0;
+}
+
+.doc-info h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+/* Authorization section */
+.authorization-container {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.auth-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #000;
+}
+
+.auth-cell {
+    padding: 2px 5px;
+    font-size: 0.7rem;
+    vertical-align: top;
+}
+
+.client-cell {
+    width: 100%;
+    border: 1px solid #000;
+}
+
+.emission-cell {
+    width: 20%;
+    vertical-align: top;
+}
+
+.auth-label {
+    font-weight: bold;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.auth-value {
+    display: inline-block;
+}
+
+.client-cell p {
+    margin: 5px 0;
+    line-height: 1.3;
+}
+
+.emission-row {
+    margin-bottom: 3px;
+    display: flex;
+}
+
+.emission-label {
+    font-weight: bold;
+    width: 40%;
+}
+
+.emission-value {
+    width: 60%;
+}
+
+.section-table {
+    width: 100%;
+    margin-top: 0.5rem;
+    border-collapse: collapse;
+}
+
+.section-header {
+    width: 100%;
+    border: 1px solid #000;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #000;
+    width: 100%;
+    font-style: italic;
+    font-weight: 500;
+    padding: 3px 0;
+    background-color: #f2f2f2;
+}
+
+.table-row {
+    width: 100%;
+    display: flex;
+    font-size: 0.75rem;
+    color: #000;
+    border-collapse: collapse;
+}
+
+.table-row:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.table-row:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+.table-cell {
+    padding: 4px 5px;
+    border-right: 1px solid #000;
+    border-bottom: 1px solid #000;
+    min-height: 20px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.table-cell:first-child {
+    /* Remove left border as it's handled by the table */
+}
+
+.cell-label {
+    font-weight: bold;
+    font-size: 0.7rem;
+}
+
+.cell-value {
+    font-weight: normal;
+    font-size: 0.7rem;
+}
+
+/* Service description section */
+.service-container {
+    width: 100%;
+    margin-bottom: 2px;
+}
+
+.service-table {
+    width: 100%;
+    margin-top: 1rem;
+    border-collapse: collapse;
+    table-layout: fixed;
+    border-top: 1px solid #000;
+    border-left: 1px solid #000;
+}
+
+.service-table tbody {
+    width: 100%;
+}
+
+/* Totals section */
+.totals-table {
+    width: 100%;
+    margin-top: 5px;
+    border-collapse: collapse;
+    border: 1px solid #000;
+}
+
+.totals-row {
+    width: 100%;
+    display: flex;
+    font-size: 0.75rem;
+    color: #000;
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+    border-bottom: 1px solid #000;
+}
+
+.totals-row-noborder {
+    width: 100%;
+    display: flex;
+    font-size: 0.75rem;
+    color: #000;
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+}
+
+.totals-cell {
+    font-weight: 600;
+    padding: 2px 5px;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid #000;
+}
+
+.totals-value {
+    padding: 2px 5px;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid #000;
+}
+
+.totals-value:last-child {
+    border-right: none;
+}
+
+.observations {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.observations-title {
+    font-size: 0.75rem;
+    margin: 5px 0;
+    font-weight: bold;
+}
+
+.observations-line {
+    margin-top: 1rem;
+    border-bottom: 1px solid #000;
+    margin-bottom: 0;
+}
+
+/* Signatures section */
+.signatures-container {
+    width: 100%;
+    display: flex;
+    margin-top: 2rem;
+    font-size: 0.75rem;
+    color: #000;
+}
+
+.signature-column {
+    width: 50%;
+}
+
+.signature-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.signature-line {
+    margin-bottom: 0;
+    width: 80%;
+    text-align: center;
+}
+
+.signature-name {
+    font-size: 0.7rem;
+    margin-top: 0;
+    text-align: center;
+}
+
+/* Width utilities */
+.w-5 { width: 5%; }
+.w-8 { width: 8%; }
+.w-9 { width: 9%; }
+.w-10 { width: 10%; }
+.w-11 { width: 11%; }
+.w-12 { width: 12%; }
+.w-13 { width: 13%; }
+.w-14 { width: 14%; }
+.w-15 { width: 15%; }
+.w-18 { width: 18%; }
+.w-19 { width: 19%; }
+.w-20 { width: 20%; }
+.w-28 { width: 28%; }
+.w-30 { width: 30%; }
+.w-48 { width: 48%; }
+.w-59 { width: 59%; }
+.w-100 { width: 100%; }
+
+/* Additional classes for elements that had inline styles */
+.emission-date {
+    text-align: right;
+    font-size: 0.7rem;
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+.no-border-top {
+    border-top: 0;
+}
+
+.client-info-container {
+    padding: 10px;
+    display: flex;
+}
+
+.client-info-left {
+    width: 65%;
+}
+
+.client-info-right {
+    width: 35%;
+}
+
+.client-info-item {
+    margin-bottom: 8px;
+}
+
+.cell-center {
+    justify-content: center;
+}
+
+.parcelas-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    align-items: stretch;
+}
+
+.parcela-row {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+    width: 100%;
+}
+
+.parcela-cell {
+    padding: 2px 5px;
+    font-size: 0.7rem;
+}
+
+.parcela-cell-center {
+    text-align: center;
+}
+
+.parcela-cell-right {
+    text-align: right;
+}
+
+.parcela-cell-border-right {
+    border-right: 1px solid #ddd;
+}
+
+.parcela-cell-width-33 {
+    width: 33%;
+}
+
+.parcela-cell-width-34 {
+    width: 34%;
+}

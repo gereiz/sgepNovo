@@ -9,7 +9,7 @@ import axios from 'axios';
 const toastr = useToastr()
 
 const props = defineProps(['cliente', 'campanha', 'paineis','bisemana', 'dataReserva'])
-const emit = defineEmits(['nextStep','formTwo']);
+const emit = defineEmits(['nextStep','formTwo']); 
 
 const edit = ref(false)
 const page = usePage()
@@ -272,7 +272,6 @@ function changeEdit() {
     }
 
 }
-
 
 
 </script>

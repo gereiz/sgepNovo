@@ -2,55 +2,69 @@
 <link rel="stylesheet" href="{{public_path('assets/css/relatorios.css')}}">
 
 <style>
+    body {
+        font-family: "Lucida Console", "Courier New", monospace;
+    }
+
+    @page {
+        margin: 2cm;
+    }
 
     .relatorio {
         margin-left: -30px;
-        margin-bottom: 10px!important;
+        margin-bottom: 20px!important;
         width: 735px;
-        height: 250px;
+        height: 280px;
+        page-break-inside: avoid;
     }
 
     .no-space{
-            margin-top: 0px;
-            margin-bottom:0px;
-            padding-top:0px;
-            padding-bottom:0px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        padding-top: 0px;
+        padding-bottom: 0px;
     }
 
     #tabletitulo {
         text-align: center;
         max-width: 750px!important;
-        margin-bottom: 2%;
-        margin-top: -3%;
+        margin-bottom: 30px;
+        margin-top: 0;
         height: 130px;
         background-color: #e4e4e4;
         border: 1px solid;
-        padding-top: -7%;
+        padding: 15px;
     }
  
     .relatorio-body {
         display: flex;
+        padding: 15px;
     }
 
     .img-relatorio {
         position: relative;
-        top: -105px;
+        top: -85px;
         left: 63%;
-        width:250px;
-        height:180px;3
+        width: 250px;
+        height: 180px;
         border: 1px solid!important;
+        object-fit: cover;
     }
 
     .endereco-relatorio{
-    max-width: 390px;
-
+        max-width: 390px;
+        margin-top: 10px;
     }
 
     .login_logo {
         width: 150px;
         position: relative;
         left: -35%;
-        top: 30%;
+        top: 20%;
+    }
+
+    #table-alerta {
+        margin-bottom: 20px;
     }
 
     #table-alerta h5 {
@@ -58,6 +72,50 @@
         text-align: center;
     }
 
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #212529;
+        background-color: transparent;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.75rem;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .table thead th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .table tbody + tbody {
+        border-top: 2px solid #dee2e6;
+    }
+
+    .table-bordered {
+        border: 1px solid #dee2e6;
+    }
+
+    .table-bordered th,
+    .table-bordered td {
+        border: 1px solid #dee2e6;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .pagebreak {
+        page-break-before: always;
+    }
 </style>
  
 <div id="tabletitulo">
@@ -78,7 +136,7 @@
     $i = 1;
     foreach ($paineis as $p) {
     ?>
-    {{-- <?php if ($i % 2 != 0) { ?>
+    {{-- <?php if ($i % 2 != 0) { ?> 
         <tr>
         <?php } ?> --}}
     <tr>

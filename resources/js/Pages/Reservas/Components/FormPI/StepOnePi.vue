@@ -66,8 +66,6 @@ onMounted(() =>{
 })
 
 const nextStep = (val) => {
-
-
     if(val == 2) {
         if(formOne.uf == 0)  {
         toastr.error('Selecione a UF do Cliente')
@@ -78,7 +76,6 @@ const nextStep = (val) => {
         toastr.error('Selecione a Cidade do Cliente')
         return
     }
-
         emit('formOne', formOne);
     }
 
