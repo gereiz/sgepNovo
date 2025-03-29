@@ -3,18 +3,12 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, usePage } from '@inertiajs/vue3';
 import { useToastr } from '@/Components/toastr';
 import { ref, reactive, onMounted, computed } from 'vue';
-import AddAno from './Gerais/AddAno.vue';
-import AddRegra from './Gerais/AddRegra.vue';
-import BtnConfig from '../Components/BtnConfig.vue'
-
-
-
 
 const page = usePage();
 const permissions = page.props.user.permissions;
 
-const props = defineProps(['anos'])
-
+const props = defineProps([''])
+const emit = defineEmits(['']);
 const toastr = useToastr();
 
 
@@ -38,17 +32,9 @@ const toastr = useToastr();
             </div>
 
             <div class="card flex flex-col md:flex-row w-full h-full bg-base-100 shadow-xl overflow-auto rounded-md p-4">
-                <!-- <AddAno :anos="anos" /> -->
-                <!-- <BtnConfig :title="'Cadastro de Anos'"
-                           :link="'/AddAno'"> 
-                </BtnConfig> -->
-                <BtnConfig  :title="'Cadastro de Regras'"
-                            :link="'/roles'">   
-                </BtnConfig>
-                <BtnConfig  :title="'Textos Padrão'"
-                            :link="'/TextosPadrao'">   
-                </BtnConfig>
+               
             </div>
+            
         </div>
 
 

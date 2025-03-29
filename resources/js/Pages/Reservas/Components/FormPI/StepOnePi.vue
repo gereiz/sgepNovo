@@ -116,18 +116,6 @@ function getCidadeCli(uf) {
             <h1 as="h3" class="text-base font-semibold leading-6 text-gray-900">Pedido de Inserção</h1>
             <div class="w-full flex mt-2 ">
                 <p class="w-full text-sm text-gray-500 mb-4 text-center">Confira os dados para criação do Pedido de Inserção.</p>
-                <!-- <button  class="w-8 h-8 flex items-center justify-center bg-amber-700 -mt-1 text-sm font-semibold text-white shadow-sm hover:bg-amber-500 sm:ml-3 rounded-full duration-1000"
-                        v-if="!edit"
-                        @click="changeEdit()"
-                        title="Ativar Edição">
-                    <UserCircleIcon class="h-6 w-6" aria-hidden="true" />
-                </button>
-
-                <button v-else  class="w-8 h-8 flex items-center justify-center bg-green-700 -mt-1 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 rounded-full duration-1000"
-                        @click="changeEdit()"
-                        title="Edição Ativada">
-                    <UserCircleIcon class="h-6 w-6" aria-hidden="true" />
-                </button> -->
             </div>
             <p class="text-xs font-bold text-red-500 text-center">Bi-Semana: {{ bisemana[0].num_bisemana }} {{ new Date(bisemana[0].inicio).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }} até {{ new Date(bisemana[0].fim).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }}</p>
         </div>
