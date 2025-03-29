@@ -3,18 +3,13 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, usePage } from '@inertiajs/vue3';
 import { useToastr } from '@/Components/toastr';
 import { ref, reactive, onMounted, computed } from 'vue';
-import AddAno from './Gerais/AddAno.vue';
-import AddRegra from './Gerais/AddRegra.vue';
-import BtnConfig from '../Components/BtnConfig.vue'
-
-
-
+import BtnConfig from '../../Components/BtnConfig.vue';
 
 const page = usePage();
 const permissions = page.props.user.permissions;
 
-const props = defineProps(['anos'])
-
+const props = defineProps([''])
+const emit = defineEmits(['']);
 const toastr = useToastr();
 
 
@@ -32,7 +27,7 @@ const toastr = useToastr();
             <!-- Cabeçalho e barra de Pesquisa -->
             <div class="w-full h-14 flex mb-2">
                 <div class="w-full md:w-4/12 h-14 flex items-center justify-center md:justify-start">
-                    <h1 class="text-xl md:text-4xl font-bold">Configurações Gerais</h1>
+                    <h1 class="text-xl md:text-4xl font-bold">Textos Padrão</h1>
                 </div>
 
             </div>
@@ -42,10 +37,10 @@ const toastr = useToastr();
                 <!-- <BtnConfig :title="'Cadastro de Anos'"
                            :link="'/AddAno'"> 
                 </BtnConfig> -->
-                <BtnConfig  :title="'Cadastro de Regras'"
-                            :link="'/roles'">   
+                <BtnConfig  :title="'Tipos de Texto'"
+                            :link="'/TipoTexto'">   
                 </BtnConfig>
-                <BtnConfig  :title="'Textos Padrão'"
+                <BtnConfig  :title="'Textos cadastrados'"
                             :link="'/TextosPadrao'">   
                 </BtnConfig>
             </div>

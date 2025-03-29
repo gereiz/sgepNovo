@@ -20,7 +20,7 @@ use App\Http\Controllers\Config\UsuarioController;
 use App\Http\Controllers\Config\RolesController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Financeiro\CaixaController;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\Config\TextosPadraoController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -238,7 +238,6 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::any('/getRelColagem', [RelColagemController::class, 'getRelColagem']);
 
 
-
     // Roles
     route::get('/roles', [RolesController::class, 'index']);
     route::post('/createRole', [RolesController::class, 'createRole']);
@@ -254,6 +253,18 @@ route::middleware(['auth', 'verified'])->group(function () {
     // Arquivos
     route::get('/PisGeradas', [ArquivosController::class, 'index']);
     route::post('/getPiBs', [ArquivosController::class, 'getPiBs']);
+
+    
+    // Textos Padrão
+    route::get('/TextosPadrao', [TextosPadraoController::class, 'index']);
+    route::get('/TipoTexto', [TextosPadraoController::class, 'tipoTexto']);
+    route::post('/addOrEditTipoTexto', [TextosPadraoController::class, 'addOrEditTipoTexto']);
+    route::post('/getTipoTexto', [TextosPadraoController::class, 'getTipoTexto']);
+    route::post('/deleteTipoTexto', [TextosPadraoController::class, 'deleteTipoTexto']);
+    
+    
+    
+    
 
 });
 
