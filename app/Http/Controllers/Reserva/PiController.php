@@ -13,7 +13,8 @@ use App\Models\Bisemanas\Bisemana;
 use App\Models\Paineis\Painel;
 use App\Services\ClienteService;
 use App\Services\UsuarioService;
-use Spatie\LaravelPdf\Facades\Pdf;
+// use Spatie\LaravelPdf\Facades\Pdf;
+use PDF;
 use \Spatie\LaravelPdf\Enums\Orientation;
 use App\Models\Reservas\Reserva;
 use App\Services\Financeiro\CaixaService;
@@ -74,7 +75,7 @@ class PiController extends Controller
         $bs_ano = substr($bs_ini[0], 2, 2);
         $bs_fin = explode('-', $bisemana->fim);
         $bs_final = $bs_fin[2].'/'.$bs_fin[1].'/'.$bs_fin[0];
-        $bs_formated = 'BS: '. $bisemana->num_bisemana.' - '.$bs_ini[2].'/'.$bs_ini[1]. ' à '.$bs_fin[2].'/'.$bs_fin[1].'/'.$bs_ano;
+        $bs_formated = 'BS: '. $bisemana->num_bisemana.' - '.$bs_ini[2].'/'.$bs_ini[1]. ' a '.$bs_fin[2].'/'.$bs_fin[1].'/'.$bs_ano;
 
 
         $dt_atual = Carbon::today()->toDateString();
@@ -138,11 +139,14 @@ class PiController extends Controller
             if(!$pi) {
                 DB::beginTransaction();
 
+                $cliente_nome = $cliente->nome_fantasia ? $cliente->nome_fantasia : $cliente->razao_social;
+                $dt_pi = Carbon::today()->toDateString();
+
                 // Cria a PI
                 $pi = Pi::updateOrCreate([
                     'id_cliente' => session('dadosPi')['One']['clienteId'],
                     'id_paineis' => json_encode(session('dadosPi')['Two']['paineis']),
-                    'arquivo' => 'pi_'.$cliente->nome_fantasia.'_'.Carbon::today()->toDateString().'.pdf',
+                    'arquivo' => 'pi_'.$cliente_nome.'_'.$dt_pi.'.pdf',
                     'contato' => session('dadosPi')['One']['responsavel'],
                     'campanha' => session('dadosPi')['Two']['campanha'],
                     'id_bisemana' => session('dadosPi')['Two']['bisemanaId'],
@@ -171,6 +175,7 @@ class PiController extends Controller
 
             $qtdParcelas = session('dadosPi')['Two']['qtdParcelas'];
             $vl_parcela = $vl_total / $qtdParcelas;
+            $lista_lancamentos = [];
 
             // verifica se o lançamento já existe
             $lancamento_existe = $caixaService->getLancamentosReserva($pi->id);
@@ -194,17 +199,21 @@ class PiController extends Controller
                 // Cria o Request manualmente
                 $request_lancamento = new \Illuminate\Http\Request();
                 $request_lancamento->replace($lancamento);
+                
 
                 if(!$lancamento_existe) {
                     // Chama o método do serviço com o objeto Request
                     $caixaService->createLancamento($request_lancamento);
+                    array_push($lista_lancamentos, $lancamento);
                 } else {
                     $lancamento_existe->update($lancamento);
+                    array_push($lista_lancamentos, $lancamento);
                 }
 
             }
 
-
+            // dd($lista_lancamentos);
+ 
             foreach($reserva as $res) {
                 $res->update(['pi_id' => $pi->id]);
             }
@@ -217,17 +226,19 @@ class PiController extends Controller
                 $cliente_nome = $cliente->nome_fantasia ? $cliente->nome_fantasia : $cliente->razao_social;
                 $dt_pi = Carbon::today()->toDateString();
 
-                $pi =  Pdf::view('relatorios.pi.pi', compact('pi', 'cliente', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
-                'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor', 'dt_atual'))
-                ->orientation(Orientation::Landscape)->save(storage_path('app/public/pdf/pi' .'pi_'.$cliente_nome.'_'.$dt_pi.'.pdf'));
+                $pi =  PDF::loadview('relatorios.pi.pi_nova', compact('pi', 'cliente', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
+                'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor', 'dt_atual', 'lista_lancamentos'));
 
+                $pi->setPaper('a4', 'landscape');
 
-                return $pi;
-            }
+                $pi->save(storage_path('app/public/pdf/pi/pi_'.$cliente_nome.'_'.$dt_pi.'.pdf'));
 
+                return $pi->stream('paineis_bisemana.pdf');
+            } 
 
 
         } catch(\Exception $e) {
+            // return $e;
             return response()->json(['cod' => 0, 'msg' => $e->getMessage()]);
         }
 

@@ -14,7 +14,7 @@ use PDF;
 use DB;
 
 
-class RelPainXCliController extends Controller
+class RelPainXCliController extends Controller 
 {
 
     public function __construct() {

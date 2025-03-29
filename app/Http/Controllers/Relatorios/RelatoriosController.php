@@ -156,10 +156,8 @@ class RelatoriosController extends Controller
                                                                             'user'
                 ));
 
-                // $orientacao = (session('orientacao') === 'R') ? '' : 'landscape';
-
-
-        return $pdf->setPaper('a4')->stream('Painéis_'.$clienteNome.'_BS-'.$numBisemana.'_'.$time.'.pdf');
+        $orientation = session('orientacao') === 'R' ? 'portrait' : 'landscape';
+        return $pdf->setPaper('a4', $orientation)->stream('Painéis_'.$clienteNome.'_BS-'.$numBisemana.'_'.$time.'.pdf');
 
     }
 

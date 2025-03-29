@@ -4,6 +4,8 @@ use App\Http\Controllers\Api\LoginControllerDomains;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Paineis\PaineisController;
+use App\Http\Controllers\SalesController;
+use App\Http\Controllers\CustomerReservationsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,3 +25,6 @@ use App\Http\Controllers\Paineis\PaineisController;
 // Route::get('users', [LoginControllerDomains::class, 'index']); 
 
 route::get('/Paineis', [PaineisController::class, 'indexApi'])->name('api.lista.paineis');
+// Add this route to your existing routes
+Route::get('/sales-by-biweek/{biweek}', [SalesController::class, 'getSalesByBiweek']);
+Route::get('/customer-reservations/{biweek}', [CustomerReservationsController::class, 'getCustomerReservationsByBiweek']);

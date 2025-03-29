@@ -37,3 +37,9 @@ function formatCep($cep) {
 function formataCash($value) {
     return 'R$ ' . number_format($value, 2, ',', '.');
 }
+
+// formata para data no formato dd/mm/yyyy
+function formataData($data) {
+    $data = explode('-', $data);
+    return $data[2].'/'.$data[1].'/'.$data[0];
+}

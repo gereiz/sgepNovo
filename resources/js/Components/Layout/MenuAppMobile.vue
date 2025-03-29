@@ -84,7 +84,7 @@
                     <li class="hover:text-slate-400"><a href="/ReservaCliente">Reservas por Cliente</a></li>
                     <li class="hover:text-slate-400"><a href="/PaineisCliente">Painéis por Cliente</a></li>
                     <!-- <li class="hover:text-slate-400"><a href="https://old.sgepequipe.com/relPainelCliente" >Painéis por Cliente2</a></li> -->
-                    <li class="hover:text-slate-400"><a href="https://old.sgepequipe.com/relPainelBisemana" >Painéis por Bisemana</a></li>
+                    <li class="hover:text-slate-400"><a href="/RelPainelBisemana" >Painéis por Bisemana</a></li>
                     <li class="hover:text-slate-400"><a href="https://old.sgepequipe.com/relClienteXbisemana" >Clientes por Bisemana</a></li>
                 </ul>
             </div>

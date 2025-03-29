@@ -3,20 +3,16 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, usePage } from '@inertiajs/vue3';
 import {ref, reactive, watch, computed, onMounted} from 'vue';
 import { useToastr } from '@/Components/toastr';
-import AddReserva from './Components/AddReserva.vue';
-import DelReserva from "@/Pages/Reservas/Components/DelReserva.vue";
 import Multiselect from 'vue-multiselect'
 import GridPaineisSemPi from './ComponentsResSemPi/GridPaineisSemPi.vue';
-import ModalPiRes from "@/Pages/Reservas/Components/ModalPiRes.vue";
+import ModalPiRes from './Components/ModalPiRes.vue';
+import axios from 'axios';
 
 const props = defineProps(['ambiente', 'clientes', 'anos', 'bisemanas', 'paineis'])
 const page = usePage();
 
 const paineis = ref(props.paineis)
 const toastr = useToastr();
-
-const criaReserva = page.props.user.permissions.includes('criar reserva');
-const excluiReserva = page.props.user.permissions.includes('excluir reserva');
 
 const reservas = ref([]);
 const itemRefs = ref([])
@@ -33,10 +29,9 @@ const idAno = ref(0); // Inicializa a variável reativa
 let idCliente = ref('');
 let clienteSel = ref('');
 const idBisemana = ref(0);
+const reservasCampanha = ref([]);
+const reservasIdent = ref([]);
 
-
-const open = ref(false)
-const openD = ref(false)
 const openP = ref(false)
 
 onMounted(() => {
@@ -47,16 +42,13 @@ onMounted(() => {
         }
 })
 
-watch(idAno, (val) => {
+watch(idAno, () => {
     getBisemanas()
 })
 
-watch(idCliente, (val) => {
+watch(idCliente, () => {
     getReservasCli(idBisemana.value)
     clearChecked()
-
-
-
 })
 
 const clientesComReserva = computed(() => {
@@ -86,13 +78,10 @@ function clearChecked() {
 
     cardPaineis.forEach(painel => {
         painel.checked = false
-
     })
-
 }
 
 function getBisemanas() {
-
     axios.post('/getBisemanas', {anoId: idAno.value})
     .then(res =>{
 
@@ -100,16 +89,10 @@ function getBisemanas() {
         // bsDisabled.value = false
         idBisemana.value = 0
         reservas.value = []
-
-
-
     })
-
-
 }
 
 function getReservasSemPi(bs) {
-
     axios.post('/GetResSemPi', {
         bsId: bs,
         cliente: idCliente.value
@@ -124,12 +107,10 @@ function getReservasSemPi(bs) {
         if(idents.length == 0) {
             getIdent(paineis.value)
         }
-
     })
 }
 
 function getReservasCli(bs) {
-
     axios.post('/GetResSemPi', {
         bsId: bs,
         cliente: idCliente.value
@@ -139,7 +120,16 @@ function getReservasCli(bs) {
         reservas.value = res.data.reservas
         paineis.value = res.data.paineis
 
-        // console.log(res.data)
+        reservasCampanha.value = []
+        for (let i = 0; i < reservas.value.length; i++) {
+            reservasCampanha.value.push(reservas.value[i].campanha)
+        }
+
+        reservasIdent.value = []
+        for (let i = 0; i < reservas.value.length; i++) {
+            reservasIdent.value.push(reservas.value[i].identificacao)
+        }
+        
     })
     .catch((err) => {
         reservas.value = []
@@ -147,61 +137,29 @@ function getReservasCli(bs) {
         console.log(err)
     })
 
-    axios.post('/GetCliente', {cliente:idCliente.value})
+    getCliente(idCliente.value)
+}
+
+function getCliente(val) {
+    axios.post('/GetCliente', {cliente:val})
     .then((res) => {
         clienteSel.value = res.data
 
-
+        // openPi('t')
     })
+
 }
 
 function openPi(val)  {
     if(val == 't') {
         openP.value = true
-    } else
+     } else {
         openP.value = false
-
-}
-
-function openAdd(val) {
-    if(val === 't') {
-        open.value = true
-    } else {
-        open.value = false
-        getReservasCli(idBisemana.value)
-    }
-}
-
-const openDel = (val) => {
-    if(val === 't') {
-        openD.value = true
-    } else {
-        openD.value = false
-        getReservasCli(idBisemana.value)
-    }
-}
-
-const delReservaPI = () => {
-    console.log(checkedPaineisId.value.length, reservas.value.length)
-
-    if(checkedPaineisId.value.length == reservas.value.length) {
-        openD.value = true
-    } else {
-        toastr.error('Painéis com PI só podem ser exlcuídos, se forem todos os painéis da reserva')
-    }
-}
-
-const getChecked = (ev) => {
-    checkedPaineis.value = ev
-
-}
-
-const getCheckedId = (ev) => {
-    checkedPaineisId.value = ev
+     }
 }
 
 const getItemsRef = (ev) => {
-    itemRefs.value = ev
+    itemRefs.vaue = ev
 
 }
 
@@ -213,32 +171,6 @@ const bisemanaSelecionada = computed(() => {
 
     return bisemanaSelecionada
 })
-
-const reservasIdent = computed(() => {
-    let reservasIdent = reservas.value.map((reserva) => {
-        return reserva.identificacao
-    })
-
-    return reservasIdent
-})
-
-const reservasCampanha = computed(() => {
-    let reservasCampanha = reservas.value.map((reserva) => {
-        return reserva.campanha
-    })
-
-    return reservasCampanha
-})
-
-const reservaData = computed(() => {
-    let reservaData = reservas.value.map((reserva) => {
-        return reserva.dt_reserva
-    })
-
-    return reservaData[reservaData.length - 1]
-})
-
-
 
 
 </script>
@@ -252,7 +184,7 @@ const reservaData = computed(() => {
             <!-- Cabeçalho e barra de Pesquisa -->
             <div class="w-full h-14 flex mb-4">
                 <div class="sm:w-2/12 h-14 flex items-center">
-                    <h1 class="titulo">Reservas sem PI </h1> <p class="text-red-500 font-bold ml-2">{{ reservas.length }}</p>
+                    <h1 class="titulo">Reservas sem PI: </h1> <p class="text-red-500 font-bold ml-2">{{ reservas.length }}</p>
                     <!-- <h1 class="text-lg md:text-2xl text-red-400 font-bold ml-2 md:ml-4">{{ paineis.length }}</h1> -->
                 </div>
             </div>
@@ -314,28 +246,30 @@ const reservaData = computed(() => {
 
 
             </div>
-
+            <!-- {{paineis}} -->
             <!-- Card Principal -->
             <div class="card w-full h-full max-h-[68vh] md:max-h-[90vh] bg-base-100 shadow-xl overflow-auto rounded-md">
                 <div class="card-body flex flex-col sm:flex-row">
                     <!-- Paineis -->
                     <GridPaineisSemPi :reservas="reservas"
                                         :clientes="clientesComReserva"
-                                        @paineisChecked="getChecked"
-                                        @paineisCheckedId="getCheckedId"
-                                        @itemRefs="getItemsRef">
+                                        :paineis="reservas"
+                                        :clienteSel="idCliente"
+                                        @itemRefs="getItemsRef"
+                                        @clienteSel="getCliente"
+                                        @geraPi="openPi">
 
                     </GridPaineisSemPi>
 
-
-                    <!-- <ModalPiRes :openPi="openP"
-                                :cliente="clienteSel"
+                    <ModalPiRes :openPi="openP"
+                                :cliente="idCliente"
                                 :campanha="reservasCampanha"
                                 :bisemana="bisemanaSelecionada"
                                 :paineis="reservasIdent"
                                 :dataReserva="reservaData"
                                 @closePi="openPi">
-                    </ModalPiRes> -->
+                    </ModalPiRes>
+                    
 
                 </div>
             </div>
