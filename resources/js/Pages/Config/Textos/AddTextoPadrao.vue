@@ -145,8 +145,8 @@ function getTextoPadrao() {
     .then((response) => {
         console.log(response.data);
         textoTitulo.value = response.data.title;
-        // textoConteudo.value = response.data.content;
-        tipoTexto.value = response.data.tipo;
+        tipoTexto.value = response.data.type;
+        ativo.value = response.data.active ? true : false;
         disabledForm.value = false;
         
         // Atualiza o editor Trix com o conteúdo recuperado
