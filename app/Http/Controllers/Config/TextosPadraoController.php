@@ -7,6 +7,9 @@ use App\Models\Textos\TipoTexto;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Services\Texto\TextoService;
+use App\Models\Textos\TextoPadrao;
+
+
 
 class TextosPadraoController extends Controller
 {
@@ -45,6 +48,31 @@ class TextosPadraoController extends Controller
     public function deleteTipoTexto(Request $request) {
         $tipo_texto = $this->textoService->deleteTipoTexto($request);
         return $tipo_texto;
+    }
+
+    public function textoPadrao() {
+        $tipo_texto = TipoTexto::all();
+        $texto_padrao = TextoPadrao::all();
+
+        return Inertia::render('Config/Textos/AddTextoPadrao', compact('tipo_texto', 'texto_padrao'));
+    }
+
+    public function addOrEditTextoPadrao(Request $request) {
+        
+        $texto = $this->textoService->addOrEditTextoPadrao($request);
+        
+        return $texto;
+
+    }
+
+    public function getTextoPadrao(Request $request) {
+        $texto = $this->textoService->getTextoPadrao($request);
+        return $texto;
+    }
+
+    public function deleteTextoPadrao(Request $request) {
+        $texto = $this->textoService->deleteTextoPadrao($request);
+        return $texto;
     }
 
 }

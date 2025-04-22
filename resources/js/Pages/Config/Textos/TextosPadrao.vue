@@ -41,7 +41,7 @@ const toastr = useToastr();
                             :link="'/TipoTexto'">   
                 </BtnConfig>
                 <BtnConfig  :title="'Textos cadastrados'"
-                            :link="'/TextosPadrao'">   
+                            :link="'/TextoPadrao'">   
                 </BtnConfig>
             </div>
         </div>

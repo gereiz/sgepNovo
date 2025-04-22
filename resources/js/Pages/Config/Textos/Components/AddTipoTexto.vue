@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch, shallowRef } from 'vue'
 import { useToastr } from '@/Components/toastr.js';
+import Swal from 'sweetalert2';
 
 
 import { XMarkIcon } from '@heroicons/vue/24/outline'
@@ -43,13 +44,65 @@ function closeM() {
 }
 
 function AddOrEditTipoTexto() {
+    // Verifica se é uma atualização (se já existe um ID)
+    const isUpdate = tipoTexto.value && tipoTexto.value.id;
+    
+    // Se for atualização, mostra confirmação
+    if (isUpdate) {
+        Swal.fire({
+            title: 'Confirmação',
+            text: 'Já existe um tipo de texto com este nome. O registro será atualizado em vez de criar um novo. Deseja continuar?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, atualizar!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                saveData();
+            }
+        });
+    } else {
+        // Verifica se já existe um tipo com o mesmo nome
+        axios.post('/verificaTipoTexto', {
+            nome: nome.value
+        })
+        .then((response) => {
+            if (response.data && response.data.exists) {
+                Swal.fire({
+                    title: 'Confirmação',
+                    text: 'Já existe um tipo de texto com este nome. O registro será atualizado em vez de criar um novo. Deseja continuar?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sim, atualizar!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        saveData();
+                    }
+                });
+            } else {
+                saveData();
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+            saveData(); // Em caso de erro na verificação, tenta salvar mesmo assim
+        });
+    }
+}
+
+function saveData() {
     axios.post('/addOrEditTipoTexto', {
         id: tipoTexto.value.id,
         nome: nome.value,
         descricao: descricao.value
     })
     .then((response) => {
-        toastr.success('Tipo de texto adicionado com sucesso!')
+        toastr.success('Tipo de texto ' + (tipoTexto.value.id ? 'atualizado' : 'adicionado') + ' com sucesso!')
         nome.value = ''
         descricao.value = ''
         closeM() 
@@ -60,7 +113,7 @@ function AddOrEditTipoTexto() {
         
     })
    .catch((error) => {
-        toastr.error('Erro ao adicionar tipo de texto!')
+        toastr.error('Erro ao ' + (tipoTexto.value.id ? 'atualizar' : 'adicionar') + ' tipo de texto!')
         nome.value = ''
         descricao.value = ''
         // closeM()

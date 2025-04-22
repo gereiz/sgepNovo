@@ -261,9 +261,13 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::post('/addOrEditTipoTexto', [TextosPadraoController::class, 'addOrEditTipoTexto']);
     route::post('/getTipoTexto', [TextosPadraoController::class, 'getTipoTexto']);
     route::post('/deleteTipoTexto', [TextosPadraoController::class, 'deleteTipoTexto']);
-    
-    
-    
+    route::get('/TextoPadrao', [TextosPadraoController::class, 'textoPadrao']);
+    route::post('/addOrEditTextoPadrao', [TextosPadraoController::class, 'addOrEditTextoPadrao']);
+    route::post('/getTextoPadrao', [TextosPadraoController::class, 'getTextoPadrao']);
+    route::post('/deleteTextoPadrao', [TextosPadraoController::class, 'deleteTextoPadrao']);
+
+
+
     
 
 });
