@@ -11,7 +11,7 @@ class TextoPadrao extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $table = 'textos_padrao';
+    protected $table = 'texto_padrao';
 
     protected $fillable = [
         'title',

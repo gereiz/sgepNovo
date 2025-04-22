@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('textos_padrao', function (Blueprint $table) {
+        Schema::create('texto_padrao', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->text('content');
-            $table->boolean('tipo');
+            $table->boolean('type');
+            $table->boolean('active')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('textos_padrao');
+        Schema::dropIfExists('texto_padrao');
     }
 };

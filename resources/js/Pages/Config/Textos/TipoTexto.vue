@@ -55,6 +55,13 @@ function deleteTipoTexto() {
             window.location.reload()
         }, 2000);
     })
+    .catch((error) => {
+        if (error.response && error.response.data && error.response.data.message) {
+            toastr.error(error.response.data.message)
+        } else {
+            toastr.error('Este tipo de texto não pode ser excluído pois está em utilização!')
+        }
+    })
 }
 
 

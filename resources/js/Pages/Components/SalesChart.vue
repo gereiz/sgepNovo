@@ -44,7 +44,7 @@ const updateChartData = () => {
     if (props.salesData && props.salesData.length > 0) {
         totalReservations.value = props.salesData.reduce((sum, item) => sum + item.total_reservations, 0);
         chartData.value = {
-            labels: props.salesData.map(item => `${item.seller_name} (${item.total_panels || 0} painéis)`),
+            labels: props.salesData.map(item => `${item.seller_name} (${item.total_reservations || 0} painéis)`),
             datasets: [{
                 data: props.salesData.map(item => item.total_reservations),
                 backgroundColor: [
