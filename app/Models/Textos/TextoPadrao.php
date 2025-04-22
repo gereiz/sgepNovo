@@ -16,7 +16,8 @@ class TextoPadrao extends Model
     protected $fillable = [
         'title',
         'content',
-        'tipo'
+        'type',
+        'active',
     ];
 
     protected $softDelete = true;

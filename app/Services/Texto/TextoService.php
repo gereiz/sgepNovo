@@ -93,14 +93,10 @@ class TextoService {
 
         try {
             // Verificar se já existe um texto padrão com o mesmo título
-            $texto_existente = TextoPadrao::where('title', $request->titulo)
-                ->when($request->id, function($query) use ($request) {
-                    // Excluir o registro atual da verificação em caso de edição
-                    return $query->where('id', '!=', $request->id);
-                })
-                ->first();
+            $texto_existente = TextoPadrao::where('id', $request->id)->first();
             
             if ($texto_existente) {
+                // dd($request->all());
                 // Se já existe um texto com o mesmo título, atualiza o registro existente
                 $texto = TextoPadrao::updateOrCreate(
                     ['id' => $texto_existente->id],
@@ -108,7 +104,7 @@ class TextoService {
                         'title' => $request->titulo,
                         'content' => $request->conteudo,
                         'type' => $request->tipo_texto_id,
-                        'active' => $request->ativo ? 1 : 0,
+                        'active' => $request->ativo,
                     ]
                 );
             } else {
