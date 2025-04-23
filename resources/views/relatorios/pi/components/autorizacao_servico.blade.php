@@ -1,48 +1,74 @@
 <table class="table" style="border-collapse: collapse; width: 100%;">
     <thead> 
-        <tr style="background: #e6e6e6;">
-            <th class="text-center font-italic py-0" colspan="6" style="border: 1px solid #cfcfcf; font-size: 12px; padding: 1px 4px;">AUTORIZAÇÃO DE SERVIÇO</th>
+        <tr>
+            <th style="width: 50%; border: 1px solid #cfcfcf; padding: 0;">
+                <table style="border-collapse: collapse; width: 100%;">
+                    <tr style="background: #e6e6e6;">
+                        <th class="text-center font-italic py-0" colspan="6" style="border-bottom: 1px solid #cfcfcf; font-size: 12px; padding: 1px 4px;">CLIENTE</th>
+                    </tr>
+                </table>
+            </th>
+            <th style="width: 50%; border: 1px solid #cfcfcf; padding: 0;">
+                <table style="border-collapse: collapse; width: 100%;">
+                    <tr style="background: #e6e6e6;">
+                        <th class="text-center font-italic py-0" colspan="6" style="border-bottom: 1px solid #cfcfcf; font-size: 12px; padding: 1px 4px;">VEÍCULO</th>
+                    </tr>
+                </table>
+            </th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td style="width: 12%; border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px; font-weight: bold;">Razão Social</td>
-            <td style="width: 28%; border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{$cliente->razao_social}}</td>
-            <td style="width: 12%; border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px; font-weight: bold;">Nome Fantasia</td>
-            <td style="width: 18%; border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{$cliente->nome_fantasia}}</td>
-            <td style="width: 8%; border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px; font-weight: bold;">CNPJ</td>
-            <td style="width: 12%; border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{formatCpfCnpj($cliente->cpf_cnpj)}}</td>
+            <td style="width: 50%; vertical-align: top; padding: 0; border: 1px solid #cfcfcf;">
+                <!-- Coluna do Cliente -->
+                <table style="border-collapse: collapse; width: 100%;">
+                    <tr>
+                        <td style="width: 100%; font-size: 11px; padding: 2px 4px;"><span style="font-weight: bold;">CLIENTE: </span>{{$cliente->razao_social}}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 60%; font-size: 11px; padding: 2px 4px;"><span style="font-weight: bold;">CNPJ: </span> {{formatCpfCnpj($cliente->cpf_cnpj)}}</td>
+                        <td style="width: 40%; font-size: 11px; padding: 2px 4px;"><span style="font-weight: bold;">I.E.: </span> {{$cliente->nro_insc}}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 70%; font-size: 11px; padding: 2px 4px;"><span style="font-weight: bold;">ENDEREÇO: </span>{{$cliente->endereco}}</td>
+                        <td style="width: 30%; font-size: 11px; padding: 2px 4px;"><span style="font-weight: bold;">Nº: </span>{{$cliente->num}}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 60%; font-size: 11px; padding: 2px 4px;"><span style="font-weight: bold;">BAIRRO: </span>{{$bairro->nome}}</td>
+                        <td style="width: 40%; font-size: 11px; padding: 2px 4px;"><span style="font-weight: bold;">COMPLEMTENTO: </span>{{$cliente->complemento ?? ''}}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 50%; font-size: 11px; padding: 2px 4px;"><span style="font-weight: bold;">CIDADE: </span>{{$cidade->nome}}</td>
+                        <td style="width: 10%; font-size: 11px; padding: 2px 4px;"><span style="font-weight: bold;">UF: </span>{{$uf->sigla}}</td>
+                        <td style="width: 40%; font-size: 11px; padding: 2px 4px;"><span style="font-weight: bold;">CEP: </span>{{formatCep($cliente->cep)}}</td>
+                    </tr>
+                </table>
+            </td>
+            <td style="width: 50%; vertical-align: top; padding: 0; border: 1px solid #cfcfcf;">
+                <!-- Coluna do Veículo (Parceiros) -->
+                <table style="border-collapse: collapse; width: 100%;">
+                    <tr>
+                        <td style="width: 100%; font-size: 11px; padding: 2px 4px;"><span style="font-weight: bold;">CLIENTE: </span>{{$cliente->razao_social}}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 60%; font-size: 11px; padding: 2px 4px;"><span style="font-weight: bold;">CNPJ: </span> {{formatCpfCnpj($cliente->cpf_cnpj)}}</td>
+                        <td style="width: 40%; font-size: 11px; padding: 2px 4px;"><span style="font-weight: bold;">I.E.: </span> {{$cliente->nro_insc}}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 70%; font-size: 11px; padding: 2px 4px;"><span style="font-weight: bold;">ENDEREÇO: </span>{{$cliente->endereco}}</td>
+                        <td style="width: 30%; font-size: 11px; padding: 2px 4px;"><span style="font-weight: bold;">Nº: </span>{{$cliente->num}}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 60%; font-size: 11px; padding: 2px 4px;"><span style="font-weight: bold;">BAIRRO: </span>{{$bairro->nome}}</td>
+                        <td style="width: 40%; font-size: 11px; padding: 2px 4px;"><span style="font-weight: bold;">COMPLEMTENTO: </span>{{$cliente->complemento ?? ''}}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 50%; font-size: 11px; padding: 2px 4px;"><span style="font-weight: bold;">CIDADE: </span>{{$cidade->nome}}</td>
+                        <td style="width: 10%; font-size: 11px; padding: 2px 4px;"><span style="font-weight: bold;">UF: </span>{{$uf->sigla}}</td>
+                        <td style="width: 40%; font-size: 11px; padding: 2px 4px;"><span style="font-weight: bold;">CEP: </span>{{formatCep($cliente->cep)}}</td>
+                    </tr>
+                </table>
+            </td>
         </tr>
-        <tr>
-            <td style="width: 8%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px; font-weight: bold;">Endereço</td>
-            <td style="width: 70%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px;" colspan="3">{{$cliente->endereco}} nº {{$cliente->num}} Bairro: {{$bairro->nome}}</td>
-            <td style="width: 10%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px; font-weight: bold;">Insc. Estadual</td>
-            <td style="width: 12%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px;">{{$cliente->nro_insc}}</td>
-        </tr>
-        <tr>
-            <td style="width: 8%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px; font-weight: bold;">Cidade</td>
-            <td style="width: 32%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px;">{{$cidade->nome}}</td>
-            <td style="width: 5%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px; font-weight: bold;">UF</td>
-            <td style="width: 30%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px;">{{$uf->sigla}}</td>
-            <td style="width: 10%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px; font-weight: bold;">CEP</td>
-            <td style="width: 15%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px;">{{formatCep($cliente->cep)}}</td>
-        </tr>
-        <tr>
-            <td style="width: 8%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px; font-weight: bold;">Telefone</td>
-            <td style="width: 32%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px;">{{formatPhone($cliente->telefone)}}</td>
-            <td style="width: 5%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px; font-weight: bold;">Email</td>
-            <td style="width: 35%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px;">{{$cliente->email}}</td>
-            <td style="width: 5%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px; font-weight: bold;">Campanha</td>
-            <td style="width: 15%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px;">{{$campanha}}</td>
-        </tr>
-        <tr>
-            <td style="width: 8%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px; font-weight: bold;">Contato</td>
-            <td style="width: 32%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px;">{{$cliente->responsavel}}</td>
-            <td style="width: 5%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px; font-weight: bold;">Tel. Contato</td>
-            <td style="width: 35%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px;">{{formatPhone($cliente->tel_responsavel)}}</td>
-            <td style="width: 5%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px; font-weight: bold;">-----</td>
-            <td style="width: 15%; border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px;">-----</td>
-        </tr>
-
     </tbody>
 </table>
