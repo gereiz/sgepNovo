@@ -38,10 +38,10 @@ const toastr = useToastr();
                            :link="'/AddAno'"> 
                 </BtnConfig> -->
                 <BtnConfig  :title="'Tipos de Texto'"
-                            :link="'/TipoTexto'">   
+                            :link="'./tipoTexto'">   
                 </BtnConfig>
                 <BtnConfig  :title="'Textos cadastrados'"
-                            :link="'/TextoPadrao'">   
+                            :link="'./textoPadrao'">   
                 </BtnConfig>
             </div>
         </div>

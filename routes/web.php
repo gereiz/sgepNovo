@@ -173,11 +173,6 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::any('/storePi', [PiController::class, 'storePi']);
 
 
-    // Configurações
-    route::get('/Config', [ConfiguracoesController::class, 'index']);
-    route::post('/AddAno', [ConfiguracoesController::class, 'AddAno'])->name('add.ano');
-
-
         // Relatórios
     // Dispopnibilidade
     route::post('/setData', [RelatoriosController::class, 'setData']);
@@ -208,18 +203,6 @@ route::middleware(['auth', 'verified'])->group(function () {
 
 
 
-    // Roles
-    route::get('/roles', [RolesController::class, 'index']);
-    route::post('/createRole', [RolesController::class, 'createRole']);
-    route::post('/updateRole', [RolesController::class, 'updateRole']);
-    route::get('/getRoles', [RolesController::class, 'getRoles']);
-    route::post('/deleteRole', [RolesController::class, 'deleteRole']);
-
-    // Permissions
-    route::get('/getPermissions ', [RolesController::class, 'getPermissions']);
-    route::post('/setPermissions', [RolesController::class, 'setPermissions']);
-
-
     // Arquivos
     route::get('/PisGeradas', [ArquivosController::class, 'index']);
     route::post('/getPiBs', [ArquivosController::class, 'getPiBs']);
@@ -238,34 +221,44 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::any('/getRelColagem', [RelColagemController::class, 'getRelColagem']);
 
 
-    // Roles
-    route::get('/roles', [RolesController::class, 'index']);
-    route::post('/createRole', [RolesController::class, 'createRole']);
-    route::post('/updateRole', [RolesController::class, 'updateRole']);
-    route::get('/getRoles', [RolesController::class, 'getRoles']);
-    route::post('/deleteRole', [RolesController::class, 'deleteRole']);
-
-    // Permissions
-    route::get('/getPermissions ', [RolesController::class, 'getPermissions']);
-    route::post('/setPermissions', [RolesController::class, 'setPermissions']);
-
-
     // Arquivos
     route::get('/PisGeradas', [ArquivosController::class, 'index']);
     route::post('/getPiBs', [ArquivosController::class, 'getPiBs']);
 
     
-    // Textos Padrão
-    route::get('/TextosPadrao', [TextosPadraoController::class, 'index']);
-    route::get('/TipoTexto', [TextosPadraoController::class, 'tipoTexto']);
-    route::post('/addOrEditTipoTexto', [TextosPadraoController::class, 'addOrEditTipoTexto']);
-    route::post('/getTipoTexto', [TextosPadraoController::class, 'getTipoTexto']);
-    route::post('/deleteTipoTexto', [TextosPadraoController::class, 'deleteTipoTexto']);
-    route::get('/TextoPadrao', [TextosPadraoController::class, 'textoPadrao']);
-    route::post('/addOrEditTextoPadrao', [TextosPadraoController::class, 'addOrEditTextoPadrao']);
-    route::post('/getTextoPadrao', [TextosPadraoController::class, 'getTextoPadrao']);
-    route::post('/deleteTextoPadrao', [TextosPadraoController::class, 'deleteTextoPadrao']);
+   
 
+    // Configurações
+    Route::prefix('config')->group(function () {
+        route::get('/', [ConfiguracoesController::class, 'index']);
+        route::post('/addAno', [ConfiguracoesController::class, 'AddAno'])->name('add.ano');
+
+        // Roles
+        route::get('/roles', [RolesController::class, 'index']);
+        route::post('/createRole', [RolesController::class, 'createRole']);
+        route::post('/updateRole', [RolesController::class, 'updateRole']);
+        route::get('/getRoles', [RolesController::class, 'getRoles']);
+        route::post('/deleteRole', [RolesController::class, 'deleteRole']);
+
+        // Permissions
+        route::get('/getPermissions ', [RolesController::class, 'getPermissions']);
+        route::post('/setPermissions', [RolesController::class, 'setPermissions']);
+
+
+        // Textos Padrão
+        route::get('/textosPadrao', [TextosPadraoController::class, 'index']);
+        route::get('/tipoTexto', [TextosPadraoController::class, 'tipoTexto']);
+        route::post('/addOrEditTipoTexto', [TextosPadraoController::class, 'addOrEditTipoTexto']);
+        route::post('/getTipoTexto', [TextosPadraoController::class, 'getTipoTexto']);
+        route::post('/deleteTipoTexto', [TextosPadraoController::class, 'deleteTipoTexto']);
+        route::get('/textoPadrao', [TextosPadraoController::class, 'textoPadrao']);
+        route::post('/addOrEditTextoPadrao', [TextosPadraoController::class, 'addOrEditTextoPadrao']);
+        route::post('/getTextoPadrao', [TextosPadraoController::class, 'getTextoPadrao']);
+        route::post('/deleteTextoPadrao', [TextosPadraoController::class, 'deleteTextoPadrao']);
+
+
+
+    });
 
 
     

@@ -5,8 +5,7 @@ namespace App\Http\Controllers\Financeiro;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-
-use App\Models\Financeiro\Servico;
+use App\Models\Clientes\Cliente;
 use App\Services\FinanceiroService;
 use App\Services\UsuarioService;
 
@@ -18,13 +17,12 @@ class ComissoesController extends Controller
     public function __construct(FinanceiroService $financeiroService, UsuarioService $usuarioService)
     {
         $this->financeiroService = $financeiroService;
-        $this->usuarioService = $usuarioService;
     }
 
     public function index()
     {
         $servicos = $this->financeiroService->listaServicos();
-        $usuarios = $this->usuarioService->listaUsuarios();
+        $usuarios = Cliente::where('ativo', 1)->where('agent', 1)->get(); // TODO: trocar por service
         $funcoes = $this->financeiroService->listaFuncoes();
         $comissoes = $this->financeiroService->listaComissoes();
 

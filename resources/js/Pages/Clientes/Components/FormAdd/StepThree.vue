@@ -12,7 +12,8 @@ const cliente = ref(props.clienteEdit)
 const respCli = ref({responsavel: '', 
                      telResp: '',
                      emailResp: '',
-                     idCliente: cliente.value.id
+                     idCliente: cliente.value.id,
+                     agent: cliente.value.agent ? true : false,
                      })
 
 onMounted(() => {
@@ -72,7 +73,7 @@ function sendFormThree() {
 
 
 <template>
-    <div class="w-full flex flex-col items-center justify-center space-y-8">
+    <div class="w-full flex flex-col items-start justify-start space-y-8">
        
         <div class="w-full flex flex-wrap justify-center space-x-0 sm:space-x-6 space-y-8 sm:space-y-0">
             <div class="w-full sm:w-4/12">
@@ -103,8 +104,34 @@ function sendFormThree() {
                 </div>
             </div>
 
-            
         </div>
+
+        <div class="w-full flex items-start justify-start mb-4">
+                <!-- <div class="w-2/12 flex flex-col items-start">
+                    <span >Ativo</span>
+                    <label class="cursor-pointer">
+                        <input v-model="respCli.ativo" 
+                                :disabled="disabledForm" 
+                                @click="ativo = !ativo"
+                                type="checkbox" 
+                                class="checkbox checkbox-lg checkbox-success border-2 border-gray-400" 
+                        />
+                    </label>
+                </div> -->
+
+                <div class="w-2/12 flex flex-col items-start">
+                    <span >Agente</span>
+                    <label class="cursor-pointer">
+                        <input v-model="respCli.agent" 
+                                :disabled="disabledForm" 
+                                @click="ativo = !ativo"
+                                type="checkbox" 
+                                class="checkbox checkbox-lg checkbox-success border-2 border-gray-400" 
+                        />
+                    </label>
+                </div>
+                
+            </div>
 
         
         <div class="mt-5 sm:mt-6 w-full space-y-4 border-t border-gray-200 pt-4">
