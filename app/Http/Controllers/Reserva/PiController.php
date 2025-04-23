@@ -13,9 +13,7 @@ use App\Models\Bisemanas\Bisemana;
 use App\Models\Paineis\Painel;
 use App\Services\ClienteService;
 use App\Services\UsuarioService;
-// use Spatie\LaravelPdf\Facades\Pdf;
-use PDF;
-use \Spatie\LaravelPdf\Enums\Orientation;
+use Barryvdh\DomPDF\Facade\PDF;
 use App\Models\Reservas\Reserva;
 use App\Services\Financeiro\CaixaService;
 use Illuminate\Support\Facades\DB;
@@ -211,7 +209,7 @@ class PiController extends Controller
                 }
 
             }
-
+ 
             // dd($lista_lancamentos);
  
             foreach($reserva as $res) {
