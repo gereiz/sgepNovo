@@ -76,6 +76,8 @@ FormCliThree.value.responsavel = ev.responsavel
 FormCliThree.value.tel_resp = ev.telResp
 FormCliThree.value.email_resp = ev.emailResp
 FormCliThree.value.idCliente = ev.idCliente
+// FormCliThree.value.ativo = ev.ativo
+FormCliThree.value.agent = ev.agent
 
 localStorage.setItem('formThree', JSON.stringify(FormCliThree.value))
 

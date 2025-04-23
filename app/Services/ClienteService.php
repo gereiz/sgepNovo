@@ -34,12 +34,12 @@ class ClienteService
         $tel_responsavel = str_replace(['(', ')', ' ', '-'], '', $request->form['sThree']['tel_resp']);
 
         $cpf_cnpj = str_replace(['.', '-', '/'], '', $request->form['sOne']['cpf_cnpj']);
-
-        $cliente = Cliente::updateOrCreate(['cpf_cnpj' => $cpf_cnpj],
+        // dd($request->all());
+        Cliente::updateOrCreate(['cpf_cnpj' => $cpf_cnpj],
         [
             'razao_social' => $request->form['sOne']['r_social'],
             'nome_fantasia' => $request->form['sOne']['n_fantasia'],
-            'cpf_cnpj' => $request->form['sOne']['cpf_cnpj'],
+            'cpf_cnpj' => $cpf_cnpj,
             'nro_insc' => $request->form['sOne']['insc_est'],
 
             'endereco' => $request->form['sTwo']['ender'],
@@ -56,7 +56,8 @@ class ClienteService
             'telefone' => $tel_responsavel,
             'celular' => $tel_responsavel,
             'tipo' => 1,
-            'ativo' => 1 // isset($request->form['sOne']ativo)? 1 : 0;
+            'ativo' => 1, // isset($request->form['sThree']['ativo']) ? 1 : 0,
+            'agent' => $request->form['sThree']['agent'],
         ]);
 
 

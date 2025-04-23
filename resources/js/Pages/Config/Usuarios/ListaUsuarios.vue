@@ -23,7 +23,7 @@ function openAdd(val) {
     } else {
         open.value = false
 
-        window.location.reload()
+        // window.location.reload()
     }
 }
 
@@ -44,8 +44,13 @@ function openAdd(val) {
                     <h1 class="text-lg md:text-2xl text-red-400 font-bold ml-2 md:ml-4">{{usuarios.length}}</h1>
                 </div>
 
-                <div class="w-10/12 flex justify-end">
-                    <label v-if="criaUsuario" for="modal-cliente-add" class="w-32 botao-modal text-sm" @click="openAdd('t')">+ Novo Usuário</label>
+                <div class="w-10/12 flex justify-end me-4 md:me-0">
+                    <!-- <label v-if="criaUsuario" for="modal-cliente-add" class="w-32 botao-modal text-sm" @click="openAdd('t')">+ Novo Usuário</label> -->
+
+                    <button v-if="criaUsuario" for="modal-cliente-add"  @click="openAdd('t')" class="btn btn-base btn-square btn-success 
+                        text-white tooltip tooltip-left" data-tip="Adicionar Novo Usuário">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
                 </div>
             </div>
 

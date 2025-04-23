@@ -156,7 +156,7 @@ class FinanceiroService
     }
 
 
-    // Comissões por usuário
+    // Comissões por usuário 
     public function cadastraComissaoUsuario(Request $request)
     {
         $comissao = Comissao::updateOrCreate(

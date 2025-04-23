@@ -68,7 +68,7 @@
                                 <div class="w-6/12">
                                     <p class="text-xs sm:text-xl font-extrabold">
                                         <span class="text-red-500">
-                                            {{usuario.name}}
+                                            {{usuario.nome_fantasia ? usuario.nome_fantasia : usuario.razao_social}}
                                         </span>
                                     </p>
 

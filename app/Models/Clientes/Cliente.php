@@ -31,6 +31,7 @@ class Cliente extends Model
                 'celular',
                 'tipo',
                 'ativo',
+                'agent'
     ];
 
 
