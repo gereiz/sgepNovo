@@ -17,7 +17,7 @@ use Barryvdh\DomPDF\Facade\PDF;
 use App\Models\Reservas\Reserva;
 use App\Services\Financeiro\CaixaService;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use App\Models\Clientes\Cliente;
 
 class PiController extends Controller
 {
@@ -30,7 +30,6 @@ class PiController extends Controller
     }
 
     public function sessionData(Request $request) {
-
 
         if($request->cliente) {
             session(['cliente' => $request->cliente]);
@@ -52,18 +51,26 @@ class PiController extends Controller
 
 
     public function storePi() {
-
         $idPaineis = session('dadosPi')['Two']['paineis'];
         $bsId = session('dadosPi')['Two']['bisemanaId'];
 
 
         $cliente = $this->clienteService->getCliente(session('dadosPi')['One']['clienteId']);
-        $data_pgto_formated = explode('-', session('dadosPi')['Two']['dtPgto']);
+        $data_pgto_formated = explode('-', session('dadosPi')['Four']['dtPgto']);
         $data_pgto_formated = $data_pgto_formated[2].'/'.$data_pgto_formated[1].'/'.$data_pgto_formated[0];
         $campanha = session('dadosPi')['Two']['campanha'];
 
-        if(session('dadosPi')['Two']['servicos'] != []) {
-            $detalhes = session('dadosPi')['Two']['servicos'][0]['detalhes'];
+        $agentes = [];
+
+        foreach (session('dadosPi')['Two']['agentesId'] as $ag) {
+            $agente = Cliente::where('agent', 1)->where('id', $ag)->first();
+
+            array_push($agentes, $agente);
+        }
+
+
+        if(session('dadosPi')['Four']['servicos'] != []) {
+            $detalhes = session('dadosPi')['Four']['servicos'][0]['detalhes'];
         }
 
         $bisemana = Bisemana::where('id', session('dadosPi')['Two']['bisemanaId'])->first();
@@ -85,10 +92,10 @@ class PiController extends Controller
         $cidade = Cidade::where('id', $cliente->cidade)->first();
         $uf = UF::where('id', $cliente->uf)->first();
 
-        $servicos = session('dadosPi')['Two']['servicos'];
+        $servicos = session('dadosPi')['Four']['servicos'];
 
-        $forma_pagamento = session('dadosPi')['Two']['formaPgto'];
-        $pagamento = session('dadosPi')['Two']['pgto'];
+        $forma_pagamento = session('dadosPi')['Four']['formaPgto'];
+        $pagamento = session('dadosPi')['Four']['pgto'];
 
         if(isset(session('dadosPi')['Three'])) {
             $faturamento = session('dadosPi')['Three'];
@@ -171,7 +178,7 @@ class PiController extends Controller
 
             // Cria o lançamento no caixa
 
-            $qtdParcelas = session('dadosPi')['Two']['qtdParcelas'];
+            $qtdParcelas = session('dadosPi')['Four']['qtdParcelas'];
             $vl_parcela = $vl_total / $qtdParcelas;
             $lista_lancamentos = [];
 
@@ -187,7 +194,7 @@ class PiController extends Controller
 
                     'valor' => $vl_parcela,
                     'parcelas' => $i . '/' . $qtdParcelas,
-                    'data_lancamento' => date('Y-m-d', strtotime(session('dadosPi')['Two']['dtPgto'] . ' + ' . $i . ' month')),
+                    'data_lancamento' => date('Y-m-d', strtotime(session('dadosPi')['Four']['dtPgto'] . ' + ' . $i . ' month')),
                     'centro_custo' => 1,
                     'tipo_lancamento' => 1,
                     'id_reserva' => $pi->id,
@@ -210,21 +217,20 @@ class PiController extends Controller
 
             }
  
-            // dd($lista_lancamentos);
  
             foreach($reserva as $res) {
                 $res->update(['pi_id' => $pi->id]);
             }
 
             DB::commit();
-
+            
             if(isset(session('dadosPi')['Three'])) {
 
 
                 $cliente_nome = $cliente->nome_fantasia ? $cliente->nome_fantasia : $cliente->razao_social;
                 $dt_pi = Carbon::today()->toDateString();
 
-                $pi =  PDF::loadview('relatorios.pi.pi_nova', compact('pi', 'cliente', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
+                $pi =  PDF::loadview('relatorios.pi.pi_nova', compact('pi', 'cliente', 'agentes', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
                 'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor', 'dt_atual', 'lista_lancamentos'));
 
                 $pi->setPaper('a4', 'landscape');

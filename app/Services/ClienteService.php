@@ -34,7 +34,7 @@ class ClienteService
         $tel_responsavel = str_replace(['(', ')', ' ', '-'], '', $request->form['sThree']['tel_resp']);
 
         $cpf_cnpj = str_replace(['.', '-', '/'], '', $request->form['sOne']['cpf_cnpj']);
-        // dd($request->all());
+        
         Cliente::updateOrCreate(['cpf_cnpj' => $cpf_cnpj],
         [
             'razao_social' => $request->form['sOne']['r_social'],

@@ -72,7 +72,7 @@ function salvarTextoPadrao() {
             text: 'Já existe um texto padrão com este título. O registro será atualizado em vez de criar um novo. Deseja continuar?',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
+            confirmButtonColor: '#00935F',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Sim, atualizar!',
             cancelButtonText: 'Cancelar'
@@ -93,7 +93,7 @@ function salvarTextoPadrao() {
                     text: 'Já existe um texto padrão com este título. O registro será atualizado em vez de criar um novo. Deseja continuar?',
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
+                    confirmButtonColor: '#00935F',
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Sim, atualizar!',
                     cancelButtonText: 'Cancelar'
@@ -165,10 +165,11 @@ function deletextoPadrao() {
         text: 'Tem certeza que deseja excluir este texto padrão?',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
+        confirmButtonColor: '#00935F',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sim, excluir!',
-        cancelButtonText: 'Cancelar'
+        cancelButtonText: 'Cancelar',
+        reverseButtons: true
     }).then((result) => {
         if (result.isConfirmed) {
             axios.post('/deleteTextoPadrao', {

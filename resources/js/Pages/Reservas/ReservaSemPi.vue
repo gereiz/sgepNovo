@@ -8,7 +8,7 @@ import GridPaineisSemPi from './ComponentsResSemPi/GridPaineisSemPi.vue';
 import ModalPiRes from './Components/ModalPiRes.vue';
 import axios from 'axios';
 
-const props = defineProps(['ambiente', 'clientes', 'anos', 'bisemanas', 'paineis'])
+const props = defineProps(['ambiente', 'clientes', 'anos', 'bisemanas', 'paineis', 'agentes'])
 const page = usePage();
 
 const paineis = ref(props.paineis)
@@ -25,6 +25,8 @@ const listaBisemana = ref(0);
 
 const anoAtual = new Date().getFullYear(); // Obtém o ano atual
 const idAno = ref(0); // Inicializa a variável reativa
+
+const agentes = ref(props.agentes)
 
 let idCliente = ref('');
 let clienteSel = ref('');
@@ -263,6 +265,7 @@ const bisemanaSelecionada = computed(() => {
 
                     <ModalPiRes :openPi="openP"
                                 :cliente="idCliente"
+                                :agentes="agentes"
                                 :campanha="reservasCampanha"
                                 :bisemana="bisemanaSelecionada"
                                 :paineis="reservasIdent"

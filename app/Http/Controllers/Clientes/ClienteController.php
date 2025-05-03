@@ -20,6 +20,14 @@ class ClienteController extends Controller
         return Inertia::render('Clientes/ListaClientes', compact('clientes'));
     }
 
+    public function getAgente() {
+        $agente = Cliente::where('ativo', 1)
+            ->where('agent', 1)
+            ->first();
+
+        return $agente;
+    }
+
 
     public function cadastraCliente(Request $request) {
 
@@ -37,7 +45,6 @@ class ClienteController extends Controller
 
 
     public function deleteCliente(Request $request) {
-//        dd($request->all());
         $cliente = Cliente::find($request->idCliente);
         $cliente->ativo = 0;
         $cliente->save();

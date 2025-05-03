@@ -54,7 +54,7 @@ function AddOrEditTipoTexto() {
             text: 'Já existe um tipo de texto com este nome. O registro será atualizado em vez de criar um novo. Deseja continuar?',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
+            confirmButtonColor: '#00935F',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Sim, atualizar!',
             cancelButtonText: 'Cancelar'
@@ -75,7 +75,7 @@ function AddOrEditTipoTexto() {
                     text: 'Já existe um tipo de texto com este nome. O registro será atualizado em vez de criar um novo. Deseja continuar?',
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
+                    confirmButtonColor: '#00935F',
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Sim, atualizar!',
                     cancelButtonText: 'Cancelar'

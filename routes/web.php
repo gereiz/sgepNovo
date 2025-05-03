@@ -93,6 +93,7 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::post('/CadCliente', [ClienteController::class, 'cadastraCliente']);
     route::post('/EditCliente', [ClienteController::class, 'editCliente']);
     route::post('/DelCliente', [ClienteController::class, 'deleteCliente']);
+    route::post('/GetAgente', [ClienteController::class, 'getAgente']);
 
 
     //Painéis

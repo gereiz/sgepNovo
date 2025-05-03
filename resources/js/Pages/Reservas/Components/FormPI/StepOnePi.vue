@@ -115,7 +115,7 @@ function getCidadeCli(uf) {
         <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
             <h1 as="h3" class="text-base font-semibold leading-6 text-gray-900">Pedido de Inserção</h1>
             <div class="w-full flex mt-2 ">
-                <p class="w-full text-sm text-gray-500 mb-4 text-center">Confira os dados para criação do Pedido de Inserção.</p>
+                <p class="w-full text-sm text-gray-500 mb-4 text-center">Confira os dados do cliente do Pedido de Inserção.</p>
             </div>
             <p class="text-xs font-bold text-red-500 text-center">Bi-Semana: {{ bisemana[0].num_bisemana }} {{ new Date(bisemana[0].inicio).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }} até {{ new Date(bisemana[0].fim).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }}</p>
         </div>
@@ -123,162 +123,143 @@ function getCidadeCli(uf) {
         <!--Razão Social / CNPJ -->
         <div class="flex space-x-6 justify-center">
             <div class="sm:col-span-4">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Cliente</label>
-                <div class="mt-2">
-                    <div class="flex bg-gray-200 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                        <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
-                        <input type="text"
-                            v-model="formOne.clienteNome"
-                            class="h-9 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs"
-                            :disabled="edit == false" />
-                    </div>
-                </div>
+                <label class="label">
+                    <span class="label-text">Cliente</span>
+                </label>
+                <input type="text"
+                    v-model="formOne.clienteNome"
+                    class="input input-bordered w-full"
+                    :disabled="edit == false"
+                    placeholder="Nome do cliente" />
             </div>
 
             <div class="sm:col-span-4">
-                <label class="block text-sm font-medium leading-6 text-gray-900">CPF / CNPJ</label>
-                <div class="mt-2">
-                    <div class="flex bg-gray-200 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                        <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
-                        <input type="text"
-                            v-model="formOne.cnpj"
-                            v-maska
-                            data-maska="[
-                                '###.###.###-##',
-                                '##.###.###/####-##'
-                            ]"
-                            class="h-9 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs"
-                            :disabled="edit == false" />
-                    </div>
-                </div>
+                <label class="label">
+                    <span class="label-text">CPF / CNPJ</span>
+                </label>
+                <input type="text"
+                    v-model="formOne.cnpj"
+                    v-maska
+                    data-maska="[
+                        '###.###.###-##',
+                        '##.###.###/####-##'
+                    ]"
+                    class="input input-bordered w-full"
+                    :disabled="edit == false"
+                    placeholder="CPF/CNPJ" />
             </div>
         </div>
 
         <!-- Endereço / CEP -->
         <div class="flex w-full space-x-6 justify-center">
             <div class="sm:col-span-4">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Endereço</label>
-                <div class="mt-2">
-                    <div class="flex bg-gray-200 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                        <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
-                        <input type="text"
-                            v-model="formOne.endereco"
-                            class="h-9 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs"
-                            :disabled="edit == false" />
-                    </div>
-                </div>
+                <label class="label">
+                    <span class="label-text">Endereço</span>
+                </label>
+                <input type="text"
+                    v-model="formOne.endereco"
+                    class="input input-bordered w-full"
+                    :disabled="edit == false"
+                    placeholder="Endereço completo" />
             </div>
 
             <div class="sm:col-span-4">
-                <label class="block text-sm font-medium leading-6 text-gray-900">CEP</label>
-                <div class="mt-2">
-                    <div class="flex bg-gray-200 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                        <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
-                        <input type="text"
-                            v-model="formOne.cep"
-                            v-maska
-                            data-maska="##.###-###"
-                            class="h-9 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs"
-                            :disabled="edit == false" />
-                    </div>
-                </div>
+                <label class="label">
+                    <span class="label-text">CEP</span>
+                </label>
+                <input type="text"
+                    v-model="formOne.cep"
+                    v-maska
+                    data-maska="##.###-###"
+                    class="input input-bordered w-full"
+                    :disabled="edit == false"
+                    placeholder="00.000-000" />
             </div>
         </div>
 
         <!-- UF / Cidade -->
-        <div class="flex w-full justify-center pl-3">
+        <div class="flex w-full justify-center pl-3 space-x-6">
             <div class="sm:col-span-4">
-                <label for="uf" class="block text-sm font-medium leading-6 text-gray-900">UF</label>
-                <div class="mt-2">
-                    <select id="uf" name="uf" v-model="formOne.uf" @change="getCidadeCli(formOne.uf)"
-                            class="block w-full lg:w-10/12 bg-gray-200 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                            :disabled="edit == false">
-                        <option value="0" disabled selected>Selecione</option>
-                        <option v-for="(uf, index) in ufs" :key="index" :value="uf.id">{{ uf.nome }}</option>
-                    </select>
-                </div>
+                <label class="label">
+                    <span class="label-text">UF</span>
+                </label>
+                <select id="uf" name="uf" v-model="formOne.uf" @change="getCidadeCli(formOne.uf)"
+                        class="select select-bordered w-full"
+                        :disabled="edit == false">
+                    <option value="0" disabled selected>Selecione</option>
+                    <option v-for="(uf, index) in ufs" :key="index" :value="uf.id">{{ uf.nome }}</option>
+                </select>
             </div>
 
             <div class="sm:col-span-4">
-                <label for="cidade" class="block text-sm font-medium leading-6 text-gray-900">Cidade</label>
-                <div class="mt-2">
-                    <select id="cidade" name="cidade" v-model="formOne.cidade"
-                            class="block w-full lg:w-11/12 bg-gray-200 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                            :disabled="edit == false">
-                        <option value="0" disabled selected>Selecione</option>
-                        <option v-for="(cid, index) in cidades" :key="index" :value="cid.id">{{ cid.nome }}</option>
-                    </select>
-                </div>
+                <label class="label">
+                    <span class="label-text">Cidade</span>
+                </label>
+                <select id="cidade" name="cidade" v-model="formOne.cidade"
+                        class="select select-bordered w-full"
+                        :disabled="edit == false">
+                    <option value="0" disabled selected>Selecione</option>
+                    <option v-for="(cid, index) in cidades" :key="index" :value="cid.id">{{ cid.nome }}</option>
+                </select>
             </div>
-
-
         </div>
 
         <!-- Fone / Insc Est-->
         <div class="flex w-full space-x-6 justify-center">
             <div class="sm:col-span-4">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Celular</label>
-                <div class="mt-2">
-                    <div class="flex bg-gray-200 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                        <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
-                        <input type="text"
-                            v-model="formOne.celular"
-                            v-maska
-                            data-maska="(##) #####-####"
-                            class="h-9 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs"
-                            :disabled="edit == false" />
-                    </div>
-                </div>
+                <label class="label">
+                    <span class="label-text">Celular</span>
+                </label>
+                <input type="text"
+                    v-model="formOne.celular"
+                    v-maska
+                    data-maska="(##) #####-####"
+                    class="input input-bordered w-full"
+                    :disabled="edit == false"
+                    placeholder="(00) 00000-0000" />
             </div>
 
             <div class="sm:col-span-4">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Insc. Estadual</label>
-                <div class="mt-2">
-                    <div class="flex bg-gray-200 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                        <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
-                        <input type="text"
-                            v-model="formOne.inscEst"
-                            class="h-9 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs"
-                            :disabled="edit == false" />
-                    </div>
-                </div>
+                <label class="label">
+                    <span class="label-text">Insc. Estadual</span>
+                </label>
+                <input type="text"
+                    v-model="formOne.inscEst"
+                    class="input input-bordered w-full"
+                    :disabled="edit == false"
+                    placeholder="Inscrição Estadual" />
             </div>
         </div>
 
         <!-- Contato / E-mail -->
         <div class="flex w-full space-x-6 justify-center">
             <div class="sm:col-span-4">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Responsável</label>
-                <div class="mt-2">
-                    <div class="flex bg-gray-200 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                        <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
-                        <input type="text"
-                            v-model="formOne.responsavel"
-                            class="h-9 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs"
-                            :disabled="edit == false" />
-                    </div>
-                </div>
+                <label class="label">
+                    <span class="label-text">Responsável</span>
+                </label>
+                <input type="text"
+                    v-model="formOne.responsavel"
+                    class="input input-bordered w-full"
+                    :disabled="edit == false"
+                    placeholder="Nome do responsável" />
             </div>
 
             <div class="sm:col-span-4">
-                <label class="block text-sm font-medium leading-6 text-gray-900">E-mail</label>
-                <div class="mt-2">
-                    <div class="flex bg-gray-200 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                        <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
-                        <input type="text"
-                            v-model="formOne.email"
-                            class="h-9 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs"
-                            :disabled="edit == false" />
-                    </div>
-                </div>
+                <label class="label">
+                    <span class="label-text">E-mail</span>
+                </label>
+                <input type="text"
+                    v-model="formOne.email"
+                    class="input input-bordered w-full"
+                    :disabled="edit == false"
+                    placeholder="email@exemplo.com" />
             </div>
         </div>
     </div>
 
     <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-        <label class="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto" @click="nextStep(2)">Avançar</label>
-        <!-- <label class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto" @click="nextStep(5)">Reservar sem PI</label> -->
-        <label class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" @click="nextStep(0)">Cancelar</label>
+        <button class="btn btn-success w-full sm:w-auto sm:ml-3" @click="nextStep(2)">Avançar</button>
+        <!-- <button class="btn btn-error w-full sm:w-auto sm:ml-3" @click="nextStep(5)">Reservar sem PI</button> -->
+        <button class="btn btn-outline mt-3 sm:mt-0 w-full sm:w-auto" @click="nextStep(0)">Cancelar</button>
     </div>
-
 </template>

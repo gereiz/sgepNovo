@@ -4,7 +4,7 @@ import { vMaska } from "maska"
 import { UserCircleIcon  } from '@heroicons/vue/24/outline'
 import { usePage, useForm } from '@inertiajs/vue3';
 import { useToastr } from '@/Components/toastr';
-
+ 
 const toastr = useToastr()
 
 const props = defineProps(['cliente', 'campanha', 'painel', 'bisemana'])
@@ -53,14 +53,14 @@ function changeEdit() {
             <h1 as="h3" class="text-base font-semibold leading-6 text-gray-900">Pedido de Inserção </h1>
             <div class="w-full flex mt-2">
                 <p class="text-sm text-gray-500 mb-4">Confira os dados para faturamento do Pedido de Inserção.</p>
-                <button  class="w-8 h-8 flex items-center justify-center bg-amber-700 -mt-1 text-sm font-semibold text-white shadow-sm hover:bg-amber-500 sm:ml-3 rounded-full duration-1000"
+                <button class="btn btn-sm btn-warning btn-circle text-white -mt-1 ml-3"
                         v-if="!edit"
                         @click="changeEdit()"
                         title="Ativar Edição">
                 <UserCircleIcon class="h-6 w-6" aria-hidden="true" />
                 </button>
 
-                <button v-else  class="w-8 h-8 flex items-center justify-center bg-green-700 -mt-1 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 rounded-full duration-1000"
+                <button v-else class="btn btn-sm btn-success btn-circle text-white -mt-1 ml-3"
                         @click="changeEdit()"
                         title="Edição Ativada">
                 <UserCircleIcon class="h-6 w-6" aria-hidden="true" />
@@ -74,66 +74,52 @@ function changeEdit() {
 
             <!-- Faturar Sobre -->
             <div class="w-5/12 sm:w-full">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Faturar Sobre: </label>
-                <div class="mt-2">
-                    <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
-                        <select id="uf" name="uf"
-                                v-model="formThree.faturar_sobre"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                :disabled="edit == false">
-                            <option value="0" disabled selected>SELECIONE</option>
-                            <option value="1">VALOR BRUTO</option>
-                            <option value="2">VALOR LIQUIDO</option>
-                        </select>
-                    </div>
-                </div>
+                <label class="label">
+                    <span class="label-text">Faturar Sobre:</span>
+                </label>
+                <select v-model="formThree.faturar_sobre"
+                        class="select select-bordered w-full"
+                        :disabled="edit == false">
+                    <option value="0" disabled selected>SELECIONE</option>
+                    <option value="1">VALOR BRUTO</option>
+                    <option value="2">VALOR LIQUIDO</option>
+                </select>
             </div>
 
             <!-- Faturar Contra -->
             <div class="w-5/12 sm:w-[40%] me-4 pt-6">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Faturar Contra: </label>
-                <div class="mt-2">
-                    <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-
-                        <select id="fat-contra" name="pagamento"
-                                v-model="formThree.faturar_contra"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                                :disabled="edit == false">
-                            <option value="0" disabled selected>SELECIONE</option>
-                            <option value="1">CLIENTE</option>
-                            <option value="2">AGÊNCIA</option>
-
-                        </select>
-                    </div>
-                </div>
+                <label class="label">
+                    <span class="label-text">Faturar Contra:</span>
+                </label>
+                <select v-model="formThree.faturar_contra"
+                        class="select select-bordered w-full"
+                        :disabled="edit == false">
+                    <option value="0" disabled selected>SELECIONE</option>
+                    <option value="1">CLIENTE</option>
+                    <option value="2">AGÊNCIA</option>
+                </select>
             </div>
 
             <!-- Enviar Faturamento -->
             <div class="w-5/12 sm:w-[40%] me-4 pt-6">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Enviar Faturamento: </label>
-                <div class="mt-2">
-                    <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-
-                        <select id="envia-faturamento" name="envia-faturamento"
-                                v-model="formThree.enviar_faturamento"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                                :disabled="edit == false">
-                            <option value="0" disabled selected>SELECIONE</option>
-                            <option value="1">CLIENTE</option>
-                            <option value="2">AGÊNCIA</option>
-
-                        </select>
-                    </div>
-                </div>
+                <label class="label">
+                    <span class="label-text">Enviar Faturamento:</span>
+                </label>
+                <select v-model="formThree.enviar_faturamento"
+                        class="select select-bordered w-full"
+                        :disabled="edit == false">
+                    <option value="0" disabled selected>SELECIONE</option>
+                    <option value="1">CLIENTE</option>
+                    <option value="2">AGÊNCIA</option>
+                </select>
             </div>
         </div>
 
 
         <!-- Avançar / Voltar -->
         <div class="w-full sm:flex sm:flex-row-reverse">
-            <label class="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto" @click="nextStep(4)">Avançar</label>
-            <label class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" @click="nextStep(2)">Voltar</label>
-
+            <button class="btn btn-success w-full sm:w-auto sm:ml-3" @click="nextStep(4)">Avançar</button>
+            <button class="btn btn-outline mt-3 sm:mt-0 w-full sm:w-auto" @click="nextStep(2)">Voltar</button>
         </div>
 
     </div>
