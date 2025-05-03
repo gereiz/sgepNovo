@@ -47,7 +47,7 @@
 
 <template>
 
-
+ 
     <!-- Card Principal -->
     <div class="card w-full h-[42rem] bg-base-100 border border-base-200 shadow-xl overflow-auto rounded-md">
         <div class="card-body flex flex-col sm:flex-row">
@@ -66,12 +66,13 @@
                                     >
                                 </div>
                                 <div class="w-6/12">
-                                    <p class="text-xs sm:text-xl font-extrabold">
-                                        <span class="text-red-500">
-                                            {{usuario.nome_fantasia ? usuario.nome_fantasia : usuario.razao_social}}
+                                    <label class="label">
+                                        <span class="label-text text-xs sm:text-xl font-extrabold">
+                                            <span class="text-red-500">
+                                                {{usuario.nome_fantasia ? usuario.nome_fantasia : usuario.razao_social}}
+                                            </span>
                                         </span>
-                                    </p>
-
+                                    </label>
                                 </div>
                             </div>
 
@@ -79,25 +80,21 @@
                                 <div class="w-full">
                                     <div class="sm:flex flex-wrap ">
                                         <div class="w-full flex flex-col items-center space-y-3 mt-4">
-
                                             <!-- <p class="text-xs sm:text-base">Função: {{ usuario.roles }}</p> -->
                                             <!-- {{ usuario }} -->
                                         </div>
 
                                         <div class="w-full flex items-center justify-around space-x-2 mt-14">
-                                            <label class="inline-flex w-full justify-center rounded-md bg-green-500 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-green-300 sm:mt-0" @click="openEdit('t', usuario)">Comissões</label>
-                                            <!-- <label class="inline-flex w-6/12 justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-300 sm:ml-3 sm:w-5/12" @click="openDel('t', usuario)">Inativar</label> -->
+                                            <button class="btn btn-success btn-md w-full" @click="openEdit('t', usuario)">Comissões</button>
+                                            <!-- <button class="btn btn-error btn-md w-6/12" @click="openDel('t', usuario)">Inativar</button> -->
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
-
 
         <EditComissaoUsu :openEdit="openE"
                          @closeEdit="openEdit"
@@ -105,9 +102,6 @@
                          :servicos="props.servicos"
                          :comissoes="props.comissoes">
         </EditComissaoUsu>
-
-
         </div>
     </div>
-
 </template>

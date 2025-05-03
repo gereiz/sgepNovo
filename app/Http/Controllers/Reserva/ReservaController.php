@@ -15,7 +15,7 @@ use App\Models\Config\Ano;
 use App\Models\Config\Whatsapp;
 use App\Models\Clientes\Cliente;
 use Carbon\Carbon;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use App\Models\Financeiro\Lancamento;
 use App\Models\PI\Pi;

@@ -11,18 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('clientes', function (Blueprint $table) {
-            $table->boolean('agent')->nullable()->after('ativo')->default(false);
+        Schema::table('comissao_venda', function (Blueprint $table) {
+            $table->double('valor_comissao')->after('agente_id')->default(0);
         });
     }
 
-    /** 
+    /**
      * Reverse the migrations.
      */
-    public function down(): void  
+    public function down(): void
     {
-        Schema::table('clientes', function (Blueprint $table) {
-            $table->dropColumn('agent');
+        Schema::table('comissao_venda', function (Blueprint $table) {
+            $table->dropColumn('valor_comisssao');
         });
     }
 };
