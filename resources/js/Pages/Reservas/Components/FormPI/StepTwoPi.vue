@@ -218,7 +218,7 @@ function changeEdit() {
                 </label>
                 <select id="vendedor" name="vendedor"
                         @change="getUsuario($event.target.value)"
-                        v-model="formTwo.agentesId"
+                        v-model="formTwo.vendedorId"
                         class="select select-bordered w-full"
                         :disabled="edit == false">
                     <option value="0" disabled selected>SELECIONE</option>

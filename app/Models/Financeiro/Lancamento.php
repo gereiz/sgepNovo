@@ -16,6 +16,7 @@ class Lancamento extends Model
     protected $fillable = [
         'descricao',
         'valor',
+        'valor_liquido',
         'parcelas',
         'dt_faturamento',
         'centro_custo',

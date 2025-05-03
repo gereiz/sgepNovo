@@ -18,6 +18,8 @@ use App\Models\Reservas\Reserva;
 use App\Services\Financeiro\CaixaService;
 use Illuminate\Support\Facades\DB;
 use App\Models\Clientes\Cliente;
+use App\Models\Financeiro\Comissao;
+use App\Models\Financeiro\ComissaoVenda;
 
 class PiController extends Controller
 {
@@ -167,17 +169,57 @@ class PiController extends Controller
 
             }
 
-            //atualiza o campo pi_id na reserva
+            //Recupera a reserva
             $reserva = Reserva::where('cliente_id', session('dadosPi')['One']['clienteId'])
             ->where('bisemana_id', session('dadosPi')['Two']['bisemanaId'])
             ->where('pi_ok', 1)->get();
+
+            $total_servicos = 0;
+            // Calcula as comissões para salvar o valor liquido e o valor total
+            foreach($servicos as $servico) {
+                $vlr_total = $servico['vlr_total'];
+                $vlr_unit = $servico['vlr_unit'];
+                $vlr_desc = $servico['vlr_desc'];
+                $vlr_liquido = $vlr_total - $vlr_desc;
+
+                foreach($agentes as $agente) {
+                    $comissao = Comissao::where('id_funcionario', $agente->id)
+                                          ->where('id_servico', $servico['id'])->first();
+
+                    $comissao_venda = new ComissaoVenda();
+                            
+
+                    if($comissao->exists()) {
+                        if($comissao->tipo_comissao == 1) {
+                            $comissao_venda->Create([
+                                'pi_id' => $pi->id,
+                                'comissao_id' => $comissao->id,
+                                'agente_id' => $agente->id,
+                                'valor_comissao' => $vlr_liquido * ($comissao->valor / 100),
+                            ]);
+                        } else {
+                            $comissao_venda->Create([
+                                'pi_id' => $pi->id,
+                                'comissao_id' => $comissao->id,
+                                'agente_id' => $agente->id,
+                                'valor_comissao' => $vlr_liquido - $comissao->valor,
+                            ]);
+                        }
+                    }
+                }
+
+                $total_servicos += $vlr_total;
+            
+            }
+
+            
+            
 
             // grava o lançamento no banco de dados
             $caixaService = new CaixaService();
 
 
             // Cria o lançamento no caixa
-
             $qtdParcelas = session('dadosPi')['Four']['qtdParcelas'];
             $vl_parcela = $vl_total / $qtdParcelas;
             $lista_lancamentos = [];
@@ -188,9 +230,9 @@ class PiController extends Controller
 
             for ($i = 1; $i <= $qtdParcelas; $i++) {
                 $lancamento = [
-                    'descricao' => 'Faturamento PI nº ' . $pi->id . ' Cliente: ' . $cliente->razao_social ?
-                        'Faturamento PI nº ' . $pi->id . ' Cliente: '.$cliente->razao_social :
-                        'Faturamento PI nº ' . $pi->id . ' Cliente: '.$cliente->nome_fantasia,
+                    'descricao' => 'PI nº ' . $pi->id . ' Cliente: ' . $cliente->razao_social ?
+                        'PI nº ' . $pi->id . ' Cliente: '.$cliente->razao_social :
+                        'PI nº ' . $pi->id . ' Cliente: '.$cliente->nome_fantasia,
 
                     'valor' => $vl_parcela,
                     'parcelas' => $i . '/' . $qtdParcelas,
@@ -217,7 +259,7 @@ class PiController extends Controller
 
             }
  
- 
+            // atualiza o campo pi_id na reserva
             foreach($reserva as $res) {
                 $res->update(['pi_id' => $pi->id]);
             }
@@ -241,7 +283,7 @@ class PiController extends Controller
             } 
 
 
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             // return $e;
             return response()->json(['cod' => 0, 'msg' => $e->getMessage()]);
         }

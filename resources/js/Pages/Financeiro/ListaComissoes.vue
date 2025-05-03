@@ -21,7 +21,7 @@ function openAdd(val) {
     if(val === 't') {
         open.value = true
     } else {
-        open.value = false
+        open.value = false 
 
         window.location.reload()
     }
@@ -44,10 +44,12 @@ function openAdd(val) {
                 </div>
                 
                 <div class="w-full sm:w-2/12 flex justify-center items-center space-x-2"> 
-                    <label for="" class="block text-lg font-medium leading-6 text-gray-900">Tipo:</label>
+                    <label class="label">
+                        <span class="label-text text-lg font-medium">Tipo:</span>
+                    </label>
 
                     <select v-model="tipo"
-                    class="block w-8/12 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                    class="select select-bordered w-8/12">
                         <option value="cSer">Comissões por Serviço</option>
                         <option value="cUsu">Comissões por Agente</option>
                     </select>

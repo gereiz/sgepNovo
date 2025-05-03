@@ -159,6 +159,7 @@ function ListaServicosPagos() {
 
     // adiciona o serviço na lista de serviços pagos
     servicosPagos.value.push({
+        id: servicoSelecionado.value.id,
         nome: servicoSelecionado.value.nome,
         quantidade: quantidade.value,
         vlr_unit: vlrUnit.value,

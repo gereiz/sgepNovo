@@ -101,7 +101,7 @@ const addLancamento = () => {
 
         <!-- Cadastro de Lançamentos -->
         <div class="w-[98%] sm:w-[99%] h-[68vh] flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-            <div class="w-[98%] sm:w-5/12 h-[90%] sm:h-[80%] sm:flex flex-col border border-slate-300 rounded-lg p-4 space-y-4 overflow-y-auto">
+            <div class="w-[98%] sm:w-4/12 h-[90%] sm:h-[80%] sm:flex flex-col border border-slate-300 rounded-lg p-4 space-y-4 overflow-y-auto">
 
                 <!-- Descrição -->
                 <div class="w-full">
@@ -183,7 +183,7 @@ const addLancamento = () => {
 
             </div>
 
-            <div class="w-[98%] sm:w-7/12 h-[98%] sm:flex flex-wrap border border-slate-300 rounded-lg overflow-x-auto">
+            <div class="w-[98%] sm:w-8/12 h-[98%] sm:flex flex-wrap border border-slate-300 rounded-lg overflow-x-auto">
 
                 <!-- Tabela de Centros de Custo -->
                 <TabelaLancamentos :centrosCusto="centrosCusto" :lancamentos="lancamentos" :tipos_lancamento="tipos_lancamento" />

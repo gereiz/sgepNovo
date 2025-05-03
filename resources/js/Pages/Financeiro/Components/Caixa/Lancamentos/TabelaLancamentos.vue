@@ -64,7 +64,8 @@ const updateLanc = (val) => {
             <tr class="divide-x divide-gray-200">
                 <th scope="col" class="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-2">ID</th>
                 <th scope="col" class="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-2">Descrição</th>
-                <th scope="col" class="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-2">Valor</th>
+                <th scope="col" class="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-2">Valor Total</th>
+                <th scope="col" class="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-2">Valor Liquido</th>
                 <th scope="col" class="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-2">Data</th>
                 <th scope="col" class="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-2">C. Custo</th>
                 <th scope="col" class="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-2">Tipo</th>
@@ -77,6 +78,7 @@ const updateLanc = (val) => {
             <tr class="divide-x divide-gray-200" v-for="lancamento in lancamentosL" :key="lancamento.id">
                 <td class="w-[10%] whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-2">{{ lancamento.id }}</td>
                 <td class="w-[40%] whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-2">{{ lancamento.descricao }}</td>
+                <td class="w-[10%] whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-2">R$ {{ lancamento.valor }}</td>
                 <td class="w-[10%] whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-2">R$ {{ lancamento.valor }}</td>
                 <td class="w-[10%] whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-2">{{ new Date(lancamento.dt_faturamento).toLocaleDateString() }}</td>
                 <td class="w-[10%] whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-2">{{ lancamento.centro_custo.centro_custo}}</td>

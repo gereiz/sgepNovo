@@ -318,7 +318,7 @@ const reservaData = computed(() => {
                         </button>
 
                         <!-- Gerar PI -->
-                        <button v-if="idCliente && reservas[0] ? reservas[0].pi_ok == 1 : false"
+                        <!-- <button v-if="idCliente && reservas[0] ? reservas[0].pi_ok == 1 : false"
                                 class="btn btn-square btn-success text-white -mt-1 tooltip tooltip-left" data-tip="Reserva já possui PI">
                             <i class="fa-solid fa-triangle-exclamation"></i>
                         </button>
@@ -327,7 +327,7 @@ const reservaData = computed(() => {
                                 @click="openPi('t')"
                                 class="btn btn-square btn-warning text-white -mt-1 tooltip tooltip-left animate-pulse" data-tip="Gerar PI para Reserva">
                             <i class="fa-solid fa-triangle-exclamation"></i>
-                        </button>
+                        </button> -->
                     </div> 
                 </div>
 
