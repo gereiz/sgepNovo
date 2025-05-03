@@ -5,6 +5,7 @@ import StepOnePi from './FormPI/StepOnePi.vue'
 import StepTwoPi from './FormPI/StepTwoPi.vue';
 import StepThreePi from './FormPI/StepThreePi.vue';
 import StepFourPi from './FormPI/StepFourPi.vue';
+import Swal from 'sweetalert2';
 
 
 import { XMarkIcon } from '@heroicons/vue/24/outline'
@@ -15,7 +16,7 @@ const toastr = useToastr();
 
 const emit = defineEmits(['closePi', 'closeAdd'])
 
-const props = defineProps(['paineis', 'bisemana', 'openPi', 'cliente', 'campanha', 'dataReserva'])
+const props = defineProps(['paineis', 'bisemana', 'openPi', 'cliente', 'campanha', 'dataReserva', 'agentes'])
 
 const step = shallowRef(StepOnePi)
 const open = ref(false)
@@ -55,16 +56,9 @@ function saveFormTwo(ev) {
     getFormPiTwo.value.paineis = ev.paineis
     getFormPiTwo.value.bisemanaId = props.bisemana[0].id
     getFormPiTwo.value.campanha = ev.campanha
-    getFormPiTwo.value.observacoes = props.observacoes
-    getFormPiTwo.value.servicos = ev.servicos
-    getFormPiTwo.value.formaPgto = ev.formaPgto
-    getFormPiTwo.value.pgto = ev.pgto
-    getFormPiTwo.value.parcelado = ev.parcelado
-    getFormPiTwo.value.qtdParcelas = ev.qtdParcelas
-    getFormPiTwo.value.dtPgto = ev.dtPgto
-    getFormPiTwo.value.dReserva = ev.dtReserva
     getFormPiTwo.value.vendedorId = ev.vendedorId
     getFormPiTwo.value.vendedor = ev.vendedor
+    getFormPiTwo.value.agentesId = ev.agentesId
 
 
     localStorage.setItem('piFormTwo', JSON.stringify(getFormPiTwo.value))
@@ -86,6 +80,16 @@ function saveFormThree(ev) {
     // formPi.value.One = JSON.parse(localStorage.getItem('piFormOne'))
     // formPi.value.Two = JSON.parse(localStorage.getItem('piFormTwo'))
     formPi.value.Three = JSON.parse(localStorage.getItem('piFormThree'))
+
+}
+
+function saveFormFour(ev) {
+
+    formPi.value.One = JSON.parse(localStorage.getItem('piFormOne'))
+    formPi.value.Two = JSON.parse(localStorage.getItem('piFormTwo'))
+    formPi.value.Three = JSON.parse(localStorage.getItem('piFormThree'))
+    formPi.value.Four = ev
+    localStorage.setItem('piFormFour', JSON.stringify(formPi.value.Four))
 
 }
 
@@ -153,16 +157,27 @@ function naviForm(ev) {
 
   } else if(ev == 5) {
 
-    submitFormPi()
-
-    setTimeout(() => {
-      closeM()
-    }, 3000);
-
+    Swal.fire({
+      title: 'Confirmação',
+      html: 'Tem certeza que deseja realizar esta reserva?<br><br>Não será possível editar NENHUM dado desta reserva, ou da PI, somente cancelando e mesma e realizando uma nova reserva.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#00935F',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sim, realizar reserva!',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        submitFormPi();
+        
+        setTimeout(() => {
+          closeM()
+        }, 3000);
+      }
+    });
   }
-
 }
-
 </script>
 
 <template>
@@ -188,6 +203,7 @@ function naviForm(ev) {
                       <KeepAlive>
                           <component :is="step"
                                      :cliente="cliente"
+                                     :agentes="agentes"
                                      :campanha="campanha"
                                      :paineis="paineis"
                                      :bisemana="bisemana"
@@ -195,7 +211,8 @@ function naviForm(ev) {
                                      @nextStep="naviForm"
                                      @formOne="saveFormOne"
                                      @formTwo="saveFormTwo"
-                                     @formThree="saveFormThree">
+                                     @formThree="saveFormThree"
+                                     @formFour="saveFormFour">
                           </component>
                       </KeepAlive>
                   </div>

@@ -260,6 +260,10 @@ class ReservaController extends Controller
             ->where('ativo', 1)
             ->get();
 
+        $agentes = Cliente::where('ativo', 1)
+            ->where('agent', 1)
+            ->get();
+
         $anos = Ano::all();
 
         $bisemanas = Bisemana::all();
@@ -273,6 +277,7 @@ class ReservaController extends Controller
                                                                     'bisemanas',
                                                                     'reservas',
                                                                     'ambiente',
+                                                                    'agentes'
                                                                 ));
     }
 

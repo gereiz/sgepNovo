@@ -5,48 +5,34 @@ import { UserCircleIcon  } from '@heroicons/vue/24/outline'
 import { usePage } from '@inertiajs/vue3';
 import { useToastr } from '@/Components/toastr';
 import axios from 'axios';
+import Multiselect from 'vue-multiselect';
 
 const toastr = useToastr()
 
-const props = defineProps(['cliente', 'campanha', 'paineis','bisemana', 'dataReserva'])
+const props = defineProps(['cliente', 'campanha', 'paineis','bisemana', 'dataReserva', 'agentes'])
 const emit = defineEmits(['nextStep','formTwo']); 
 
 const edit = ref(false)
 const page = usePage()
 
-const liberaEmissaoPi = page.props.user.permissions.includes('liberar emissao pi');
-
 const usuario = ref ()
-
 const usuarios = ref()
-
 const servicos = ref()
-const servico = ref(0)
 const quantidade = ref(props.paineis.length)
-const id_servico = ref(0)
-const servicoSelecionado = ref('')
+
 const servicosPagos = ref([])
 
 const vlrUnit = ref('')
 const vlrDesc = ref(0)
 const vlrTotal = ref()
-const detalhes = ref('')
 
-const dataAtual = new Date().toISOString().slice(0, 10);
-const dtPgto = ref(dataAtual)
-const dtReserva = ref(props.dataReserva)
+const agentesLista = ref([]);
 
 const formTwo = reactive({
     paineis: props.paineis,
     campanha: props.campanha[0],
-    servicos: servicosPagos,
-    formaPgto: 0,
-    pgto: '',
-    parcelado: 0,
-    qtdParcelas: 1,
-    dtPgto: dtPgto.value,
-    dtReserva: props.dataReserva,
     vendedorId: '',
+    agentesId: [],
     vendedor: ''
 
 })
@@ -91,6 +77,18 @@ watch((quantidade), (val) => {
 
 })
 
+watch(agentesLista, (val) => {
+  if (!Array.isArray(formTwo.agentesId)) {
+    formTwo.agentesId = [];
+  }
+
+  val.forEach((agente) => {
+    if (!formTwo.agentesId.includes(agente)) {
+      formTwo.agentesId.push(agente);
+    }
+  });
+});
+
 function getUsuarios() {
     axios.get('/getUsuarios')
     .then((response) => {
@@ -110,20 +108,6 @@ const getUsuario = (val) => {
 
 }
 
-function getServico(val) {
-    axios.post('/GetServico', {id_servico: val})
-    .then((res) => {
-        id_servico.value = res.data.id
-        servicoSelecionado.value = res.data
-
-
-    })
-    .catch((err) => {
-        toastr.error(res.data.message)
-    })
-
-}
-
 function getServicos() {
     axios.get('/ListaServicos')
     .then((response) => {
@@ -139,62 +123,6 @@ function getServicos() {
     return servicos
 }
 
-function ListaServicosPagos() {
-
-    // verifica se a quantidade é maior que a quantidade de painéis
-    if(parseInt(quantidade.value) > parseInt(props.paineis.length)) {
-        toastr.error('Quantidade do serviço é maior que a quantidade de Painéis disponíveis!')
-        return
-    }
-
-    // verifica se a quantidade é menor que 1
-    if(parseInt(quantidade.value) < 1 || quantidade.value == '') {
-        toastr.error('Quantidade do serviço não pode ser menor que 1 !')
-        return
-    }
-
-    // verifica se o valor unitário é menor que 1
-    if(parseFloat(vlrUnit.value) < 1 || vlrUnit.value == '') {
-        toastr.error('Valor Unitário do serviço não pode ser menor que R$ 1.00 !')
-        return
-    }
-
-    // verifica se o valor do desconto é vazio
-    if(vlrDesc.value == '') {
-        vlrDesc.value = 0
-    }
-
-    // verifica se o valor unitário é menor que o valor do desconto
-    if(parseFloat(vlrDesc.value) > parseFloat(vlrUnit.value)) {
-        toastr.error('Valor do Desconto não pode ser maior que o Valor Unitário !')
-        return
-    }
-
-    // adiciona o serviço na lista de serviços pagos
-    servicosPagos.value.push({
-        nome: servicoSelecionado.value.nome,
-        quantidade: quantidade.value,
-        vlr_unit: vlrUnit.value,
-        vlr_desc: vlrDesc.value,
-        vlr_total: vlrTotal.value,
-        detalhes: detalhes.value
-    })
-
-    servico.value = 0
-    quantidade.value = props.paineis.length
-    vlrUnit.value = 0
-    vlrDesc.value = 0
-
-    getServicos()
-
-}
-
-function removeServicoPago(index) {
-    servicosPagos.value.splice(index, 1)
-
-    getServicos()
-}
-
 const nextStep = (val) => {
 
     if(val == 1) {
@@ -202,64 +130,24 @@ const nextStep = (val) => {
     }
 
     if(val == 3) {
-        if(servicosPagos.value.length == 0) {
-            toastr.error('Adicione ao menos um Serviço')
-            return
-        }
-
-        if(formTwo.formaPgto == 0) {
-            toastr.error('Selecione a Forma de Pagamento')
-            return
-        }
-
-        if(formTwo.pgto == '') {
-            toastr.error('Informe se o Pedido foi Pago')
-            return
-        }
-
-        if(formTwo.pgto == 1 && formTwo.dtPgto == '') {
-            toastr.error('Informe a Data de Pagamento')
-            return
-        }
-
-        if(formTwo.pgto == 1 && formTwo.dtPgto.length < 10 || formTwo.dtPgto.length > 10) {
-            toastr.error('Data de Pagamento Inválida')
-            return
-        }
-
-        if(formTwo.pgto == 1 && formTwo.dtPgto.length == 10) {
-            let dt = formTwo.dtPgto.split('/')
-            let data = new Date(dt[2], dt[1] - 1, dt[0])
-            let dataAtual = new Date()
-            if(data > dataAtual) {
-                toastr.error('Data de Pagamento não pode ser maior que a Data Atual')
-                return
-            }
-        }
-
         if(formTwo.vendedorId == 0) {
             toastr.error('Selecione o Vendedor')
             return
         }
-
-
+        
+        if(formTwo.agentesId.length === 0) {
+            toastr.error('Selecione pelo menos um Agente')
+            return
+        }
 
         emit('nextStep', val);
-
         emit('formTwo', formTwo)
-
-
     }
 
     if(val == 5) {
         emit('formTwo', formTwo)
-
         emit('nextStep', val);
-
-
     }
-
-
 }
 
 function changeEdit() {
@@ -282,15 +170,15 @@ function changeEdit() {
         <div class="mt-3 text-center sm:mt-0 sm:text-left">
             <h1 as="h3" class="text-base font-semibold leading-6 text-gray-900">Pedido de Inserção</h1>
             <div class="flex mt-2">
-                <p class="text-sm text-gray-500 mb-4">Confira os dados para criação do Pedido de Inserção.</p>
-                <button  class="w-8 h-8 flex items-center justify-center bg-amber-700 -mt-1 text-sm font-semibold text-white shadow-sm hover:bg-amber-500 sm:ml-3 rounded-full duration-1000"
+                <p class="text-sm text-gray-500 mb-4">Confira os dados da reserva do Pedido de Inserção. </p>
+                <button class="btn btn-sm btn-warning text-white btn-circle -mt-1 ml-3"
                         v-if="!edit"
                         @click="changeEdit()"
                         title="Ativar Edição">
                 <UserCircleIcon class="h-6 w-6" aria-hidden="true" />
                 </button>
 
-                <button v-else  class="w-8 h-8 flex items-center justify-center bg-green-700 -mt-1 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 rounded-full duration-1000"
+                <button v-else class="btn btn-sm btn-success text-white btn-circle -mt-1 ml-3"
                         @click="changeEdit()"
                         title="Edição Ativada">
                 <UserCircleIcon class="h-6 w-6" aria-hidden="true" />
@@ -302,355 +190,72 @@ function changeEdit() {
         <!--Painéis / Campanha -->
         <div class="flex w-full space-x-6">
             <div class="sm:w-8/12">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Painéis</label>
-                <div class="mt-2">
-                    <div class="flex bg-gray-200 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                        <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
-                        <input type="text"
-                            v-model="formTwo.paineis"
-                            class="h-9 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-red-500 font-extrabold placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs"
-                            disabled />
-                    </div>
-                </div>
+                <label class="label">
+                    <span class="label-text">Painéis</span>
+                </label>
+                <input type="text"
+                    v-model="formTwo.paineis"
+                    class="input input-bordered w-full text-red-500 font-extrabold"
+                    disabled />
             </div>
 
             <div class="w-4/12">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Campanha</label>
-                <div class="mt-2">
-                    <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                        <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
-                        <input type="text"
-                            v-model="formTwo.campanha"
-                            class="h-9 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs"
-                            :disabled="edit == false"
-                        />
-                    </div>
-                </div>
+                <label class="label">
+                    <span class="label-text">Campanha</span>
+                </label>
+                <input type="text"
+                    v-model="formTwo.campanha"
+                    class="input input-bordered w-full"
+                    :disabled="edit == false" />
             </div>
-
         </div>
 
-        <!-- Serviços / Pago? / Data Pgto -->
-        <div class="flex space-x-4">
-            <div class="w-full md:w-6/12">
-                <label for="" class="block text-sm font-medium leading-6 text-gray-900">Serviço:</label>
-                <select v-model="servico" @change=getServico(servico) class="w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset
-                                ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" :disabled="edit == false">
-                    <option value="0" disabled>Selecione um Serviço</option>
-                    <option v-for="serv in servicos" :key="serv.id" :value="serv.id">{{ serv.nome }}</option>
-
+        <!-- Agente / Vendedor-->
+        <div class="flex flex-wrap w-full justify-between">
+            <div class="sm:w-[47%]">
+                <label class="label">
+                    <span class="label-text">Vendedor</span>
+                </label>
+                <select id="vendedor" name="vendedor"
+                        @change="getUsuario($event.target.value)"
+                        v-model="formTwo.agentesId"
+                        class="select select-bordered w-full"
+                        :disabled="edit == false">
+                    <option value="0" disabled selected>SELECIONE</option>
+                    <option v-for="user in usuarios" :key="user.id" :value="user.id">{{ user.name }}</option>
                 </select>
             </div>
 
-            <div class="w-5/12 md:w-2/12">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Pago</label>
-                    <select id="pagamento" name="pagamento"
-                    v-model="formTwo.pgto"
-                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 md:max-w-xs md:text-sm md:leading-6"
-                            :disabled="edit == false">
-                        <option value="" disabled selected>SEL...</option>
-                        <option value="0">NÃO</option>
-                        <option value="1">SIM</option>
-                    </select>
-            </div>
-
-            <div class="w-5/12 md:w-3/12">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Data Pagamento</label>
-                <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                    <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
-                    <input type="date"
-                        v-model="formTwo.dtPgto"
-                        :disabled="edit == false"
-                        class="h-9 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs"
-
-                    />
-                </div>
+            <div class="sm:w-[47%]">
+                <label class="label">
+                    <span class="label-text">agentes</span>
+                </label>
+                <multiselect
+                    v-model="agentesLista"
+                    :options="props.agentes.map(agente => agente.id)"
+                    :custom-label="id => {
+                        const agente = props.agentes.find(a => a.id === id);
+                        return agente ? (agente.nome_fantasia ? agente.nome_fantasia : agente.razao_social) : '';
+                    }"
+                    :multiple="true"
+                    :searchable="true"
+                    :close-on-select="false"
+                    :show-labels="false"
+                    :hide-selected="true"
+                    open-direction="bottom"
+                    placeholder="Selecione os agentes"
+                    :disabled="edit == false"
+                >
+                </multiselect>
             </div>
         </div>
-
-        <!--Quantidade / Valor Unitário / Desconto / Valor Total -->
-        <div :class="{'hidden': servico == 0}" class="flex w-full space-x-6">
-
-            <div class="w-11/12 flex flex-wrap space-x-0 sm:space-x-6 space-y-4 border sm:border-0 border-sky-300 rounded-lg mb-2 sm:mb-0">
-
-                <!-- Serviço -->
-                <div class="w-10/12 sm:w-8/12">
-                    <label for="desc_servico" class="block text-sm font-medium leading-6 text-gray-900">Serviço</label>
-                    <div class="mt-2">
-                        <input type="text" disabled
-                            name="desc_servico"
-                            id="desc_servico"
-                            v-model="servicoSelecionado.nome"
-                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset
-                                ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600  sm:leading-6 text-center"
-                        />
-                    </div>
-                </div>
-
-                <!-- Quantidade -->
-                <div class="w-10/12 sm:w-3/12">
-                    <label for="quantidade" class="block text-sm font-medium leading-6 text-gray-900">Quantidade</label>
-                        <input type="text"
-                            name="quantidade"
-                            id="quantidade"
-                            v-model="quantidade"
-                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset
-                                ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center"
-                        />
-                </div>
-
-                <!-- Valores -->
-                <div class="w-full flex justify-center space-x-4">
-
-                    <!-- Valor Unit. -->
-                    <div class="w-10/12 sm:w-3/12">
-                        <label for="vlr_unit" class="block text-sm font-medium leading-6 text-gray-900">Valor Unit.</label>
-                            <input type="text" placeholder="R$ 0.00"
-                                name="vlr_unit"
-                                id="vlr_unit"
-                                v-model="vlrUnit"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset
-                                    ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center"
-                                v-maska
-                                data-maska=
-                                "[
-                                     '##.##',
-                                    '###.##',
-                                    '####.##',
-                                    '#####.##'
-                                ]"
-                            />
-                    </div>
-
-                    <!-- Descontos -->
-                    <div class="w-10/12 sm:w-3/12">
-                        <label for="vlr_desc" class="block text-sm font-medium leading-6 text-gray-900">Desc. Unit.</label>
-                            <input type="text" placeholder="R$ 0.00"
-                                name="vlr_desc"
-                                id="vlr_desc"
-                                v-model="vlrDesc"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset
-                                    ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center"
-                                v-maska
-                                data-maska=
-                                "[
-                                     '##.##',
-                                    '###.##',
-                                    '####.##',
-                                    '#####.##'
-                                ]"
-                            />
-                    </div>
-
-                    <!-- Valor Total -->
-                    <div class="w-10/12 sm:w-3/12">
-                        <label for="vlr_total" class="block text-sm font-medium leading-6 text-gray-900">Valor Total</label>
-                            <input type="text" disabled placeholder="R$ 0.00"
-                                name="vlr_total"
-                                id="vlr_total"
-                                v-model="vlrTotal"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset bg-gray-200
-                                    ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center"
-                                v-maska
-                                data-maska=
-                                "[
-                                     '##.##',
-                                    '###.##',
-                                    '####.##',
-                                    '#####.##'
-                                ]"
-                            />
-                    </div>
-
-                    <!-- Botão OK -->
-                    <div class="w-10/12 sm:w-1/12 pt-[1.5rem]">
-                        <button @click="ListaServicosPagos()" class="flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500">OK</button>
-                    </div>
-                </div>
-
-                <!-- Detalhes -->
-                <!-- <div class="w-full pt-4">
-                    <label for="detalhes" class="block text-sm font-medium leading-6 text-gray-900">Detalhes</label>
-                    <div class="mt-2">
-                        <textarea name="detalhes" id="detalhes" rows="2" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset
-                            ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                            :disabled="edit == false"
-                            v-model="detalhes"
-                        ></textarea>
-                    </div>
-                </div> -->
-
-            </div>
-
-        </div>
-
-        <!-- Serviços Já Cadastrados -->
-        <div :class="{'hidden': servicosPagos.length  == 0}" class="w-full max-h-40 flex flex-col overflow-auto">
-
-            <div v-for="(sp, index) in servicosPagos" :key="sp.id" class="w-11/12 flex flex-wrap space-x-0 sm:space-x-6 space-y-4 sm:space-y-0
-                border sm:border-0 border-sky-300 rounded-lg mb-2 sm:mb-4"
-            >
-
-                <!-- Serviço -->
-                <div class="w-10/12 sm:w-[28%]">
-                    <label for="desc_servico" class="block text-sm font-medium leading-6 text-gray-900">Serviço</label>
-                    <div class="">
-                        <input type="text" disabled
-                            name="desc_servico"
-                            id="desc_servico"
-                            :value="sp.nome"
-                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset bg-gray-200
-                                ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600  sm:leading-6 text-center"
-                        />
-                    </div>
-                </div>
-
-                <!-- Quantidade -->
-                <div class="w-10/12 sm:w-[15%]">
-                    <label for="quantidade" class="block text-sm font-medium leading-6 text-gray-900">Qtde.</label>
-                    <div class="">
-                        <input type="text" disabled
-                            name="quantidade"
-                            id="quantidade"
-                            :value="sp.quantidade"
-                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset bg-gray-200
-                                ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center"
-                        />
-                    </div>
-                </div>
-
-                <!-- Valor Total -->
-                <div class="w-10/12 md:w-3/12">
-                    <label for="vlr_total" class="block text-sm font-medium leading-6 text-gray-900">Valor Total</label>
-                    <div class="">
-                        <input type="text" disabled
-                            name="vlr_total"
-                            id="vlr_total"
-                            :value="sp.vlr_total"
-                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset bg-gray-200
-                                ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center"
-                            v-maska
-                            data-maska=
-                            "[
-                                'R$ ##.##',
-                                'R$ ###.##',
-                                'R$ ####.##',
-                                'R$ #####.##'
-                            ]"
-                        />
-                    </div>
-                </div>
-
-                <!-- Botão Excluir -->
-                <div class="w-10/12 sm:w-[10%] pt-[1.45rem]">
-                    <button @click="removeServicoPago(index)" class="flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500">X</button>
-                </div>
-
-            </div>
-
-
-        </div>
-
-        <!-- Forma de Pagamento / Parcelado / Parcelas-->
-        <div class="w-full flex flex-wrap justify-center sm:space-x-4 space-y-6 sm:space-y-0">
-
-            <div class="w-full sm:w-5/12">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Forma de Pagamento</label>
-                <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                    <select id="forma_pagamento" name="forma_pagamento"
-                        v-model="formTwo.formaPgto"
-                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                            :disabled="edit == false">
-                        <option value="0" disabled selected>SELECIONE</option>
-                        <option value="1">A VISTA DINHEIRO</option>
-                        <option value="2">A VISTA PIX</option>
-                        <option value="3">CARTÃO</option>
-                        <option value="4">BOLETO</option>
-                        <option value="5">DEPÓSITO</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="w-5/12 md:w-3/12">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Parcelado</label>
-                    <select id="parcelado" name="parcelado" v-if="formTwo.formaPgto > 2"
-                    v-model="formTwo.parcelado"
-                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 md:max-w-xs md:text-sm md:leading-6"
-                            :disabled="edit == false">
-                        <!-- <option value="" disabled selected>SEL...</option> -->
-                        <option value="0" selected>NÃO</option>
-                        <option value="1">SIM</option>
-                    </select>
-            </div>
-
-            <div class="w-5/12 md:w-3/12">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Parcelas</label>
-                    <select id="qtdparcelas" name="qtdparcelas" v-if="formTwo.formaPgto > 2 && formTwo.parcelado == 1"
-                            v-model="formTwo.qtdParcelas"
-                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 md:max-w-xs md:text-sm md:leading-6"
-                            :disabled="edit == false">
-                        <option value="1" disabled selected>SEL...</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                    </select>
-            </div>
-
-        </div>
-
-        <!-- Data da Reserva / Vendedor-->
-        <div class="flex flex-wrap w-full space-x-6">
-
-            <div class="sm:w-3/12">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Data da Reserva</label>
-                <div class="mt-2">
-                    <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 bg-gray-200">
-                        <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
-                        <input type="date"
-                            v-model="dtReserva"
-                            disabled
-                            class="h-9 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs"
-
-                        />
-                    </div>
-                </div>
-            </div>
-
-            <div class="sm:w-4/12">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Vendedor</label>
-                <div class="mt-2">
-                    <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-
-                        <select id="vendedor" name="vendedor"
-                                @change="getUsuario($event.target.value)"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                                :disabled="edit == false">
-                            <option value="0" disabled selected>SELECIONE</option>
-                            <option v-for="user in usuarios" :key="user.id" :value="user.id">{{ user.name }}</option>
-
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-
-        </div>
-
 
         <!-- Avançar / Voltar -->
         <div class="w-full sm:flex sm:flex-row-reverse">
-            <label class="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto" @click="nextStep(3)">Avançar</label>
-<!--            <label v-if="liberaEmissaoPi" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto" @click="nextStep(5)">Reservar sem PI</label>-->
-            <label class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" @click="nextStep(1)">Voltar</label>
-
+            <button class="btn btn-success w-full sm:w-auto sm:ml-3" @click="nextStep(3)">Avançar</button>
+            <button class="btn btn-outline mt-3 sm:mt-0 w-full sm:w-auto" @click="nextStep(1)">Voltar</button>
         </div>
     </div>
 </template>
+
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>
