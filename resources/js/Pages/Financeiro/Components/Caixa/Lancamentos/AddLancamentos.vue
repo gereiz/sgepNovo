@@ -7,7 +7,7 @@ import { ref, defineProps } from 'vue';
 import { useToastr } from '@/Components/toastr';
 
 const page = usePage();
-const props = defineProps(['centrosCusto', 'lancamentos', 'tipos_lancamento']);
+const props = defineProps(['centrosCusto', 'lancamentos', 'tipos_lancamento', 'comissoes_por_reserva']);
 const toastr = useToastr();
 
 
@@ -186,7 +186,7 @@ const addLancamento = () => {
             <div class="w-[98%] sm:w-8/12 h-[98%] sm:flex flex-wrap border border-slate-300 rounded-lg overflow-x-auto">
 
                 <!-- Tabela de Centros de Custo -->
-                <TabelaLancamentos :centrosCusto="centrosCusto" :lancamentos="lancamentos" :tipos_lancamento="tipos_lancamento" />
+                <TabelaLancamentos :centrosCusto="centrosCusto" :lancamentos="lancamentos" :tipos_lancamento="tipos_lancamento" :comissoes_por_reserva="comissoes_por_reserva" />
 
 
             </div>

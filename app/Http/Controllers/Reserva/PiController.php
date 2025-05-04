@@ -174,7 +174,7 @@ class PiController extends Controller
             ->where('bisemana_id', session('dadosPi')['Two']['bisemanaId'])
             ->where('pi_ok', 1)->get();
 
-            $total_servicos = 0;
+            $valor_liq_comissoes = 0;
             // Calcula as comissões para salvar o valor liquido e o valor total
             foreach($servicos as $servico) {
                 $vlr_total = $servico['vlr_total'];
@@ -197,6 +197,7 @@ class PiController extends Controller
                                 'agente_id' => $agente->id,
                                 'valor_comissao' => $vlr_liquido * ($comissao->valor / 100),
                             ]);
+                            $vlr_total -= $vlr_liquido * ($comissao->valor / 100);
                         } else {
                             $comissao_venda->Create([
                                 'pi_id' => $pi->id,
@@ -204,12 +205,12 @@ class PiController extends Controller
                                 'agente_id' => $agente->id,
                                 'valor_comissao' => $vlr_liquido - $comissao->valor,
                             ]);
+                            $vlr_total -= $vlr_liquido - $comissao->valor;
                         }
                     }
                 }
 
-                $total_servicos += $vlr_total;
-            
+                $valor_liq_comissoes += $vlr_total;
             }
 
             
@@ -273,7 +274,7 @@ class PiController extends Controller
                 $dt_pi = Carbon::today()->toDateString();
 
                 $pi =  PDF::loadview('relatorios.pi.pi_nova', compact('pi', 'cliente', 'agentes', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
-                'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor', 'dt_atual', 'lista_lancamentos'));
+                'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor', 'dt_atual', 'lista_lancamentos', 'valor_liq_comissoes'));
 
                 $pi->setPaper('a4', 'landscape');
 

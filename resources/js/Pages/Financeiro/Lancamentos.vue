@@ -12,7 +12,7 @@ import ListaTipoLancamento from './Components/Caixa/TipoLancamento/AddTipoLancam
 const props = defineProps(['centros_custo', 'lancamentos', 'tipos_lancamento']);
 
 
-</script>
+</script> 
 
 <template>
     <Head title="Painel de Lançamentos" />

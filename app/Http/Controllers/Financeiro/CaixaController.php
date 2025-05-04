@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Financeiro;
 
 use App\Http\Controllers\Controller;
+use App\Models\Financeiro\Comissao;
+use App\Models\Financeiro\ComissaoVenda;
 use Illuminate\Http\Request;
 use App\Services\Financeiro\CaixaService;
 use Inertia\Inertia;
@@ -22,7 +24,16 @@ class CaixaController extends Controller
         $tipos_lancamento = $this->caixaService->getTiposLancamentos();
         $lancamentos = $this->caixaService->getLancamentos();
 
-        return Inertia::render('Financeiro/ControleCaixa', compact('centros_custo', 'tipos_lancamento', 'lancamentos'));
+        $comissoes_por_reserva = [];
+
+        foreach ($lancamentos as $lancamento) {
+            $comissoes_por_reserva[$lancamento->id_reserva] = ComissaoVenda::where('pi_id', $lancamento->id_reserva)->sum('valor_comissao');
+        }
+
+        // dd($comissoes_por_reserva);
+        return Inertia::render('Financeiro/ControleCaixa', compact('centros_custo', 'tipos_lancamento', 'lancamentos', 'comissoes_por_reserva'));
+
+
     }
 
     public function lancamentos()
@@ -30,6 +41,7 @@ class CaixaController extends Controller
         $centros_custo = $this->caixaService->getCentrosCusto();
         $tipos_lancamento = $this->caixaService->getTiposLancamentos();
         $lancamentos = $this->caixaService->getLancamentos();
+
 
         return Inertia::render('Financeiro/Lancamentos', compact('centros_custo', 'tipos_lancamento', 'lancamentos'));
     }
