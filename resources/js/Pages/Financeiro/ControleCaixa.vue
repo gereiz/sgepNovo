@@ -9,7 +9,7 @@ import ListaCentroCusto from './Components/Caixa/CentroDeCustos/AddCentroCusto.v
 import ListaLancamentos from './Components/Caixa/Lancamentos/AddLancamentos.vue';
 import ListaTipoLancamento from './Components/Caixa/TipoLancamento/AddTipoLancamento.vue';
 
-const props = defineProps(['centros_custo', 'lancamentos', 'tipos_lancamento'])
+const props = defineProps(['centros_custo', 'lancamentos', 'tipos_lancamento', 'comissoes_por_reserva'])
 
 const pagina = shallowRef('')
 
@@ -67,13 +67,14 @@ const openPagina = (val) => {
                 <div class="mt-4 ml-4">
                     <div class="w-full flex flex-col">
 
-                        <h1 v-if="pagina === ''" class="w-full h-72 flex items-center justify-center text-4xl font-semibold">Selecione uma opção Acima</h1>
+                        <h1 v-if="pagina === ''" class="w-full h-72 flex items-center justify-center text-4xl font-semibold">Selecione uma opção Acima </h1>
 
                         <keep-alive>
                             <component :is="pagina"
                                         :centrosCusto="centros_custo"
                                         :lancamentos="lancamentos"
                                         :tipos_lancamento="tipos_lancamento"
+                                        :comissoes_por_reserva="comissoes_por_reserva"
 
                             >
                             </component>

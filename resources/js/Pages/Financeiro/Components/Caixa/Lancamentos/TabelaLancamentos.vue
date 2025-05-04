@@ -8,7 +8,7 @@ import EditLancamento from './EditLancamento.vue';
 import DelLancamento from './DelLancamento.vue';
 
 const page = usePage();
-const props = defineProps(['centrosCusto', 'lancamentos', 'tipos_lancamento']);
+const props = defineProps(['centrosCusto', 'lancamentos', 'tipos_lancamento', 'comissoes_por_reserva']);
 const toastr = useToastr();
 
 
@@ -79,7 +79,7 @@ const updateLanc = (val) => {
                 <td class="w-[10%] whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-2">{{ lancamento.id }}</td>
                 <td class="w-[40%] whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-2">{{ lancamento.descricao }}</td>
                 <td class="w-[10%] whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-2">R$ {{ lancamento.valor }}</td>
-                <td class="w-[10%] whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-2">R$ {{ lancamento.valor }}</td>
+                <td class="w-[10%] whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-2">R$ {{ (lancamento.valor - comissoes_por_reserva[lancamento.id_reserva] || 0).toFixed(2) }}</td>
                 <td class="w-[10%] whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-2">{{ new Date(lancamento.dt_faturamento).toLocaleDateString() }}</td>
                 <td class="w-[10%] whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-2">{{ lancamento.centro_custo.centro_custo}}</td>
 
