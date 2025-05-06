@@ -60,6 +60,7 @@
     { name: 'Cadastro de Serviços', description: 'Realize o cadastro / edição de serviços.', href: '/Servicos', icon: CurrencyDollarIcon  },
     { name: 'Cadastro de Comissões', description: 'Realize o cadastro / edição de comissões.', href: '/Comissoes', icon: CurrencyDollarIcon },
     { name: 'Controle de Caixa', description: 'Realize o controle de Entradas e Saídas de valores.', href: '/Caixa', icon: CurrencyDollarIcon },
+    { name: 'Comissões Pagas', description: 'Lista as comissões pagas por PI.', href: '/ListaComissoesPagas', icon: CurrencyDollarIcon },
 
   ]
 

@@ -44,7 +44,7 @@ class FinanceiroService
             ['id' => $request->id_servico],
             [
                 'nome' => $request->nome_servico,
-                'valor' => number_format(floatval($request->valor_servico = str_replace(',', '.', $request->valor_servico)), 2, '.', ''),
+                'valor' => number_format(floatval(str_replace(',', '.', $request->valor_servico)), 2, '.', ''),
                 'descricao' => $request->desc_servico,
                 'id_user' => auth()->user()->id
             ]
@@ -132,7 +132,7 @@ class FinanceiroService
         $comissao = Servico::updateOrCreate(
             ['id' => $request['id_servico']],
             [
-                'comissao' => number_format(floatval($request->valor_comissao = str_replace(',', '.', $request->valor_comissao)), 2, '.', ''),
+                'comissao' => number_format(floatval(str_replace(',', '.', $request->valor_comissao)), 2, '.', ''),
                 'tipo_comissao' => $request->tipo_comissao,
                 'id_user' => auth()->user()->id
             ]
@@ -164,7 +164,7 @@ class FinanceiroService
             [
                 'id_funcionario' => $request->id_funcionario,
                 'id_servico' => $request->id_servico,
-                'valor' => number_format(floatval($request->valor_comissao = str_replace(',', '.', $request->valor_comissao)), 2, '.', ''),
+                'valor' => number_format(floatval(str_replace(',', '.', $request->valor_comissao)), 2, '.', ''),
                 'tipo_comissao' => $request->tipo_comissao,
                 'id_user' => auth()->user()->id
             ]
