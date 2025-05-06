@@ -113,8 +113,10 @@ function getReservas(idBisemana) {
             </div>
 
             <!-- Cards das PIs -->
-            <div class="card flex flex-col md:flex-row flex-wrap w-full h-full bg-base-100 shadow-xl overflow-auto rounded-md p-4 space-y-4 mr-4">
-                <div v-for="(pi, index) in pisFiltradas" :key="index" class="card bg-neutral text-neutral-content w-96 h-5/6 hover:scale-105 transition-all duration-500 ease-in-out">
+            <div class="card flex flex-col md:flex-row md:flex-wrap w-full h-full bg-base-100 shadow-xl overflow-auto rounded-md p-4 space-y-4 md:space-y-0">
+                <div v-for="(pi, index) in pisFiltradas" :key="index" 
+                        class="card bg-neutral text-neutral-content w-96 h-5/6 md:h-4/6 hover:scale-105 transition-all duration-500 ease-in-out md:mx-4 mb-4"
+                >
                     <div class="card-body items-center text-center">
                         <h2 class="card-title text-2xl">PI nº {{ pi.id }}</h2>
                         
@@ -123,7 +125,7 @@ function getReservas(idBisemana) {
                         <p class="text-lg font-bold">Campanha: {{ pi.campanha ? pi.campanha : 'Não informada' }}</p>
                         
                         <!-- Lista de comissões relacionadas a esta PI -->
-                        <div class="w-full mt-4">
+                        <div class="w-full mt-4 max-h-18 overflow-auto">
                             <h3 class="text-lg font-bold mb-2">Comissões</h3>
                             <div v-if="props.comissoes.filter(com => com.pi_id === pi.id).length > 0">
                                 <div v-for="(comissao, comIndex) in props.comissoes.filter(com => com.pi_id === pi.id)" 
