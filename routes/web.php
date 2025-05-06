@@ -167,6 +167,7 @@ route::middleware(['auth', 'verified'])->group(function () {
 
     route::post('/CadastraComissaoUsuario', [ComissoesController::class, 'cadastraComissaoUsuario'])->name('cad.comissao.usuario');
     route::post('/DeletaComissaoUsuario', [ComissoesController::class, 'deletaComissaoUsuario'])->name('del.comissao.usuario');
+    route::get('/ListaComissoesPagas', [ComissoesController::class, 'listaComissoesPagas']);
 
 
     // Pi's
