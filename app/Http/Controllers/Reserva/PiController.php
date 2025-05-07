@@ -56,6 +56,7 @@ class PiController extends Controller
         $idPaineis = session('dadosPi')['Two']['paineis'];
         $bsId = session('dadosPi')['Two']['bisemanaId'];
 
+        // dd(session('dadosPi'));
 
         $cliente = $this->clienteService->getCliente(session('dadosPi')['One']['clienteId']);
         $data_pgto_formated = explode('-', session('dadosPi')['Four']['dtPgto']);
@@ -160,11 +161,11 @@ class PiController extends Controller
                     'vl_unit' =>  $vlr_unt,
                     'vl_desc' => $vlr_desc,
                     'vl_total' => $vl_total,
-                    'pago' => session('dadosPi')['Two']['pgto'],
+                    'pago' => session('dadosPi')['Four']['pgto'],
                     'dt_pgto' => $data_pgto_formated,
-                    'forma_pagamento' => session('dadosPi')['Two']['formaPgto'],
+                    'forma_pagamento' => session('dadosPi')['Four']['formaPgto'],
                     'vendedor' => session('dadosPi')['Two']['vendedorId'],
-                    'obs' => session('dadosPi')['Two']['servicos'][0]['detalhes']
+                    'obs' => session('dadosPi')['Four']['servicos'][0]['detalhes']
                 ]);
 
             }
