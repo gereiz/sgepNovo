@@ -41,11 +41,11 @@
                 $count_total = 0;
             @endphp
 
-            @foreach ($paineis as $painel)
+            @foreach ($paineisPorCidade as $painel)
             {{$count_total++}}
             <tr> 
                 <td colspan="1" class="small" style="font-weight: 800;">{{$loop->iteration}}</td>
-                <td colspan="9" class="small" style="font-weight: 800;">{{$painel->num_bisemana}} - {{date('d/m/Y', strtotime($painel->inicio))}} até {{date('d/m/Y', strtotime($painel->fim))}}</td>
+                <td colspan="9" class="small" style="font-weight: 800;"></td>
                 <td colspan="1" class="text-center small" style="font-weight: 800;">{{$painel->painel}}</td>
                 <td colspan="1" class="text-center small" style="font-weight: 800;">{{$painel->count_painel}}</td>
             </tr>

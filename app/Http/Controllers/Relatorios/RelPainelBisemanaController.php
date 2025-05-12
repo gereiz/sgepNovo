@@ -10,12 +10,14 @@ use App\Models\Bisemanas\Bisemana;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
-use PDF;
+use Barryvdh\DomPDF\Facade\PDF;
+use Carbon\Carbon;
 
 class RelPainelBisemanaController extends Controller
 {
-    public function index()
-    {
+
+    public function index() {
+
         $anos = Ano::orderBy('ano_bisemana', 'desc')->get();
         
         return Inertia::render('Relatorios/PaineisXBisemana/RelPainelBisemana', [
@@ -23,11 +25,13 @@ class RelPainelBisemanaController extends Controller
         ]);
     }
     
-    public function setRelPainelBisemana(Request $request)
-    {
+    public function setRelPainelBisemana(Request $request) {
+        // dd($request->all());
+
         $anoId = $request->anoId;
         $bsId = $request->bsId;
         $orient = $request->orient;
+
         
         // Store in session
         session(['anoId' => $anoId]);
@@ -42,6 +46,10 @@ class RelPainelBisemanaController extends Controller
         $anoId = session('anoId');
         $bsId = session('bsId');
         $orient = session('orient');
+
+        $dt_atual = Carbon::today()->toDateString();
+        $dt_atual = explode('-', $dt_atual);
+        $dt_atual = $dt_atual[2].'/'.$dt_atual[1].'/'.$dt_atual[0];
         
         // Get bisemana details
         $bisemana = Bisemana::find($bsId);
@@ -87,12 +95,9 @@ class RelPainelBisemanaController extends Controller
             
             $paineisPorCidade[$painel->cidade][$painel->regiao][$painel->bairro][] = $painel;
         }
-        
+
         // Generate PDF
-        $pdf = PDF::loadView('relatorios.paineis_bisemana', [
-            'paineisPorCidade' => $paineisPorCidade,
-            'bisemana' => $bisemana
-        ]);
+        $pdf = PDF::loadView('relatorios.paineisXbisemanas.rel_pain_x_bisemana', compact('paineisPorCidade', 'paineis', 'bisemana', 'dt_atual'));
         
         if ($orient == 'L') {
             $pdf->setPaper('a4', 'landscape');

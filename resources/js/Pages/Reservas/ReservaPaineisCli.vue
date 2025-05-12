@@ -276,8 +276,8 @@ const reservaData = computed(() => {
                         </select>
                     </div>
 
-                     <!-- Clientes -->
-                     <div class="w-full lg:w-[35%] flex flex-col sm:-mt-5 me-4 sm:me-6 mb-2">
+                    <!-- Clientes -->
+                    <div class="w-full lg:w-[35%] flex flex-col sm:-mt-5 me-4 sm:me-6 mb-2">
                         <label for="cliente">Cliente</label>
                         <multiselect :disabled="idBisemana == 0"
                             v-model="idCliente"
