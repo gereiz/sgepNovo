@@ -103,9 +103,9 @@
     <AuthenticatedLayout>
         <div class="w-full h-screen pt-24 pb-32 mx-2 md:mx-4">
             <!-- Cabeçalho e barra de Pesquisa -->
-            <div class="w-full h-14 flex mb-2">
+            <div class="w-full h-14 flex mb-2"> 
                 <div class="sm:w-2/12 h-14 flex items-center">
-                    <h1 class="titulo">Relatório de Colagem</h1>
+                    <h1 class="text-2xl font-bold">Relatório de Colagem</h1>
                 </div>
             </div>
 
@@ -115,7 +115,9 @@
                         <div class="w-full sm:w-10/12 flex flex-wrap space-y-6 sm:space-y-0 sm:space-x-6">
                             <!-- Ano -->
                             <div class="w-full sm:w-1/12 flex flex-col">
-                                <label for="cliente">Ano</label>
+                                <label class="label">
+                                    <span class="label-text">Ano</span>
+                                </label>
                                 <select class="select select-bordered w-full max-w-xs" v-model="anoId" @change="setReservaCliente()">
                                     <option value="0" disabled selected>Selecione</option>
                                     <option v-for="ano, index in anos" :key="index" :value="ano.id">{{ ano.ano_bisemana }}</option>
@@ -124,7 +126,9 @@
 
                             <!-- Bi-semana -->
                             <div class="w-full sm:w-3/12 flex flex-col">
-                                <label for="cliente">Bi-semana</label>
+                                <label class="label">
+                                    <span class="label-text">Bi-semana</span>
+                                </label>
                                 <select class="select select-bordered w-full max-w-xs" v-model="bsId" :disabled="bisemanas.length === 0">
                                     <option value="0" disabled selected>Selecione</option>
                                     <option v-for="bs, index in bisemanas" :key="index" :value="bs.id">BS: {{ bs.num_bisemana }} {{ new Date(bs.inicio).toLocaleDateString() }} até {{ new Date(bs.fim).toLocaleDateString() }}</option>
@@ -133,7 +137,9 @@
 
                             <!-- Orientação -->
                             <div class="w-full sm:w-5/12 flex flex-col">
-                                <label for="cliente">Orientação</label>
+                                <label class="label">
+                                    <span class="label-text">Orientação</span>
+                                </label>
                                 <select v-model="orient" class="select select-bordered w-full max-w-xs" disabled>
                                     <option value="" disabled selected>Selecione</option>
                                     <option value="R">A4 - Retrato</option>
@@ -147,7 +153,9 @@
                     <div class="w-full sm:w-10/12 flex flex-wrap space-y-6 sm:space-y-0 sm:space-x-6">
                         <!-- Cidade -->
                         <div class="w-full sm:w-[20%] flex flex-col">
-                            <label for="cidade">Cidade</label>
+                            <label class="label">
+                                <span class="label-text">Cidade</span>
+                            </label>
                             <select class="select select-bordered w-full max-w-xs" v-model="cidId" disabled @change="setRegioes()">
                                 <option value="0" disabled selected>Todos</option>
                                 <option v-for="cid, index in cidades" :key="index" :value="cid.id">{{ cid.nome }}</option>
@@ -156,7 +164,9 @@
 
                         <!-- Região -->
                         <div class="w-full sm:w-[20%] flex flex-col">
-                            <label for="regiao">Região</label>
+                            <label class="label">
+                                <span class="label-text">Região</span>
+                            </label>
                             <select class="select select-bordered w-full max-w-xs" v-model="regId" disabled @change="setBairros()">
                                 <option value="0" disabled selected>Todos</option>
                                 <option v-for="reg, index in regioes" :key="index" :value="reg.id">{{ reg.nome }}</option>
@@ -165,7 +175,9 @@
 
                         <!-- Bairro -->
                         <div class="w-full sm:w-[20%] flex flex-col">
-                            <label for="bairro">Bairro</label>
+                            <label class="label">
+                                <span class="label-text">Bairro</span>
+                            </label>
                             <select class="select select-bordered w-full max-w-xs" v-model="baiId" disabled>
                                 <option value="0" disabled selected>Todos</option>
                                 <option v-for="bai, index in bairros" :key="index" :value="bai.id">{{ bai.nome }}</option>
@@ -175,7 +187,7 @@
                         
                         <div class="w-full sm:w-4/12 flex flex-wrap sm:space-x-4 space-y-6 sm:space-y-0">
                             <div class="w-full sm:w-5/12 flex flex-col items-center sm:items-start justify-center">
-                                <button id="gera_rel" class="botao-primario w-11/12 sm:w-fit sm:px-4 -ms-3.5 sm:-ms-0 mt-5" @click="getRelColagem()">Gerar Relatório</button>
+                                <button id="gera_rel" class="btn btn-primary w-11/12 sm:w-fit sm:px-4 -ms-3.5 sm:-ms-0 mt-8" @click="getRelColagem()">Gerar Relatório</button>
                             </div>
                         </div>
                     </div>
