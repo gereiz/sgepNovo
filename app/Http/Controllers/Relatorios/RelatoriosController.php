@@ -13,7 +13,7 @@ use App\Models\Reservas\Reserva;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Inertia\Inertia;
-use PDF;
+use Barryvdh\DomPDF\Facade\PDF;
 
 
 
@@ -102,9 +102,8 @@ class RelatoriosController extends Controller
         $anos = Ano::all();
 
 
-        return Inertia::render('Relatorios/RelReservaCliente', compact('clientes', 'anos'));
+        return Inertia::render('Relatorios/Reservas/RelReservaCliente', compact('clientes', 'anos'));
     }
-
 
     public function setCLiente(Request $request) {
 
@@ -134,8 +133,8 @@ class RelatoriosController extends Controller
 
     }
 
-
     public function getRelReservaCliente(Request $request) {
+        // dd($request->orient);
         $tZone = new \DateTimeZone('America/Sao_paulo');
         $user = auth()->user()->name;
         $bisemana = Bisemana::where('id', session('num_bs'))->first();
@@ -147,16 +146,20 @@ class RelatoriosController extends Controller
 
         $paineis = Reserva::with('painel.bairro.regiao.cidade')->where([['bisemana_id', session('num_bs')], ['cliente_id', session('cliente')]])->get();
 
+        $dt_atual = Carbon::today()->toDateString();
+        $dt_atual = explode('-', $dt_atual);
+        $dt_atual = $dt_atual[2].'/'.$dt_atual[1].'/'.$dt_atual[0];
 
 
         $pdf = PDF::loadView('relatorios.paineis.rel_paineis_x_cliente', compact('numBisemana',
                                                                             'periodo',
                                                                             'paineis',
                                                                             'cliente',
-                                                                            'user'
+                                                                            'user',
+                                                                            'dt_atual'
                 ));
 
-        $orientation = session('orientacao') === 'R' ? 'portrait' : 'landscape';
+        $orientation = $request->orient === 'P' ? 'portrait' : 'landscape';
         return $pdf->setPaper('a4', $orientation)->stream('Painéis_'.$clienteNome.'_BS-'.$numBisemana.'_'.$time.'.pdf');
 
     }

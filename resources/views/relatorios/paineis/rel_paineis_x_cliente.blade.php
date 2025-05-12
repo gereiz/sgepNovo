@@ -2,169 +2,67 @@
 <link rel="stylesheet" href="{{public_path('assets/css/relatorios.css')}}">
 
 <style>
-    body {
-        font-family: "Lucida Console", "Courier New", monospace;
-    }
-
     @page {
-        margin: 2cm;
+        margin: 1cm;
     }
-
-    .relatorio {
-        margin-left: -30px;
-        margin-bottom: 20px!important;
-        width: 735px;
-        height: 280px;
-        page-break-inside: avoid;
-    }
-
-    .no-space{
-        margin-top: 0px;
-        margin-bottom: 0px;
-        padding-top: 0px;
-        padding-bottom: 0px;
-    }
-
-    #tabletitulo {
-        text-align: center;
-        max-width: 750px!important;
-        margin-bottom: 30px;
-        margin-top: 0;
-        height: 130px;
-        background-color: #e4e4e4;
-        border: 1px solid;
-        padding: 15px;
-    }
- 
-    .relatorio-body {
-        display: flex;
-        padding: 15px;
-    }
-
-    .img-relatorio {
-        position: relative;
-        top: -85px;
-        left: 63%;
-        width: 250px;
-        height: 180px;
-        border: 1px solid!important;
-        object-fit: cover;
-    }
-
-    .endereco-relatorio{
-        max-width: 390px;
-        margin-top: 10px;
-    }
-
-    .login_logo {
-        width: 150px;
-        position: relative;
-        left: -35%;
-        top: 20%;
-    }
-
-    #table-alerta {
-        margin-bottom: 20px;
-    }
-
-    #table-alerta h5 {
-        color: #B22222;
-        text-align: center;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .table {
-        width: 100%;
-        margin-bottom: 1rem;
-        color: #212529;
-        background-color: transparent;
-    }
-
-    .table th,
-    .table td {
-        padding: 0.75rem;
-        vertical-align: top;
-        border-top: 1px solid #dee2e6;
-    }
-
-    .table thead th {
-        vertical-align: bottom;
-        border-bottom: 2px solid #dee2e6;
-    }
-
-    .table tbody + tbody {
-        border-top: 2px solid #dee2e6;
-    }
-
-    .table-bordered {
-        border: 1px solid #dee2e6;
-    }
-
-    .table-bordered th,
-    .table-bordered td {
-        border: 1px solid #dee2e6;
-    }
-
-    .table-striped tbody tr:nth-of-type(odd) {
-        background-color: rgba(0, 0, 0, 0.05);
-    }
-
+    
     .pagebreak {
         page-break-before: always;
     }
+    
+    .img-relatorio {
+        width: 400px;
+        height: 220px;
+        object-fit: cover;
+    }
+    
+    #table-alerta h5 {
+        color: #B22222;
+    }
 </style>
  
-<div id="tabletitulo">
-    <img class="login_logo" src="{{public_path('storage/img/logo.png')}}" alt="Logo">
-    <h4 style="margin-top:-5%;">Painéis Reservados</h4>
-    <h5>{{$cliente->nome_fantasia ? $cliente->nome_fantasia : $cliente->razao_social}}</h5>
-    <h5>Bi-Semana: {{$numBisemana}} - {{$periodo}}</h5>
-</div>
+@include('relatorios.includes.rel_header', ['titulo' => 'RESERVAS POR CLIENTE', 'doc' => 'REL', 'num' => ""])
 
-<div id="table-alerta">
-    <h5><b><u>Esta disponibilidade está sujeita a alteração, sem aviso prévio.</b></u></h5>
+<div id="table-alerta" class="mb-4">
+    <h5 class="text-center"><b><u>Esta disponibilidade está sujeita a alteração, sem aviso prévio.</b></u></h5>
 </div>
 
 
-<table style="page-break-after:always;">
+<table class="w-100" style="page-break-after:always;">
 
     <?php
     $i = 1;
     foreach ($paineis as $p) {
     ?>
-    {{-- <?php if ($i % 2 != 0) { ?> 
-        <tr>
-        <?php } ?> --}}
     <tr>
-        <td >
+        <td>
             <div class="col-md-12">
-                <div class="card relatorio">
-                    <div class="text-center" style="background-color:#E0E0E0;">
+                <div class="card mb-4" style="width: 100%; height: 290px; page-break-inside: avoid; margin-top: 20px; margin-left: -15px; border: 1px solid #666666; border-radius: 10px;">
+                    <div class="text-center bg-secondary text-white py-2" style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
                         <h4 class="card-title">Identificação: {{$p->painel->identificacao}}</h4>
                     </div>
-                    <div class="card-body relatorio-body">
-                        <div class="row d-flex">
+                    <div class="card-body p-3">
+                        <div class="row">
                             <div class="col-md-12">
                                
                                {{-- informações --}}
-                                <div class="d-inline col-md-6">
-                                    <div class="endereco-relatorio">
-                                        <p><b>Localização:</b>  {{$p->painel->logradouro}}, nº{{$p->painel->numero}} - {{$p->painel->bairro->nome}} / {{$p->painel->bairro->regiao->cidade->nome}}</p>
+                                <div class="col-md-6 d-inline-block">
+                                    <div class="mt-2" style="max-width: 390px;">
+                                        <p><b>Localização:</b>  {{$p->painel->logradouro}}, nº
+                                                                {{$p->painel->numero}} - 
+                                                                {{$p->painel->bairro->nome}} / 
+                                                                {{$p->painel->bairro->regiao->cidade->nome}}
+                                        </p>
                                         <p><b>Coordenadas:</b> <a href="https://maps.google.com/?q={{$p->painel->latitude}},{{$p->painel->longitude}}" target="_blank">Ver localização no mapa</a> </p>
                                     </div>
                                 </div>
 
                                 {{-- Imagem --}}
-                                <div class="d-inline col-md-6">
-                                    <div style="margin-top: -7%;">
+                                <div class="col-md-6 d-inline-block">
+                                    <div class="position-relative" style="width: 400px; height: 220px; margin-top: -3%; left: 55%; top: -85px;">
                                         <?php
                                         $filePath = 'storage/'.$p->painel->image_url;
                                         $originalImage = public_path($filePath);
-                                        //if(pathinfo('storage/'.$p->painel->image_url, PATHINFO_EXTENSION) != "png" || mime_content_type($filePath) != "image/png"){
                                         if(filesize($filePath) > 50000){
                                             $info = getimagesize($filePath);
                             
@@ -182,26 +80,16 @@
                                         }
                                     
                                         ?>
-                                        <img class="img-relatorio" src="{{$reportImage}}" alt="imagem_painel">
+                                        <img class="img-relatorio border" src="{{$reportImage}}" alt="imagem_painel" style="border: 0.2px solid #666666; border-radius: 10px;">
                                     </div>
                                 </div> 
-
-
                             </div>
-                            
                         </div>
-                        
-                        {{-- <div class="d-inline row">
-                            <p class="d-inline card-text">{{$p->painel->localizacao}}</p>
-                        </div> --}}
                     </div>
                 </div>
             </div>
         </td>
     </tr>
-    {{-- <?php if ($i % 2 == 0) { ?>
-    </tr>
-    <?php } ?> --}}
 
     <?php if ($i == 6) { ?>
         <div class="d-inline pagebreak"> </div>

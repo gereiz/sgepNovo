@@ -1,10 +1,7 @@
-<link rel="stylesheet" href="{{public_path('assets/vendor/css/rtl/bootstrap.css')}}">
-<link rel="stylesheet" href="{{public_path('assets/css/relatorios.css')}}">
+<link rel="stylesheet" href="{{public_path('assets/vendor/css/rtl/bootstrap.css')}}"> 
+<link rel="stylesheet" href="{{public_path('assets/css/relatorios.css')}}"> 
 
 <style>
-    body {
-        font-family: "Lucida Console", "Courier New", monospace;
-    }
 
     @page {
         margin: 2cm;
@@ -117,12 +114,29 @@
         page-break-before: always;
     }
 </style>
+
+<!-- <style>
+    @page {
+        margin: 10px;
+    }
+    
+    .page-number {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        font-size: 12px;
+    }
+    
+    .page-number:after {
+        content: "página " counter(page) " de 2";
+    }
+
+    .page-break {
+        page-break-before: always;
+    }
+</style> -->
  
-<div id="tabletitulo">
-    <img class="login_logo" src="{{public_path('storage/img/logo.png')}}" alt="Logo">
-    <h4 style="margin-top:-5%;">Relatório de Painéis por Bisemana</h4>
-    <h5>Bisemana: {{ $bisemana->num_bisemana }} ({{ date('d/m/Y', strtotime($bisemana->inicio)) }} - {{ date('d/m/Y', strtotime($bisemana->fim)) }})</h5>
-</div>
+@include('relatorios.includes.rel_header', ['titulo' => 'PAINÉIS POR BI-SEMANA', 'doc' => 'REL', 'num' => 0])
 
 <div id="table-alerta">
     <h5><b><u>Esta disponibilidade está sujeita a alteração, sem aviso prévio.</b></u></h5>
@@ -141,7 +155,7 @@
                         <table>
                             <thead>
                                 <tr>
-
+                                    <th>identificação</th>
                                     <th>Logradouro</th>
                                     <th>Ponto de Referência</th>
                                     <th>Cliente</th>
