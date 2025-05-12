@@ -10,8 +10,9 @@ use App\Models\Enderecos\Regiao;
 use App\Models\Enderecos\Bairro;
 use App\Models\Bisemanas\Bisemana;
 use Inertia\Inertia;
-use PDF;
-use DB;
+use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\PDF;
+use Illuminate\Support\Facades\DB;
 
 
 class RelPainXCliController extends Controller 
@@ -61,12 +62,15 @@ class RelPainXCliController extends Controller
                     ->where('res.bisemana_id', $bisemana_id)
                     ->get();
 
-        // dd($reservas);
+
+        $dt_atual = Carbon::today()->toDateString();
+        $dt_atual = explode('-', $dt_atual);
+        $dt_atual = $dt_atual[2].'/'.$dt_atual[1].'/'.$dt_atual[0];
 
 
-        $orientacao = (session('orientacao') == 'P') ? 'portrait' : 'landscape';
+        $orientacao = (session('orientacao') == 'L') ? 'portrait' : 'landscape';
 
-        $pdf = PDF::loadView('relatorios.paineisXclientes.rel_pain_x_cli', compact('reservas','count_res', 'bisemana'));
+        $pdf = PDF::loadView('relatorios.paineisXclientes.rel_pain_x_cli', compact('reservas','count_res', 'bisemana', 'dt_atual'));
         
             return $pdf->setPaper('a4', $orientacao)->stream('Paineis_X_Cliente.pdf');
     }

@@ -2,12 +2,9 @@
 <link rel="stylesheet" href="{{public_path('assets/css/relatorios.css')}}">
 
 <style>
-    body {
-        font-family: "Lucida Console", "Courier New", monospace;
-    } 
 
     @page {
-        margin: 2cm;
+        margin: 1cm;
     }
 
     table {
@@ -56,7 +53,7 @@
     }
 </style>
 
-<div>
+<!-- <div>
     <hr class="bg-dark" style="margin-top: -3%;">
     <div class="text-center">
         <img class="text-center" src="assets/img/logo-white.png" style="width: 20%; margin-bottom: 2%;">
@@ -68,17 +65,22 @@
         {{-- <h5 class="text-center">Bi-semana: {{$bisemana->num_bisemana}} - {{date('d/m/Y', strtotime($bisemana->inicio))}} até {{date('d/m/Y', strtotime($bisemana->fim))}}</h5> --}}
         <hr class="bg-dark">
     </div>
-</div>
+</div> -->
+
+@include('relatorios.includes.rel_header', ['titulo' => 'Painéis reservados por Cliente', 'doc' => 'PI', 'num' => ""])
 
 <div style="margin-top: -1.7%;">  
     <table class="table table-striped table-bordered">
-    
-        <tbody>
+        <thead>
             <tr class="text-center">
                 <th colspan="12">
-                    <h4 class="text-center">Bi-semana: {{$bisemana->num_bisemana}} - {{date('d/m/Y', strtotime($bisemana->inicio))}} até {{date('d/m/Y', strtotime($bisemana->fim))}}</h4>
+                    <h5 class="text-center mt-5">Bi-semana: {{$bisemana->num_bisemana}} - {{date('d/m/Y', strtotime($bisemana->inicio))}} até {{date('d/m/Y', strtotime($bisemana->fim))}}</h5>
                 </th>
             </tr>
+        </thead>
+    
+        <tbody>
+            
 
             <tr class="thead-dark">
                 <th colspan="1"></th>

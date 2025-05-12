@@ -2,7 +2,7 @@
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import { Head } from '@inertiajs/vue3';
     import { useToastr } from '@/Components/toastr';
-    import { ref, reactive, onMounted, computed } from 'vue';
+    import { ref, reactive, onMounted, watch } from 'vue';
 
     const props = defineProps(['anos'])
 
@@ -10,9 +10,20 @@
 
     const anoId = ref(0)
     const bsId = ref(0)
-    const orient = ref('P')
+    const orient = ref('L')
 
+    onMounted(() => {
+        // Procura o ID do ano atual na lista de anos disponíveis
+        const anoAtual = new Date().getFullYear(); // Obtém o ano atual
+        const anoEncontrado = props.anos.find(ano => ano.ano_bisemana == anoAtual);
+        if (anoEncontrado) {
+            anoId.value = anoEncontrado.id;
+        }
+    })
 
+    watch(anoId, (val) => {
+        getBs()
+    })
     
     function getBs() {
 
@@ -88,7 +99,9 @@
                         <div class="w-full sm:w-10/12 flex flex-wrap space-y-6 sm:space-y-0 sm:space-x-6">
                             <!-- Ano -->
                             <div class="w-full sm:w-1/12 flex flex-col">
-                                <label for="cliente">Ano</label>
+                                <label class="label">
+                                    <span class="label-text">Ano</span>
+                                </label>
                                 <select class="select select-bordered w-full max-w-xs" v-model="anoId" @change="getBs()">
                                     <option value="0" disabled selected>Selecione</option>
                                     <option v-for="ano, index in anos" :key="index" :value="ano.id">{{ ano.ano_bisemana }}</option>
@@ -98,8 +111,10 @@
 
                             <!-- Bi-semana -->
                             <div class="w-full sm:w-3/12 flex flex-col">
-                                <label for="cliente">Bi-semana</label>
-                                <select class="select select-bordered w-full max-w-xs" v-model="bsId" :disabled="bisemanas.length === 0">
+                                <label class="label">
+                                    <span class="label-text">Bi-semana</span>
+                                </label>
+                                <select class="select select-bordered w-full" v-model="bsId" :disabled="bisemanas.length === 0">
                                     <option value="0" disabled selected>Selecione</option>
                                     <option v-for="bs, index in bisemanas" :key="index" :value="bs.id">BS: {{ bs.num_bisemana }} {{ new Date(bs.inicio).toLocaleDateString() }} até {{ new Date(bs.fim).toLocaleDateString() }}</option>
                                   
@@ -112,15 +127,17 @@
                     <div class="w-full sm:w-10/12 flex flex-wrap space-y-6 sm:space-y-0 space-x-6">
                         <div class="w-full sm:w-6/12 flex flex-wrap sm:space-x-4 space-y-6 sm:space-y-0">
                             <div class="w-full sm:w-5/12 flex flex-col">
-                                <label for="cliente">Orientação</label>
+                                <label class="label">
+                                    <span class="label-text">Orientação</span>
+                                </label>
                                 <select v-model="orient" class="select select-bordered w-full max-w-xs" disabled>
                                     <option value="" disabled selected>Selecione</option>
-                                    <option value="R">A4 - Retrato</option>
-                                    <option value="P">A4 - Paisagem</option>
+                                    <option value="P">A4 - Retrato</option>
+                                    <option value="L">A4 - Paisagem</option>
                                 </select>
                             </div>
                             <div class="w-full sm:w-5/12 flex flex-col items-center sm:items-start justify-center">
-                                <button id="gera_rel" class="botao-primario w-11/12 sm:w-fit sm:px-4 -ms-3.5 sm:-ms-0 mt-5" @click="getRelatorio()">Gerar Relatório</button>
+                                <button id="gera_rel" class="btn btn-primary w-11/12 sm:w-fit sm:px-4 -ms-3.5 sm:-ms-0 mt-8" @click="getRelatorio()">Gerar Relatório</button>
                             </div>
                         </div>
                     </div>
