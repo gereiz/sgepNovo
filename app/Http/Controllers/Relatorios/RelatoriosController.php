@@ -13,7 +13,7 @@ use App\Models\Reservas\Reserva;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Inertia\Inertia;
-use Barryvdh\DomPDF\Facade\PDF;
+use PDF;
 
 
 

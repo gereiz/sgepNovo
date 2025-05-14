@@ -11,7 +11,7 @@ use App\Models\Enderecos\Bairro;
 use App\Models\Bisemanas\Bisemana;
 use Inertia\Inertia;
 use Carbon\Carbon;
-use Barryvdh\DomPDF\Facade\PDF;
+use PDF;
 use Illuminate\Support\Facades\DB;
 
 

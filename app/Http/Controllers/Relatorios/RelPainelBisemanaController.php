@@ -10,7 +10,7 @@ use App\Models\Bisemanas\Bisemana;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
-use Barryvdh\DomPDF\Facade\PDF;
+use PDF;
 use Carbon\Carbon;
 
 class RelPainelBisemanaController extends Controller
