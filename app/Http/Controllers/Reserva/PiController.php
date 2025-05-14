@@ -190,7 +190,7 @@ class PiController extends Controller
                     $comissao_venda = new ComissaoVenda();
                             
 
-                    if($comissao->exists()) {
+                    if (optional($comissao)->exists()) {
                         if($comissao->tipo_comissao == 1) {
                             $comissao_venda->Create([
                                 'pi_id' => $pi->id,
