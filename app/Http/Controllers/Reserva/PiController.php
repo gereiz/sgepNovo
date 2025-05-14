@@ -13,7 +13,7 @@ use App\Models\Bisemanas\Bisemana;
 use App\Models\Paineis\Painel;
 use App\Services\ClienteService;
 use App\Services\UsuarioService;
-use Barryvdh\DomPDF\Facade\PDF;
+use PDF;
 use App\Models\Reservas\Reserva;
 use App\Services\Financeiro\CaixaService;
 use Illuminate\Support\Facades\DB;
