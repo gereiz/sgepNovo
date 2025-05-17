@@ -39,11 +39,7 @@ function getUf(val) {
     axios.post('/dtGetUf', {uf_id: val})
       .then((res) => {
             endPain.value.uf = res.data.id
-            console.log(endPain.value.uf)
-            console.log(endPain.value.cidade)
-            console.log(endPain.value.bairro)
-            
-            // Após atualizar o valor da UF, carregamos as cidades correspondentes
+
             getCidades()
         })
       .catch((err) => {
@@ -57,10 +53,12 @@ function getCidade(val) {
        .then((res) => {
             endPain.value.cidade = res.data.id
             
-            // Após atualizar a cidade, carregamos os bairros correspondentes
-            getBairros()
+
+            setTimeout(() => {
+                getBairros()
+            }, 1000);
             
-            // Em seguida, buscamos a UF
+
             getUf(res.data.uf_id)
         })
        .catch((err) => {
@@ -222,7 +220,7 @@ watch(() => props.painel, (val) => {
             <div class="w-full sm:w-4/12">
                 <label for="cidade" class="block text-sm font-medium leading-6 text-gray-900">Cidade</label>
                 <div class="mt-2">
-                    <select id="cidade" name="cidade" v-model="endPain.cidade" :disabled="endPain.uf == 0" @change="getBairros()"
+                    <select id="cidade" name="cidade" v-model="endPain.cidade" @change="getBairros()" :disabled="endPain.cidade == 0"
                             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                         <option value="0" disabled selected>Selecione</option>
                         <option v-for="(cid, index) in cidades" :key="index" :value="cid.id">{{ cid.nome }}</option>
@@ -233,7 +231,7 @@ watch(() => props.painel, (val) => {
             <div class="w-full sm:w-3/12">
                 <label for="bairro" class="block text-sm font-medium leading-6 text-gray-900">Bairro</label>
                 <div class="mt-2">
-                    <select id="bairro" name="bairro" v-model="endPain.bairro" :disabled="endPain.cidade == 0" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                    <select id="bairro" name="bairro" v-model="endPain.bairro" :disabled="endPain.bairro == 0" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                         <option value="0" disabled selected>Selecione</option>
                         <option v-for="(bai, index) in bairros" :key="index" :value="bai.id">{{ bai.nome }}</option>
                     </select>
