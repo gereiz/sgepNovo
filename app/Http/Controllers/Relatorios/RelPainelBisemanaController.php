@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Relatorios;
 
 use App\Http\Controllers\Controller;
-use App\Models\Painel;
-use App\Models\Reserva;
 use App\Models\Config\Ano;
+use App\Models\Enderecos\Bairro;
+use App\Models\Enderecos\Cidade;
+use App\Models\Enderecos\Regiao;
 use App\Models\Bisemanas\Bisemana;
+use App\Models\Paineis\Painel;
+use App\Models\Reservas\Reserva;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -19,23 +22,22 @@ class RelPainelBisemanaController extends Controller
     public function index() {
 
         $anos = Ano::orderBy('ano_bisemana', 'desc')->get();
+        $paineis = Painel::all();
         
-        return Inertia::render('Relatorios/PaineisXBisemana/RelPainelBisemana', [
-            'anos' => $anos
-        ]);
+        return Inertia::render('Relatorios/PaineisXBisemana/RelPainelBisemana', compact('anos', 'paineis'));
     }
     
     public function setRelPainelBisemana(Request $request) {
         // dd($request->all());
 
         $anoId = $request->anoId;
-        $bsId = $request->bsId;
+        $paineis_id = $request->idPaineis;
         $orient = $request->orient;
 
         
         // Store in session
         session(['anoId' => $anoId]);
-        session(['bsId' => $bsId]);
+        session(['paineis_id' => $paineis_id]);
         session(['orient' => $orient]);
         
         return response()->json(['success' => true]);
@@ -43,68 +45,102 @@ class RelPainelBisemanaController extends Controller
     
     public function getRelPainelBisemana()
     {
-        $anoId = session('anoId');
-        $bsId = session('bsId');
-        $orient = session('orient');
+        $cidades = Cidade::all();
+        $regioes = Regiao::all();
+        $bairros = Bairro::all(); 
+        // $bisemana_id = $request->bisemana_id;
+        // $bisemana = Bisemana::where('id', $bisemana_id)->first();
+        $paineis = Painel::all();
+        $outdoors = session('paineis_id');
+        // $out = explode(',', $outdoors);
+        
+        $bs_ano = Bisemana::where('ano_id', session('anoId'))->get();
 
-        $dt_atual = Carbon::today()->toDateString();
-        $dt_atual = explode('-', $dt_atual);
-        $dt_atual = $dt_atual[2].'/'.$dt_atual[1].'/'.$dt_atual[0];
-        
-        // Get bisemana details
-        $bisemana = Bisemana::find($bsId);
-        
-        // Get all panels with reservations for this bisemana
-        $paineis = DB::table('outdoors')
-            ->join('reservas', 'outdoors.id', '=', 'reservas.outdoor_id')
-            ->join('clientes', 'reservas.cliente_id', '=', 'clientes.id')
-            ->join('bairros', 'outdoors.bairro_id', '=', 'bairros.id')
-            ->join('regioes', 'bairros.regiao_id', '=', 'regioes.id')
-            ->join('cidades', 'regioes.cidade_id', '=', 'cidades.id')
-            ->where('reservas.bisemana_id', $bsId)
-            ->select(
-                'outdoors.id',
-                'outdoors.identificacao',
-                'outdoors.logradouro',
-                'outdoors.ponto_referencia',
-                'bairros.nome as bairro',
-                'regioes.nome as regiao',
-                'cidades.nome as cidade',
-                DB::raw('COALESCE(clientes.nome_fantasia, clientes.razao_social) as cliente')
-            )
-            ->orderBy('cidades.nome')
-            ->orderBy('regioes.nome')
-            ->orderBy('bairros.nome')
-            ->orderBy('outdoors.identificacao')
-            ->get();
-        
-        // Group panels by city, region, and neighborhood
-        $paineisPorCidade = [];
-        foreach ($paineis as $painel) {
-            if (!isset($paineisPorCidade[$painel->cidade])) {
-                $paineisPorCidade[$painel->cidade] = [];
-            }
-            
-            if (!isset($paineisPorCidade[$painel->cidade][$painel->regiao])) {
-                $paineisPorCidade[$painel->cidade][$painel->regiao] = [];
-            }
-            
-            if (!isset($paineisPorCidade[$painel->cidade][$painel->regiao][$painel->bairro])) {
-                $paineisPorCidade[$painel->cidade][$painel->regiao][$painel->bairro] = [];
-            }
-            
-            $paineisPorCidade[$painel->cidade][$painel->regiao][$painel->bairro][] = $painel;
-        }
+        // $reserva = \App\Models\Reservas\Reserva::first();
 
-        // Generate PDF
-        $pdf = PDF::loadView('relatorios.paineisXbisemanas.rel_pain_x_bisemana', compact('paineisPorCidade', 'paineis', 'bisemana', 'dt_atual'));
-        
-        if ($orient == 'L') {
-            $pdf->setPaper('a4', 'landscape');
-        } else {
-            $pdf->setPaper('a4', 'portrait');
-        }
-        
-        return $pdf->stream('paineis_bisemana.pdf');
+        // dd($reserva->painel);
+
+        // $reservas_out = Reserva::whereIn('outdoor_id', [97, 98])->get();
+        $reservas_out = Reserva::with('painel')
+        ->whereIn('outdoor_id', $outdoors)
+        ->whereIn('bisemana_id', $bs_ano->pluck('id'))
+        ->get();
+
+
+        $orientacao = (session('orient') == 'P') ? '' : 'landscape';
+
+        $pdf = PDF::loadView('relatorios.paineisXbisemanas.rel_pain_x_bisemana', compact('reservas_out'));
+                return $pdf->setPaper('a4', $orientacao)->stream('Rel-Painéis_Bi-semanas.pdf');
+
+    // return $request->all();
+    
     }
+
+
+    // public function getRelPainelBisemana()
+    // {
+    //     $anoId = session('anoId');
+    //     $paineis_id = session('paineis_id');
+    //     $orient = session('orient');
+
+    //     $dt_atual = Carbon::today()->toDateString();
+    //     $dt_atual = explode('-', $dt_atual);
+    //     $dt_atual = $dt_atual[2].'/'.$dt_atual[1].'/'.$dt_atual[0];
+        
+    //     // Get bisemana details
+    //     $bisemana = Bisemana::find($bsId);
+        
+    //     // Get all panels with reservations for this bisemana
+    //     $paineis = DB::table('outdoors')
+    //         ->join('reservas', 'outdoors.id', '=', 'reservas.outdoor_id')
+    //         ->join('clientes', 'reservas.cliente_id', '=', 'clientes.id')
+    //         ->join('bairros', 'outdoors.bairro_id', '=', 'bairros.id')
+    //         ->join('regioes', 'bairros.regiao_id', '=', 'regioes.id')
+    //         ->join('cidades', 'regioes.cidade_id', '=', 'cidades.id')
+    //         ->where('reservas.bisemana_id', $bsId)
+    //         ->select(
+    //             'outdoors.id',
+    //             'outdoors.identificacao',
+    //             'outdoors.logradouro',
+    //             'outdoors.ponto_referencia',
+    //             'bairros.nome as bairro',
+    //             'regioes.nome as regiao',
+    //             'cidades.nome as cidade',
+    //             DB::raw('COALESCE(clientes.nome_fantasia, clientes.razao_social) as cliente')
+    //         )
+    //         ->orderBy('cidades.nome')
+    //         ->orderBy('regioes.nome')
+    //         ->orderBy('bairros.nome')
+    //         ->orderBy('outdoors.identificacao')
+    //         ->get();
+        
+    //     // Group panels by city, region, and neighborhood
+    //     $paineisPorCidade = [];
+    //     foreach ($paineis as $painel) {
+    //         if (!isset($paineisPorCidade[$painel->cidade])) {
+    //             $paineisPorCidade[$painel->cidade] = [];
+    //         }
+            
+    //         if (!isset($paineisPorCidade[$painel->cidade][$painel->regiao])) {
+    //             $paineisPorCidade[$painel->cidade][$painel->regiao] = [];
+    //         }
+            
+    //         if (!isset($paineisPorCidade[$painel->cidade][$painel->regiao][$painel->bairro])) {
+    //             $paineisPorCidade[$painel->cidade][$painel->regiao][$painel->bairro] = [];
+    //         }
+            
+    //         $paineisPorCidade[$painel->cidade][$painel->regiao][$painel->bairro][] = $painel;
+    //     }
+
+    //     // Generate PDF
+    //     $pdf = PDF::loadView('relatorios.paineisXbisemanas.rel_pain_x_bisemana', compact('paineisPorCidade', 'paineis', 'bisemana', 'dt_atual'));
+        
+    //     if ($orient == 'L') {
+    //         $pdf->setPaper('a4', 'landscape');
+    //     } else {
+    //         $pdf->setPaper('a4', 'portrait');
+    //     }
+        
+    //     return $pdf->stream('paineis_bisemana.pdf');
+    // }
 }

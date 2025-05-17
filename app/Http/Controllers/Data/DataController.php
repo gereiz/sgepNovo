@@ -45,6 +45,13 @@ class DataController extends Controller
 
     }
 
+    public function getCidade(Request $request)  {
+        $cidade = Cidade::find($request->cidade_id)->first();
+
+        return $cidade;
+        
+    }
+
     public function getCidades(Request $request)  {
         $cidades = Cidade::with('uf')
         ->where('uf_id', $request->uf)
@@ -55,7 +62,13 @@ class DataController extends Controller
         
     }
 
-    public function getUf()  {
+    public function getUf(Request $request)  {
+        $uf = UF::where('id', $request->uf_id)->first();
+
+        return $uf;
+    }
+
+    public function getUfs()  {
         $uf = UF::orderBy('nome')->get();
 
         return $uf;
