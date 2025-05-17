@@ -35,6 +35,7 @@ function nextStep(ev) {
   if (ev === 0) {
     step.value = StepOne
     closeAdd()
+    location.reload()
   } else if (ev === 1) {
     step.value = StepOne
   } else if (ev === 2) {
