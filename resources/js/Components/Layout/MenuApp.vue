@@ -51,7 +51,7 @@
     { name: 'Reservas por Cliente', description: 'Relatório com a quantidade de painéis por cliente específico na bi-semana.', href: '/ReservaCliente', icon: NewspaperIcon },
     { name: 'Painéis por Cliente', description: 'Relatório geral com a quantidade de painéis por cliente na bi-semana', href: '/PaineisCliente', icon: NewspaperIcon },
     { name: 'Painéis por Bisemana', description: 'Relatório com a lista de painéis por bisemana.', href: '/RelPainelBisemana', icon: NewspaperIcon },
-    { name: 'Clientes por Bisemana', description: '.', href: 'https://old.sgepequipe.com/relClienteXbisemana', icon: NewspaperIcon },
+    // { name: 'Clientes por Bisemana', description: '.', href: 'https://old.sgepequipe.com/relClienteXbisemana', icon: NewspaperIcon },
     // { name: 'Gerador de Relatórios', description: '.', href: '/report-generator', icon: NewspaperIcon },
 
   ]

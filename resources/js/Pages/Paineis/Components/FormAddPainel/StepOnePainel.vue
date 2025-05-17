@@ -14,7 +14,7 @@ const ufs = ref([]);
 
 
 onMounted(() => {
-    axios.get('/dtGetUf')
+    axios.get('/dtGetUfs')
     .then((res) => {
         ufs.value = res.data
 
@@ -34,6 +34,40 @@ const endPain = ref({ender: '',
                     longitude: ''
                 });
 
+
+function getUf(val) {
+    axios.post('/dtGetUf', {uf_id: val})
+      .then((res) => {
+            endPain.value.uf = res.data.id
+            console.log(endPain.value.uf)
+            console.log(endPain.value.cidade)
+            console.log(endPain.value.bairro)
+            
+            // Após atualizar o valor da UF, carregamos as cidades correspondentes
+            getCidades()
+        })
+      .catch((err) => {
+            console.log(err)
+        })
+}
+
+
+function getCidade(val) {
+    axios.post('/dtGetCidade', {cidade_id: val})
+       .then((res) => {
+            endPain.value.cidade = res.data.id
+            
+            // Após atualizar a cidade, carregamos os bairros correspondentes
+            getBairros()
+            
+            // Em seguida, buscamos a UF
+            getUf(res.data.uf_id)
+        })
+       .catch((err) => {
+            console.log(err)
+        })
+}
+                
 
 function getCidades() {
     axios.post('/dtGetCidades', {uf: endPain.value.uf})
@@ -122,14 +156,21 @@ function sendFormOne() {
 }
 
 watch(() => props.painel, (val) => {
-    endPain.value.ender = val[0].logradouro ? val[0].logradouro : ''
-    endPain.value.numero = val[0].numero ? val[0].numero : ''
-    endPain.value.referencia = val[0].ponto_referencia ? val[0].ponto_referencia : ''
-    endPain.value.bairro = val[0].bairro_id ? val[0].bairro_id : ''
-    endPain.value.latitude = val[0].latitude ? val[0].latitude : ''
-    endPain.value.longitude = val[0].longitude ? val[0].longitude : ''
-
-})
+    if (val && val.length > 0 && val[0].bairro_id) {
+        // Primeiro definimos os valores simples
+        endPain.value.ender = val[0].logradouro ? val[0].logradouro : ''
+        endPain.value.numero = val[0].numero ? val[0].numero : ''
+        endPain.value.referencia = val[0].ponto_referencia ? val[0].ponto_referencia : ''
+        endPain.value.latitude = val[0].latitude ? val[0].latitude : ''
+        endPain.value.longitude = val[0].longitude ? val[0].longitude : ''
+        
+        // Definimos o bairro primeiro para que a função getCidade seja chamada com o valor correto
+        endPain.value.bairro = val[0].bairro_id
+        
+        // Chamamos getCidade que irá buscar a cidade e a UF em sequência
+        getCidade(val[0].bairro_id)
+    }
+}, { immediate: true })
 
 
 </script>

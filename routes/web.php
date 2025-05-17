@@ -62,8 +62,10 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::post('/getBisemanas', [DataController::class, 'getBisemanas']);
     route::post('/getBisemana', [DataController::class, 'getBisemana']);
     route::any('/dtGetBairros', [DataController::class, 'getBairros']);
+    route::any('/dtGetCidade', [DataController::class, 'getCidade']);
     route::any('/dtGetCidades', [DataController::class, 'getCidades']);
-    route::get('/dtGetUf', [DataController::class, 'getUf']);
+    route::get('/dtGetUfs', [DataController::class, 'getUfs']);
+    route::any('/dtGetUf', [DataController::class, 'getUf']);
     route::post('/dtGetUfCli', [DataController::class, 'getUfCli']);
 
 

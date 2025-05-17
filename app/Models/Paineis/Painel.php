@@ -40,9 +40,10 @@ class Painel extends Model
     }
 
 
-    public function reserva()
+    public function reservas()
     {
-        return $this->hasMany(Reserva::class, 'id', 'outdoor_id');
+        return $this->hasMany(Reserva::class, 'outdoor_id', 'id');
     }
+
 }
  
