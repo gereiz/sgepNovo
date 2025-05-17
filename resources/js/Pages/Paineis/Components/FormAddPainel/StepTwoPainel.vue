@@ -9,8 +9,8 @@ const props = defineProps(['painel', 'user'])
 const emit = defineEmits(['step1', 'formOne'])
 const toastr = useToastr()
 
-const painelEdit = ref (props.painel)
-
+const painelEdit = ref(props.painel)
+const imagemPreview = ref(null) // Adicione esta linha
 
 const form = useForm({ident: null,
                        ident_ant: null,
@@ -21,8 +21,6 @@ const form = useForm({ident: null,
                        tipo: null,
                        imagem: null,
                        idPainel: null
-
-
 })
 
 onMounted(() => {
@@ -35,9 +33,36 @@ onMounted(() => {
         form.dimLona = painelEdit.value[0].dimensao_lona
         form.posicao = painelEdit.value[0].posicao
         form.tipo = painelEdit.value[0].tipo
-
+        
+        // Verifica se existe uma imagem e define o preview
+        if (painelEdit.value[0].image_url) {
+            imagemPreview.value = getImage(painelEdit.value[0].image_url)
+            // Se já existe uma imagem, não precisamos exigir uma nova
+            form.imagem = 'existente'
+        }
     }
+    console.log(props.painel)
 })
+
+function getImage(i) {
+    // Devenvolvimento
+    var image = 'http://localhost:8000/storage/'+ i
+
+    // Produção
+    var image = '/storage/'+ i
+
+    return image
+}
+
+// Adicione esta função
+function handleImagemInput(event) {
+    const file = event.target.files[0]
+    if (file) {
+        form.imagem = file
+        // Cria uma URL para preview da nova imagem selecionada
+        imagemPreview.value = URL.createObjectURL(file)
+    }
+}
 
 
 function emitStep(val) {
@@ -51,7 +76,9 @@ function emitStep(val) {
 }
 
 function sendFormTwo() {
-    if(form.ident != null && form.ident_ant != null && form.cadan != null && form.posicao != null && form.tipo != null && form.imagem != null ){
+    // Verifica se todos os campos obrigatórios estão preenchidos
+    // Considera que a imagem pode ser nova (form.imagem) ou existente (imagemPreview.value)
+    if(form.ident != null && form.ident_ant != null && form.cadan != null && form.posicao != null && form.tipo != null && (form.imagem != null || imagemPreview.value)){
         emit('formTwo', form)
     }
 
@@ -101,7 +128,8 @@ function toSubmitStep() {
         toastr.error('O campo Tipo é obrigatório!')
         tipo.focus()
 
-    } else if(form.imagem == null) {
+    } else if(form.imagem == null && !imagemPreview.value) {
+        // Modificado para verificar também o imagemPreview
         let imagem = document.getElementById('imagem')
 
         toastr.error('O campo Imagem é obrigatório!')
@@ -197,11 +225,16 @@ function toSubmitStep() {
                 <label for="cover-photo" class="block text-sm font-medium leading-6 text-gray-900">Imagem do Painel</label>
                 <div class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                     <div class="text-center">
-                        <PhotoIcon class="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
+                        <!-- Exibe a imagem se houver um preview -->
+                        <div v-if="imagemPreview" class="mb-4">
+                            <img :src="imagemPreview" alt="Preview da imagem" class="mx-auto max-h-48 object-contain" />
+                        </div>
+                        <!-- Exibe o ícone padrão se não houver imagem -->
+                        <PhotoIcon v-else class="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
                         <div class="mt-4 flex text-sm leading-6 text-gray-600">
                             <label for="file-upload" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
                                 <span>Selecione um arquivo</span>
-                                <input id="file-upload" name="file-upload" type="file" class="sr-only" @input="form.imagem = $event.target.files[0]" />
+                                <input id="file-upload" name="file-upload" type="file" class="sr-only" @input="handleImagemInput($event)" />
                             </label>
                             <p class="pl-1">ou arraste e solte aqui</p>
                         </div>
