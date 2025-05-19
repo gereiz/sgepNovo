@@ -24,24 +24,43 @@ const endCli = ref({ender: '',
                 });
 
 onMounted(() => {
-    axios.get('/dtGetUf')
+    axios.get('/dtGetUfs')
     .then((res) => {
         ufs.value = res.data
+        
+        // Após carregar as UFs, verifica se há dados do cliente para preencher
+        if(cliente.value && Object.keys(cliente.value).length > 0) {
+            endCli.value.ender = cliente.value.endereco ? cliente.value.endereco.toUpperCase() : ''
+            endCli.value.numero = cliente.value.num ? cliente.value.num.toUpperCase() : ''
 
+            if (cliente.value.uf) {
+                endCli.value.uf = cliente.value.uf.toUpperCase()
+                // Carrega as cidades após definir a UF
+                getCidades()
+                
+                // Aguarda um pouco para garantir que as cidades foram carregadas
+                setTimeout(() => {
+                    if (cliente.value.cidade) {
+                        endCli.value.cidade = cliente.value.cidade.toUpperCase()
+                        // Carrega os bairros após definir a cidade
+                        getBairros()
+                        
+                        // Aguarda um pouco para garantir que os bairros foram carregados
+                        setTimeout(() => {
+                            if (cliente.value.bairro) {
+                                endCli.value.bairro = cliente.value.bairro.toUpperCase()
+                            }
+                        }, 300)
+                    }
+                }, 300)
+            }
+            
+            endCli.value.cep = cliente.value.cep ? cliente.value.cep.toUpperCase() : ''
+        }
     })
-
-    // Alimenta os campos deendereço com os dados coletados no stepOne
-    if(props.clienteEdit.value != {}) {
-        endCli.value.ender = cliente.value.endereco.toUpperCase()
-        endCli.value.numero = cliente.value.num.toUpperCase()
-        endCli.value.uf = cliente.value.uf.toUpperCase()
-        getCidades()
-        endCli.value.cidade = cliente.value.cidade.toUpperCase()
-        getBairros()
-        endCli.value.bairro = cliente.value.bairro.toUpperCase()
-        endCli.value.cep = cliente.value.cep.toUpperCase()
-    }
-
+    .catch((err) => {
+        console.log(err)
+    })
 })
 
 
