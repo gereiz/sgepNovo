@@ -67,7 +67,7 @@
     </div>
 </div> -->
 
-@include('relatorios.includes.rel_header', ['titulo' => 'Painéis reservados por Cliente', 'doc' => 'PI', 'num' => ""])
+@include('relatorios.includes.rel_header', ['titulo' => 'Painéis reservados por Cliente', 'doc' => 'REL', 'num' => ""])
 
 <div style="margin-top: -1.7%;">  
     <table class="table table-striped table-bordered">

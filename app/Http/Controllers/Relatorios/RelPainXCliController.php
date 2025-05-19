@@ -68,11 +68,11 @@ class RelPainXCliController extends Controller
         $dt_atual = $dt_atual[2].'/'.$dt_atual[1].'/'.$dt_atual[0];
 
 
-        $orientacao = (session('orientacao') == 'L') ? 'portrait' : 'landscape';
+        $orientacao = (session('orientacao') == 'P') ? 'portrait' : 'landscape';
 
         $pdf = PDF::loadView('relatorios.paineisXclientes.rel_pain_x_cli', compact('reservas','count_res', 'bisemana', 'dt_atual'));
         
-            return $pdf->setPaper('a4', $orientacao)->stream('Paineis_X_Cliente.pdf');
+            return $pdf->setPaper('a4', 'portrait')->stream('Paineis_X_Cliente.pdf');
     }
 
 
