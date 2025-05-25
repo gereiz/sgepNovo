@@ -112,7 +112,7 @@
                             <!-- Cliente -->
                             <div class="w-full sm:w-3/12 flex flex-col">
                                 <label class="label">
-                                    <span class="label-text">Cliente</span>
+                                    <span class="label-text">Painéis</span>
                                 </label>
                                 <multiselect
                                     v-model="idPaineis"
@@ -142,16 +142,6 @@
                                 </select>
                             </div>
 
-                            <!-- Bi-semana -->
-                            <!-- <div class="w-full sm:w-3/12 flex flex-col">
-                                <label class="label">
-                                    <span class="label-text">Bi-semana</span>
-                                </label>
-                                <select class="select select-bordered w-full max-w-xs" v-model="bsId" :disabled="bisemanas.length === 0">
-                                    <option value="0" disabled selected>Selecione</option>
-                                    <option v-for="bs, index in bisemanas" :key="index" :value="bs.id">BS: {{ bs.num_bisemana }} {{ new Date(bs.inicio).toLocaleDateString() }} até {{ new Date(bs.fim).toLocaleDateString() }}</option>
-                                </select>
-                            </div> -->
                         </div>
                     </div>
 

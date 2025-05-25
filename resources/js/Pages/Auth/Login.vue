@@ -1,7 +1,7 @@
 <template>
     <div class="flex">
         <div class="md:w-8/12 h-screen group md:flex md:flex-row items-center justify-center hidden">
-            <div class="z-0 w-8/12 absolute h-screen bg-hero bg-cover opacity-30 group-hover:opacity-75 transform transition-all duration-1000">
+            <div class="z-0 w-8/12 absolute h-screen bg-hero bg-cover  bg-center opacity-30 group-hover:opacity-75 transform transition-all duration-1000">
 
             </div>
             <div class="z-10 group-hover:text-white transition-all duration-1000">

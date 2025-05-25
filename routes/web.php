@@ -12,6 +12,7 @@ use App\Http\Controllers\Reserva\ReservaController;
 use App\Http\Controllers\Relatorios\RelatoriosController;
 use App\Http\Controllers\Relatorios\RelColagemController;
 use App\Http\Controllers\Relatorios\RelPainXCliController;
+use App\Http\Controllers\Relatorios\RelOcupacaoController;
 use App\Http\Controllers\Reserva\PiController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Financeiro\ServicosController;
@@ -204,6 +205,11 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::post('/setRegioes', [RelColagemController::class, 'setRegioes']);
     route::post('/setBairros', [RelColagemController::class, 'setBairros']);
     route::any('/getRelColagem', [RelColagemController::class, 'getRelColagem']);
+
+    // Relatório de Ocupação
+    route::get('/RelOcupacao', [RelOcupacaoController::class,'relOcupacao']);
+    route::post('/setRelOcupacao', [RelOcupacaoController::class,'setRelOcupacao']);
+    route::any('/getRelOcupacao', [RelOcupacaoController::class,'getRelOcupacao']);
 
 
 
