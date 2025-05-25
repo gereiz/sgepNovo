@@ -51,7 +51,11 @@
     { name: 'Reservas por Cliente', description: 'Relatório com a quantidade de painéis por cliente específico na bi-semana.', href: '/ReservaCliente', icon: NewspaperIcon },
     { name: 'Painéis por Cliente', description: 'Relatório geral com a quantidade de painéis por cliente na bi-semana', href: '/PaineisCliente', icon: NewspaperIcon },
     { name: 'Painéis por Bisemana', description: 'Relatório com a lista de painéis por bisemana.', href: '/RelPainelBisemana', icon: NewspaperIcon },
-    // { name: 'Clientes por Bisemana', description: '.', href: 'https://old.sgepequipe.com/relClienteXbisemana', icon: NewspaperIcon },
+    { name: 'Relatório de Ocupação', 
+      description: 'Acompanhamento de ocupação.', 
+      href: '/RelOcupacao', 
+      icon: NewspaperIcon
+     },
     // { name: 'Gerador de Relatórios', description: '.', href: '/report-generator', icon: NewspaperIcon },
 
   ]
@@ -221,7 +225,7 @@
                       <component :is="item.icon" class="h-6 w-6 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
                     </div>
                     <div class="flex-auto">
-                      <a :href="item.href" target="_blank" class="block font-semibold text-gray-900">
+                      <a :href="item.href" class="block font-semibold text-gray-900">
                         {{ item.name }}
                         <span class="absolute inset-0" />
                       </a>

@@ -20,6 +20,7 @@ export default {
             },
             backgroundImage: {
                 'hero': "url('/storage/app/public/img/login_bg.jpg')",
+                
             },
             important: true,
 
