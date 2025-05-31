@@ -31,7 +31,7 @@ const formOne = useForm({
 
 onMounted(() =>{
 
-    axios.get('/dtGetUf')
+    axios.get('/dtGetUfs')
     .then((res) => {
         ufs.value = res.data
 
@@ -39,6 +39,7 @@ onMounted(() =>{
             clienteUf.value = 0
         } else {
             getCidadeCli(clienteUf.value)
+            clienteUf.value = cliente.value.uf
         }
 
         if(clienteCidade.value == null) {
