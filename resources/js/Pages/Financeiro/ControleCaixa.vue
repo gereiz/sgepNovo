@@ -5,9 +5,9 @@ import { useToastr } from '@/Components/toastr';
 import { ref, computed } from 'vue';
 import { defineProps, shallowRef } from 'vue';
 
-import ListaCentroCusto from './Components/Caixa/CentroDeCustos/AddCentroCusto.vue';
-import ListaLancamentos from './Components/Caixa/Lancamentos/AddLancamentos.vue';
-import ListaTipoLancamento from './Components/Caixa/TipoLancamento/AddTipoLancamento.vue';
+import ListaCentroCusto from './Components/Caixa/CentroDeCustos/ListaCentroCusto.vue';
+import ListaLancamentos from './Components/Caixa/Lancamentos/ListaLancamento.vue';
+import ListaTipoLancamento from './Components/Caixa/TipoLancamento/ListaTipoLancamento.vue';
 
 const props = defineProps(['centros_custo', 'lancamentos', 'tipos_lancamento', 'comissoes_por_reserva'])
 
@@ -43,10 +43,10 @@ const openPagina = (val) => {
 
                 <!-- Botões -->
                 <div class="w-full sm:w-6/12 flex flex-wrap justify-center sm:justify-start space-x-4 ">
-                    <label class="sm:w-48 btn btn-sm sm:btn-md btn-warning text-white mt-2" @click="openPagina('centro-custo')">
+                    <label class="sm:w-48 btn btn-sm sm:btn-md btn-info text-white mt-2" @click="openPagina('centro-custo')">
                         Centros de Custo
                     </label>
-                    <label class="sm:w-48 btn btn-sm sm:btn-md btn-warning text-white mt-2" @click="openPagina('tipo-lancamento')">
+                    <label class="sm:w-48 btn btn-sm sm:btn-md btn-accent text-white mt-2" @click="openPagina('tipo-lancamento')">
                         Tipos de Lançamentos
                     </label>
 
@@ -54,9 +54,9 @@ const openPagina = (val) => {
                         Lançamentos
                     </label>
 
-                    <a href="/PainelLancamentos" class="sm:w-48 btn btn-sm sm:btn-md btn-outline btn-success text-white mt-2">
+                    <!-- <label class="sm:w-48 btn btn-sm sm:btn-md btn-outline btn-success text-white mt-2">
                         Lançamentos Plus
-                    </a>
+                    </label> -->
                 </div>
 
             </div>

@@ -12,6 +12,7 @@ use App\Http\Controllers\Reserva\ReservaController;
 use App\Http\Controllers\Relatorios\RelatoriosController;
 use App\Http\Controllers\Relatorios\RelColagemController;
 use App\Http\Controllers\Relatorios\RelPainXCliController;
+use App\Http\Controllers\Relatorios\RelLancamentosController;
 use App\Http\Controllers\Relatorios\RelOcupacaoController;
 use App\Http\Controllers\Reserva\PiController;
 use App\Http\Controllers\User\UserController;
@@ -211,17 +212,10 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::post('/setRelOcupacao', [RelOcupacaoController::class,'setRelOcupacao']);
     route::any('/getRelOcupacao', [RelOcupacaoController::class,'getRelOcupacao']);
 
-
-
-    // Arquivos
-    route::get('/PisGeradas', [ArquivosController::class, 'index']);
-    route::post('/getPiBs', [ArquivosController::class, 'getPiBs']);
-
     // Painéis x Bisemanas
     route::get('/RelPainelBisemana', [App\Http\Controllers\Relatorios\RelPainelBisemanaController::class, 'index']);
     route::post('/setRelPainelBisemana', [App\Http\Controllers\Relatorios\RelPainelBisemanaController::class, 'setRelPainelBisemana']);
     route::any('/getRelPainelBisemana', [App\Http\Controllers\Relatorios\RelPainelBisemanaController::class, 'getRelPainelBisemana']);
-
 
     // Relatório de Colagem
     route::get('/RelColagem', [RelColagemController::class, 'relColagem']);
@@ -229,6 +223,14 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::post('/setRegioes', [RelColagemController::class, 'setRegioes']);
     route::post('/setBairros', [RelColagemController::class, 'setBairros']);
     route::any('/getRelColagem', [RelColagemController::class, 'getRelColagem']);
+
+
+    // Relatório de Lançamentos
+    route::get('/RelLancamentos', [RelLancamentosController::class, 'index']);
+    route::any('/getRelLancamentos', [RelLancamentosController::class, 'getRelLancamentos']);
+
+
+
 
 
     // Arquivos

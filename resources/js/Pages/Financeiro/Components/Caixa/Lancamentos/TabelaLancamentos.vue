@@ -58,7 +58,7 @@ const updateLanc = (val) => {
 
 <template>
 
-    <div class="inline-block min-w-full align-middle ">
+    <div class="inline-block min-w-full max-h-48 align-middle">
         <table class="min-w-full divide-y divide-gray-300 border table-xs">
             <thead>
             <tr class="divide-x divide-gray-200">

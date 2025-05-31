@@ -236,7 +236,7 @@ class PiController extends Controller
                         'PI nº ' . $pi->id . ' Cliente: '.$cliente->razao_social :
                         'PI nº ' . $pi->id . ' Cliente: '.$cliente->nome_fantasia,
 
-                    'valor' => $vl_parcela,
+                    'valor' => $vl_parcela, 
                     'parcelas' => $i . '/' . $qtdParcelas,
                     'data_lancamento' => date('Y-m-d', strtotime(session('dadosPi')['Four']['dtPgto'] . ' + ' . $i . ' month')),
                     'centro_custo' => 1,

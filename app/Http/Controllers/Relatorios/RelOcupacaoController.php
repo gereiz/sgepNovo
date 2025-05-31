@@ -81,11 +81,6 @@ class RelOcupacaoController extends Controller
                   ->first();
 
 
-
-
-        
-
-
         $pdf = PDF::loadView('relatorios.ocupacao.rel_ocupacao', compact('dt_atual', 'ano', 'paineis', 'qtd_bs', 'ultima_bs', 'qtds_bs_res'));
                 return $pdf->setPaper('a4', 'landscape')->stream('Rel-Ocupacao.pdf');
 

@@ -60,6 +60,8 @@ const editLancamento = () => {
             dialog.close()
             nome.value = ''
             emit('editLancamento', 'T')
+
+            window.location.reload()
         }, 1000)
 
     }).catch(error => {

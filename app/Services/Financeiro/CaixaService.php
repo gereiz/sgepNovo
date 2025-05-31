@@ -177,20 +177,8 @@ class CaixaService
         //Transforma a data para o formato do banco de dados
         $lancamento['data_lancamento'] = date('Y-m-d', strtotime($lancamento['data_lancamento']));
 
-        if($lancamento['id_reserva'] == null) {
-            $lancamento = Lancamento::updateOrCreate([
-                'descricao' => $lancamento['descricao'],
-                'valor' => $lancamento['valor'],
-                'parcelas' => $lancamento['parcelas'],
-                'dt_faturamento' => $lancamento['data_lancamento'],
-                'centro_custo' => $lancamento['centro_custo'],
-                'tipo_lancamento' => $lancamento['tipo_lancamento'],
-                'id_reserva' => $lancamento['id_reserva'],
-                'observacoes' => $lancamento['observacoes'],
-            ]);
-        }
-
-        $lancamento = Lancamento::create([
+        $lancamento = Lancamento::create(
+            [
             'descricao' => $lancamento['descricao'],
             'valor' => $lancamento['valor'],
             'parcelas' => $lancamento['parcelas'],
@@ -203,7 +191,7 @@ class CaixaService
 
         $lancamento = Lancamento::with('tipoLancamento', 'centroCusto')->find($lancamento->id);
 
-        return response()->json($lancamento, 201);
+        return response()->json($lancamento, 200);
     }
 
     public function updateLancamento(Request $request)

@@ -9,7 +9,7 @@ const toastr = useToastr();
 
 const lancamentoL = ref(props.lancamento)
 
-const deleteCentroCusto = () => {
+const deleteLancamento = () => {
     axios.post('/DeleteLancamento', { lancamento: props.lancamento })
     .then(response => {
         toastr.success('Lançamento excluído com sucesso!')
@@ -18,6 +18,8 @@ const deleteCentroCusto = () => {
             const dialog = document.getElementById('del_lancamento')
             dialog.close()
             emit('delLancamento', 'T')
+
+            window.location.reload()
         }, 1000)
 
     }).catch(error => {
@@ -43,7 +45,7 @@ const deleteCentroCusto = () => {
             </div>
 
             <div class="w-full flex flex-col items-center p-4">
-                <label class="w-full btn btn-error text-white" title="Excluir" @click="deleteCentroCusto()">
+                <label class="w-full btn btn-error text-white" title="Excluir" @click="deleteLancamento()">
                     <i class="fa-solid fa-trash"></i> Excluir
                 </label>
             </div>
