@@ -70,7 +70,7 @@
 
   const configuracoes = [
     { name: 'Cadastro de Usuários', description: 'Realize o cadastro / edição de usuários no sistema.', href: '/ListaUsuarios', icon: GlobeAmericasIcon  },
-    { name: 'Configurações Gerais', description: 'Configurações Diversas', href: '/config', icon: GlobeAmericasIcon },
+    { name: 'Configurações Gerais', description: 'Configurações Diversas', href: '/configuracoes', icon: GlobeAmericasIcon },
         // { name: 'Cadastro de Funções', description: 'Realize o cadastro / edição de funções.', href: '/Funcoes', icon: GlobeAmericasIcon },
 
   ]

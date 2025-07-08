@@ -241,7 +241,7 @@ route::middleware(['auth', 'verified'])->group(function () {
    
 
     // Configurações
-    Route::prefix('config')->group(function () {
+    Route::prefix('/configuracoes')->group(function () {
         route::get('/', [ConfiguracoesController::class, 'index']);
         route::post('/addAno', [ConfiguracoesController::class, 'AddAno'])->name('add.ano');
 
