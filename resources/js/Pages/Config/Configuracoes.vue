@@ -43,10 +43,10 @@ const toastr = useToastr();
                            :link="'/AddAno'"> 
                 </BtnConfig> -->
                 <BtnConfig  :title="'Cadastro de Regras'"
-                            :link="'config/roles'">   
+                            :link="'configuracoes/roles'">   
                 </BtnConfig>
                 <BtnConfig  :title="'Textos Padrão'"
-                            :link="'config/textosPadrao'">   
+                            :link="'configuracoes/textosPadrao'">   
                 </BtnConfig>
             </div>
         </div>
