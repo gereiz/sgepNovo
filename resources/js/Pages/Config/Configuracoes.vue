@@ -15,7 +15,7 @@ const permissions = page.props.user.permissions;
 
 const props = defineProps(['anos'])
 
-const toastr = useToastr();
+const toastr = useToastr(); 
 
 
 
