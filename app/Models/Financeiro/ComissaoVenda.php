@@ -1,5 +1,4 @@
-<?php
-
+<?php 
 namespace App\Models\Financeiro;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;

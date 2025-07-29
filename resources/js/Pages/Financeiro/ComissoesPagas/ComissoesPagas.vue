@@ -3,6 +3,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, usePage } from '@inertiajs/vue3';
 import { useToastr } from '@/Components/toastr';
 import { ref, reactive, onMounted, computed, watch } from 'vue';
+import RelComissoes from '../../Relatorios/Financeiro/RelComissoes.vue';
+
 
 const page = usePage();
 const permissions = page.props.user.permissions;
@@ -11,6 +13,7 @@ const props = defineProps(['anos', 'bisemanas', 'comissoes', 'pis', 'clientes'])
 const emit = defineEmits(['']);
 const toastr = useToastr();
 
+const open = ref(false)
 const anoAtual = new Date().getFullYear(); // Obtém o ano atual
 const idAno = ref(0); // Inicializa a variável reativa
 const listaBisemana = ref(0);
@@ -33,7 +36,7 @@ onMounted(() => {
         if (anoEncontrado) {
             idAno.value = anoEncontrado.id;
         }
-        
+
      // Inicializa pisFiltradas com todas as PIs
      pisFiltradas.value = props.pis;
 })
@@ -59,6 +62,14 @@ function getReservas(idBisemana) {
     } else {
         // Filtrar as PIs pela bisemana selecionada
         pisFiltradas.value = props.pis.filter(pi => pi.id_bisemana === idBisemana);
+    }
+}
+
+function openRel(val) {
+    if(val === 't') {
+        open.value = true
+    } else {
+        open.value = false
     }
 }
 
@@ -103,7 +114,14 @@ function getReservas(idBisemana) {
                         </select>
                     </div>
 
+                    <button
+                            @click="openRel('t')"
+                            class="btn btn-md btn-square btn-primary text-white text-xl tooltip tooltip-left -mt-2.5 ml-10" data-tip="Gerar Relatório de Comissões Mensal">
+                            <i class="fa-regular fa-file-pdf"></i>
+                    </button>
+
                 </div>
+
             </div>
 
             <!-- Mensagem quando não há PIs para a bisemana selecionada -->
@@ -114,22 +132,22 @@ function getReservas(idBisemana) {
 
             <!-- Cards das PIs -->
             <div class="card flex flex-col md:flex-row md:flex-wrap w-full h-full bg-base-100 shadow-xl overflow-auto rounded-md p-4 space-y-4">
-                <div v-for="(pi, index) in pisFiltradas" :key="index" 
+                <div v-for="(pi, index) in pisFiltradas" :key="index"
                         class="card bg-neutral text-neutral-content w-96 h-5/6 md:h-4/6 hover:scale-105 transition-all duration-500 ease-in-out md:mx-4 mt-4"
                 >
                     <div class="card-body items-center text-center">
                         <h2 class="card-title text-2xl">PI nº {{ pi.id }}</h2>
-                        
+
                         <!-- Informações da PI -->
                         <p class="text-sm font-bold">Cliente: {{ getClienteById(pi.id_cliente) ? getClienteById(pi.id_cliente).nome_fantasia : getAgenteById(comissao.agente_id).razao_social }}</p>
                         <p class="text-lg font-bold">Campanha: {{ pi.campanha ? pi.campanha : 'Não informada' }}</p>
-                        
+
                         <!-- Lista de comissões relacionadas a esta PI -->
                         <div class="w-full mt-4 max-h-18 overflow-auto">
                             <h3 class="text-lg font-bold mb-2">Comissões</h3>
                             <div v-if="props.comissoes.filter(com => com.pi_id === pi.id).length > 0">
-                                <div v-for="(comissao, comIndex) in props.comissoes.filter(com => com.pi_id === pi.id)" 
-                                     :key="comIndex" 
+                                <div v-for="(comissao, comIndex) in props.comissoes.filter(com => com.pi_id === pi.id)"
+                                     :key="comIndex"
                                      class="card bg-base-100 text-neutral mb-2 p-2">
                                     <div class="text-left">
                                         <p class="text-sm"><span class="font-bold">Agente:</span> {{ getAgenteById(comissao.agente_id) ? getAgenteById(comissao.agente_id).nome_fantasia : getAgenteById(comissao.agente_id).razao_social }}</p>
@@ -144,7 +162,17 @@ function getReservas(idBisemana) {
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Gera um novo Relatório -->
+            <RelComissoes :openRelScreen="open"
+                          :anos="props.anos"
+                          :bisemanas="props.bisemanas"
+                          :pis="props.pis"
+                          :comissoes="props.comissoes"
+                          :clientes="props.clientes"
+                        @closeRel="openRel">
+            </RelComissoes>
+
         </div>
     </AuthenticatedLayout>
 </template>

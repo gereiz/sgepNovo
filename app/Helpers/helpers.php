@@ -43,3 +43,14 @@ function formataData($data) {
     $data = explode('-', $data);
     return $data[2].'/'.$data[1].'/'.$data[0];
 }
+
+function formataDataCompleta($dataHora) {
+    if (!$dataHora) return null;
+
+    try {
+        $data = new DateTime($dataHora);
+        return $data->format('d/m/Y');
+    } catch (Exception $e) {
+        return null; // ou lance uma exceção, dependendo da sua lógica
+    }
+}

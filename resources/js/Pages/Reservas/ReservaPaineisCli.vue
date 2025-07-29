@@ -328,7 +328,7 @@ const reservaData = computed(() => {
                                 class="btn btn-square btn-warning text-white -mt-1 tooltip tooltip-left animate-pulse" data-tip="Gerar PI para Reserva">
                             <i class="fa-solid fa-triangle-exclamation"></i>
                         </button> -->
-                    </div> 
+                    </div>
                 </div>
 
 

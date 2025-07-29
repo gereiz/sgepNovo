@@ -13,6 +13,7 @@ use App\Http\Controllers\Relatorios\RelatoriosController;
 use App\Http\Controllers\Relatorios\RelColagemController;
 use App\Http\Controllers\Relatorios\RelPainXCliController;
 use App\Http\Controllers\Relatorios\RelLancamentosController;
+use App\Http\Controllers\Relatorios\RelComissaoController;
 use App\Http\Controllers\Relatorios\RelOcupacaoController;
 use App\Http\Controllers\Reserva\PiController;
 use App\Http\Controllers\User\UserController;
@@ -230,6 +231,15 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::any('/getRelLancamentos', [RelLancamentosController::class, 'getRelLancamentos']);
 
 
+    // Relatório de Comissões
+    // route::get('/RelComissoes', [RelComissaoController::class, 'index']);
+    route::any('/setRelComissoes', [RelComissaoController::class, 'setRelComissoes']);
+    route::get('/getRelComissoes', [RelComissaoController::class, 'getRelComissoes']);
+
+
+
+
+
 
 
 
@@ -237,8 +247,8 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::get('/PisGeradas', [ArquivosController::class, 'index']);
     route::post('/getPiBs', [ArquivosController::class, 'getPiBs']);
 
-    
-   
+
+
 
     // Configurações
     Route::prefix('/configuracoes')->group(function () {
@@ -273,7 +283,7 @@ route::middleware(['auth', 'verified'])->group(function () {
     });
 
 
-    
+
 
 });
 

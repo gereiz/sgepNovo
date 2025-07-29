@@ -37,7 +37,7 @@ class ComissoesController extends Controller
     public function gravaComissaoservico(Request $request): void
     {
         $grava_comissao = $this->financeiroService->gravaComissaoservico($request);
-                
+
     }
 
     public function delComissaoServico(Request $request): void
@@ -48,7 +48,7 @@ class ComissoesController extends Controller
     public function cadastraComissaoUsuario(Request $request): void
     {
         $cadastra_comissao = $this->financeiroService->cadastraComissaoUsuario($request);
-    }   
+    }
 
     public function deletaComissaoUsuario(Request $request): void
     {
@@ -62,7 +62,7 @@ class ComissoesController extends Controller
         $comissoes = ComissaoVenda::all();
         $pis = Pi::all();
         $clientes = Cliente::all();
-        
+
         return Inertia::render('Financeiro/ComissoesPagas/ComissoesPagas', compact('anos', 'bisemanas', 'comissoes', 'pis', 'clientes'));
     }
 
