@@ -187,8 +187,8 @@ class PiController extends Controller
                     $comissao = Comissao::where('id_funcionario', $agente->id)
                                           ->where('id_servico', $servico['id'])->first();
 
-                    $comissao_venda = new ComissaoVenda();
-                            
+                    $comissao_venda = new ComissaoVenda(); 
+
 
                     if (optional($comissao)->exists()) {
                         if($comissao->tipo_comissao == 1) {
@@ -214,8 +214,8 @@ class PiController extends Controller
                 $valor_liq_comissoes += $vlr_total;
             }
 
-            
-            
+
+
 
             // grava o lançamento no banco de dados
             $caixaService = new CaixaService();
@@ -236,7 +236,7 @@ class PiController extends Controller
                         'PI nº ' . $pi->id . ' Cliente: '.$cliente->razao_social :
                         'PI nº ' . $pi->id . ' Cliente: '.$cliente->nome_fantasia,
 
-                    'valor' => $vl_parcela, 
+                    'valor' => $vl_parcela,
                     'parcelas' => $i . '/' . $qtdParcelas,
                     'data_lancamento' => date('Y-m-d', strtotime(session('dadosPi')['Four']['dtPgto'] . ' + ' . $i . ' month')),
                     'centro_custo' => 1,
@@ -248,7 +248,7 @@ class PiController extends Controller
                 // Cria o Request manualmente
                 $request_lancamento = new \Illuminate\Http\Request();
                 $request_lancamento->replace($lancamento);
-                
+
 
                 if(!$lancamento_existe) {
                     // Chama o método do serviço com o objeto Request
@@ -260,14 +260,14 @@ class PiController extends Controller
                 }
 
             }
- 
+
             // atualiza o campo pi_id na reserva
             foreach($reserva as $res) {
                 $res->update(['pi_id' => $pi->id]);
             }
 
             DB::commit();
-            
+
             if(isset(session('dadosPi')['Three'])) {
 
 
@@ -282,7 +282,7 @@ class PiController extends Controller
                 $pi->save(storage_path('app/public/pdf/pi/pi_'.$cliente_nome.'_'.$dt_pi.'.pdf'));
 
                 return $pi->stream('paineis_bisemana.pdf');
-            } 
+            }
 
 
         } catch (\Exception $e) {

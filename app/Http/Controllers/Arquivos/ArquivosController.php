@@ -25,12 +25,10 @@ class ArquivosController extends Controller
 
 
     public function getPiBs(Request $request) {
-
         $pis = Pi::with(['cliente'])->where('id_bisemana', $request->idBs)
                 ->get();
 
         return $pis;
-
     }
 
 }
