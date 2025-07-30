@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Inertia\Inertia;
 use PDF;
+use App\Models\Clientes\Cliente;
 
 class RelComissaoController extends Controller
 {
@@ -22,6 +23,7 @@ class RelComissaoController extends Controller
         session(['bisemanas' => $request->bisemanas]);
         session(['pis' => $request->pis]);
         session(['comissoes' => $request->comissoes]);
+        session(['agente_sel' => $request->agenteSel]);
         
 
 
@@ -35,6 +37,13 @@ class RelComissaoController extends Controller
         $bisemanas = session('bisemanas');
         $pis = session('pis');
         $comissoes = session('comissoes');
+        $agente_sel = session('agente_sel');
+
+        // if($agente_sel !== 0) {
+        //     $agentes = Cliente::where('id', $agente_sel)->get();
+            
+
+        // }
 
 
 
