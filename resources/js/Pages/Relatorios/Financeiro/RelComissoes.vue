@@ -11,7 +11,7 @@ const anoAtual = new Date().getFullYear(); // Obtém o ano atual
 const idAno = ref(0); // Inicializa a variável reativa
 const open = ref(false)
 const mes = ref(0)
-const agente = ref(0)
+const agenteSel = ref(0)
 const anoSelecionado = ref(0)
 
 const pisFiltradas = ref([])
@@ -106,7 +106,8 @@ function getRelComissoes() {
         pis: pisFiltradas.value,
         agentes: agentesFiltrados.value,
         bisemanas: bisemanasFiltradas.value,
-        comissoes: comissoesFiltradas.value
+        comissoes: comissoesFiltradas.value,
+        agenteSel: agenteSel.value
 
     })
     .then(res => {
@@ -175,8 +176,8 @@ function getRelComissoes() {
                         <!-- Vendedor -->
                         <div class="w-[66%] lg:w-[30%] flex flex-col me-4 sm:me-6 mb-2">
                             <label for="agentes">Agente</label>
-                            <select class="select select-bordered" name="agentes" id="agentes" v-model="agente" :disabled="mes == 0">
-                                <option value="0" selected>Selecione</option>
+                            <select class="select select-bordered" name="agentes" id="agentes" v-model="agenteSel" disabled>
+                                <option value="0" selected>TODOS</option>
                                 <option v-for="(agente, index) in agentesFiltrados"
                                     :key="index"
                                     :value="agente.id">{{ agente.nome_fantasia ? agente.nome_fantasia : agente.razao_social }}
