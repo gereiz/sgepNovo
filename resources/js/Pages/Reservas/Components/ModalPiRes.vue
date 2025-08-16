@@ -91,6 +91,7 @@ function saveFormFour(ev) {
     formPi.value.Four = ev
     localStorage.setItem('piFormFour', JSON.stringify(formPi.value.Four))
 
+    console.log(formPi.value.Four)
 }
 
 
@@ -170,7 +171,7 @@ function naviForm(ev) {
     }).then((result) => {
       if (result.isConfirmed) {
         submitFormPi();
-        
+
         setTimeout(() => {
           closeM()
         }, 3000);

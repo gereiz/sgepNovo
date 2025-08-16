@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
 const toastr = useToastr()
 
 const props = defineProps(['cliente', 'campanha', 'paineis','bisemana', 'dataReserva', 'agentes'])
-const emit = defineEmits(['nextStep','formTwo', 'formFour']); 
+const emit = defineEmits(['nextStep','formTwo', 'formFour']);
 
 const edit = ref(false)
 const page = usePage()
@@ -26,6 +26,7 @@ const servicosPagos = ref([])
 
 const vlrUnit = ref('')
 const vlrDesc = ref(0)
+const vlrCusto = ref(0)
 const vlrTotal = ref()
 const detalhes = ref('')
 
@@ -34,7 +35,7 @@ const dtPgto = ref(dataAtual)
 const dtReserva = ref(dataAtual)
 
 const formFour = reactive({
-    servicos: servicosPagos,
+    servicos: servicosPagos.value,
     formaPgto: 0,
     pgto: '',
     parcelado: 0,
@@ -47,13 +48,13 @@ const formFour = reactive({
 watch((vlrUnit), (val) => {
 
     vlrUnit.value = val
-    formFour.vlr_unit = val
+    // formFour.vlr_unit = val
 
     if(parseFloat(vlrDesc.value) > parseFloat(vlrUnit.value)) {
         vlrTotal.value = 0.0
 
     } else {
-        vlrTotal.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value)) * parseFloat(quantidade.value)).toFixed(2)
+        vlrTotal.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value) - parseFloat(vlrCusto.value)) * parseFloat(quantidade.value)).toFixed(2)
         formFour.vlr_total =  vlrTotal.value
     }
 
@@ -62,12 +63,25 @@ watch((vlrUnit), (val) => {
 
 watch((vlrDesc), (val) => {
     vlrDesc.value = val
-    formFour.vlr_desc = val
+    // formFour.vlr_desc = val
 
     if(parseFloat(vlrDesc.value) > parseFloat(vlrUnit.value)) {
         vlrTotal.value = 0.0
     } else {
-        vlrTotal.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value)) * parseFloat(quantidade.value)).toFixed(2)
+        vlrTotal.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value) - parseFloat(vlrCusto.value)) * parseFloat(quantidade.value)).toFixed(2)
+        formFour.vlr_total =  vlrTotal.value
+    }
+
+})
+
+watch((vlrCusto), (val) => {
+    vlrCusto.value = val
+    // formFour.vlr_custo = val
+
+    if(parseFloat(vlrCusto.value) > parseFloat(vlrUnit.value)) {
+        vlrTotal.value = 0.0
+    } else {
+        vlrTotal.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value) - parseFloat(vlrCusto.value)) * parseFloat(quantidade.value)).toFixed(2)
         formFour.vlr_total =  vlrTotal.value
     }
 
@@ -78,7 +92,7 @@ watch((quantidade), (val) => {
     if(parseFloat(vlrDesc.value) > parseFloat(vlrUnit.value)) {
         vlrTotal.value = 0.0
     } else {
-        vlrTotal.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value)) * parseFloat(quantidade.value)).toFixed(2)
+        vlrTotal.value = (((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value)) - parseFloat(vlrCusto.value)) * parseFloat(quantidade.value)).toFixed(2)
         formFour.vlr_total =  vlrTotal.value
     }
 
@@ -95,7 +109,6 @@ function getUsuarios() {
 
     return usuarios
 }
-
 
 function getServico(val) {
     axios.post('/GetServico', {id_servico: val})
@@ -164,14 +177,16 @@ function ListaServicosPagos() {
         quantidade: quantidade.value,
         vlr_unit: vlrUnit.value,
         vlr_desc: vlrDesc.value,
+        vlr_custo: vlrCusto.value,
         vlr_total: vlrTotal.value,
         detalhes: detalhes.value
     })
 
     servico.value = 0
     quantidade.value = props.paineis.length
-    vlrUnit.value = 0
+    vlrUnit.value = ''
     vlrDesc.value = 0
+    vlrCusto.value = 0
 
     getServicos()
 
@@ -277,16 +292,16 @@ function changeEdit() {
             <p class="text-xs font-bold text-red-500 text-center">Bi-Semana: {{ bisemana[0].num_bisemana }} {{ new Date(bisemana[0].inicio).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }} até {{ new Date(bisemana[0].fim).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }}</p>
         </div>
 
-  
+
         <!-- Serviços / Pago? / Data Pgto -->
         <div class="flex space-x-4">
             <div class="w-full md:w-[45%]">
                 <label class="label">
                     <span class="label-text">Serviço:</span>
                 </label>
-                <select v-model="servico" 
-                        @change=getServico(servico) 
-                        class="select select-bordered w-full" 
+                <select v-model="servico"
+                        @change=getServico(servico)
+                        class="select select-bordered w-full"
                         :disabled="edit == false">
                     <option value="0" disabled>Selecione um Serviço</option>
                     <option v-for="serv in servicos" :key="serv.id" :value="serv.id">{{ serv.nome }}</option>
@@ -297,7 +312,7 @@ function changeEdit() {
                 <label class="label">
                     <span class="label-text">Pago</span>
                 </label>
-                <select id="pagamento" 
+                <select id="pagamento"
                         name="pagamento"
                         v-model="formFour.pgto"
                         class="select select-bordered w-full"
@@ -308,7 +323,7 @@ function changeEdit() {
                 </select>
             </div>
 
-        
+
         </div>
 
         <!--Quantidade / Valor Unitário / Desconto / Valor Total -->
@@ -319,7 +334,7 @@ function changeEdit() {
                     <label class="label">
                         <span class="label-text">Serviço</span>
                     </label>
-                    <input type="text" 
+                    <input type="text"
                         disabled
                         name="desc_servico"
                         id="desc_servico"
@@ -346,7 +361,7 @@ function changeEdit() {
                         <label class="label">
                             <span class="label-text">Valor Unit.</span>
                         </label>
-                        <input type="text" 
+                        <input type="text"
                             placeholder="R$ 0.00"
                             name="vlr_unit"
                             id="vlr_unit"
@@ -367,7 +382,7 @@ function changeEdit() {
                         <label class="label">
                             <span class="label-text">Desc. Unit.</span>
                         </label>
-                        <input type="text" 
+                        <input type="text"
                             placeholder="R$ 0.00"
                             name="vlr_desc"
                             id="vlr_desc"
@@ -383,13 +398,39 @@ function changeEdit() {
                             ]" />
                     </div>
 
+                    <!-- Custos -->
+                    <div class="w-10/12 sm:w-3/12">
+                        <label class="label">
+                            <span class="label-text">Custo. Unit.</span>
+                        </label>
+                        <input type="text"
+                            placeholder="R$ 0.00"
+                            name="vlr_custo"
+                            id="vlr_custo"
+                            v-model="vlrCusto"
+                            class="input input-bordered w-full text-center"
+                            v-maska
+                            data-maska=
+                            "[
+                                '##.##',
+                                '###.##',
+                                '####.##',
+                                '#####.##'
+                            ]" />
+                    </div>
+                </div>
+
+
+                <!-- Valor Total -->
+                <div class="w-full flex justify-center space-x-4">
+
                     <!-- Valor Total -->
                     <div class="w-10/12 sm:w-3/12">
                         <label class="label">
                             <span class="label-text">Valor Total</span>
                         </label>
-                        <input type="text" 
-                            disabled 
+                        <input type="text"
+                            disabled
                             placeholder="R$ 0.00"
                             name="vlr_total"
                             id="vlr_total"
@@ -410,19 +451,20 @@ function changeEdit() {
                         <button @click="ListaServicosPagos()" class="btn btn-success">OK</button>
                     </div>
                 </div>
+
             </div>
         </div>
 
         <!-- Serviços Já Cadastrados -->
         <div :class="{'hidden': servicosPagos.length == 0}" class="w-full max-h-40 flex flex-col overflow-auto">
-            <div v-for="(sp, index) in servicosPagos" :key="sp.id" 
+            <div v-for="(sp, index) in servicosPagos" :key="sp.id"
                 class="w-11/12 flex flex-wrap space-x-0 sm:space-x-6 space-y-4 sm:space-y-0 border sm:border-0 border-sky-300 rounded-lg mb-2 sm:mb-4">
                 <!-- Serviço -->
                 <div class="w-10/12 sm:w-[28%]">
                     <label class="label">
                         <span class="label-text">Serviço</span>
                     </label>
-                    <input type="text" 
+                    <input type="text"
                         disabled
                         name="desc_servico"
                         id="desc_servico"
@@ -435,7 +477,7 @@ function changeEdit() {
                     <label class="label">
                         <span class="label-text">Qtde.</span>
                     </label>
-                    <input type="text" 
+                    <input type="text"
                         disabled
                         name="quantidade"
                         id="quantidade"
@@ -448,7 +490,7 @@ function changeEdit() {
                     <label class="label">
                         <span class="label-text">Valor Total</span>
                     </label>
-                    <input type="text" 
+                    <input type="text"
                         disabled
                         name="vlr_total"
                         id="vlr_total"
@@ -471,7 +513,7 @@ function changeEdit() {
                 <label class="label">
                     <span class="label-text">Forma Pagamento</span>
                 </label>
-                <select id="formaPgto" 
+                <select id="formaPgto"
                         name="formaPgto"
                         v-model="formFour.formaPgto"
                         class="select select-bordered w-full"
@@ -489,7 +531,7 @@ function changeEdit() {
                 <label class="label">
                     <span class="label-text">Parcelado</span>
                 </label>
-                <select id="parcelado" 
+                <select id="parcelado"
                         name="parcelado"
                         v-model="formFour.parcelado"
                         class="select select-bordered w-full"
@@ -532,7 +574,7 @@ function changeEdit() {
                         v-model="dtReserva"
                         disabled
                         class="input input-bordered w-full bg-base-200 text-center"/>
-                    
+
             </div>
 
             <div class="w-5/12 md:w-[40%]">

@@ -13,6 +13,7 @@ use App\Models\Bisemanas\Bisemana;
 use App\Models\Paineis\Painel;
 use App\Services\ClienteService;
 use App\Services\UsuarioService;
+use App\Services\Pi\PiService;
 use PDF;
 use App\Models\Reservas\Reserva;
 use App\Services\Financeiro\CaixaService;
@@ -25,10 +26,13 @@ class PiController extends Controller
 {
     private $clienteService;
     private $usuarioService;
+    private $piService;
 
-    public function __construct(ClienteService $clienteService, UsuarioService $usuarioService) {
+
+    public function __construct(ClienteService $clienteService, UsuarioService $usuarioService, PiService $piService) {
         $this->clienteService = $clienteService;
         $this->usuarioService = $usuarioService;
+        $this->piService = $piService;
     }
 
     public function sessionData(Request $request) {
@@ -57,6 +61,7 @@ class PiController extends Controller
         $bsId = session('dadosPi')['Two']['bisemanaId'];
 
         // dd(session('dadosPi'));
+
 
         $cliente = $this->clienteService->getCliente(session('dadosPi')['One']['clienteId']);
         $data_pgto_formated = explode('-', session('dadosPi')['Four']['dtPgto']);
@@ -106,23 +111,15 @@ class PiController extends Controller
 
         $vendedor = session('dadosPi')['Two']['vendedor'];
 
+
         // Grava as reservas
         foreach($idPaineis as $idPainel) {
             $painel = Painel::where('identificacao', $idPainel)->first();
 
-            Reserva::updateOrCreate(['cliente_id' => $cliente->id, 'outdoor_id' => $painel->id, 'bisemana_id' => $bsId],
-            [
-                'cliente_id' => $cliente->id,
-                'outdoor_id' => $painel->id,
-                'bisemana_id' => $bsId,
-                'dt_reserva' => Carbon::now()->toDateString(),
-                'campanha' => $campanha,
-                // 'observacao' => $observacoes,
-                'pi_ok' => 1,
-                'user_id' => auth()->user()->id
-            ]);
+            $grava_reservas = $this->piService->storeReservation($cliente->id, $painel->id, $bsId, $campanha);
 
         }
+
 
 
         $pi = Pi::where('id_cliente', session('dadosPi')['One']['clienteId'])
@@ -135,10 +132,12 @@ class PiController extends Controller
         $vl_total = 0;
         $vlr_unt = 0;
         $vlr_desc = 0;
+        $vlr_custo = 0;
         foreach($servicos as $servico) {
             $vl_total += $servico['vlr_total'];
             $vlr_unt += $servico['vlr_unit'];
             $vlr_desc += $servico['vlr_desc'];
+            $vlr_custo += $servico['vlr_custo'];
         }
 
 
@@ -151,6 +150,10 @@ class PiController extends Controller
                 $dt_pi = Carbon::today()->toDateString();
 
                 // Cria a PI
+                // $grava_pi = $this->piService->storeOrUpdatePi(session('dadosPi'), $cliente_nome, $dt_pi, $vlr_unt, $vlr_desc, $vlr_custo, $vl_total, $data_pgto_formated);
+
+                // dd($grava_pi);
+
                 $pi = Pi::updateOrCreate([
                     'id_cliente' => session('dadosPi')['One']['clienteId'],
                     'id_paineis' => json_encode(session('dadosPi')['Two']['paineis']),
@@ -160,9 +163,10 @@ class PiController extends Controller
                     'id_bisemana' => session('dadosPi')['Two']['bisemanaId'],
                     'vl_unit' =>  $vlr_unt,
                     'vl_desc' => $vlr_desc,
+                    'vl_custo' => $vlr_custo,
                     'vl_total' => $vl_total,
                     'pago' => session('dadosPi')['Four']['pgto'],
-                    'dt_pgto' => $data_pgto_formated,
+                    'dt_pgto' => session('dadosPi')['Four']['dtPgto'],
                     'forma_pagamento' => session('dadosPi')['Four']['formaPgto'],
                     'vendedor' => session('dadosPi')['Two']['vendedorId'],
                     'obs' => session('dadosPi')['Four']['servicos'][0]['detalhes']
@@ -170,24 +174,32 @@ class PiController extends Controller
 
             }
 
+            // dd($data_pgto_formated);
+
             //Recupera a reserva
             $reserva = Reserva::where('cliente_id', session('dadosPi')['One']['clienteId'])
             ->where('bisemana_id', session('dadosPi')['Two']['bisemanaId'])
             ->where('pi_ok', 1)->get();
 
             $valor_liq_comissoes = 0;
+
             // Calcula as comissões para salvar o valor liquido e o valor total
+            $this->piService->calculateComission($servicos, $agentes, $pi, $valor_liq_comissoes);
+
             foreach($servicos as $servico) {
                 $vlr_total = $servico['vlr_total'];
                 $vlr_unit = $servico['vlr_unit'];
                 $vlr_desc = $servico['vlr_desc'];
-                $vlr_liquido = $vlr_total - $vlr_desc;
+                $vlr_custo = $servico['vlr_custo'];
+
+                $vlr_liquido = $vlr_total - $vlr_desc - $vlr_custo;
+
 
                 foreach($agentes as $agente) {
                     $comissao = Comissao::where('id_funcionario', $agente->id)
                                           ->where('id_servico', $servico['id'])->first();
 
-                    $comissao_venda = new ComissaoVenda(); 
+                    $comissao_venda = new ComissaoVenda();
 
 
                     if (optional($comissao)->exists()) {
@@ -216,8 +228,11 @@ class PiController extends Controller
 
 
 
-
             // grava o lançamento no banco de dados
+            // $this->piService->storeFinancialRelease($vl_total, $cliente, $detalhes, $pi, $reserva);
+
+
+
             $caixaService = new CaixaService();
 
 
