@@ -22,6 +22,7 @@ class Pi extends Model
                             'id_bisemana',
                             'vl_unit',
                             'vl_desc',
+                            'vl_custo',
                             'vl_total',
                             'pago',
                             'dt_pgto',
