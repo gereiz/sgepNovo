@@ -192,12 +192,16 @@ class PiController extends Controller
                 $vlr_desc = $servico['vlr_desc'];
                 $vlr_custo = $servico['vlr_custo'];
 
-                $vlr_liquido = $vlr_total - $vlr_desc - $vlr_custo;
+                $vlr_liquido = $vlr_total - $vlr_desc;
+                $vlr_liquido_financeiro = $vlr_total - $vlr_desc - $vlr_custo;
 
 
                 foreach($agentes as $agente) {
                     $comissao = Comissao::where('id_funcionario', $agente->id)
                                           ->where('id_servico', $servico['id'])->first();
+
+                    $comissoes = Comissao::where('id_funcionario', $agente->id)->get()->toArray();
+
 
                     $comissao_venda = new ComissaoVenda();
 
@@ -283,18 +287,20 @@ class PiController extends Controller
 
             DB::commit();
 
+
             if(isset(session('dadosPi')['Three'])) {
 
-
+                //via do cliente
                 $cliente_nome = $cliente->nome_fantasia ? $cliente->nome_fantasia : $cliente->razao_social;
                 $dt_pi = Carbon::today()->toDateString();
 
-                $pi =  PDF::loadview('relatorios.pi.pi_nova', compact('pi', 'cliente', 'agentes', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
+                $pi =  PDF::loadview('relatorios.pi.pi_nova', compact('pi', 'cliente', 'agentes', 'comissoes', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
                 'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor', 'dt_atual', 'lista_lancamentos', 'valor_liq_comissoes'));
 
                 $pi->setPaper('a4', 'landscape');
 
                 $pi->save(storage_path('app/public/pdf/pi/pi_'.$cliente_nome.'_'.$dt_pi.'.pdf'));
+
 
                 return $pi->stream('paineis_bisemana.pdf');
             }

@@ -48,7 +48,7 @@
             <p style="margin: 0; line-height: 1.2; font-size: 14px;">CEP - 35010-200 - contato@equipepropaganda.com.br - Governador Valadares - MG</p>
             <p style="margin: 0; line-height: 1.2; font-size: 14px;">CNPJ - 02.777.922/0001-35 - Insc Municipal: 038-537-7 - Insc Estadual: Isenta</p>
             <p class="title" style="margin: 5px 0 0 0;">{{$titulo}}</p>
-            <p style="margin: 0; text-align: right; margin-right: 24px; font-size: 14px;">Emissão: {{$dt_atual}}</p>
+            <p style="margin: 0; text-align: right; margin-right: 24px; font-size: 14px;">@isset($via)<b> Via: {{$via}}</b> - @endisset  Emissão: {{$dt_atual}}</p>
         </td>
         <td class="text-center align-middle" style="width: 20%; color: red; font-size: 40px; font-weight: bold; border: 1px solid #666666;">
             {{$doc}}<br>

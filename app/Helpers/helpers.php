@@ -24,7 +24,7 @@ function formatCpfCnpj($cpfCnpj) {
 
     return $cpfCnpj;
 }
- 
+
 // formata o cep no formato xxxxx-xxx
 function formatCep($cep) {
     $cep = str_replace('-', '', $cep);
@@ -53,4 +53,18 @@ function formataDataCompleta($dataHora) {
     } catch (Exception $e) {
         return null; // ou lance uma exceção, dependendo da sua lógica
     }
+}
+
+
+function buscarComissao(array $comissoes, int $idServico, int $idFuncionario): ?array {
+    foreach ($comissoes as $comissao) {
+        if (
+            isset($comissao['id_servico'], $comissao['id_funcionario']) &&
+            $comissao['id_servico'] == $idServico &&
+            $comissao['id_funcionario'] == $idFuncionario
+        ) {
+            return [$comissao['valor'] ?? null, $comissao['tipo_comissao'] ?? null];
+        }
+    }
+    return null; // caso não encontre
 }
