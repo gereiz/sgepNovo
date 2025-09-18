@@ -39,9 +39,9 @@
             <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{formataCash($serv['vlr_unit'] * $serv['quantidade'])}}</td>
             @foreach ($agentes as $ag)
                 <td style="border: 1px solid #cfcfcf; font-size: 10px; padding: 2px 4px;">
-                    {{$ag->nome_fantasia}} -@if(buscarComissao($comissoes, 3, $ag->id)[1] == 0) R$ @endif
-                        {{buscarComissao($comissoes, 3, $ag->id)[0]}}
-                        @if(buscarComissao($comissoes, 3, $ag->id)[1] == 1) % @endif
+                    {{$ag->nome_fantasia}} -@if(buscarComissao($comissoes, $serv['id'], $ag->id)[1] == 0) R$ @endif
+                        {{buscarComissao($comissoes, $serv['id'], $ag->id)[0]}}
+                        @if(buscarComissao($comissoes, $serv['id'], $ag->id)[1] == 1) % @endif
                 </td>
             @endforeach
             <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{formataCash($serv['vlr_custo'] * $serv['quantidade'])}}</td>
