@@ -63,8 +63,8 @@ function buscarComissao(array $comissoes, int $idServico, int $idFuncionario): ?
             $comissao['id_servico'] == $idServico &&
             $comissao['id_funcionario'] == $idFuncionario
         ) {
-            return [$comissao['valor'] ?? null, $comissao['tipo_comissao'] ?? null];
+            return [$comissao['valor'] ?? [0, 0], $comissao['tipo_comissao'] ?? [0, 0]];
         }
     }
-    return null; // caso não encontre
+    return [0, 0]; // caso não encontre
 }
