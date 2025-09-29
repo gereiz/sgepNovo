@@ -36,7 +36,7 @@
             </td>
             <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{formataCash($serv['vlr_unit'] * $serv['quantidade'])}}</td>
             <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{formataCash($serv['vlr_desc'] * $serv['quantidade'])}}</td>
-            <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{formataCash($serv['vlr_unit'] - $serv['vlr_desc'] * $serv['quantidade'])}}</td>
+            <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{formataCash(($serv['vlr_unit'] - $serv['vlr_desc']) * $serv['quantidade'])}}</td>
         </tr>
         @endforeach
     </tbody>

@@ -61,7 +61,7 @@
 
 @include('relatorios.pi.components.descricao_servico_fin')
 
-@include('relatorios.pi.components.totais')
+@include('relatorios.pi.components.totais_fin')
 
 @include('relatorios.pi.components.assinaturas')
 

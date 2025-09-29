@@ -415,8 +415,13 @@ class ReservaController extends Controller
 
     public function reservaPaineisCliente(Request $request) {
 
-        $paineis = $request->idPaineis[0];
-        $idPaineis = [];
+        // $paineis = $request->idPaineis[0];
+        if (!empty($request->idPaineis[0])) {
+            $paineis = $request->idPaineis[0];
+        } else {
+            $paineis = $request->idPaineis ?? [];
+        }
+                $idPaineis = [];
 
         foreach($paineis as $painel) {
             array_push($idPaineis, intval(substr($painel, -3)));

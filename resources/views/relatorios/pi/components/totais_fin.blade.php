@@ -2,19 +2,19 @@
     <tbody>
         <tr>
             <td colspan="1" style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px; font-weight: bold;">TOTAL:</td>
-
+            
             <td colspan="11" style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">
                 @php
                     $total = 0;
                 @endphp
                 @foreach ($servicos as $serv)
                     @php
-                        $total += (($serv['vlr_unit'] - $serv['vlr_desc']) * $serv['quantidade']);
+                        $total += $serv['vlr_total'];
                     @endphp
                 @endforeach
                 <strong style="font-size: 12px;">{{formataCash($total)}}</strong>
             </td>
-
+            
         </tr>
         <tr>
             <td colspan="1" style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px; font-weight: bold;">Corretor:</td>
@@ -54,7 +54,7 @@
                     @if (!$loop->last) || @endif
                 @endforeach
             </td>
-        </tr>
+        </tr>    
     </tbody>
 </table>
 
