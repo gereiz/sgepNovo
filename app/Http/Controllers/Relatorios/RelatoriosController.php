@@ -43,13 +43,18 @@ class RelatoriosController extends Controller
         $envio = $request->tpEnvio;
         $time = Carbon::now($tZone)->toTimeString();
         $fileName = 'Paineis_Disponiveis_Bi-semana_'.$numBisemana.'_'.$time.'.pdf';
+        $bisemanas_ano = Bisemana::where('ano_id', $bisemana->ano_id)->pluck('id')->toArray();
+
+        // dd($reservas_painel = Reserva::where([['painel_id', $p->id], ['bisemana_id', in_array($p->bisemana_id, $bisemanas_ano)]])->get());
+
 
 
         $pdf = PDF::loadView('relatorios.paineis.rel_disponiveis', compact('numBisemana',
                                                                             'periodo',
                                                                             'paineis',
                                                                             'status',
-                                                                            'user'
+                                                                            'user',
+                                                                            'bisemanas_ano'
                                                                         ));
 
 
@@ -63,6 +68,7 @@ class RelatoriosController extends Controller
         return $pdf->download('Paineis_disponiveis_'.$periodo.'_'.$time.'.pdf');
 
     }
+
 
     public function relPaineis(Request $request) {
         $tZone = new \DateTimeZone('America/Sao_paulo');

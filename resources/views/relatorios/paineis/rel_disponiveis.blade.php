@@ -101,12 +101,40 @@
                                             @else
                                             Painel Convencional
                                         @endif</i></p>
+
+                                        @php
+                                            // Pega todos os bisemana_id das reservas do painel
+                                            $reservas_painel = \App\Models\Reservas\Reserva::where('outdoor_id', $p->id)
+                                                ->whereIn('bisemana_id', $bisemanas_ano)
+                                                ->pluck('bisemana_id')
+                                                ->toArray();
+
+                                            // Inicializa o array final
+                                            $num_bisemanas_painel = [];
+
+                                            // Para cada bisemana_id, busca o num_bisemana correspondente
+                                            foreach ($reservas_painel as $respan) {
+                                                $num = \App\Models\Bisemanas\Bisemana::where('id', $respan)
+                                                    ->pluck('num_bisemana')
+                                                    ->first(); // pega o valor único
+                                                $num_bisemanas_painel[] = $num; // adiciona ao array final
+                                            }
+
+                                            // Ordena em ordem crescente
+                                            sort($num_bisemanas_painel);
+                                        @endphp
+                                        <p style="color: #B22222;">
+                                            <i>
+                                                Bi-semanas disponíveis: @foreach ($num_bisemanas_painel as $bspan) {{$bspan}},  @endforeach
+
+                                            </i>
+                                        </p>
                                     </div>
                                 </div>
 
                                 {{-- Imagem --}}
                                 <div class="d-inline col-md-6">
-                                    <div style="margin-top: -7%;">
+                                    <div style="margin-top: -18%;">
                                         <?php
                                         $filePath = 'storage/'.$p->image_url;
                                         $originalImage = public_path($filePath);
