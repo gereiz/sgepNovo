@@ -71,7 +71,22 @@
 </div>
 
 
+
 <table style="page-break-after:always;">
+    @php
+        $panelIds = collect($paineis)->pluck('id')->unique()->toArray();
+
+        // reservas por painel (só para saber quais bisemanas já estão ocupadas)
+        $reservas = \App\Models\Reservas\Reserva::whereIn('outdoor_id', $panelIds)
+            ->whereIn('bisemana_id', $bisemanas_ano)
+            ->get()
+            ->groupBy('outdoor_id');
+
+        // pega todos os num_bisemana válidos do ano (ex: [1,2,3,...])
+        $bisemanas_map = \App\Models\Bisemanas\Bisemana::whereIn('id', $bisemanas_ano)
+            ->pluck('num_bisemana', 'id')
+            ->toArray();
+    @endphp
 
     <?php
     $i = 1;
@@ -103,30 +118,23 @@
                                         @endif</i></p>
 
                                         @php
-                                            // Pega todos os bisemana_id das reservas do painel
-                                            $reservas_painel = \App\Models\Reservas\Reserva::where('outdoor_id', $p->id)
-                                                ->whereIn('bisemana_id', $bisemanas_ano)
-                                                ->pluck('bisemana_id')
-                                                ->toArray();
+                                            // reservas deste painel
+                                            $reservas_painel = $reservas[$p->id] ?? collect();
 
-                                            // Inicializa o array final
-                                            $num_bisemanas_painel = [];
+                                            // ids das bisemanas já reservadas neste painel
+                                            $bisemanas_reservadas = $reservas_painel->pluck('bisemana_id')->unique()->toArray();
 
-                                            // Para cada bisemana_id, busca o num_bisemana correspondente
-                                            foreach ($reservas_painel as $respan) {
-                                                $num = \App\Models\Bisemanas\Bisemana::where('id', $respan)
-                                                    ->pluck('num_bisemana')
-                                                    ->first(); // pega o valor único
-                                                $num_bisemanas_painel[] = $num; // adiciona ao array final
-                                            }
+                                            // todas as bisemanas do ano
+                                            $todas_bisemanas = collect($bisemanas_map);
 
-                                            // Ordena em ordem crescente
-                                            sort($num_bisemanas_painel);
+                                            // remove as que já foram reservadas
+                                            $num_bisemanas_disponiveis = $todas_bisemanas->except($bisemanas_reservadas)->values()->sort()->toArray();
                                         @endphp
+
                                         <p style="color: #B22222;">
                                             <i>
-                                                Bi-semanas disponíveis: @foreach ($num_bisemanas_painel as $bspan) {{$bspan}},  @endforeach
-
+                                                Bi-semanas disponíveis:
+                                                {{ empty($num_bisemanas_disponiveis) ? '—' : implode(', ', $num_bisemanas_disponiveis) }}
                                             </i>
                                         </p>
                                     </div>

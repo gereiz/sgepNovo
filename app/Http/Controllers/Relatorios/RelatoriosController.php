@@ -45,7 +45,7 @@ class RelatoriosController extends Controller
         $fileName = 'Paineis_Disponiveis_Bi-semana_'.$numBisemana.'_'.$time.'.pdf';
         $bisemanas_ano = Bisemana::where('ano_id', $bisemana->ano_id)->pluck('id')->toArray();
 
-        // dd($reservas_painel = Reserva::where([['painel_id', $p->id], ['bisemana_id', in_array($p->bisemana_id, $bisemanas_ano)]])->get());
+        // dd($bisemanas_ano);
 
 
 
