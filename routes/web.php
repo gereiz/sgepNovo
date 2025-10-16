@@ -258,7 +258,7 @@ route::middleware(['auth', 'verified'])->group(function () {
         route::post('/deleteRole', [RolesController::class, 'deleteRole']);
 
         // Permissions
-        route::get('/getPermissions ', [RolesController::class, 'getPermissions']);
+        route::get('/getPermissions', [RolesController::class, 'getPermissions']);
         route::post('/setPermissions', [RolesController::class, 'setPermissions']);
 
 
