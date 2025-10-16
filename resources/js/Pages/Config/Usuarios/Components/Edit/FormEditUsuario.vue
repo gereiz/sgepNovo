@@ -51,7 +51,7 @@ function sendFormUsu() {
 
 
 const getRoles = () => {
-    axios.get('/getRoles')
+    axios.get('/configuracoes/getRoles')
     .then((response) => {
         funcoes.value = response.data
         console.log(response.data)

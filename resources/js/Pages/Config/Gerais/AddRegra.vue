@@ -5,7 +5,7 @@ import { useToastr } from '@/Components/toastr';
 import { ref, reactive, onMounted, computed } from 'vue';
 import TabelaRegras from './TabelaRegras.vue';
 
-const props = defineProps(['funcoes'])
+const props = defineProps(['permissions'])
 
 const toastr = useToastr();
 
@@ -82,7 +82,7 @@ const AddPermissao = () => {
                 <!-- tabela de permissões -->
                 <div class="w-8/12 flex flex-col border p-4 rounded-xl overflow-y-auto overflow-x-hidden">
 
-                    <TabelaRegras :funcoes="funcoes"/>
+                    <TabelaRegras :permissions="permissions"/>
 
                 </div>
 

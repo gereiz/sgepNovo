@@ -21,9 +21,9 @@ class RolesController extends Controller
 
     public function index()
     {
-        $funcoes = Funcao::all();
+        $permissions = $this->rolesService->getPermissions();
 
-        return Inertia::render('Config/Gerais/AddRegra', compact('funcoes'));
+        return Inertia::render('Config/Gerais/AddRegra', compact('permissions'));
     }
 
     public function getRoles()

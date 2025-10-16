@@ -20,7 +20,7 @@ onMounted(() => {
 })
 
 const getPermissoes = () => {
-    axios.get('/getRoles')
+    axios.get('/configuracoes/getRoles')
     .then((res) => {
         listPermissoes.value = res.data
     })

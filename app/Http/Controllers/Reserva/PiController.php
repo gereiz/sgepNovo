@@ -157,7 +157,7 @@ class PiController extends Controller
                 $pi = Pi::updateOrCreate([
                     'id_cliente' => session('dadosPi')['One']['clienteId'],
                     'id_paineis' => json_encode(session('dadosPi')['Two']['paineis']),
-                    'arquivo' => 'pi_'.$cliente_nome.'_'.$dt_pi.'.pdf',
+                    'arquivo' => $cliente_nome.'_'.$dt_pi.'.pdf',
                     'contato' => session('dadosPi')['One']['responsavel'],
                     'campanha' => session('dadosPi')['Two']['campanha'],
                     'id_bisemana' => session('dadosPi')['Two']['bisemanaId'],
@@ -294,20 +294,29 @@ class PiController extends Controller
                 $cliente_nome = $cliente->nome_fantasia ? $cliente->nome_fantasia : $cliente->razao_social;
                 $dt_pi = Carbon::today()->toDateString();
 
-                $pi =  PDF::loadview('relatorios.pi.pi_nova', compact('pi', 'cliente', 'agentes', 'comissoes', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
-                'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor', 'dt_atual', 'lista_lancamentos', 'valor_liq_comissoes'));
 
-                $pi->setPaper('a4', 'landscape');
+                // Via do Financeiro
+                $pi_fin =  PDF::loadview('relatorios.pi.pi_fin_nova', compact('pi', 'cliente', 'agentes', 'comissoes', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
+                'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor', 'lista_lancamentos', 'valor_liq_comissoes'));
 
-                $pi->save(storage_path('app/public/pdf/pi/pi_'.$cliente_nome.'_'.$dt_pi.'.pdf'));
+                $pi_fin->setPaper('a4', 'landscape');
+
+                $pi_fin->save(storage_path('app/public/pdf/pi/pi_fin_'.$cliente_nome.'_'.$dt_pi.'.pdf'));
+
+                // Via do Cliente
+                $pi_cli =  PDF::loadview('relatorios.pi.pi_nova', compact('pi', 'cliente', 'agentes', 'comissoes', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
+                'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor', 'lista_lancamentos', 'valor_liq_comissoes'));
+
+                $pi_cli->setPaper('a4', 'landscape');
+
+                $pi_cli->save(storage_path('app/public/pdf/pi/pi_cli_'.$cliente_nome.'_'.$dt_pi.'.pdf'));
 
 
-                return $pi->stream('paineis_bisemana.pdf');
+                return $pi_cli->stream('paineis_bisemana.pdf');
             }
 
 
         } catch (\Exception $e) {
-            // return $e;
             return response()->json(['cod' => 0, 'msg' => $e->getMessage()]);
         }
 

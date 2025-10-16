@@ -30,22 +30,21 @@
 
 <div class="page-number"></div>
 
-@include('relatorios.includes.rel_header', ['titulo' => 'PEDIDO DE INSERÇÃO', 'doc' => 'PI', 'num' => $num, 'via' => 'Cliente'])
+@include('relatorios.includes.rel_header', ['titulo' => 'PEDIDO DE INSERÇÃO', 'doc' => 'PI', 'num' => $num, 'via' => 'Financeiro'])
 
 @include('relatorios.pi.components.autorizacao_servico')
 
-@include('relatorios.pi.components.descricao_servico')
+@include('relatorios.pi.components.descricao_servico_fin')
 
-@include('relatorios.pi.components.totais')
+@include('relatorios.pi.components.totais_fin')
 
 @include('relatorios.pi.components.assinaturas')
 
-<!-- Quebra de página para a segunda página -->
+<!-- Quebra de página para a quarta página -->
 <div style="page-break-after: always;"></div>
 
 <!-- Cabeçalho da segunda página -->
-@include('relatorios.includes.rel_header', ['titulo' => 'PEDIDO DE INSERÇÃO', 'doc' => 'PI', 'num' => $num, 'via' => 'Cliente'])
+@include('relatorios.includes.rel_header', ['titulo' => 'PEDIDO DE INSERÇÃO', 'doc' => 'PI', 'num' => $num, 'via' => 'Financeiro'])
 
 <!-- Conteúdo da segunda página -->
 @include('relatorios.pi.components.informacoes_contratuais')
-

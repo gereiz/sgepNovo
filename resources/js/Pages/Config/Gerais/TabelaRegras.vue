@@ -5,7 +5,7 @@ import { useToastr } from '@/Components/toastr';
 import { ref, reactive, onMounted, computed } from 'vue';
 import AddPermissaoRegra from './Regras/AddPermissaoRegra.vue';
 
-const props = defineProps(['funcoes'])
+const props = defineProps(['permissions'])
 
 const toastr = useToastr();
 
@@ -27,9 +27,10 @@ onMounted(() => {
 })
 
 const getRoles = () => {
-    axios.get('/getRoles')
+    axios.get('/configuracoes/getRoles')
     .then((res) => {
         listRoles.value = res.data
+        console.log(listRoles.value)
     })
     .catch((err) => {
         console.log(err)
@@ -37,7 +38,7 @@ const getRoles = () => {
 }
 
 const getPermissions = () => {
-    axios.get('/getPermissions')
+    axios.get('/configuracoes/getPermissions')
     .then((res) => {
         listPermissions.value = res.data
     })
@@ -70,7 +71,7 @@ const deleteRole = (role) => {
 
     <div class="sm:flex sm:items-center sm:justify-center">
         <div class="sm:flex-auto">
-            <p class="mt-2 font-bold text-xl text-gray-700 text-center mb-4">Funções cadastradas no sistema.</p>
+            <p class="mt-2 font-bold text-xl text-gray-700 text-center mb-4">Funções cadastradas no sistema. </p>
         </div>
     </div>
 

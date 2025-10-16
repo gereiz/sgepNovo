@@ -14,6 +14,8 @@ const idAno = ref(0); // Inicializa a variável reativa
 const idBisemana = ref(0);
 const listaPi = ref([])
 
+const criaFinanceiro = page.props.user.permissions.includes('criar financeiro');
+
 
 onMounted(() => {
      // Procura o ID do ano atual na lista de anos disponíveis
@@ -51,10 +53,16 @@ function getPiBs(val) {
     })
 }
 
-function openPiGerada(val) {
-    const pdfPath = `/storage/pdf/pi/${val}`;
-    const pdfUrl = window.location.origin + pdfPath;
-    window.open(pdfUrl, '_blank');
+function openPiGerada(val, tipo) {
+   if(tipo === 'cli') {
+        const pdfPath = `/storage/pdf/pi/pi_cli_${val}`;
+        const pdfUrl = window.location.origin + pdfPath;
+        window.open(pdfUrl, '_blank');
+   } else {
+        const pdfPath = `/storage/pdf/pi/pi_fin_${val}`;
+        const pdfUrl = window.location.origin + pdfPath;
+        window.open(pdfUrl, '_blank');
+   }
 
 }
 
@@ -127,10 +135,15 @@ function openPiGerada(val) {
                                     </p>
                                 </div>
 
-                                <div class="md:w-2/12">
-                                    <button tabindex="0" @click="openPiGerada(pi.arquivo)" class="btn btn-sm btn-square btn-error text-white tooltip tooltip-left"
-                                        data-tip="Baixar PI gerada">
-                                        <i class="fa-solid fa-file-arrow-down"></i>
+                                <div class="md:w-2/12 space-x-3">
+                                    <button tabindex="0" @click="openPiGerada(pi.arquivo, 'cli')" class="btn btn-sm btn-square btn-error text-white tooltip tooltip-top"
+                                        data-tip="Baixar PI do Cliente">
+                                        <i class="fa-solid fa-user"></i>
+                                    </button>
+
+                                    <button v-if="criaFinanceiro" tabindex="0" @click="openPiGerada(pi.arquivo, 'fin')" class="btn btn-sm btn-square btn-info text-white tooltip tooltip-top"
+                                        data-tip="Baixar PI do Financeiro">
+                                        <i class="fa-solid fa-dollar-sign"></i>
                                     </button>
                                 </div>
                             </div>
