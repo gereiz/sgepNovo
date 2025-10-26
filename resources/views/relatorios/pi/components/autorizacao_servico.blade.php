@@ -1,5 +1,5 @@
 <table class="table" style="border-collapse: collapse; width: 100%;">
-    <thead> 
+    <thead>
         <tr>
             <th style="width: 50%; border: 1px solid #cfcfcf; padding: 0;">
                 <table style="border-collapse: collapse; width: 100%;">
@@ -61,27 +61,27 @@
                     </tr>
                     <tr>
                         <td style="width: 12%; font-size: 11px; padding: 2px 4px; font-weight: bold;">CNPJ:</td>
-                        <td style="width: 58%; font-size: 11px; padding: 2px 4px;">{{formatCpfCnpj($agentes[0]->cpf_cnpj)}}</td>
+                        <td style="width: 58%; font-size: 11px; padding: 2px 4px;">{{strlen($agentes[0]->cpf_cnpj) == 14 ? formatCpf($agentes[0]->cpf_cnpj) : "***.***.***--"}}</td>
                         <td style="width: 8%; font-size: 11px; padding: 2px 4px; font-weight: bold;">I.E.:</td>
                         <td style="width: 22%; font-size: 11px; padding: 2px 4px;">{{$agentes[0]->nro_insc}}</td>
                     </tr>
                     <tr>
                         <td style="width: 12%; font-size: 11px; padding: 2px 4px; font-weight: bold;">ENDEREÇO:</td>
-                        <td style="width: 58%; font-size: 11px; padding: 2px 4px;">{{$agentes[0]->endereco}}</td>
+                        <td style="width: 58%; font-size: 11px; padding: 2px 4px;">{{strlen($agentes[0]->cpf_cnpj) == 14 ? $agentes[0]->endereco : "*******************"}}</td>
                         <td style="width: 8%; font-size: 11px; padding: 2px 4px; font-weight: bold;">Nº:</td>
-                        <td style="width: 22%; font-size: 11px; padding: 2px 4px;">{{$agentes[0]->num}}</td>
+                        <td style="width: 22%; font-size: 11px; padding: 2px 4px;">{{strlen($agentes[0]->cpf_cnpj) == 14 ? $agentes[0]->num : "*****"}}</td>
                     </tr>
                     <tr>
                         <td style="width: 12%; font-size: 11px; padding: 2px 4px; font-weight: bold;">BAIRRO:</td>
-                        <td style="width: 58%; font-size: 11px; padding: 2px 4px;">{{$bairro->nome}}</td>
+                        <td style="width: 58%; font-size: 11px; padding: 2px 4px;">{{strlen($agentes[0]->cpf_cnpj) == 14 ? $bairro->nome : "*******************"}}</td>
                         <td style="width: 10%; font-size: 11px; padding: 2px 4px; font-weight: bold;">COMPLEMENTO:</td>
-                        <td style="width: 20%; font-size: 11px; padding: 2px 4px;">{{$agentes[0]->complemento ?? ''}}</td>
+                        <td style="width: 20%; font-size: 11px; padding: 2px 4px;">{{strlen($agentes[0]->cpf_cnpj) == 14 ? $agentes[0]->complemento ?? '' : "*****"}}</td>
                     </tr>
                     <tr>
                         <td style="width: 12%; font-size: 11px; padding: 2px 4px; font-weight: bold;">CIDADE:</td>
                         <td style="width: 58%; font-size: 11px; padding: 2px 4px;">{{$cidade->nome}} - {{$uf->sigla}}</td>
                         <td style="width: 5%; font-size: 11px; padding: 2px 4px; font-weight: bold;">CEP:</td>
-                        <td style="width: 10%; font-size: 11px; padding: 2px 4px;">{{formatCep($agentes[0]->cep)}}</td>
+                        <td style="width: 10%; font-size: 11px; padding: 2px 4px;">{{strlen($agentes[0]->cpf_cnpj) == 14 ? formatCep($agentes[0]->cep) : "**.***-***"}}</td>
                     </tr>
                 </table>
             </td>
