@@ -251,7 +251,7 @@ route::middleware(['auth', 'verified'])->group(function () {
         route::post('/addAno', [ConfiguracoesController::class, 'AddAno'])->name('add.ano');
 
         // Roles
-        route::get('/roles', [RolesController::class, 'index']);
+        route::get('/roles', [RolesController::class, 'index']); 
         route::post('/createRole', [RolesController::class, 'createRole']);
         route::post('/updateRole', [RolesController::class, 'updateRole']);
         route::get('/getRoles', [RolesController::class, 'getRoles']);

@@ -459,14 +459,18 @@ class ReservaController extends Controller
     }
 
 
-    public function getCliente(Request $request) {
+    public function getCliente(Request $request)
+    {
+        if (!isset($request->cliente) || !isset($request->cliente['id'])) {
+            return response()->json(['error' => 'Cliente inválido ou não informado.'], 400);
+        }
 
         $id_cliente = intval($request->cliente['id']);
-        $cliente = Cliente::where('id', $id_cliente)->first();
+        $cliente = Cliente::find($id_cliente);
 
-        return $cliente;
-
+        return $cliente ?? response()->json(['error' => 'Cliente não encontrado.'], 404);
     }
+
 
 
     public function delResCliente(Request $request) {
