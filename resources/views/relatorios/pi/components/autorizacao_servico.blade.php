@@ -61,7 +61,7 @@
                     </tr>
                     <tr>
                         <td style="width: 12%; font-size: 11px; padding: 2px 4px; font-weight: bold;">CNPJ:</td>
-                        <td style="width: 58%; font-size: 11px; padding: 2px 4px;">{{strlen($agentes[0]->cpf_cnpj) == 14 ? formatCpf($agentes[0]->cpf_cnpj) : "***.***.***--"}}</td>
+                        <td style="width: 58%; font-size: 11px; padding: 2px 4px;">{{strlen($agentes[0]->cpf_cnpj) == 14 ? formatCpfCnpj($agentes[0]->cpf_cnpj) : "***.***.***--"}}</td>
                         <td style="width: 8%; font-size: 11px; padding: 2px 4px; font-weight: bold;">I.E.:</td>
                         <td style="width: 22%; font-size: 11px; padding: 2px 4px;">{{$agentes[0]->nro_insc}}</td>
                     </tr>

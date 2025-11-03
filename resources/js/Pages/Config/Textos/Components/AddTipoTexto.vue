@@ -34,8 +34,8 @@ watch( () => props.tipoTexto, (val) =>  {
         tipoTexto.value = val
         nome.value = tipoTexto.value.nome
         descricao.value = tipoTexto.value.descricao
-        
-    } 
+
+    }
 })
 
 function closeM() {
@@ -46,7 +46,7 @@ function closeM() {
 function AddOrEditTipoTexto() {
     // Verifica se é uma atualização (se já existe um ID)
     const isUpdate = tipoTexto.value && tipoTexto.value.id;
-    
+
     // Se for atualização, mostra confirmação
     if (isUpdate) {
         Swal.fire({
@@ -105,12 +105,12 @@ function saveData() {
         toastr.success('Tipo de texto ' + (tipoTexto.value.id ? 'atualizado' : 'adicionado') + ' com sucesso!')
         nome.value = ''
         descricao.value = ''
-        closeM() 
-        
+        closeM()
+
         setTimeout(() => {
             window.location.reload()
         }, 2000);
-        
+
     })
    .catch((error) => {
         toastr.error('Erro ao ' + (tipoTexto.value.id ? 'atualizar' : 'adicionar') + ' tipo de texto!')
@@ -157,7 +157,7 @@ function saveData() {
                             <div class="flex bg-gray-100 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
                                 <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
                                 <input type="text" placeholder="Nome do tipo de texto" v-model="nome"
-                                    class="h-9 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 
+                                    class="h-9 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900
                                          placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-xs"
                                 />
                             </div>

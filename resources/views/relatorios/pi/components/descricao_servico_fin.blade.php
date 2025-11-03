@@ -10,7 +10,7 @@
         <tr>
             <td style="width: 15%; border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px; font-weight: bold;">Ident. do Serviço</td>
             <td style="width: 5%; border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px; font-weight: bold;">Quant.</td>
-            <td style="width: 25%; border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px; font-weight: bold;">Especificação</td>
+            <td style="width: 25%; border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px; font-weight: bold;">Especificação (Painéis)</td>
             <td style="width: 15%; border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px; font-weight: bold;">Período</td>
             <td style="width: 10%; border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px; font-weight: bold;">Pagamento</td>
             <td style="width: 9%; border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px; font-weight: bold;">Vlr Bruto</td>
@@ -21,7 +21,7 @@
         <tr>
             <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{$serv['nome']}}</td>
             <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{$serv['quantidade']}}</td>
-            <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{$serv['detalhes']}}</td>
+            <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{implode(", ", $idPaineis)}}</td>
             <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{$bs_formated}}</td>
             <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">
                 @if($forma_pagamento == '1')

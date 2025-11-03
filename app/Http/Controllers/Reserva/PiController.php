@@ -296,7 +296,7 @@ class PiController extends Controller
 
 
                 // Via do Financeiro
-                $pi_fin =  PDF::loadview('relatorios.pi.pi_fin_nova', compact('pi', 'cliente', 'agentes', 'comissoes', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
+                $pi_fin =  PDF::loadview('relatorios.pi.pi_fin_nova', compact('pi', 'idPaineis',  'cliente', 'agentes', 'comissoes', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
                 'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor', 'lista_lancamentos', 'valor_liq_comissoes'));
 
                 $pi_fin->setPaper('a4', 'landscape');
@@ -304,7 +304,7 @@ class PiController extends Controller
                 $pi_fin->save(storage_path('app/public/pdf/pi/pi_fin_'.$cliente_nome.'_'.$dt_pi.'.pdf'));
 
                 // Via do Cliente
-                $pi_cli =  PDF::loadview('relatorios.pi.pi_nova', compact('pi', 'cliente', 'agentes', 'comissoes', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
+                $pi_cli =  PDF::loadview('relatorios.pi.pi_nova', compact('pi', 'idPaineis', 'cliente', 'agentes', 'comissoes', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
                 'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor', 'lista_lancamentos', 'valor_liq_comissoes'));
 
                 $pi_cli->setPaper('a4', 'landscape');
