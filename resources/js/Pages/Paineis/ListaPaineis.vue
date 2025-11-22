@@ -93,24 +93,25 @@ function getImage(i) {
     <Head title="Painéis" />
 
     <AuthenticatedLayout>
-        <div class="w-full h-screen pt-20 sm:pt-4 pb-32 mx-2 sm:mx-4">
-
-            <!-- Cabeçalho e barra de Pesquisa -->
-            <div class="w-full h-14 flex mb-2 pe-3 sm:pe-0 mt-14">
-                <div class="w-2/12 h-14 flex items-center">
-                    <h1 class="text-xl sm:text-4xl font-bold">Painéis</h1>
-                    <h1 class="text-lg sm:text-2xl text-red-400 font-bold ml-2 sm:ml-4">{{ paineis.length }}</h1>
+        <div class="w-full min-h-screen pt-4 md:pt-20 pb-24 mx-2 sm:mx-4">
+            <div class="navbar bg-base-100 rounded-box shadow mb-4">
+                <div class="flex-1">
+                    <a class="btn btn-ghost text-xl">Painéis</a>
                 </div>
-
-                <div v-if="criaPainel" class="w-10/12 flex justify-end">
-                    <label for="modal-painel-add" class="w-28 botao-modal text-sm " @click="openAdd('t')">+ Novo Painel</label>
+                <div class="flex-none">
+                    <div class="badge badge-primary">{{ paineis.length }}</div>
+                    <button v-if="criaPainel" for="modal-painel-add" class="btn btn-success btn-sm ml-3" @click="openAdd('t')">Novo Painel</button>
                 </div>
-
             </div>
 
             <!-- Barra de Pesquisa -->
             <div class="w-full sm:w-4/12">
-                <input v-model="pesqPainel" placeholder="Pesquisar Painel" class="w-full h-10 input input-bordered rounded-none mb-4" type="text" name="pesquisar" id="pesquisar">
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Pesquisar Painel</span>
+                    </label>
+                    <input v-model="pesqPainel" placeholder="Pesquisar Painel" class="input input-bordered" type="text" name="pesquisar" id="pesquisar">
+                </div>
             </div>
 
             <!-- Card Principal -->

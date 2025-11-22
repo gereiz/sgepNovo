@@ -107,13 +107,13 @@ function openPi(val)  {
 
 
         <!-- Menu Mobile -->
-        <div class="sticky w-screen top-0 z-40 flex items-center gap-x-6 bg-gray-900 px-4 py-3 shadow-sm sm:px-6 md:hidden">
-            <button type="button" class="-m-2.5 p-2.5 text-gray-400 lg:hidden" @click="sidebarOpen = true">
+        <div class="navbar bg-base-100 sticky w-screen top-0 z-40 sm:px-6 md:hidden shadow">
+            <button type="button" class="btn btn-ghost btn-circle lg:hidden" @click="sidebarOpen = true">
                 <span class="sr-only">Open sidebar</span>
                 <Bars3Icon class="h-6 w-6" aria-hidden="true" />
             </button>
-            <div class="w-9/12 flex justify-center text-sm font-semibold leading-6 text-white">
-                {{ user.name }}
+            <div class="flex-1 flex justify-center">
+                <span class="text-sm font-semibold">{{ user.name }}</span>
             </div>
             <div class="dropdown dropdown-hover">
                 <vue-avatar :username="user.name" background-color="#ef4444" :size="40"/>

@@ -6,7 +6,9 @@
     </thead>
     <tbody>
         <tr>
-            <td colspan="2" style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px; height: 70px;"></td>
+            <td colspan="2" style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px; height: 70px;">
+                {!! isset($observacao) && $observacao ? $observacao : '' !!}
+            </td>
         </tr>
     </tbody>
 </table>

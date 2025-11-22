@@ -1,6 +1,5 @@
 <script setup>
 import { ref, shallowRef, watch } from 'vue'
-import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { CheckIcon } from '@heroicons/vue/24/outline'
 import { vMaska } from 'maska'
 import StepOne from './FormAdd/StepOne.vue'
@@ -112,53 +111,35 @@ watch(() => props.openAdd, (val)  =>{
 
 
 <template>
-    <TransitionRoot as="template" :show="open">
-      <Dialog as="div" class="relative z-10">
-        <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100" leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
-          <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-        </TransitionChild>
-  
-        <div class="fixed inset-0 z-10 overflow-y-auto">
-          <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" enter-to="opacity-100 translate-y-0 sm:scale-100" leave="ease-in duration-200" leave-from="opacity-100 translate-y-0 sm:scale-100" leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-              <DialogPanel class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-5/12 sm:max-w-full sm:p-6">
-                <div>
-                  <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                    <CheckIcon class="h-6 w-6 text-green-600" aria-hidden="true" />
-                  </div>
-                  <div class="mt-3 text-center sm:mt-5">
-                    <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900">Cadastrar Novo Cliente</DialogTitle>
+  <div class="modal" :class="{ 'modal-open': open }">
+    <div class="modal-box w-full sm:w-5/12">
+      <div class="absolute right-2 top-2">
+        <button class="btn btn-sm btn-circle btn-ghost" @click="closeAdd">✕</button>
+      </div>
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+        <CheckIcon class="h-6 w-6 text-green-600" aria-hidden="true" />
+      </div>
+      <h3 class="font-bold text-lg text-center mt-2">Cadastrar Novo Cliente</h3>
+      <p class="text-sm text-base-content/70 text-center">Preencha os dados para incluir um novo cliente.</p>
 
-                    <form>
-                        <div class="space-y-12">
+      <div class="mt-6">
+        <keep-alive>
+          <component :is="step" :clienteEdit="props.clienteEdit"
+                    @step2="nextStep" 
+                    @step3="nextStep"
+                    @stepSubumit="nextStep"
+                    @formOne="getFormOne"
+                    @formTwo="getFormTwo"
+                    @formThree="getFormThree"
+          >
+          </component>
+        </keep-alive>
+      </div>
 
-                            <div class="border-b border-gray-900/10 pb-12">
-                                <p class="mt-1 text-sm leading-6 text-gray-600">Preencha os dados para incluir um novo cliente.</p>
-                                <div class="mt-10 space-y-10">
-                                    <keep-alive>
-                                      <component :is="step" :clienteEdit="props.clienteEdit"
-                                                @step2="nextStep" 
-                                                @step3="nextStep"
-                                                @stepSubumit="nextStep"
-                                                @formOne="getFormOne"
-                                                @formTwo="getFormTwo"
-                                                @formThree="getFormThree"
-                                      > 
-                                      </component>
-                                    </keep-alive>
-                                </div>
-                            </div>
-                        </div>
-
-                    </form>
-                    
-                  </div>
-                </div>
-              </DialogPanel>
-            </TransitionChild>
-          </div>
-        </div>
-      </Dialog>
-    </TransitionRoot>
-  </template>
+      <!-- <div class="modal-action">
+        <button class="btn" @click="closeAdd">Fechar</button>
+      </div> -->
+    </div>
+  </div>
+</template>
   

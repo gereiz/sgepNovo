@@ -27,27 +27,35 @@ const toastr = useToastr();
     <Head title="Configurações" />
 
     <AuthenticatedLayout>
-        <div class="w-full h-screen pt-4 md:pt-24 pb-32 mx-2 md:mx-4">
-
-            <!-- Cabeçalho e barra de Pesquisa -->
-            <div class="w-full h-14 flex mb-2">
-                <div class="w-full md:w-4/12 h-14 flex items-center justify-center md:justify-start">
-                    <h1 class="text-xl md:text-4xl font-bold">Configurações Gerais</h1>
+        <div class="w-full min-h-screen pt-4 md:pt-20 mx-2 md:mx-4">
+            <div class="navbar bg-base-100 rounded-box shadow mb-4">
+                <div class="flex-1">
+                    <a class="btn btn-ghost text-xl">Configurações</a>
                 </div>
-
+                <div class="flex-none">
+                    <div class="breadcrumbs text-sm">
+                        <ul>
+                            <li><a href="/">Início</a></li>
+                            <li>Configurações</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
 
-            <div class="card flex flex-col md:flex-row w-full h-full bg-base-100 shadow-xl overflow-auto rounded-md p-4">
-                <!-- <AddAno :anos="anos" /> -->
-                <!-- <BtnConfig :title="'Cadastro de Anos'"
-                           :link="'/AddAno'"> 
-                </BtnConfig> -->
-                <BtnConfig  :title="'Cadastro de Regras'"
-                            :link="'configuracoes/roles'">   
-                </BtnConfig>
-                <BtnConfig  :title="'Textos Padrão'"
-                            :link="'configuracoes/textosPadrao'">   
-                </BtnConfig>
+            <div class="card w-full h-[80vh] bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title">Áreas de Configuração</h2>
+                    <span class="text-sm text-base-content/70">Escolha uma seção para gerenciar regras, permissões e textos padrão.</span>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                        <BtnConfig  :title="'Cadastro de Regras'"
+                                    :link="'configuracoes/roles'">   
+                        </BtnConfig>
+                        <BtnConfig  :title="'Textos Padrão'"
+                                    :link="'configuracoes/textosPadrao'">   
+                        </BtnConfig>
+                    </div>
+                </div>
             </div>
         </div>
 

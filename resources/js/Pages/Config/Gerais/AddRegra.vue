@@ -44,49 +44,39 @@ const AddPermissao = () => {
     <Head title="Regras & Permissões" />
 
     <AuthenticatedLayout>
-        <div class="w-full h-screen pt-24 pb-32 mx-2 md:mx-4">
-
-            <!-- Cabeçalho e barra de Pesquisa -->
-            <div class="w-full h-14 flex mb-2">
-                <div class="w-4/12 h-14 flex items-center">
-                    <h1 class="text-xl md:text-4xl font-bold">Funções & Permissões</h1>
+        <div class="w-full min-h-screen pt-20 mx-2 md:mx-4">
+            <div class="navbar bg-base-100 rounded-box shadow mb-4">
+                <div class="flex-1">
+                    <a class="btn btn-ghost text-xl">Funções & Permissões</a>
                 </div>
-
             </div>
 
-
-            <div class="card flex flex-row w-full h-full bg-base-100 shadow-xl overflow-auto rounded-md p-4">
-
-                <!-- cadastro de permissões -->
-                <div class="w-4/12 flex flex-col border p-4 rounded-xl mr-2">
-
-                    <div class="w-full flex mb-4">
-                        <h3 class="font-bold text-lg">Cadastrar Função</h3>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div class="col-span-1">
+                    <div class="card bg-base-100 shadow-xl">
+                        <div class="card-body">
+                            <h3 class="card-title">Cadastrar Função</h3>
+                            <div class="form-control w-full">
+                                <label class="label">
+                                    <span class="label-text">Nome da função</span>
+                                </label>
+                                <input type="text" name="nome_permissao" id="nome_permissao" placeholder="Ex.: gerente" v-model="permissao.nome_permissao" class="input input-bordered w-full" />
+                            </div>
+                            <div class="card-actions justify-end mt-4">
+                                <button id="btnAddPermissao" class="btn btn-success" @click="AddPermissao">Salvar</button>
+                            </div>
+                        </div>
                     </div>
-
-                    <div class="w-full flex justify-center mt-8">
-                        <input type="text" name="nome_permissao" id="nome_permissao" placeholder="Nome da função" v-model="permissao.nome_permissao"
-                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300
-                                    placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ps-4" />
-
-                        <label id="btnAddPermissao"
-                                class="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm
-                                        font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-5/12"
-                                        @click="AddPermissao">
-                                Avançar
-                        </label>
-                    </div>
-
                 </div>
 
-                <!-- tabela de permissões -->
-                <div class="w-8/12 flex flex-col border p-4 rounded-xl overflow-y-auto overflow-x-hidden">
-
-                    <TabelaRegras :permissions="permissions"/>
-
+                <div class="col-span-1 lg:col-span-2">
+                    <div class="card bg-base-100 shadow-xl">
+                        <div class="card-body">
+                            <h3 class="card-title">Regras cadastradas</h3>
+                            <TabelaRegras :permissions="permissions" />
+                        </div>
+                    </div>
                 </div>
-
-
             </div>
 
 

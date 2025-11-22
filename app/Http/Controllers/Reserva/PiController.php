@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Clientes\Cliente;
 use App\Models\Financeiro\Comissao;
 use App\Models\Financeiro\ComissaoVenda;
+use App\Models\Textos\TextoPadrao;
 
 class PiController extends Controller
 {
@@ -242,47 +243,74 @@ class PiController extends Controller
 
             // Cria o lançamento no caixa
             $qtdParcelas = session('dadosPi')['Four']['qtdParcelas'];
-            $vl_parcela = $vl_total / $qtdParcelas;
             $lista_lancamentos = [];
 
             // verifica se o lançamento já existe
             $lancamento_existe = $caixaService->getLancamentosReserva($pi->id);
 
 
-            for ($i = 1; $i <= $qtdParcelas; $i++) {
-                $lancamento = [
-                    'descricao' => 'PI nº ' . $pi->id . ' Cliente: ' . $cliente->razao_social ?
-                        'PI nº ' . $pi->id . ' Cliente: '.$cliente->razao_social :
-                        'PI nº ' . $pi->id . ' Cliente: '.$cliente->nome_fantasia,
+            $parcelasDetalhe = session('dadosPi')['Four']['parcelasDetalhe'] ?? null;
+            if (is_array($parcelasDetalhe) && count($parcelasDetalhe) > 0) {
+                $i = 1;
+                foreach ($parcelasDetalhe as $parc) {
+                    $lancamento = [
+                        'descricao' => 'PI nº ' . $pi->id . ' Cliente: ' . ($cliente->razao_social ? $cliente->razao_social : $cliente->nome_fantasia),
+                        'valor' => $parc['valor'],
+                        'parcelas' => $i . '/' . count($parcelasDetalhe),
+                        'data_lancamento' => $parc['data'],
+                        'centro_custo' => 1,
+                        'tipo_lancamento' => 1,
+                        'id_reserva' => $pi->id,
+                        'observacoes' => $detalhes,
+                    ];
 
-                    'valor' => $vl_parcela,
-                    'parcelas' => $i . '/' . $qtdParcelas,
-                    'data_lancamento' => date('Y-m-d', strtotime(session('dadosPi')['Four']['dtPgto'] . ' + ' . $i . ' month')),
-                    'centro_custo' => 1,
-                    'tipo_lancamento' => 1,
-                    'id_reserva' => $pi->id,
-                    'observacoes' => $detalhes,
-                ];
+                    $request_lancamento = new \Illuminate\Http\Request();
+                    $request_lancamento->replace($lancamento);
 
-                // Cria o Request manualmente
-                $request_lancamento = new \Illuminate\Http\Request();
-                $request_lancamento->replace($lancamento);
-
-
-                if(!$lancamento_existe) {
-                    // Chama o método do serviço com o objeto Request
-                    $caixaService->createLancamento($request_lancamento);
-                    array_push($lista_lancamentos, $lancamento);
-                } else {
-                    $lancamento_existe->update($lancamento);
-                    array_push($lista_lancamentos, $lancamento);
+                    if(!$lancamento_existe) {
+                        $caixaService->createLancamento($request_lancamento);
+                        array_push($lista_lancamentos, $lancamento);
+                    } else {
+                        $lancamento_existe->update($lancamento);
+                        array_push($lista_lancamentos, $lancamento);
+                    }
+                    $i++;
                 }
+            } else {
+                $vl_parcela = $vl_total / $qtdParcelas;
+                for ($i = 0; $i < $qtdParcelas; $i++) {
+                    $parcelaLabel = ($i + 1) . '/' . $qtdParcelas;
+                    $dataLanc = date('Y-m-d', strtotime(session('dadosPi')['Four']['dtPgto'] . ' + ' . $i . ' month'));
+                    $lancamento = [
+                        'descricao' => 'PI nº ' . $pi->id . ' Cliente: ' . ($cliente->razao_social ? $cliente->razao_social : $cliente->nome_fantasia),
+                        'valor' => $vl_parcela,
+                        'parcelas' => $parcelaLabel,
+                        'data_lancamento' => $dataLanc,
+                        'centro_custo' => 1,
+                        'tipo_lancamento' => 1,
+                        'id_reserva' => $pi->id,
+                        'observacoes' => $detalhes,
+                    ];
 
+                    $request_lancamento = new \Illuminate\Http\Request();
+                    $request_lancamento->replace($lancamento);
+
+                    if(!$lancamento_existe) {
+                        $caixaService->createLancamento($request_lancamento);
+                        array_push($lista_lancamentos, $lancamento);
+                    } else {
+                        $lancamento_existe->update($lancamento);
+                        array_push($lista_lancamentos, $lancamento);
+                    }
+                }
             }
 
-            // atualiza o campo pi_id na reserva
+            // atualiza o campo pi_id e observação na reserva
+            $observacao = session('dadosPi')['Five']['observacao'] ?? null;
             foreach($reserva as $res) {
-                $res->update(['pi_id' => $pi->id]);
+                $update = ['pi_id' => $pi->id];
+                if ($observacao !== null) { $update['observacao'] = $observacao; }
+                $res->update($update);
             }
 
             DB::commit();
@@ -296,8 +324,10 @@ class PiController extends Controller
 
 
                 // Via do Financeiro
+                $textoAtivo = TextoPadrao::where('active', 1)->first();
+                $observacao = session('dadosPi')['Five']['observacao'] ?? null;
                 $pi_fin =  PDF::loadview('relatorios.pi.pi_fin_nova', compact('pi', 'idPaineis',  'cliente', 'agentes', 'comissoes', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
-                'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor', 'lista_lancamentos', 'valor_liq_comissoes'));
+                'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor', 'lista_lancamentos', 'valor_liq_comissoes', 'textoAtivo', 'observacao'));
 
                 $pi_fin->setPaper('a4', 'landscape');
 
@@ -305,7 +335,7 @@ class PiController extends Controller
 
                 // Via do Cliente
                 $pi_cli =  PDF::loadview('relatorios.pi.pi_nova', compact('pi', 'idPaineis', 'cliente', 'agentes', 'comissoes', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
-                'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor', 'lista_lancamentos', 'valor_liq_comissoes'));
+                'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor', 'lista_lancamentos', 'valor_liq_comissoes', 'textoAtivo', 'observacao'));
 
                 $pi_cli->setPaper('a4', 'landscape');
 
@@ -322,6 +352,84 @@ class PiController extends Controller
 
 
         return response()->json(['cod' => 1, 'msg' => 'Paineis reservados!']);
+    }
+
+    public function previewPi() {
+        $dados = session('dadosPi') ?? [];
+        $two = $dados['Two'] ?? [];
+        $one = $dados['One'] ?? [];
+        $three = $dados['Three'] ?? [];
+        $four = $dados['Four'] ?? [];
+
+        $idPaineis = $two['paineis'] ?? [];
+        $clienteId = $one['clienteId'] ?? null;
+        $bisemanaId = $two['bisemanaId'] ?? null;
+        $cliente = $clienteId ? $this->clienteService->getCliente($clienteId) : new \stdClass();
+        $bisemana = $bisemanaId ? Bisemana::where('id', $bisemanaId)->first() : null;
+        $bs_ini = explode('-', $bisemana->inicio);
+        $bs_fin = explode('-', $bisemana->fim);
+        $bs_inicio = $bs_ini[2].'/'.$bs_ini[1].'/'.$bs_ini[0];
+        $bs_final = $bs_fin[2].'/'.$bs_fin[1].'/'.$bs_fin[0];
+        $bs_ano = substr($bs_ini[0], 2, 2);
+        $bs_formated = 'BS: '. $bisemana->num_bisemana.' - '.$bs_ini[2].'/'.$bs_ini[1]. ' a '.$bs_fin[2].'/'.$bs_fin[1].'/'.$bs_ano;
+        $dt_atual = Carbon::today()->toDateString();
+        $dt_atual = explode('-', $dt_atual);
+        $dt_atual = $dt_atual[2].'/'.$dt_atual[1].'/'.$dt_atual[0];
+        $bairro = isset($cliente->bairro) ? Bairro::where('id', $cliente->bairro)->first() : null;
+        $cidade = isset($cliente->cidade) ? Cidade::where('id', $cliente->cidade)->first() : null;
+        $uf = isset($cliente->uf) ? UF::where('id', $cliente->uf)->first() : null;
+        $servicos = $four['servicos'] ?? [];
+        $pagamento = $four['pgto'] ?? 0;
+        $forma_pagamento = $four['formaPgto'] ?? 0;
+        $campanha = $two['campanha'] ?? '';
+        $faturamento = $three ?: null;
+        $vendedor = $two['vendedor'] ?? null;
+        $agentes = [];
+        foreach (($two['agentesId'] ?? []) as $ag) {
+            $agente = Cliente::where('agent', 1)->where('id', $ag)->first();
+            array_push($agentes, $agente);
+        }
+        $textoAtivo = TextoPadrao::where('active', 1)->first();
+        $observacao = $dados['Five']['observacao'] ?? null;
+
+        $piPreview = new Pi();
+        $piPreview->id = 0;
+
+        // Monta lista de lançamentos para a prévia
+        $lista_lancamentos = [];
+        $parcelasDetalhe = $four['parcelasDetalhe'] ?? [];
+        if (is_array($parcelasDetalhe) && count($parcelasDetalhe) > 0) {
+            $i = 1;
+            foreach ($parcelasDetalhe as $parc) {
+                $lista_lancamentos[] = [
+                    'valor' => (float)($parc['valor'] ?? 0),
+                    'parcelas' => $i . '/' . count($parcelasDetalhe),
+                    'data_lancamento' => $parc['data'] ?? ($four['dtPgto'] ?? date('Y-m-d')),
+                ];
+                $i++;
+            }
+        } else {
+            $qtdParcelas = (int)($four['qtdParcelas'] ?? 0);
+            $dtPgto = $four['dtPgto'] ?? date('Y-m-d');
+            $vl_total = 0;
+            foreach ($servicos as $s) { $vl_total += (float)($s['vlr_total'] ?? 0); }
+            if ($qtdParcelas > 0 && $vl_total > 0) {
+                $vl_parcela = $vl_total / $qtdParcelas;
+                for ($i = 0; $i < $qtdParcelas; $i++) {
+                    $lista_lancamentos[] = [
+                        'valor' => $vl_parcela,
+                        'parcelas' => ($i + 1) . '/' . $qtdParcelas,
+                        'data_lancamento' => date('Y-m-d', strtotime($dtPgto . ' + ' . $i . ' month')),
+                    ];
+                }
+            }
+        }
+
+        $pi = $piPreview;
+        $pi_cli =  PDF::loadview('relatorios.pi.pi_nova', compact('pi', 'idPaineis', 'cliente', 'agentes', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
+            'dt_atual', 'bairro', 'cidade', 'uf','campanha', 'servicos', 'faturamento', 'vendedor', 'textoAtivo', 'lista_lancamentos', 'observacao'));
+        $pi_cli->setPaper('a4', 'landscape');
+        return $pi_cli->stream('pi_preview.pdf');
     }
 
 

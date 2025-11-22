@@ -177,6 +177,7 @@ route::middleware(['auth', 'verified'])->group(function () {
 
     // Pi's
     route::any('/sessionData', [PiController::class, 'sessionData']);
+    route::any('/previewPi', [PiController::class, 'previewPi']);
     route::any('/storePi', [PiController::class, 'storePi']);
 
 

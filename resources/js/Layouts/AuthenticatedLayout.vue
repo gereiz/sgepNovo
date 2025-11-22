@@ -15,8 +15,8 @@ watch(openM, (val) =>{
 
 
 <template>
-    <div class="w-full flex flex-col h-screen bg-gray-100">
-        <div class="w-full sticky z-50 top-0 hidden sm:flex">
+    <div class="w-full flex flex-col min-h-screen bg-base-200">
+        <div class="w-full sticky z-50 top-0 hidden sm:flex shadow">
             <HeaderApp class="w-full">
             </HeaderApp>
         </div>
@@ -25,7 +25,7 @@ watch(openM, (val) =>{
             <SideMenu :menuMobile="openM" class="absolute sm:relative z-50">
             </SideMenu>
 
-            <div class="w-full flex ml-0 bg-gray-100 relative z-0 space-x-2">
+            <div class="w-full flex ml-0 bg-base-200 relative z-0 space-x-2">
                 <slot />
             </div>
         </div>
