@@ -5,6 +5,7 @@ import StepOnePi from './FormPI/StepOnePi.vue'
 import StepTwoPi from './FormPI/StepTwoPi.vue';
 import StepThreePi from './FormPI/StepThreePi.vue';
 import StepFourPi from './FormPI/StepFourPi.vue';
+import StepFivePi from './FormPI/StepFivePi.vue';
 import Swal from 'sweetalert2';
 
 
@@ -23,6 +24,7 @@ const open = ref(false)
 const getFormPiOne = ref({})
 const getFormPiTwo = ref({})
 const getFormPiThree = ref({})
+const getFormPiFive = ref({})
 const formPi = ref({})
 
 watch( () => props.openPi, (val) =>  {
@@ -94,6 +96,11 @@ function saveFormFour(ev) {
     console.log(formPi.value.Four)
 }
 
+function saveFormFive(ev) {
+  formPi.value.Five = ev
+  localStorage.setItem('piFormFive', JSON.stringify(formPi.value.Five))
+}
+
 
 function submitFormPi() {
 
@@ -128,6 +135,28 @@ function submitFormPi() {
   })
 }
 
+function previewPi() {
+  axios.post('/sessionData', {
+    formPi: formPi.value
+  }).then(() => {
+    setTimeout(() => {
+      window.open('/previewPi', '_blank')
+    }, 500)
+  }).catch((err) => {
+    console.log(err)
+  })
+}
+
+function finalizePi() {
+  axios.post('/sessionData', { formPi: formPi.value })
+    .then(() => {
+      setTimeout(() => {
+        window.open('/storePi', '_blank')
+      }, 500)
+      setTimeout(() => { window.location.reload() }, 2000)
+    })
+}
+
 
 function closeM() {
     open.value  = false
@@ -157,26 +186,33 @@ function naviForm(ev) {
     step.value = StepFourPi;
 
   } else if(ev == 5) {
-
+    step.value = StepFivePi;
+  } else if(ev == 6) {
+    previewPi()
     Swal.fire({
-      title: 'Confirmação',
-      html: 'Tem certeza que deseja realizar esta reserva?<br><br>Não será possível editar NENHUM dado desta reserva, ou da PI, somente cancelando e mesma e realizando uma nova reserva.',
-      icon: 'warning',
+      title: 'Pré-visualização gerada',
+      html: 'Confira o PDF aberto em uma nova aba. Deseja confirmar e gravar a PI e os lançamentos?',
+      icon: 'info',
       showCancelButton: true,
       confirmButtonColor: '#00935F',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Sim, realizar reserva!',
+      confirmButtonText: 'Sim, confirmar!',
       cancelButtonText: 'Cancelar',
-      reverseButtons: true
+      reverseButtons: true,
+      allowOutsideClick: false,
+      didOpen: () => {
+        const btn = Swal.getConfirmButton()
+        if (btn) {
+          btn.disabled = true
+          setTimeout(() => { btn.disabled = false }, 3000)
+        }
+      }
     }).then((result) => {
       if (result.isConfirmed) {
-        submitFormPi();
-
-        setTimeout(() => {
-          closeM()
-        }, 3000);
+        finalizePi()
+        setTimeout(() => { closeM() }, 2500)
       }
-    });
+    })
   }
 }
 </script>
@@ -213,7 +249,8 @@ function naviForm(ev) {
                                      @formOne="saveFormOne"
                                      @formTwo="saveFormTwo"
                                      @formThree="saveFormThree"
-                                     @formFour="saveFormFour">
+                                     @formFour="saveFormFour"
+                                     @formFive="saveFormFive">
                           </component>
                       </KeepAlive>
                   </div>

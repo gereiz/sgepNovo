@@ -58,7 +58,7 @@
     </tbody>
 </table>
 
-@if(count($lista_lancamentos) > 1)
+@if(isset($lista_lancamentos) && count($lista_lancamentos) > 0)
     <table class="table" style="border-collapse: collapse; width: 100%; margin-top: -10px; border: 1px solid #cfcfcf;">
         <tbody>
             <tr style="background: #e6e6e6;">

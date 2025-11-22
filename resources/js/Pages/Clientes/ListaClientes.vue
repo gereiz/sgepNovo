@@ -75,22 +75,23 @@ const clientesFiltrados = computed(() => {
     <Head title="Clientes" />
 
     <AuthenticatedLayout>
-        <div class="w-full h-screen pt-24 pb-32 mx-2 md:mx-4">
-
-            <!-- Cabeçalho e barra de Pesquisa -->
-            <div class="w-full h-14 flex mb-2">
-                <div class="w-2/12 h-14 flex items-center">
-                    <h1 class="text-xl md:text-4xl font-bold">Clientes</h1>
-                    <h1 class="text-lg md:text-2xl text-red-400 font-bold ml-2 md:ml-4">{{ clientes.length }}</h1>
+        <div class="w-full min-h-screen pt-4 md:pt-20 pb-24 mx-2 md:mx-4">
+            <div class="navbar bg-base-100 rounded-box shadow mb-4">
+                <div class="flex-1">
+                    <a class="btn btn-ghost text-xl">Clientes</a>
                 </div>
-
-                <div class="w-10/12 flex justify-end">
-                    <label for="modal-cliente-add" class="btn btn-primary" @click="openAdd('t')">+ Novo Cliente</label>
+                <div class="flex-none">
+                    <div class="badge badge-primary">{{ clientes.length }}</div>
+                    <button class="btn btn-success btn-sm ml-3" for="modal-cliente-add" @click="openAdd('t')">Novo Cliente</button>
                 </div>
-
             </div>
-            <div class="w-full md:w-4/12">
-                <input v-model="pesqCliente" placeholder="Pesquisar Cliente" class="w-full h-10 input input-bordered rounded-none mb-4" type="text" name="pesquisar" id="pesquisar">
+            <div class="w-full md:w-4/12 my-4">
+                <div class="form-control">
+                    <label class="label">
+                        <!-- <span class="label-text">Pesquisar Cliente</span> -->
+                    </label>
+                    <input v-model="pesqCliente" placeholder="Pesquisar Cliente" class="input input-bordered" type="text" name="pesquisar" id="pesquisar">
+                </div>
             </div>
 
             <!-- Card dos Clientes -->

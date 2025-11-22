@@ -36,14 +36,14 @@ function openPi(val)  {
            <a href="/"><img class="hidden h-8 w-auto lg:block" src="../../../../storage/app/public/img/logo-black.png" alt="Equipe Comunicação" /></a> 
           </div>
           <div class="hidden sm:ml-6 sm:block">
-            <div class="flex space-x-4">
+            <div class="menu menu-horizontal">
               <MenuApp/>
             </div>
           </div>
         </div>
         <div class="hidden sm:ml-6 sm:block">
           <div class="flex items-center">
-            <button type="button" class="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+            <button type="button" class="btn btn-ghost btn-circle">
               <span class="sr-only">View notifications</span>
               <BellIcon class="h-6 w-6" aria-hidden="true" />
             </button>
@@ -51,28 +51,28 @@ function openPi(val)  {
             <!-- Profile dropdown -->
             <Menu as="div" class="relative ml-3">
               <div>
-                <MenuButton class="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                <MenuButton class="flex rounded-full text-sm">
                   <span class="sr-only">Open user menu</span>
                   <vue-avatar :username="user.name" background-color="#ef4444" :size="40"/>
                 </MenuButton>
               </div>
               <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-                <MenuItems class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <MenuItems class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-base-100 py-1 shadow-lg ring-1 ring-base-300 focus:outline-none">
                   <MenuItem v-slot="{ active }">
                     <a href="https://ibitweb.atlassian.net/servicedesk/customer/portal/1/group/1/create/10" 
-                      :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
+                      :class="[active ? 'bg-base-200' : '', 'block px-4 py-2 text-sm']"
                       target="_blank">
                       Abrir Chamado
                     </a>
                   </MenuItem>
                   <MenuItem v-slot="{ active }">
                     <label @click="openPi('t')"
-                      :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']" >
+                      :class="[active ? 'bg-base-200' : '', 'block px-4 py-2 text-sm']" >
                       Alterar senha
                   </label>
                   </MenuItem>
                   <MenuItem v-slot="{ active }">
-                    <a href="/logout" :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']">Sair</a>
+                    <a href="/logout" :class="[active ? 'bg-base-200' : '', 'block px-4 py-2 text-sm']">Sair</a>
                   </MenuItem>
                 </MenuItems>
               </transition>
@@ -81,7 +81,7 @@ function openPi(val)  {
         </div>
         <div class="-mr-2 flex sm:hidden">
           <!-- Mobile menu button -->
-          <DisclosureButton class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+          <DisclosureButton class="btn btn-ghost btn-circle">
             <span class="sr-only">Open main menu</span>
             <Bars3Icon v-if="!open" class="block h-6 w-6" aria-hidden="true" />
             <XMarkIcon v-else class="block h-6 w-6" aria-hidden="true" />
@@ -93,29 +93,29 @@ function openPi(val)  {
     <DisclosurePanel class="sm:hidden">
       <div class="space-y-1 px-2 pb-3 pt-2">
         <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-        <DisclosureButton as="a" href="#" class="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white">Dashboard</DisclosureButton>
-        <DisclosureButton as="a" href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Team</DisclosureButton>
-        <DisclosureButton as="a" href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Projects</DisclosureButton>
-        <DisclosureButton as="a" href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Calendar</DisclosureButton>
+        <DisclosureButton as="a" href="#" class="btn btn-ghost w-full justify-start">Dashboard</DisclosureButton>
+        <DisclosureButton as="a" href="#" class="btn btn-ghost w-full justify-start">Team</DisclosureButton>
+        <DisclosureButton as="a" href="#" class="btn btn-ghost w-full justify-start">Projects</DisclosureButton>
+        <DisclosureButton as="a" href="#" class="btn btn-ghost w-full justify-start">Calendar</DisclosureButton>
       </div>
-      <div class="border-t border-gray-700 pb-3 pt-4">
+      <div class="divider pb-3 pt-4">
         <div class="flex items-center px-5">
           <div class="flex-shrink-0">
             <img class="h-10 w-10 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
           </div>
           <div class="ml-3">
-            <div class="text-base font-medium text-white">Tom Cook</div>
-            <div class="text-sm font-medium text-gray-400">tom@example.com</div>
+            <div class="text-base">Tom Cook</div>
+            <div class="text-sm text-base-content/70">tom@example.com</div>
           </div>
-          <button type="button" class="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+          <button type="button" class="btn btn-ghost btn-circle ml-auto">
             <span class="sr-only">View notifications</span>
             <BellIcon class="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
         <div class="mt-3 space-y-1 px-2">
-          <DisclosureButton as="a" href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">Your Profile</DisclosureButton>
-          <DisclosureButton as="a" href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">Settings</DisclosureButton>
-          <DisclosureButton as="a" href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">Sign out</DisclosureButton>
+          <DisclosureButton as="a" href="#" class="btn btn-ghost w-full justify-start">Your Profile</DisclosureButton>
+          <DisclosureButton as="a" href="#" class="btn btn-ghost w-full justify-start">Settings</DisclosureButton>
+          <DisclosureButton as="a" href="#" class="btn btn-ghost w-full justify-start">Sign out</DisclosureButton>
         </div>
       </div>
     </DisclosurePanel>

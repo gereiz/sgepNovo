@@ -101,11 +101,10 @@
     <Head title="Relatórios" />
 
     <AuthenticatedLayout>
-        <div class="w-full h-screen pt-24 pb-32 mx-2 md:mx-4">
-            <!-- Cabeçalho e barra de Pesquisa -->
-            <div class="w-full h-14 flex mb-2"> 
-                <div class="sm:w-2/12 h-14 flex items-center">
-                    <h1 class="text-2xl font-bold">Relatório de Colagem</h1>
+        <div class="w-full min-h-screen pt-4 md:pt-20 pb-24 mx-2 md:mx-4">
+            <div class="navbar bg-base-100 rounded-box shadow mb-4">
+                <div class="flex-1">
+                    <a class="btn btn-ghost text-xl">Relatório de Colagem</a>
                 </div>
             </div>
 

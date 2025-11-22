@@ -68,16 +68,23 @@ watch(idBisemana, () => {
     <Head title="Dashboard" />
 
     <AuthenticatedLayout>
-        <div class="w-full py-14">
-            <div class="mx-auto sm:px-2 lg:px-4">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                    <div class="mb-6 flex space-x-4">
+        <div class="w-full min-h-screen pt-4 md:pt-20 pb-24 mx-2 md:mx-4">
+            <div class="navbar bg-base-100 rounded-box shadow mb-4">
+                <div class="flex-1">
+                    <a class="btn btn-ghost text-xl">Dashboard</a>
+                </div>
+            </div>
+            <div class="card w-full bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Ano -->
-                        <div class="w-1/4">
-                            <label class="block text-sm font-medium text-gray-700">Ano</label>
+                        <div class="w-full">
+                            <label class="label">
+                                <span class="label-text">Ano</span>
+                            </label>
                             <select 
                                 v-model="idAno"
-                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                                class="select select-bordered w-full"
                                 @change="getBisemanas()"
                             >
                                 <option value="0" disabled>Selecione</option>
@@ -90,13 +97,15 @@ watch(idBisemana, () => {
                         </div>
                         
                         <!-- Bisemana -->
-                        <div class="w-3/4">
-                            <label class="block text-sm font-medium text-gray-700">Bi-Semana</label>
+                        <div class="w-full">
+                            <label class="label">
+                                <span class="label-text">Bi-Semana</span>
+                            </label>
                             <select 
                                 v-model="idBisemana"
                                 :disabled="bsDisabled"
                                 @change="fetchSalesData()"
-                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                                class="select select-bordered w-full"
                             >
                                 <option value="0" selected disabled>Selecione</option>
                                 <option v-for="(bs, index) in listaBisemana"
@@ -108,11 +117,11 @@ watch(idBisemana, () => {
                     </div>
 
                     <!-- Dashboard Cards Container -->
-                    <div class="grid grid-cols-2 gap-6 h-[calc(100vh-20rem)]">
-                        <div class="overflow-auto scrollbar-hide">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="overflow-auto">
                             <SalesChart :sales-data="salesData" />
                         </div>
-                        <div class="overflow-auto scrollbar-hide">
+                        <div class="overflow-auto">
                             <CustomerChart :customer-data="customerData" />
                         </div>
                     </div>

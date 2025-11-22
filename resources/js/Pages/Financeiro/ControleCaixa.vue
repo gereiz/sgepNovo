@@ -33,32 +33,16 @@ const openPagina = (val) => {
     <Head title="Controle de Caixa" />
 
     <AuthenticatedLayout>
-        <div class="w-full h-screen sm:pt-24 sm:pb-32 mx-2 md:mx-4">
-
-            <!-- Cabeçalho e barra de Pesquisa -->
-            <div class="w-full h-[16%] sm:flex">
-                <div class="w-full sm:w-4/12 h-14 flex justify-center sm:justify-start items-center">
-                    <h1 class="text-2xl md:text-4xl font-bold sm:mt-4">Controle de Caixa</h1>
+        <div class="w-full min-h-screen pt-4 md:pt-20 pb-24 mx-2 md:mx-4">
+            <div class="navbar bg-base-100 rounded-box shadow mb-4">
+                <div class="flex-1">
+                    <a class="btn btn-ghost text-xl">Controle de Caixa</a>
                 </div>
-
-                <!-- Botões -->
-                <div class="w-full sm:w-6/12 flex flex-wrap justify-center sm:justify-start space-x-4 ">
-                    <label class="sm:w-48 btn btn-sm sm:btn-md btn-info text-white mt-2" @click="openPagina('centro-custo')">
-                        Centros de Custo
-                    </label>
-                    <label class="sm:w-48 btn btn-sm sm:btn-md btn-accent text-white mt-2" @click="openPagina('tipo-lancamento')">
-                        Tipos de Lançamentos
-                    </label>
-
-                    <label class="sm:w-48 btn btn-sm sm:btn-md btn-success text-white mt-2" @click="openPagina('lancamentos')">
-                        Lançamentos
-                    </label>
-
-                    <!-- <label class="sm:w-48 btn btn-sm sm:btn-md btn-outline btn-success text-white mt-2">
-                        Lançamentos Plus
-                    </label> -->
+                <div class="flex-none gap-2">
+                    <button class="btn btn-info btn-sm" @click="openPagina('centro-custo')">Centros de Custo</button>
+                    <button class="btn btn-accent btn-sm" @click="openPagina('tipo-lancamento')">Tipos de Lançamentos</button>
+                    <button class="btn btn-success btn-sm" @click="openPagina('lancamentos')">Lançamentos</button>
                 </div>
-
             </div>
 
 
@@ -67,7 +51,7 @@ const openPagina = (val) => {
                 <div class="mt-4 ml-4">
                     <div class="w-full flex flex-col">
 
-                        <h1 v-if="pagina === ''" class="w-full h-72 flex items-center justify-center text-4xl font-semibold">Selecione uma opção Acima </h1>
+                        <h1 v-if="pagina === ''" class="w-full h-72 flex items-center justify-center text-2xl font-semibold">Selecione uma opção acima</h1>
 
                         <keep-alive>
                             <component :is="pagina"

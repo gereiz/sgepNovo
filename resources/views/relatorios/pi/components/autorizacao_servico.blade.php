@@ -11,7 +11,7 @@
             <th style="width: 50%; border: 1px solid #cfcfcf; padding: 0;">
                 <table style="border-collapse: collapse; width: 100%;">
                     <tr style="background: #e6e6e6;">
-                        <th class="text-center font-italic py-0" colspan="6" style="border-bottom: 1px solid #cfcfcf; font-size: 12px; padding: 1px 4px;">VEÍCULO</th>
+                        <th class="text-center font-italic py-0" colspan="6" style="border-bottom: 1px solid #cfcfcf; font-size: 12px; padding: 1px 4px;">AGÊNCIA / VEÍCULO</th>
                     </tr>
                 </table>
             </th>
@@ -53,7 +53,7 @@
                 </table>
             </td>
             <td style="width: 50%; vertical-align: top; padding: 0; border: 1px solid #cfcfcf;">
-                <!-- Coluna do Veículo (Parceiros) -->
+                <!-- Coluna do AGÊNCIA / VEÍCULO (Parceiros) -->
                 <table style="border-collapse: collapse; width: 100%;">
                     <tr>
                         <td style="width: 12%; font-size: 11px; padding: 2px 4px; font-weight: bold;">CLIENTE:</td>

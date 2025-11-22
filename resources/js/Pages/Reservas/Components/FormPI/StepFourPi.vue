@@ -30,7 +30,13 @@ const vlrCusto = ref(0)
 const vlrTotal = ref()
 const detalhes = ref('')
 
-const dataAtual = new Date().toISOString().slice(0, 10);
+function formatLocalDate(d) {
+    const yyyy = d.getFullYear()
+    const mm = String(d.getMonth() + 1).padStart(2, '0')
+    const dd = String(d.getDate()).padStart(2, '0')
+    return `${yyyy}-${mm}-${dd}`
+}
+const dataAtual = formatLocalDate(new Date());
 const dtPgto = ref(dataAtual)
 const dtReserva = ref(dataAtual)
 
@@ -44,6 +50,123 @@ const formFour = reactive({
     dtReserva: props.dataReserva,
 
 })
+
+const parcelas = ref([])
+const warningMsg = ref('')
+
+const totalServicos = computed(() => {
+    return (servicosPagos.value || []).reduce((sum, s) => sum + parseFloat(s.vlr_total || 0), 0)
+})
+
+function addMonthsLocal(dateStr, monthsToAdd) {
+    const [yyyy, mm, dd] = (dateStr || '').split('-').map(n => parseInt(n, 10))
+    const d = new Date(yyyy || new Date().getFullYear(), (mm ? mm - 1 : new Date().getMonth()), dd || new Date().getDate())
+    d.setMonth(d.getMonth() + monthsToAdd)
+    return formatLocalDate(d)
+}
+
+onMounted(() => {
+    gerarParcelasIniciais()
+})
+
+function gerarParcelasIniciais() {
+    parcelas.value = []
+    const qtd = parseInt(formFour.qtdParcelas || 0)
+    if (!qtd || formFour.parcelado !== 1) return
+    const totalFromForm = parseFloat(formFour.vlr_total || 0)
+    const total = totalFromForm > 0 ? totalFromForm : parseFloat(totalServicos.value || 0)
+    if (!total || total <= 0) return
+    const base = Math.floor((total / qtd) * 100) / 100
+    const resto = parseFloat((total - base * (qtd - 1)).toFixed(2))
+    for (let i = 0; i < qtd; i++) {
+        const valor = i === qtd - 1 ? resto : base
+        const data = addMonthsLocal(formFour.dtPgto || dtPgto.value, i)
+        parcelas.value.push({ valor: valor.toFixed(2), data })
+    }
+}
+
+function ajustarUltimaParcela() {
+    if (!parcelas.value || parcelas.value.length === 0) return
+    const totalTarget = (() => {
+        const tForm = parseFloat(formFour.vlr_total || 0)
+        if (tForm && tForm > 0) return tForm
+        const tServ = parseFloat(totalServicos.value || 0)
+        return tServ || 0
+    })()
+    if (!totalTarget || totalTarget <= 0) return
+    const n = parcelas.value.length
+    let somaOutras = 0
+    for (let i = 0; i < n - 1; i++) {
+        somaOutras += parseFloat(parcelas.value[i].valor || 0)
+    }
+    let ultima = parseFloat((totalTarget - somaOutras).toFixed(2))
+    if (ultima < 0) ultima = 0
+    parcelas.value[n - 1].valor = ultima.toFixed(2)
+    warningMsg.value = ''
+}
+
+function totalTarget() {
+    const tForm = parseFloat(formFour.vlr_total || 0)
+    if (tForm && tForm > 0) return tForm
+    const tServ = parseFloat(totalServicos.value || 0)
+    return tServ || 0
+}
+
+function parseNumber(v) {
+    if (v === null || v === undefined) return 0
+    const s = String(v).replace(',', '.')
+    const num = parseFloat(s)
+    return isNaN(num) ? 0 : num
+}
+function formatValor(v) {
+    const num = parseNumber(v)
+    return num.toFixed(2)
+}
+
+function redistributeFromEntry(entradaOverride) {
+    if (!parcelas.value || parcelas.value.length === 0) return
+    let alvo = totalTarget()
+    if (!alvo || alvo <= 0) return
+    let entrada = entradaOverride !== undefined ? parseNumber(entradaOverride) : parseNumber(parcelas.value[0].valor || 0)
+    if (entrada < 0) entrada = 0
+    if (entrada > alvo) entrada = alvo
+    // mantém o valor digitado no input; formata apenas em blur
+    const restantes = parcelas.value.length - 1
+    if (restantes <= 0) return
+    const restanteTotal = parseFloat((alvo - entrada).toFixed(2))
+    const base = Math.floor((restanteTotal / restantes) * 100) / 100
+    const resto = parseFloat((restanteTotal - base * (restantes - 1)).toFixed(2))
+    for (let i = 1; i < parcelas.value.length - 1; i++) {
+        parcelas.value[i].valor = base.toFixed(2)
+    }
+    parcelas.value[parcelas.value.length - 1].valor = resto.toFixed(2)
+    ajustarUltimaParcela()
+}
+
+function onParcelChange(i) {
+    if (!parcelas.value || parcelas.value.length === 0) return
+    if (i === 0) {
+        redistributeFromEntry(parcelas.value[i].valor)
+    } else {
+        ajustarUltimaParcela()
+    }
+}
+
+function onParcelBlur(i) {
+    parcelas.value[i].valor = formatValor(parcelas.value[i].valor)
+}
+
+watch(() => formFour.parcelado, (val) => {
+    if (Number(val) === 1) gerarParcelasIniciais()
+    else parcelas.value = []
+})
+
+watch(() => formFour.qtdParcelas, () => gerarParcelasIniciais())
+watch(() => formFour.dtPgto, () => gerarParcelasIniciais())
+watch(servicosPagos, () => gerarParcelasIniciais(), { deep: true })
+watch(() => formFour.vlr_total, () => gerarParcelasIniciais())
+
+watch(parcelas, () => ajustarUltimaParcela(), { deep: true })
 
 watch((vlrUnit), (val) => {
 
@@ -244,13 +367,27 @@ const nextStep = (val) => {
                 reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
+                    formFour.parcelasDetalhe = parcelas.value
                     emit('formFour', formFour)
                     emit('nextStep', val);
                 }
             });
         } else {
-            emit('nextStep', val);
+            if (formFour.parcelado === 1) {
+                const soma = parcelas.value.reduce((sum, p) => sum + parseFloat(p.valor || 0), 0).toFixed(2)
+                const total = totalTarget().toFixed(2)
+                if (parseFloat(soma) > parseFloat(total)) {
+                    toastr.error('Atenção: soma das parcelas excede o total. Última parcela ajustada.')
+                    return
+                }
+                if (soma !== total) {
+                    toastr.error('Soma das parcelas difere do total dos serviços')
+                    return
+                }
+            }
+            formFour.parcelasDetalhe = parcelas.value
             emit('formFour', formFour)
+            emit('nextStep', val);
         }
     }
 }
@@ -515,15 +652,15 @@ function changeEdit() {
                 </label>
                 <select id="formaPgto"
                         name="formaPgto"
-                        v-model="formFour.formaPgto"
+                        v-model.number="formFour.formaPgto"
                         class="select select-bordered w-full"
                         :disabled="edit == false">
-                    <option value="0" disabled selected>SELECIONE</option>
-                    <option value="1">DINHEIRO</option>
-                    <option value="2">PIX</option>
-                    <option value="3">CARTÃO</option>
-                    <option value="4">BOLETO</option>
-                    <option value="5">TRANSFERÊNCIA</option>
+                    <option :value="0" disabled selected>SELECIONE</option>
+                    <option :value="1">DINHEIRO</option>
+                    <option :value="2">PIX</option>
+                    <option :value="3">CARTÃO</option>
+                    <option :value="4">BOLETO</option>
+                    <option :value="5">TRANSFERÊNCIA</option>
                 </select>
             </div>
 
@@ -533,36 +670,73 @@ function changeEdit() {
                 </label>
                 <select id="parcelado"
                         name="parcelado"
-                        v-model="formFour.parcelado"
+                        v-model.number="formFour.parcelado"
                         class="select select-bordered w-full"
                         :disabled="formFour.formaPgto < 3">
-                    <option value="0" disabled selected>SELECIONE</option>
-                    <option value="1">SIM</option>
-                    <option value="2">NÃO</option>
+                    <option :value="0" disabled selected>SELECIONE</option>
+                    <option :value="1">SIM</option>
+                    <option :value="2">NÃO</option>
                 </select>
             </div>
 
             <div class="w-5/12 md:w-[20%] ">
                 <label class="label"><span class="label-text">Parcelas</span></label>
-                    <select id="qtdparcelas" name="qtdparcelas" v-if="formFour.formaPgto > 2 && formFour.parcelado == 1"
-                            v-model="formFour.qtdParcelas"
+                    <select id="qtdparcelas" name="qtdparcelas" v-if="formFour.formaPgto > 2 && Number(formFour.parcelado) === 1"
+                            v-model.number="formFour.qtdParcelas"
                             class="select select-bordered w-full"
                             :disabled="edit == false">
-                        <option value="1" disabled selected>SEL...</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
+                        <option :value="1" disabled selected>SEL...</option>
+                        <option :value="2">2</option>
+                        <option :value="3">3</option>
+                        <option :value="4">4</option>
+                        <option :value="5">5</option>
+                        <option :value="6">6</option>
+                        <option :value="7">7</option>
+                        <option :value="8">8</option>
+                        <option :value="9">9</option>
+                        <option :value="10">10</option>
+                        <option :value="11">11</option>
+                        <option :value="12">12</option>
                     </select>
             </div>
 
+        </div>
+
+        <!-- Parcialização - edição de valores e datas -->
+        <div v-if="Number(formFour.parcelado) === 1" class="w-full">
+            <div class="card bg-base-100 shadow">
+                <div class="card-body">
+                    <h3 class="card-title">Parcelas</h3>
+                    <p class="text-sm">Total dos serviços: R$ {{ totalServicos.toFixed(2) }}</p>
+                    <div class="mb-2">
+                        <button class="btn btn-sm" @click="gerarParcelasIniciais">Recalcular</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="table table-zebra">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Valor</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(parc, i) in parcelas" :key="i">
+                                    <td>{{ i+1 }}/{{ parcelas.length }}</td>
+                                    <td>
+                                        <input type="text" class="input input-bordered w-32 text-center" v-model="parc.valor" @input="onParcelChange(i)" @blur="onParcelBlur(i)" />
+                                    </td>
+                                    <td>
+                                        <input type="date" class="input input-bordered w-40" v-model="parc.data" />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="text-sm">Soma das parcelas: R$ {{ parcelas.reduce((s,p)=> s + parseFloat(p.valor||0),0).toFixed(2) }}</div>
+                </div>
+            </div>
         </div>
 
         <!-- Data da Reserva / Vendedor / Agente-->
@@ -577,7 +751,7 @@ function changeEdit() {
 
             </div>
 
-            <div class="w-5/12 md:w-[40%]">
+            <div class="w-5/12 md:w-[40%]" v-if="Number(formFour.parcelado) !== 1">
                 <label class="label"><span class="label-text">Data Pagamento</span></label>
                 <input type="date"
                     v-model="formFour.dtPgto"

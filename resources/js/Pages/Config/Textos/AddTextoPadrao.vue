@@ -24,6 +24,7 @@ const textoConteudo = ref('')
 const textoTitulo = ref('')
 const ativo = ref(false)
 const disabledForm = ref(true)
+const ativoAtual = ref(null)
 
 
 watch( () => tipoTexto.value, (val) =>  {
@@ -34,7 +35,7 @@ watch( () => tipoTexto.value, (val) =>  {
 })
 
 function getTipoTexto() {
-   axios.post('/getTipoTexto', {
+   axios.post('/configuracoes/getTipoTexto', {
         id: tipoTexto.value
     })
    .then((response) => {
@@ -82,64 +83,44 @@ function salvarTextoPadrao() {
             }
         });
     } else {
-        // Verifica se já existe um texto com o mesmo título
-        axios.post('/verificaTextoPadrao', {
-            titulo: textoTitulo.value
-        })
-        .then((response) => {
-            if (response.data && response.data.exists) {
-                Swal.fire({
-                    title: 'Confirmação',
-                    text: 'Já existe um texto padrão com este título. O registro será atualizado em vez de criar um novo. Deseja continuar?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#00935F',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sim, atualizar!',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        saveTextoPadrao();
-                    }
-                });
-            } else {
-                saveTextoPadrao();
-            }
-        })
-        .catch((error) => {
-            console.error(error);
-            saveTextoPadrao(); // Em caso de erro na verificação, tenta salvar mesmo assim
-        });
+        saveTextoPadrao();
     }
 }
 
 function saveTextoPadrao() {
-    axios.post('/addOrEditTextoPadrao', {
-        id: TextoPadrao.value,
-        tipo_texto_id: tipoTexto.value,
-        titulo: textoTitulo.value,
-        conteudo: textoConteudo.value,
-        ativo: ativo.value
-    })
-    .then((response) => {
+    const desativarOutros = ativo.value ? (props.texto_padrao || []).filter(t => t.id !== TextoPadrao.value) : [];
+    const reqs = desativarOutros.map(t => axios.post('/configuracoes/addOrEditTextoPadrao', {
+        id: t.id,
+        tipo_texto_id: t.type,
+        titulo: t.title,
+        conteudo: t.content,
+        ativo: false
+    }));
+
+    const exec = reqs.length ? Promise.all(reqs) : Promise.resolve();
+
+    exec.then(() => {
+        return axios.post('/configuracoes/addOrEditTextoPadrao', {
+            id: TextoPadrao.value,
+            tipo_texto_id: tipoTexto.value,
+            titulo: textoTitulo.value,
+            conteudo: textoConteudo.value,
+            ativo: ativo.value
+        })
+    }).then(() => {
         toastr.success('Texto padrão ' + (TextoPadrao.value ? 'atualizado' : 'adicionado') + ' com sucesso!');
         textoTitulo.value = '';
         textoConteudo.value = '';
-        // Limpar o editor Trix
         document.querySelector('trix-editor').value = '';
-
-        setTimeout(() => {
-            window.location.reload();
-        }, 2000);
-    })
-    .catch((error) => {
+        setTimeout(() => { window.location.reload(); }, 2000);
+    }).catch((error) => {
         toastr.error('Erro ao ' + (TextoPadrao.value ? 'atualizar' : 'adicionar') + ' o texto padrão!');
         console.error(error);
     });
 }
 
 function getTextoPadrao() {
-    axios.post('/getTextoPadrao', {
+    axios.post('/configuracoes/getTextoPadrao', {
         id: TextoPadrao.value
     })
     .then((response) => {
@@ -172,7 +153,7 @@ function deletextoPadrao() {
         reverseButtons: true
     }).then((result) => {
         if (result.isConfirmed) {
-            axios.post('/deleteTextoPadrao', {
+            axios.post('/configuracoes/deleteTextoPadrao', {
                 id: TextoPadrao.value
             })
             .then((response) => {
@@ -212,7 +193,7 @@ watch(() => disabledForm.value, (val) => {
     <Head title="Configurações" />
 
     <AuthenticatedLayout>
-        <div class="w-full h-screen pt-4 md:pt-24 pb-32 mx-2 md:mx-4">
+        <div class="w-full h-screen pt-4 md:pt-14 pb-20 mx-2 md:mx-4">
 
             <!-- Cabeçalho e barra de Pesquisa -->
             <div class="w-full h-14 flex mb-2">
@@ -226,10 +207,13 @@ watch(() => disabledForm.value, (val) => {
                     <div class="w-full flex flex-col md:flex-row mb-4 items-center">
                         <!-- Textos -->
                         <div class="w-full md:w-[20vw] flex flex-col me-4">
-                            <label for="tipo-texto">Textos Padrão</label>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="label-text">Textos Padrão</span>
+                                <span v-if="(props.texto_padrao || []).find(t => t.active)" class="badge badge-success">Ativo: {{ (props.texto_padrao || []).find(t => t.active).title }}</span>
+                            </div>
                             <select v-model="TextoPadrao" class="select select-bordered " name="tipo-texto" id="tipo-texto">
                                 <option value="0" selected>Selecione</option>
-                                <option v-for="texto, index in texto_padrao" :value="texto.id">{{ texto.title }} </option>
+                                <option v-for="texto, index in texto_padrao" :value="texto.id">{{ texto.title }} {{ texto.active ? '(ativo)' : '' }}</option>
                             </select>
                         </div>
 
