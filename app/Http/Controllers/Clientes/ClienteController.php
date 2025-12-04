@@ -28,6 +28,13 @@ class ClienteController extends Controller
         return $agente;
     }
 
+    public function getAgentes() {
+        return Cliente::where('ativo', 1)
+            ->where('agent', 1)
+            ->orderBy('nome_fantasia')
+            ->get();
+    }
+
 
     public function cadastraCliente(Request $request) {
 

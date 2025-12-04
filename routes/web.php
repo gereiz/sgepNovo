@@ -16,6 +16,7 @@ use App\Http\Controllers\Relatorios\RelLancamentosController;
 use App\Http\Controllers\Relatorios\RelComissaoController;
 use App\Http\Controllers\Relatorios\RelOcupacaoController;
 use App\Http\Controllers\Reserva\PiController;
+use App\Http\Controllers\Vendas\VendaController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Financeiro\ServicosController;
 use App\Http\Controllers\Financeiro\ComissoesController;
@@ -179,6 +180,15 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::any('/sessionData', [PiController::class, 'sessionData']);
     route::any('/previewPi', [PiController::class, 'previewPi']);
     route::any('/storePi', [PiController::class, 'storePi']);
+
+    // Vendas
+    route::get('/Vendas/Lancar', [VendaController::class, 'index'])->name('vendas.lancar');
+    route::any('/vendas/sessionData', [VendaController::class, 'sessionData']);
+    route::get('/vendas/preview', [VendaController::class, 'preview']);
+    route::any('/vendas/store', [VendaController::class, 'store']);
+
+    // Agentes
+    route::get('/getAgentes', [ClienteController::class, 'getAgentes']);
 
 
         // Relatórios
