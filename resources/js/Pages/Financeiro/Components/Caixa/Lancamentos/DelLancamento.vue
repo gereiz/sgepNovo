@@ -12,7 +12,8 @@ const lancamentoL = ref(props.lancamento)
 const deleteLancamento = () => {
     axios.post('/DeleteLancamento', { lancamento: props.lancamento })
     .then(response => {
-        toastr.success('Lançamento excluído com sucesso!')
+        const msg = response?.data?.message || 'Lançamento excluído com sucesso!'
+        toastr.success(msg)
 
         setTimeout(() => {
             const dialog = document.getElementById('del_lancamento')

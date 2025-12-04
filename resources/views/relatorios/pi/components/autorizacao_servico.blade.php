@@ -24,7 +24,7 @@
                 <table style="border-collapse: collapse; width: 100%;">
                     <tr>
                         <td style="width: 12%; font-size: 11px; padding: 2px 4px; font-weight: bold;">CLIENTE:</td>
-                        <td style="width: 88%; font-size: 11px; padding: 2px 4px;" colspan="3">{{$cliente->razao_social}}</td>
+                        <td style="width: 88%; font-size: 11px; padding: 2px 4px;" colspan="3">{{ $cliente->razao_social ?? $cliente->nome_fantasia ?? '' }}</td>
                     </tr>
                     <tr>
                         <td style="width: 12%; font-size: 11px; padding: 2px 4px; font-weight: bold;">CNPJ:</td>

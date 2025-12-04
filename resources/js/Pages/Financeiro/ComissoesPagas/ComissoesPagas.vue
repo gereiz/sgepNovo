@@ -9,7 +9,7 @@ import RelComissoes from '../../Relatorios/Financeiro/RelComissoes.vue';
 const page = usePage();
 const permissions = page.props.user.permissions;
 
-const props = defineProps(['anos', 'bisemanas', 'comissoes', 'pis', 'clientes'])
+const props = defineProps(['anos', 'bisemanas', 'comissoes', 'pis', 'clientes', 'comissoes_defs', 'lancamentos'])
 const emit = defineEmits(['']);
 const toastr = useToastr();
 
@@ -73,13 +73,67 @@ function openRel(val) {
     }
 }
 
+const comissaoDefsMap = computed(() => {
+    const map = new Map()
+    ;(props.comissoes_defs || []).forEach(c => map.set(c.id, c))
+    return map
+})
+
+function getServicoNome(comissaoId) {
+    const c = comissaoDefsMap.value.get(comissaoId)
+    return (c && c.servico && c.servico.nome) ? c.servico.nome : 'Serviço'
+}
+
+function getParcelasPorPi(piId) {
+    return (props.lancamentos || [])
+        .filter(l => l.id_reserva === piId)
+        .sort((a,b)=> new Date(a.dt_faturamento) - new Date(b.dt_faturamento))
+        .map(l => ({ data: new Date(l.dt_faturamento).toLocaleDateString('pt-BR', { timeZone: 'UTC' }), label: l.parcelas }))
+}
+
+function getVencimentoPorPi(piId) {
+    const lans = (props.lancamentos || [])
+        .filter(l => l.id_reserva === piId)
+        .sort((a,b)=> new Date(a.dt_faturamento) - new Date(b.dt_faturamento))
+    if (lans.length === 0) return null
+    const dt = new Date(lans[0].dt_faturamento)
+    return dt.toLocaleDateString('pt-BR', { timeZone: 'UTC' })
+}
+
+function comissoesUnicasPorPi(piId) {
+    const lista = (props.comissoes || []).filter(com => com.pi_id === piId)
+    const seen = new Set()
+    return lista.filter(c => {
+        const key = `${c.agente_id}|${c.comissao_id}|${Number(c.valor_comissao).toFixed(2)}`
+        if (seen.has(key)) return false
+        seen.add(key)
+        return true
+    })
+}
+
+async function openPiPdf(pi) {
+    const nomeArquivo = pi?.arquivo
+    if (!nomeArquivo) { toastr.error('PI sem arquivo cadastrado'); return }
+    const urls = [
+        `/storage/pdf/pi/pi_cli_${nomeArquivo}`,
+        `/storage/pdf/pi/pi_fin_${nomeArquivo}`,
+    ]
+    for (const url of urls) {
+        try {
+            const resp = await fetch(url, { method: 'HEAD', cache: 'no-store' })
+            if (resp.ok) { window.open(url, '_blank'); return }
+        } catch (e) {}
+    }
+    toastr.error('PDF da PI não encontrado')
+}
+
 </script>
 
 <template>
     <Head title="Comissões Pagas" />
 
     <AuthenticatedLayout>
-        <div class="w-full h-screen sm:pt-20 lg:pb-32 mx-2 md:mx-4">
+        <div class="w-full min-h-screen bg-base-100 sm:pt-20 lg:pb-32 mx-2 md:mx-4">
 
             <!-- Cabeçalho e barra de Pesquisa -->
             <div class="w-full h-14 flex mb-4">
@@ -130,33 +184,46 @@ function openRel(val) {
                 <span>Nenhuma PI encontrada para a bisemana selecionada.</span>
             </div>
 
-            <!-- Cards das PIs -->
-            <div class="card flex flex-col md:flex-row md:flex-wrap w-full h-full bg-base-100 shadow-xl overflow-auto rounded-md p-4 space-y-4">
-                <div v-for="(pi, index) in pisFiltradas" :key="index"
-                        class="card bg-neutral text-neutral-content w-96 h-5/6 md:h-4/6 hover:scale-105 transition-all duration-500 ease-in-out md:mx-4 mt-4"
-                >
-                    <div class="card-body items-center text-center">
-                        <h2 class="card-title text-2xl">PI nº {{ pi.id }}</h2>
-
-                        <!-- Informações da PI -->
-                        <p class="text-sm font-bold">Cliente: {{ getClienteById(pi.id_cliente) ? getClienteById(pi.id_cliente).nome_fantasia : getAgenteById(comissao.agente_id).razao_social }}</p>
-                        <p class="text-lg font-bold">Campanha: {{ pi.campanha ? pi.campanha : 'Não informada' }}</p>
-
-                        <!-- Lista de comissões relacionadas a esta PI -->
-                        <div class="w-full mt-4 max-h-18 overflow-auto">
-                            <h3 class="text-lg font-bold mb-2">Comissões</h3>
-                            <div v-if="props.comissoes.filter(com => com.pi_id === pi.id).length > 0">
-                                <div v-for="(comissao, comIndex) in props.comissoes.filter(com => com.pi_id === pi.id)"
-                                     :key="comIndex"
-                                     class="card bg-base-100 text-neutral mb-2 p-2">
-                                    <div class="text-left">
-                                        <p class="text-sm"><span class="font-bold">Agente:</span> {{ getAgenteById(comissao.agente_id) ? getAgenteById(comissao.agente_id).nome_fantasia : getAgenteById(comissao.agente_id).razao_social }}</p>
-                                        <p class="text-sm"><span class="font-bold">Valor:</span> {{ comissao.valor_comissao }} R$</p>
-                                    </div>
-                                </div>
+            <div class="w-full bg-base-100 rounded-xl p-4">
+                <div class="grid grid-cols-[repeat(auto-fit,minmax(18rem,1fr))] gap-6">
+                    <div v-for="(pi, index) in pisFiltradas" :key="index" class="card card-compact bg-base-200 shadow-lg ring-1 ring-base-300 rounded-xl transition-all">
+                        <div class="card-body gap-2">
+                            <div class="flex items-center justify-between">
+                                <button class="badge badge-neutral cursor-pointer" @click="openPiPdf(pi)">PI nº {{ pi.id }}</button>
+                                <div class="badge badge-neutral">BS {{ pi.id_bisemana }}</div>
                             </div>
-                            <div v-else class="text-error">
-                                Nenhuma comissão encontrada para esta PI
+
+                            <div class="space-y-1">
+                                <p class="text-sm">
+                                    <span class="font-semibold">Cliente:</span>
+                                    {{ getClienteById(pi.id_cliente) ? (getClienteById(pi.id_cliente).nome_fantasia || getClienteById(pi.id_cliente).razao_social) : 'Não informado' }}
+                                </p>
+                                <p class="text-sm">
+                                    <span class="font-semibold">Campanha:</span>
+                                    {{ pi.campanha ? pi.campanha : 'Não informada' }}
+                                </p>
+                            </div>
+
+                            <div class="divider">Comissões</div>
+
+                            <div class="space-y-2 max-h-44 overflow-auto">
+                                <template v-if="comissoesUnicasPorPi(pi.id).length > 0">
+                                    <div v-for="(comissao, comIndex) in comissoesUnicasPorPi(pi.id)" :key="comIndex" class="flex items-center justify-between p-2 rounded-md border">
+                                        <div class="flex-1">
+                                            <div class="text-sm font-medium">
+                                                {{ getAgenteById(comissao.agente_id) ? (getAgenteById(comissao.agente_id).nome_fantasia || getAgenteById(comissao.agente_id).razao_social) : 'Agente' }}
+                                            </div>
+                                            <div class="text-xs opacity-70">ID {{ comissao.agente_id }} • {{ getServicoNome(comissao.comissao_id) }}</div>
+                                            <div class="text-xs opacity-70 flex flex-wrap gap-1">
+                                                <span v-for="(parc, idx) in getParcelasPorPi(pi.id)" :key="idx" class="badge badge-ghost">{{ parc.data }} {{ parc.label }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="badge badge-primary">R$ {{ comissao.valor_comissao }}</div>
+                                    </div>
+                                </template>
+                                <div v-else class="alert alert-info rounded-lg">
+                                    <span>Nenhuma comissão encontrada para esta PI.</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -176,4 +243,3 @@ function openRel(val) {
         </div>
     </AuthenticatedLayout>
 </template>
-

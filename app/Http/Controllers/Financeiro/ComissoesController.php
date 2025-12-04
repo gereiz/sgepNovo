@@ -62,8 +62,10 @@ class ComissoesController extends Controller
         $comissoes = ComissaoVenda::all();
         $pis = Pi::all();
         $clientes = Cliente::all();
+        $comissoes_defs = $this->financeiroService->listaComissoes();
+        $lancamentos = \App\Models\Financeiro\Lancamento::whereIn('id_reserva', $pis->pluck('id'))->get();
 
-        return Inertia::render('Financeiro/ComissoesPagas/ComissoesPagas', compact('anos', 'bisemanas', 'comissoes', 'pis', 'clientes'));
+        return Inertia::render('Financeiro/ComissoesPagas/ComissoesPagas', compact('anos', 'bisemanas', 'comissoes', 'pis', 'clientes', 'comissoes_defs', 'lancamentos'));
     }
 
 }

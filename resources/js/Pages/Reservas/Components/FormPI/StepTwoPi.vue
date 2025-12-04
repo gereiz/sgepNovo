@@ -27,6 +27,8 @@ const vlrDesc = ref(0)
 const vlrTotal = ref()
 
 const agentesLista = ref([]);
+const agentesFull = ref([]);
+const agentesOptions = ref([]);
 
 const formTwo = reactive({
     paineis: props.paineis,
@@ -100,6 +102,23 @@ function getUsuarios() {
 
     return usuarios
 }
+
+function loadAgentes() {
+    if (props.agentes && Array.isArray(props.agentes) && props.agentes.length > 0) {
+        agentesFull.value = props.agentes
+        agentesOptions.value = props.agentes.map(a => a.id)
+    } else {
+        axios.get('/getAgentes')
+            .then((res) => {
+                agentesFull.value = res.data
+                agentesOptions.value = (res.data || []).map(a => a.id)
+            })
+    }
+}
+
+onMounted(() => {
+    loadAgentes()
+})
 
 const getUsuario = (val) => {
     usuario.value = usuarios.value.find((user) => user.id == val)
@@ -232,9 +251,9 @@ function changeEdit() {
                 </label>
                 <multiselect
                     v-model="agentesLista"
-                    :options="props.agentes.map(agente => agente.id)"
+                    :options="agentesOptions"
                     :custom-label="id => {
-                        const agente = props.agentes.find(a => a.id === id);
+                        const agente = agentesFull.find(a => a.id === id);
                         return agente ? (agente.nome_fantasia ? agente.nome_fantasia : agente.razao_social) : '';
                     }"
                     :multiple="true"

@@ -138,7 +138,10 @@ class CaixaService
     // Lançamentos
     public function getLancamentos()
     {
-        return Lancamento::with('tipoLancamento', 'centroCusto')->get();
+        return Lancamento::with('tipoLancamento', 'centroCusto')
+            ->orderByDesc('id')
+            ->limit(20)
+            ->get();
     }
 
     public function getLancamento($id)
@@ -239,10 +242,33 @@ class CaixaService
     {
         $id = $request['lancamento']['id'];
         $lancamento = Lancamento::find($id);
-        // dd($lancamento);
-        $lancamento->delete();
+        if (!$lancamento) {
+            return response()->json(['message' => 'Lançamento não encontrado.'], 404);
+        }
 
-        return response()->json(null, 204);
+        $desc = $lancamento->descricao ?? '';
+        $isOs = (strpos($desc, 'OS nº') !== false);
+
+        if ($isOs) {
+            $osId = null;
+            if ($lancamento->id_reserva && $lancamento->id_reserva > 0) {
+                $osId = (int)$lancamento->id_reserva;
+            } else {
+                if (preg_match('/OS nº\s*(\d+)/', $desc, $m)) {
+                    $osId = (int)$m[1];
+                }
+            }
+
+            if ($osId) {
+                Lancamento::where('id_reserva', $osId)
+                    ->orWhere('descricao', 'LIKE', 'OS nº '.$osId.'%')
+                    ->delete();
+                return response()->json(['message' => 'Todos os lançamentos da OS nº '.$osId.' foram excluídos.'], 200);
+            }
+        }
+
+        $lancamento->delete();
+        return response()->json(['message' => 'Lançamento excluído com sucesso!'], 200);
     }
 
 
