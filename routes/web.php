@@ -252,6 +252,8 @@ route::middleware(['auth', 'verified'])->group(function () {
     // Arquivos
     route::get('/PisGeradas', [ArquivosController::class, 'index']);
     route::post('/getPiBs', [ArquivosController::class, 'getPiBs']);
+    route::get('/VendasGeradas', [ArquivosController::class, 'vendas']);
+    route::post('/getOsBs', [ArquivosController::class, 'getOsBs']);
 
 
 
