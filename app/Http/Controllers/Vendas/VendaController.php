@@ -118,7 +118,7 @@ class VendaController extends Controller
                     'valor' => $parc['valor'],
                     'parcelas' => $i . '/' . count($parcelasDetalhe),
                     'data_lancamento' => $parc['data'],
-                    'centro_custo' => 2,
+                    'centro_custo' => 1,
                     'tipo_lancamento' => 1,
                     'id_reserva' => $os->id ?? 0,
                     'observacoes' => strip_tags($five['observacao'] ?? ''),
@@ -141,7 +141,7 @@ class VendaController extends Controller
                         'valor' => $vl_parc,
                         'parcelas' => ($i+1) . '/' . $qtd,
                         'data_lancamento' => date('Y-m-d', strtotime($dtPgto . ' + ' . $i . ' month')),
-                        'centro_custo' => 2,
+                        'centro_custo' => 1,
                         'tipo_lancamento' => 1,
                         'id_reserva' => $os->id ?? 0,
                         'observacoes' => strip_tags($five['observacao'] ?? ''),
@@ -213,10 +213,15 @@ class VendaController extends Controller
         if (!is_dir($dir)) { @mkdir($dir, 0777, true); }
         $cliNome = preg_replace('/[^A-Za-z0-9_-]+/', '_', $cliNome);
         $fileName = 'os_cli_'.$cliNome.'_'.$dtFile.'.pdf';
-        $osPdf->save($dir.'/'.$fileName);
-        $os->update(['arquivo' => $fileName]);
+        try {
+            $osPdf->save($dir.'/'.$fileName);
+            $os->update(['arquivo' => $fileName]);
+        } catch (\Exception $e) {
+            return response()->json(['cod'=>0,'msg'=>'Falha ao salvar PDF da OS: '.$e->getMessage()]);
+        }
 
-        return response()->json(['cod'=>1,'msg'=>'Venda lançada com sucesso']);
+        $fileUrl = url('storage/pdf/os/'.$fileName);
+        return response()->json(['cod'=>1,'msg'=>'Venda lançada com sucesso','file_url'=>$fileUrl,'file_name'=>$fileName]);
     }
 
     public function preview(Request $request)

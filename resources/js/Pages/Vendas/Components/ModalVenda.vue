@@ -48,9 +48,14 @@ function next(ev){
       }))
       .then((res)=> {
         if(res?.isConfirmed){
-          return axios.post('/vendas/store').then(()=> {
+          return axios.post('/vendas/store').then((resp)=> {
+            const url = resp?.data?.file_url
+            if (url) { window.open(url, '_blank') }
             Swal.fire({ toast: true, icon: 'success', title: 'OS adicionada com sucesso', position: 'top-end', showConfirmButton: false, timer: 3000 })
             closeM('f')
+          }).catch(err => {
+            const msg = err?.response?.data?.msg || 'Erro ao salvar OS'
+            Swal.fire({ icon:'error', title:'Falha', text: msg })
           })
         } else {
           step.value = StepFiveVenda

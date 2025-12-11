@@ -48,6 +48,7 @@
   const arquivos = [
     { name: 'Disponibilidades Enviadas', description: 'Em Breve.', href: '#', icon: ViewColumnsIcon   },
     { name: 'Pi\'s Geradas', description: 'Exibe todas as Pi\'s geradas nos ultimos 60 dias', href: '/PisGeradas', icon: ViewColumnsIcon   },
+    { name: 'Vendas Geradas', description: 'Exibe todas as Vendas geradas', href: '/VendasGeradas', icon: ViewColumnsIcon   },
   ]
 
   const relatorios = [
@@ -186,7 +187,7 @@
           </Popover>
 
           <!-- Vendas -->
-          <!-- <Popover class="relative">
+          <Popover class="relative">
             <PopoverButton class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-white">
               Vendas
               <ChevronDownIcon class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
@@ -210,7 +211,7 @@
                 </div>
               </PopoverPanel>
             </transition>
-          </Popover> -->
+          </Popover>
 
           <!-- Diponilidades -->
           <Popover class="relative">
