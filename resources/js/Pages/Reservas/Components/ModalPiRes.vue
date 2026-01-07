@@ -109,20 +109,20 @@ function submitFormPi() {
   })
   .then((res) => {
       if(formPi.value.One && formPi.value.Two && formPi.value.Three) {
-        setTimeout(() => {
-            window.open('/storePi', '_blank')
-        }, 2000);
-        setTimeout(() => {
-            window.location.reload()
-        }, 3000);
+        axios.get('/storePi', { responseType: 'blob' }).then((resp) => {
+          const url = window.URL.createObjectURL(resp.data)
+          window.open(url, '_blank')
+        })
+        toastr.success('PI gerada em nova aba')
+        closeM()
       } else {
-        axios.get('/storePi')
-            .then((res) => {
+        axios.get('/storePi', { responseType: 'blob' })
+            .then((resp) => {
+                const url = window.URL.createObjectURL(resp.data)
+                window.open(url, '_blank')
                 toastr.success('Reserva realizada sem emissão da PI')
 
-                setTimeout(() => {
-                    window.location.reload()
-                }, 3000);
+                closeM()
             })
             .catch((err) => {
                 console.log(err)
@@ -136,24 +136,29 @@ function submitFormPi() {
 }
 
 function previewPi() {
-  axios.post('/sessionData', {
-    formPi: formPi.value
-  }).then(() => {
-    setTimeout(() => {
-      window.open('/previewPi', '_blank')
-    }, 500)
-  }).catch((err) => {
-    console.log(err)
-  })
+  axios.post('/sessionData', { formPi: formPi.value })
+    .then(() => {
+      localStorage.setItem('piFormOne', JSON.stringify(formPi.value.One || {}))
+      localStorage.setItem('piFormTwo', JSON.stringify(formPi.value.Two || {}))
+      localStorage.setItem('piFormThree', JSON.stringify(formPi.value.Three || {}))
+      localStorage.setItem('piFormFour', JSON.stringify(formPi.value.Four || {}))
+      localStorage.setItem('piFormFive', JSON.stringify(formPi.value.Five || {}))
+      axios.get('/previewPi', { responseType: 'blob' }).then((resp) => {
+        const url = window.URL.createObjectURL(resp.data)
+        window.open(url, '_blank')
+      })
+    }).catch((err) => { console.log(err) })
 }
 
 function finalizePi() {
   axios.post('/sessionData', { formPi: formPi.value })
     .then(() => {
-      setTimeout(() => {
-        window.open('/storePi', '_blank')
-      }, 500)
-      setTimeout(() => { window.location.reload() }, 2000)
+      axios.get('/storePi', { responseType: 'blob' }).then((resp) => {
+        const url = window.URL.createObjectURL(resp.data)
+        window.open(url, '_blank')
+      })
+      toastr.success('PI confirmada e aberta em nova aba')
+      closeM()
     })
 }
 
@@ -262,4 +267,3 @@ function naviForm(ev) {
     </Dialog>
   </TransitionRoot>
 </template>
-

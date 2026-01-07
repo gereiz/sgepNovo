@@ -27,6 +27,7 @@ const vlrUnit = ref('')
 const vlrDesc = ref(0)
 const vlrCusto = ref(0)
 const vlrTotal = ref()
+const vlrTotalFin = ref(0)
 const detalhes = ref('')
 
 function formatLocalDate(d) {
@@ -172,7 +173,8 @@ watch((vlrUnit), (val) => {
     if(parseFloat(vlrDesc.value) > parseFloat(vlrUnit.value)) {
         vlrTotal.value = 0.0
     } else {
-        vlrTotal.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value) - parseFloat(vlrCusto.value)) * parseFloat(quantidade.value)).toFixed(2)
+        vlrTotal.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value)) * parseFloat(quantidade.value)).toFixed(2)
+        vlrTotalFin.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value) - parseFloat(vlrCusto.value)) * parseFloat(quantidade.value)).toFixed(2)
         formFour.vlr_total =  vlrTotal.value
     }
 })
@@ -182,7 +184,8 @@ watch((vlrDesc), (val) => {
     if(parseFloat(vlrDesc.value) > parseFloat(vlrUnit.value)) {
         vlrTotal.value = 0.0
     } else {
-        vlrTotal.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value) - parseFloat(vlrCusto.value)) * parseFloat(quantidade.value)).toFixed(2)
+        vlrTotal.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value)) * parseFloat(quantidade.value)).toFixed(2)
+        vlrTotalFin.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value) - parseFloat(vlrCusto.value)) * parseFloat(quantidade.value)).toFixed(2)
         formFour.vlr_total =  vlrTotal.value
     }
 })
@@ -192,7 +195,8 @@ watch((vlrCusto), (val) => {
     if(parseFloat(vlrCusto.value) > parseFloat(vlrUnit.value)) {
         vlrTotal.value = 0.0
     } else {
-        vlrTotal.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value) - parseFloat(vlrCusto.value)) * parseFloat(quantidade.value)).toFixed(2)
+        vlrTotal.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value)) * parseFloat(quantidade.value)).toFixed(2)
+        vlrTotalFin.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value) - parseFloat(vlrCusto.value)) * parseFloat(quantidade.value)).toFixed(2)
         formFour.vlr_total =  vlrTotal.value
     }
 })
@@ -202,7 +206,8 @@ watch((quantidade), (val) => {
     if(parseFloat(vlrDesc.value) > parseFloat(vlrUnit.value)) {
         vlrTotal.value = 0.0
     } else {
-        vlrTotal.value = (((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value)) - parseFloat(vlrCusto.value)) * parseFloat(quantidade.value)).toFixed(2)
+        vlrTotal.value = (((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value))) * parseFloat(quantidade.value)).toFixed(2)
+        vlrTotalFin.value = (((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value)) - parseFloat(vlrCusto.value)) * parseFloat(quantidade.value)).toFixed(2)
         formFour.vlr_total =  vlrTotal.value
     }
 })
@@ -266,6 +271,7 @@ function ListaServicosPagos() {
         vlr_desc: vlrDesc.value,
         vlr_custo: vlrCusto.value,
         vlr_total: vlrTotal.value,
+        vlr_total_fin: vlrTotalFin.value,
         detalhes: detalhes.value
     })
     servico.value = 0
@@ -497,7 +503,7 @@ function changeEdit() {
                 <div class="w-full flex justify-center space-x-4">
                     <div class="w-10/12 sm:w-3/12">
                         <label class="label">
-                            <span class="label-text">Valor Total</span>
+                            <span class="label-text">Valor Total s/custo</span>
                         </label>
                         <input type="text"
                             disabled
@@ -514,6 +520,18 @@ function changeEdit() {
                                 '####.##',
                                 '#####.##'
                             ]" />
+                    </div>
+                    <div class="w-10/12 sm:w-3/12">
+                        <label class="label">
+                            <span class="label-text">Total c/ custo (visualização)</span>
+                        </label>
+                        <input type="text"
+                            disabled
+                            placeholder="R$ 0.00"
+                            name="vlr_total_fin"
+                            id="vlr_total_fin"
+                            :value="vlrTotalFin"
+                            class="input input-bordered w-full bg-base-200 text-center" />
                     </div>
 
                     <div class="w-10/12 sm:w-1/12 pt-[2.2rem]">
@@ -588,13 +606,24 @@ function changeEdit() {
 
                 <div class="w-10/12 md:w-[20%]">
                     <label class="label">
-                        <span class="label-text">Total</span>
+                        <span class="label-text">Total s/custo</span>
                     </label>
                     <input type="text"
                         disabled
                         name="vlr_total"
                         id="vlr_total"
                         :value="sp.vlr_total"
+                        class="input input-bordered w-full bg-base-200 text-center" />
+                </div>
+                <div class="w-10/12 md:w-[20%]">
+                    <label class="label">
+                        <span class="label-text">Total c/ custo</span>
+                    </label>
+                    <input type="text"
+                        disabled
+                        name="vlr_total_fin"
+                        id="vlr_total_fin"
+                        :value="sp.vlr_total_fin"
                         class="input input-bordered w-full bg-base-200 text-center" />
                 </div>
 

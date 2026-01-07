@@ -68,6 +68,13 @@
                 $totalParcelas = count($lista_lancamentos);
                 $colunas = min(4, ceil($totalParcelas / 3));
                 $parcelasPorColuna = min(3, ceil($totalParcelas / $colunas));
+                $totalFinanceiro = 0;
+                $totalCliente = 0;
+                foreach ($servicos as $serv) {
+                    $qtd = $serv['quantidade'] ?? 1;
+                    $totalFinanceiro += (($serv['vlr_unit'] - $serv['vlr_desc'] - $serv['vlr_custo']) * $qtd);
+                    $totalCliente += (($serv['vlr_unit'] - $serv['vlr_desc']) * $qtd);
+                }
             @endphp
 
             @for ($i = 0; $i < $parcelasPorColuna; $i++)
@@ -78,7 +85,16 @@
                         @endphp
                         @if ($index < $totalParcelas)
                             <td colspan="3" style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">
-                                Parcela {{$lista_lancamentos[$index]['parcelas']}} => {{formataCash($lista_lancamentos[$index]['valor'])}} - Venc: {{formataData($lista_lancamentos[$index]['data_lancamento'])}}
+                                @php
+                                    $valorManualCli = $lista_lancamentos[$index]['valor'] ?? null;
+                                    if ($valorManualCli !== null && $totalCliente > 0) {
+                                        $ratio = $valorManualCli / $totalCliente;
+                                        $valorParcelaFin = $ratio * $totalFinanceiro;
+                                    } else {
+                                        $valorParcelaFin = ($totalParcelas > 0) ? ($totalFinanceiro / $totalParcelas) : 0;
+                                    }
+                                @endphp
+                                Parcela {{$lista_lancamentos[$index]['parcelas']}} => {{formataCash($valorParcelaFin)}} - Venc: {{formataData($lista_lancamentos[$index]['data_lancamento'])}}
                             </td>
                         @else
                             <td colspan="3" style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">&nbsp;</td>
