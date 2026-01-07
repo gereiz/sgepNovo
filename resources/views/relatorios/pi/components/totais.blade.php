@@ -1,9 +1,10 @@
 <table class="table" style="border-collapse: collapse; width: 100%; margin-top: 10px; border: 1px solid #cfcfcf;">
     <tbody>
         <tr>
+            <td colspan="10" style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;"></td>
             <td colspan="1" style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px; font-weight: bold;">TOTAL:</td>
 
-            <td colspan="11" style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">
+            <td colspan="1" style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">
                 @php
                     $total = 0;
                 @endphp
@@ -78,7 +79,11 @@
                         @endphp
                         @if ($index < $totalParcelas)
                             <td colspan="3" style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">
-                                Parcela {{$lista_lancamentos[$index]['parcelas']}} => {{formataCash($lista_lancamentos[$index]['valor'])}} - Venc: {{formataData($lista_lancamentos[$index]['data_lancamento'])}}
+                                @php
+                                    $valorManual = $lista_lancamentos[$index]['valor'] ?? null;
+                                    $valorParcelaCliente = $valorManual !== null ? $valorManual : (($totalParcelas > 0) ? ($total / $totalParcelas) : 0);
+                                @endphp
+                                Parcela {{$lista_lancamentos[$index]['parcelas']}} => {{formataCash($valorParcelaCliente)}} - Venc: {{formataData($lista_lancamentos[$index]['data_lancamento'])}}
                             </td>
                         @else
                             <td colspan="3" style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">&nbsp;</td>
