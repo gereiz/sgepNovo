@@ -67,62 +67,66 @@ watch(idBisemana, () => {
 <template>
     <Head title="Dashboard" />
 
-    <AuthenticatedLayout>
-        <div class="w-full min-h-screen pt-4 md:pt-20 pb-24 mx-2 md:mx-4">
-            <div class="navbar bg-base-100 rounded-box shadow mb-4">
-                <div class="flex-1">
-                    <a class="btn btn-ghost text-xl">Dashboard</a>
-                </div>
-            </div>
-            <div class="card w-full bg-base-100 shadow-xl">
-                <div class="card-body">
-                    <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Ano -->
-                        <div class="w-full">
-                            <label class="label">
-                                <span class="label-text">Ano</span>
-                            </label>
-                            <select 
-                                v-model="idAno"
-                                class="select select-bordered w-full"
-                                @change="getBisemanas()"
-                            >
-                                <option value="0" disabled>Selecione</option>
-                                <option v-for="(ano, index) in props.anos"
-                                    :key="index"
-                                    :value="ano.id">
-                                    {{ ano.ano_bisemana }}
-                                </option>
-                            </select>
-                        </div>
-                        
-                        <!-- Bisemana -->
-                        <div class="w-full">
-                            <label class="label">
-                                <span class="label-text">Bi-Semana</span>
-                            </label>
-                            <select 
-                                v-model="idBisemana"
-                                :disabled="bsDisabled"
-                                @change="fetchSalesData()"
-                                class="select select-bordered w-full"
-                            >
-                                <option value="0" selected disabled>Selecione</option>
-                                <option v-for="(bs, index) in listaBisemana"
-                                    :key="index"
-                                    :value="bs.id">BS: {{ bs.num_bisemana }} {{ new Date(bs.inicio).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }} até {{ new Date(bs.fim).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }}
-                                </option>
-                            </select>
+    <AuthenticatedLayout :hideHeader="true">
+        <div class="w-full min-h-screen pt-6 pb-24 mx-2 md:mx-4 overflow-x-hidden">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 mb-4">
+                <div class="card bg-base-100 shadow">
+                    <div class="card-body">
+                        <h2 class="card-title">Seleção de Período</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="label">
+                                    <span class="label-text">Ano</span>
+                                </label>
+                                <select 
+                                    v-model="idAno"
+                                    class="select select-bordered w-full"
+                                    @change="getBisemanas()"
+                                >
+                                    <option value="0" disabled>Selecione</option>
+                                    <option v-for="(ano, index) in props.anos"
+                                        :key="index"
+                                        :value="ano.id">
+                                        {{ ano.ano_bisemana }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="label">
+                                    <span class="label-text">Bi-Semana</span>
+                                </label>
+                                <select 
+                                    v-model="idBisemana"
+                                    :disabled="bsDisabled"
+                                    @change="fetchSalesData()"
+                                    class="select select-bordered w-full"
+                                >
+                                    <option value="0" selected disabled>Selecione</option>
+                                    <option v-for="(bs, index) in listaBisemana"
+                                        :key="index"
+                                        :value="bs.id">BS: {{ bs.num_bisemana }} {{ new Date(bs.inicio).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }} até {{ new Date(bs.fim).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }}
+                                    </option>
+                                </select>
+                            </div>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <!-- Dashboard Cards Container -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="card bg-base-100 shadow h-[50vh]">
+                    <div class="card-body overflow-auto">
+                        <h2 class="card-title text-base">Vendas por Vendedor</h2>
                         <div class="overflow-auto">
-                            <SalesChart :sales-data="salesData" />
+                            <SalesChart :sales-data="salesData" :height="250" legendPosition="bottom" />
                         </div>
+                    </div>
+                </div>
+                <div class="card bg-base-100 shadow h-[50vh]">
+                    <div class="card-body overflow-auto">
+                        <h2 class="card-title text-base">Reservas por Cliente</h2>
                         <div class="overflow-auto">
-                            <CustomerChart :customer-data="customerData" />
+                            <CustomerChart :customer-data="customerData" :height="250" legendPosition="bottom" />
                         </div>
                     </div>
                 </div>
@@ -130,4 +134,3 @@ watch(idBisemana, () => {
         </div>
     </AuthenticatedLayout>
 </template>
-

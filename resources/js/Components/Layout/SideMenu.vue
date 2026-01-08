@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import {
   Bars3Icon,
@@ -19,6 +19,30 @@ import ModalAlteraSenha from '@/Components/Layout/ModalAlteraSenha.vue';
 import MenuAppMobile from './MenuAppMobile.vue';
 
 const open = ref(false);
+
+const emit = defineEmits(['collapsed'])
+const collapsed = ref(false)
+const openSection = ref('')
+
+function toggleCollapse() {
+    collapsed.value = !collapsed.value
+    localStorage.setItem('sidebar_collapsed', collapsed.value ? 'true' : 'false')
+    emit('collapsed', collapsed.value)
+}
+
+function onExpandTo(section) {
+    collapsed.value = false
+    localStorage.setItem('sidebar_collapsed', 'false')
+    emit('collapsed', false)
+    openSection.value = section
+}
+onMounted(() => {
+    const saved = localStorage.getItem('sidebar_collapsed')
+    if (saved === 'true') {
+        collapsed.value = true
+        emit('collapsed', true)
+    }
+})
 
 
 const page = usePage()
@@ -71,15 +95,20 @@ function openPi(val)  {
         </TransitionRoot>
 
         <!-- Static sidebar for desktop -->
-        <!-- <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-            <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6">
-                <div class="flex h-16 shrink-0 items-center justify-center border-b border-gray-500">
-                        <a href="/"><img v-if="!closeMenu" class="w-24 h-9" src="../../../../storage/app/public/img/logo-black.png" alt=""></a>
+        <div :class="['hidden md:fixed md:inset-y-0 md:z-50 md:flex md:flex-col transition-all duration-300 ease-in-out', collapsed ? 'md:w-16' : 'md:w-72']">
+            <div :class="['flex grow flex-col overflow-y-auto bg-gray-900', collapsed ? 'px-0 gap-y-1' : 'px-6 gap-y-5']">
+                <div class="flex h-16 shrink-0 items-center justify-between border-b border-gray-500">
+                        <a href="/"><img :class="[collapsed ? 'w-10' : 'w-24 h-9']" src="../../../../storage/app/public/img/logo-black.png" alt=""></a>
+                        <button class="btn btn-ghost btn-circle text-white" @click="toggleCollapse">
+                            <span class="sr-only">Retract sidebar</span>
+                            <Bars3Icon v-if="collapsed" class="h-5 w-5" aria-hidden="true" />
+                            <XMarkIcon v-else class="h-5 w-5" aria-hidden="true" />
+                        </button>
                 </div>
                 <nav class="flex flex-1 flex-col">
                 <ul role="list" class="flex flex-1 flex-col gap-y-7">
                     <li>
-                        <MenuApp/>
+                        <MenuAppMobile :collapsed="collapsed" :openSection="openSection" @expandTo="onExpandTo"/>
                     </li>
                     <li class="-mx-6 mt-auto">
                     <a href="#" class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white hover:bg-gray-800">
@@ -103,11 +132,11 @@ function openPi(val)  {
                 </ul>
                 </nav>
             </div>
-        </div> -->
+        </div>
 
 
         <!-- Menu Mobile -->
-        <div class="navbar bg-base-100 sticky w-screen top-0 z-40 sm:px-6 md:hidden shadow">
+        <div class="navbar bg-base-100 sticky top-0 z-40 sm:px-6 md:hidden shadow">
             <button type="button" class="btn btn-ghost btn-circle lg:hidden" @click="sidebarOpen = true">
                 <span class="sr-only">Open sidebar</span>
                 <Bars3Icon class="h-6 w-6" aria-hidden="true" />
@@ -130,12 +159,6 @@ function openPi(val)  {
                 </ul>
             </div>
         </div>
-
-        <main class="sm:pl-[14.1rem]">
-        <div class="px-4 sm:px-6 lg:px-8">
-            <!-- Your content -->
-        </div>
-        </main>
     </div>
 
     <ModalAlteraSenha :openPi="open" :user="user" @closePi="openPi"> </ModalAlteraSenha>

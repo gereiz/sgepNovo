@@ -13,6 +13,7 @@ import ModalAlteraSenha from '@/Components/Layout/ModalAlteraSenha.vue';
 const open = ref(false);
 const page = usePage()
 const user = computed(() => page.props.auth.user)
+const searchQuery = ref('')
 
 function openPi(val)  {
     // console.log(val)
@@ -39,6 +40,16 @@ function openPi(val)  {
             <div class="menu menu-horizontal">
               <MenuApp/>
             </div>
+          </div>
+        </div>
+        <div class="flex-1 px-4 hidden sm:block">
+          <div class="form-control">
+            <input
+              type="text"
+              v-model="searchQuery"
+              placeholder="Buscar..."
+              class="input input-bordered w-full max-w-md"
+            />
           </div>
         </div>
         <div class="hidden sm:ml-6 sm:block">
@@ -123,4 +134,3 @@ function openPi(val)  {
 
   <ModalAlteraSenha :openPi="open" :user="user" @closePi="openPi"> </ModalAlteraSenha>
 </template>
-
