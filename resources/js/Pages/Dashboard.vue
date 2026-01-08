@@ -23,13 +23,32 @@ const bisemanaSelecionada = computed(() => {
     return bisemanaSelecionada
 });
 
-function getBisemanas() {
-    axios.post('/getBisemanass', {bisemana: idAno.value})
-    .then(res => {
-        listaBisemana.value = Object.values(res.data)
-        bsDisabled.value = false
-        idBisemana.value = 0
-    })
+function parseYMDToUTC(dateStr) {
+    const d = (dateStr || '').toString().slice(0, 10)
+    const [y, m, dnum] = d.split('-').map(n => parseInt(n, 10))
+    return Date.UTC(y, (m || 1) - 1, dnum || 1)
+}
+
+function findCurrentBiweekId(list) {
+    const nowUTC = Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate())
+    for (const bs of list) {
+        const startUTC = parseYMDToUTC(bs.inicio)
+        const endUTC = parseYMDToUTC(bs.fim)
+        if (nowUTC >= startUTC && nowUTC <= endUTC) {
+            return bs.id
+        }
+    }
+    // fallback: primeira bisemana do ano (mais segura que última)
+    return list.length ? list[0].id : 0
+}
+
+async function getBisemanas() {
+    const res = await axios.post('/getBisemanass', {bisemana: idAno.value})
+    listaBisemana.value = Object.values(res.data)
+    bsDisabled.value = false
+    // Auto selecionar bi-semana atual ao carregar
+    const currentId = findCurrentBiweekId(listaBisemana.value)
+    idBisemana.value = currentId
 }
 
 const fetchSalesData = async () => {
@@ -49,11 +68,11 @@ const fetchSalesData = async () => {
     }
 };
 
-onMounted(() => {
+onMounted(async () => {
     const anoEncontrado = props.anos?.find(ano => ano.ano_bisemana == anoAtual);
     if (anoEncontrado) {
         idAno.value = anoEncontrado.id;
-        getBisemanas();
+        await getBisemanas();
     }
 });
 
