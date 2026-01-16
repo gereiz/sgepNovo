@@ -145,7 +145,8 @@
                                     <div style="margin-top: -18%;">
                                         <?php
                                         $filePath = 'storage/'.$p->image_url;
-                                        $originalImage = public_path($filePa                                        $reportImage = $originalImage;
+                                        $originalImage = public_path($filePath);
+                                        $reportImage = $originalImage;
                                         if(file_exists($originalImage) && filesize($originalImage) > 500000){
                                             $info = getimagesize($originalImage);
                                             if ($info['mime'] == 'image/jpeg')
