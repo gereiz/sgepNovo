@@ -30,9 +30,8 @@ class PainelService
 
        ]);
 
-       $path = 'outdoorImages/'.$painel->id;
-       $filname = $painel->id.'.'.$request->dados['sTwo']['imagem']->extension();
-       dd($path.'/'.$filname);
+       $path = 'outdoorImages/'.$painel->identificacao;
+       $filname = $painel->identificacao.'.'.$request->dados['sTwo']['imagem']->extension();
        $request->dados['sTwo']['imagem']->storeAs('public/'.$path, $filname);
 
          $painel->image_url = $path.'/'.$filname;
@@ -41,6 +40,24 @@ class PainelService
        return back()->with('success', 'Painel Cadastrado com sucesso.');
 
 
+    }
+
+    public function latestImagePath(Painel $painel): string
+    {
+        $dir = 'outdoorImages/'.$painel->identificacao;
+        $files = Storage::disk('public')->files($dir);
+        if (empty($files)) {
+            return $painel->image_url ?? '';
+        }
+        usort($files, function ($a, $b) {
+            return Storage::disk('public')->lastModified($b) <=> Storage::disk('public')->lastModified($a);
+        });
+        $keep = array_slice($files, 0, 2);
+        $toDelete = array_slice($files, 2);
+        if (!empty($toDelete)) {
+            Storage::disk('public')->delete($toDelete);
+        }
+        return $keep[0] ?? $painel->image_url ?? '';
     }
 
 

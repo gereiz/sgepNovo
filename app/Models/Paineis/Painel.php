@@ -8,6 +8,7 @@ use App\Models\Enderecos\Bairro;
 use App\Models\Enderecos\Regiao;
 use App\Models\Reservas\Reserva;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Painel extends Model
 {
@@ -43,6 +44,24 @@ class Painel extends Model
     public function reservas()
     {
         return $this->hasMany(Reserva::class, 'outdoor_id', 'id');
+    }
+
+    public function getImageUrlAttribute($value)
+    {
+        $dir = 'outdoorImages/'.$this->identificacao;
+        $files = Storage::disk('public')->files($dir);
+        if (empty($files)) {
+            return $value;
+        }
+        usort($files, function ($a, $b) {
+            return Storage::disk('public')->lastModified($b) <=> Storage::disk('public')->lastModified($a);
+        });
+        $keep = array_slice($files, 0, 2);
+        $toDelete = array_slice($files, 2);
+        if (!empty($toDelete)) {
+            Storage::disk('public')->delete($toDelete);
+        }
+        return $keep[0] ?? $value;
     }
 
 }

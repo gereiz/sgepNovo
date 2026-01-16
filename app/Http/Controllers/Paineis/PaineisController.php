@@ -19,10 +19,15 @@ class PaineisController extends Controller
         $paineis = Painel::with('bairro.regiao')
             ->join('bairros', 'outdoors.bairro_id', '=', 'bairros.id')
             ->join('regioes', 'bairros.regiao_id', '=', 'regioes.id')
-            ->orderBy('regioes.nome') // Ordena por nome da região
-            ->orderBy('bairros.nome') // Ordena por nome do bairro
-            ->select('outdoors.*') // Garante que só os campos de "paineis" sejam retornados
+            ->orderBy('regioes.nome')
+            ->orderBy('bairros.nome')
+            ->select('outdoors.*')
         ->get();
+
+        $service = new PainelService();
+        foreach ($paineis as $p) {
+            $p->image_url = $service->latestImagePath($p);
+        }
 
         return Inertia::render('Paineis/ListaPaineis', compact('paineis'));
 

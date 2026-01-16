@@ -63,20 +63,26 @@
                                         <?php
                                         $filePath = 'storage/'.$p->painel->image_url;
                                         $originalImage = public_path($filePath);
-                                        if(filesize($filePath) > 50000){
-                                            $info = getimagesize($filePath);
-                            
+                                        $reportImage = $originalImage;
+                                        if(file_exists($originalImage) && filesize($originalImage) > 50000){
+                                            $info = getimagesize($originalImage);
                                             if ($info['mime'] == 'image/jpeg') 
-                                                $image = @imagecreatefromjpeg($filePath);
-                                        
+                                                $image = @imagecreatefromjpeg($originalImage);
                                             elseif ($info['mime'] == 'image/gif') 
-                                                $image = @imagecreatefromgif($filePath);
-                                        
+                                                $image = @imagecreatefromgif($originalImage);
                                             elseif ($info['mime'] == 'image/png') 
-                                                $image = @imagecreatefrompng($filePath);
-                                        
-                                            imagejpeg($image, 'storage/outdoorImages/'.$p->painel->id."/CompressedJpgImage.jpg", 5);
-                                            $reportImage = public_path('storage/outdoorImages/'.$p->painel->id."/CompressedJpgImage.jpg");
+                                                $image = @imagecreatefrompng($originalImage);
+                                            $dir = public_path('storage/outdoorImages/'.$p->painel->identificacao);
+                                            if(!is_dir($dir)) { @mkdir($dir, 0755, true); }
+                                            $compressed = $dir."/CompressedJpgImage.jpg";
+                                            imagejpeg($image, $compressed, 5);
+                                            $reportImage = $compressed;
+                                            $files = is_dir($dir) ? array_values(array_diff(scandir($dir), ['.', '..'])) : [];
+                                            $files = array_map(fn($f) => $dir.'/'.$f, $files);
+                                            $files = array_filter($files, 'is_file');
+                                            usort($files, fn($a,$b) => filemtime($b) <=> filemtime($a));
+                                            $toDelete = array_slice($files, 2);
+                                            foreach($toDelete as $f){ @unlink($f); }
                                         }
                                     
                                         ?>
@@ -112,4 +118,3 @@
         <p style="margin : 0; padding-top:0;"><b>Status: <i>{{$status}}</i></b></p>
     </div>
 </div> --}}
-
