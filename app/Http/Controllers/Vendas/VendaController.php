@@ -332,4 +332,22 @@ class VendaController extends Controller
         $osPdf->setPaper('a4','landscape');
         return $osPdf->stream('os_preview.pdf');
     }
+
+    public function cancel(Request $request)
+    {
+        $id = (int)($request->id ?? 0);
+        if (!$id) {
+            return response()->json(['cod'=>0,'msg'=>'ID inválido'], 400);
+        }
+        $os = Os::find($id);
+        if (!$os) {
+            return response()->json(['cod'=>0,'msg'=>'OS não encontrada'], 404);
+        }
+        Lancamento::where('id_reserva', $os->id)->delete();
+        $dir = storage_path('app/public/pdf/os');
+        $file = $dir . '/' . ($os->arquivo ?? '');
+        if ($os->arquivo && is_file($file)) { @unlink($file); }
+        $os->delete();
+        return response()->json(['cod'=>1,'msg'=>'Venda cancelada com sucesso']);
+    }
 }

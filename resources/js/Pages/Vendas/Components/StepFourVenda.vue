@@ -650,6 +650,7 @@ function changeEdit() {
                     <option :value="2">PIX</option>
                     <option :value="3">CARTÃO</option>
                     <option :value="4">BOLETO</option>
+                    <option :value="5">TRANSFERÊNCIA</option>
                 </select>
             </div>
 

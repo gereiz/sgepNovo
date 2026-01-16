@@ -2,6 +2,8 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, usePage } from '@inertiajs/vue3';
 import {ref, watch, onMounted} from 'vue';
+import axios from 'axios'
+import Swal from 'sweetalert2'
 
 const props = defineProps(['ambiente',  'anos', 'bisemanas', 'vendas'])
 const page = usePage();
@@ -35,6 +37,32 @@ function openOsGerada(fileName) {
   const pdfPath = `/storage/pdf/os/${fileName}`
   const pdfUrl = window.location.origin + pdfPath
   window.open(pdfUrl, '_blank')
+}
+
+function cancelarVenda(os) {
+  Swal.fire({
+    title: 'Cancelar venda?',
+    text: 'Os lançamentos financeiros serão removidos e a OS excluída.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#00935F',
+    confirmButtonText: 'Sim, cancelar',
+    cancelButtonText: 'Voltar',
+    reverseButtons: true
+  }).then((res) => {
+    if (res.isConfirmed) {
+      axios.post('/vendas/cancel', { id: os.id })
+        .then(() => {
+          Swal.fire({ toast: true, icon: 'success', title: 'Venda cancelada', position: 'top-end', showConfirmButton: false, timer: 3000 })
+          getOsBs(idBisemana.value)
+        })
+        .catch(err => {
+          const msg = err?.response?.data?.msg || 'Falha ao cancelar venda'
+          Swal.fire({ icon:'error', title:'Erro', text: msg })
+        })
+    }
+  })
 }
 
 </script>
@@ -88,6 +116,9 @@ function openOsGerada(fileName) {
                   <button tabindex="0" @click="openOsGerada(os.arquivo)" class="btn btn-sm btn-square btn-primary text-white tooltip tooltip-top" data-tip="Abrir OS do Cliente">
                     <i class="fa-regular fa-file-pdf"></i>
                   </button>
+                  <button tabindex="0" @click="cancelarVenda(os)" class="btn btn-sm btn-square btn-error text-white tooltip tooltip-top" data-tip="Cancelar Venda">
+                    <i class="fa-solid fa-ban"></i>
+                  </button>
                 </div>
               </div>
             </div>
@@ -98,4 +129,3 @@ function openOsGerada(fileName) {
     </div>
   </AuthenticatedLayout>
 </template>
-

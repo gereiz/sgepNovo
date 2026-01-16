@@ -186,6 +186,7 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::any('/vendas/sessionData', [VendaController::class, 'sessionData']);
     route::get('/vendas/preview', [VendaController::class, 'preview']);
     route::any('/vendas/store', [VendaController::class, 'store']);
+    route::post('/vendas/cancel', [VendaController::class, 'cancel']);
 
     // Agentes
     route::get('/getAgentes', [ClienteController::class, 'getAgentes']);
