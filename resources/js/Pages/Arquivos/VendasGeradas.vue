@@ -42,7 +42,7 @@ function openOsGerada(fileName) {
 function cancelarVenda(os) {
   Swal.fire({
     title: 'Cancelar venda?',
-    text: 'Os lançamentos financeiros serão removidos e a OS excluída.',
+    text: 'Os lançamentos financeiros serão removidos e a OS será marcada como cancelada.',
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#d33',

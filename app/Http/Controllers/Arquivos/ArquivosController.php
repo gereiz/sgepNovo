@@ -28,7 +28,7 @@ class ArquivosController extends Controller
         $ambiente = env('APP_ENV');
         $anos = Ano::all();
         $bisemanas = Bisemana::all();
-        $vendas = Os::with(['cliente'])->get();
+        $vendas = Os::with(['cliente'])->where('cancelada', 0)->get();
 
         return Inertia::render('Arquivos/VendasGeradas', compact('ambiente', 'anos', 'bisemanas', 'vendas'));
     }
@@ -42,7 +42,7 @@ class ArquivosController extends Controller
     }
 
     public function getOsBs(Request $request) {
-        $os = Os::with(['cliente'])->where('id_bisemana', $request->idBs)->get();
+        $os = Os::with(['cliente'])->where('id_bisemana', $request->idBs)->where('cancelada', 0)->get();
         return $os;
     }
 

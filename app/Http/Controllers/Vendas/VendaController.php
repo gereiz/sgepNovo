@@ -104,6 +104,7 @@ class VendaController extends Controller
             'forma_pagamento' => $four['formaPgto'] ?? null,
             'vendedor' => $two['vendedorId'] ?? null,
             'obs' => strip_tags($five['observacao'] ?? ($servicos[0]['detalhes'] ?? '')),
+            'cancelada' => 0,
         ]);
         $descricaoBase = 'OS nº ' . ($os->id ?? 0) . ' Cliente: ' . ($cliNome ?? '');
 
@@ -344,10 +345,8 @@ class VendaController extends Controller
             return response()->json(['cod'=>0,'msg'=>'OS não encontrada'], 404);
         }
         Lancamento::where('id_reserva', $os->id)->delete();
-        $dir = storage_path('app/public/pdf/os');
-        $file = $dir . '/' . ($os->arquivo ?? '');
-        if ($os->arquivo && is_file($file)) { @unlink($file); }
-        $os->delete();
+        $os->cancelada = 1;
+        $os->save();
         return response()->json(['cod'=>1,'msg'=>'Venda cancelada com sucesso']);
     }
 }
