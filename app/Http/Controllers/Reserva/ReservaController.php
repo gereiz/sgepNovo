@@ -180,6 +180,14 @@ class ReservaController extends Controller
 
         }
 
+        $service = new \App\Services\PainelService();
+        foreach ($paineis as $p) {
+            $tmp = new \App\Models\Paineis\Painel();
+            $tmp->identificacao = $p->identificacao;
+            $tmp->image_url = $p->image_url;
+            $p->image_url = $service->latestImagePath($tmp);
+        }
+
         return response()->json($paineis);
     }
 
@@ -344,6 +352,19 @@ class ReservaController extends Controller
         ->get();
 
 
+        $service = new \App\Services\PainelService();
+        foreach ($reservas as $p) {
+            $tmp = new \App\Models\Paineis\Painel();
+            $tmp->identificacao = $p->identificacao;
+            $tmp->image_url = $p->image_url;
+            $p->image_url = $service->latestImagePath($tmp);
+        }
+        foreach ($paineis as $p) {
+            $tmp = new \App\Models\Paineis\Painel();
+            $tmp->identificacao = $p->identificacao;
+            $tmp->image_url = $p->image_url;
+            $p->image_url = $service->latestImagePath($tmp);
+        }
         return response()->json(['reservas' => $reservas, 'paineis' => $paineis]);
 
     }
@@ -408,6 +429,19 @@ class ReservaController extends Controller
         ->get();
 
 
+        $service = new \App\Services\PainelService();
+        foreach ($reservas as $p) {
+            $tmp = new \App\Models\Paineis\Painel();
+            $tmp->identificacao = $p->identificacao;
+            $tmp->image_url = $p->image_url;
+            $p->image_url = $service->latestImagePath($tmp);
+        }
+        foreach ($paineis as $p) {
+            $tmp = new \App\Models\Paineis\Painel();
+            $tmp->identificacao = $p->identificacao;
+            $tmp->image_url = $p->image_url;
+            $p->image_url = $service->latestImagePath($tmp);
+        }
         return response()->json(['reservas' => $reservas, 'paineis' => $paineis]);
 
     }

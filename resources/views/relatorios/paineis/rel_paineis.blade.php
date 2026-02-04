@@ -110,26 +110,18 @@
                                         <?php
                                         $filePath = 'storage/'.$p->image_url;
                                         $originalImage = public_path($filePath);
+                                        $dir = public_path('storage/outdoorImages/'.$p->identificacao);
                                         $reportImage = $originalImage;
-                                        if(file_exists($originalImage) && filesize($originalImage) > 500000){
-                                            $info = getimagesize($originalImage);
-                                            if ($info['mime'] == 'image/jpeg')
-                                                $image = @imagecreatefromjpeg($originalImage);
-                                            elseif ($info['mime'] == 'image/gif')
-                                                $image = @imagecreatefromgif($originalImage);
-                                            elseif ($info['mime'] == 'image/png')
-                                                $image = @imagecreatefrompng($originalImage);
-                                            $dir = public_path('storage/outdoorImages/'.$p->identificacao);
-                                            if(!is_dir($dir)) { @mkdir($dir, 0755, true); }
-                                            $compressed = $dir."/CompressedJpgImage.jpg";
-                                            imagejpeg($image, $compressed, 5);
-                                            $reportImage = $compressed;
-                                            $files = is_dir($dir) ? array_values(array_diff(scandir($dir), ['.', '..'])) : [];
+                                        if (is_dir($dir)) {
+                                            $files = array_values(array_diff(scandir($dir), ['.', '..']));
                                             $files = array_map(fn($f) => $dir.'/'.$f, $files);
-                                            $files = array_filter($files, 'is_file');
-                                            usort($files, fn($a,$b) => filemtime($b) <=> filemtime($a));
-                                            $toDelete = array_slice($files, 2);
-                                            foreach($toDelete as $f){ @unlink($f); }
+                                            $files = array_filter($files, function ($f) {
+                                                return is_file($f) && basename($f) !== 'CompressedJpgImage.jpg';
+                                            });
+                                            usort($files, fn($a, $b) => filemtime($b) <=> filemtime($a));
+                                            if (!empty($files)) {
+                                                $reportImage = $files[0];
+                                            }
                                         }
 
                                         ?>
