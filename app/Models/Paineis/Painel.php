@@ -53,6 +53,9 @@ class Painel extends Model
         if (empty($files)) {
             return $value;
         }
+        $files = array_filter($files, function ($f) {
+            return basename($f) !== 'CompressedJpgImage.jpg';
+        });
         usort($files, function ($a, $b) {
             return Storage::disk('public')->lastModified($b) <=> Storage::disk('public')->lastModified($a);
         });
