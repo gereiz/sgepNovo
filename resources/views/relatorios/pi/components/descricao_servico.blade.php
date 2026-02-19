@@ -18,7 +18,8 @@
         @foreach ($servicos as $serv)
         <tr>
             <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{$serv['nome']}}</td>
-            <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{$serv['quantidade']}}</td>
+            @php $qtd_cobrada = max(0, ($serv['quantidade'] ?? 0) - ($serv['bonificado'] ?? 0)); @endphp
+            <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{$qtd_cobrada}}</td>
             <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{implode(", ", $idPaineis)}}</td>
             <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{$bs_formated}}</td>
             <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">
@@ -34,9 +35,9 @@
                     Depósito
                 @endif
             </td>
-            <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{formataCash($serv['vlr_unit'] * $serv['quantidade'])}}</td>
-            <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{formataCash($serv['vlr_desc'] * $serv['quantidade'])}}</td>
-            <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{formataCash(($serv['vlr_unit'] - $serv['vlr_desc']) * $serv['quantidade'])}}</td>
+            <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{formataCash(($serv['vlr_unit'] ?? 0) * $qtd_cobrada)}}</td>
+            <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{formataCash(($serv['vlr_desc'] ?? 0) * $qtd_cobrada)}}</td>
+            <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{formataCash((($serv['vlr_unit'] ?? 0) - ($serv['vlr_desc'] ?? 0)) * $qtd_cobrada)}}</td>
         </tr>
         @endforeach
     </tbody>

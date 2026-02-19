@@ -190,7 +190,13 @@ async function openPiPdf(pi) {
                         <div class="card-body gap-2">
                             <div class="flex items-center justify-between">
                                 <button class="badge badge-neutral cursor-pointer" @click="openPiPdf(pi)">PI nº {{ pi.id }}</button>
-                                <div class="badge badge-neutral">BS {{ pi.id_bisemana }}</div>
+                                <div class="badge badge-neutral">
+                                  BS {{
+                                    (bisemanas.find(b => b.id === pi.id_bisemana)?.num_bisemana) || pi.id_bisemana
+                                  }}/{{
+                                    (anos.find(a => a.id === (bisemanas.find(b => b.id === pi.id_bisemana)?.ano_id))?.ano_bisemana) || ''
+                                  }}
+                                </div>
                             </div>
 
                             <div class="space-y-1">

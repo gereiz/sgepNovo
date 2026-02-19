@@ -39,6 +39,12 @@ function openOsGerada(fileName) {
   window.open(pdfUrl, '_blank')
 }
 
+function openOsFinanceira(fileName) {
+  const fin = fileName.replace('os_cli_', 'os_fin_')
+  const pdfPath = `/storage/pdf/os/${fin}`
+  const pdfUrl = window.location.origin + pdfPath
+  window.open(pdfUrl, '_blank')
+}
 function cancelarVenda(os) {
   Swal.fire({
     title: 'Cancelar venda?',
@@ -115,6 +121,9 @@ function cancelarVenda(os) {
                 <div class="md:w-2/12 space-x-3">
                   <button tabindex="0" @click="openOsGerada(os.arquivo)" class="btn btn-sm btn-square btn-primary text-white tooltip tooltip-top" data-tip="Abrir OS do Cliente">
                     <i class="fa-regular fa-file-pdf"></i>
+                  </button>
+                  <button tabindex="0" @click="openOsFinanceira(os.arquivo)" class="btn btn-sm btn-square btn-info text-white tooltip tooltip-top" data-tip="Abrir OS Financeira">
+                    <i class="fa-solid fa-dollar-sign"></i>
                   </button>
                   <button tabindex="0" @click="cancelarVenda(os)" class="btn btn-sm btn-square btn-error text-white tooltip tooltip-top" data-tip="Cancelar Venda">
                     <i class="fa-solid fa-ban"></i>

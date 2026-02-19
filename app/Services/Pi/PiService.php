@@ -72,10 +72,10 @@ class PiService
     public function calculateComission($servicos, $agentes, $pi, $valor_liq_comissoes)
     {
         foreach ($servicos as $servico) {
-            $vlr_total  = $servico['vlr_total'];
-            $vlr_unit   = $servico['vlr_unit'];
-            $vlr_desc   = $servico['vlr_desc'];
-            $vlr_custo  = $servico['vlr_custo'];
+            $vlr_total  = (float)($servico['vlr_total'] ?? 0);
+            $vlr_unit   = (float)($servico['vlr_unit'] ?? 0);
+            $vlr_desc   = (float)($servico['vlr_desc'] ?? 0);
+            $vlr_custo  = (float)($servico['vlr_custo'] ?? 0);
             $vlr_liquido = $vlr_total - $vlr_desc - $vlr_custo;
 
             foreach ($agentes as $agente) {

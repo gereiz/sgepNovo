@@ -221,6 +221,37 @@ class VendaController extends Controller
             return response()->json(['cod'=>0,'msg'=>'Falha ao salvar PDF da OS: '.$e->getMessage()]);
         }
 
+        // Via Financeira da OS
+        try {
+            $osFin = PDF::loadview('relatorios.os.os_fin_nova', [
+                'os' => $os,
+                'cliente' => $cliente,
+                'servicos' => $servicos,
+                'lista_lancamentos' => $lista,
+                'dt_atual' => $dt_atual,
+                'observacao' => $five['observacao'] ?? null,
+                'idPaineis' => $idPaineis,
+                'bs_inicio' => $bs_inicio,
+                'bs_final' => $bs_final,
+                'bs_formated' => $bs_formated,
+                'pagamento' => $pagamento,
+                'forma_pagamento' => $forma_pagamento,
+                'bairro' => $bairro,
+                'cidade' => $cidade,
+                'uf' => $uf,
+                'campanha' => $campanha,
+                'faturamento' => $faturamento,
+                'vendedor' => $vendedor,
+                'textoAtivo' => $textoAtivo,
+                'agentes' => $agentes,
+            ]);
+            $osFin->setPaper('a4','landscape');
+            $finName = str_replace('os_cli_', 'os_fin_', $fileName);
+            $osFin->save($dir.'/'.$finName);
+        } catch (\Exception $e) {
+            // não bloqueia a OS do cliente se a via financeira falhar
+        }
+
         $fileUrl = url('storage/pdf/os/'.$fileName);
         return response()->json(['cod'=>1,'msg'=>'Venda lançada com sucesso','file_url'=>$fileUrl,'file_name'=>$fileName]);
     }
