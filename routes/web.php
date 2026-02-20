@@ -255,6 +255,7 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::post('/getPiBs', [ArquivosController::class, 'getPiBs']);
     route::get('/VendasGeradas', [ArquivosController::class, 'vendas']);
     route::post('/getOsBs', [ArquivosController::class, 'getOsBs']);
+    route::post('/groupPiPdf', [ArquivosController::class, 'groupPiPdf']);
 
 
 

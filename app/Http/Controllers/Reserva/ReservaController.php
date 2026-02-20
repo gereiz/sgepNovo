@@ -449,55 +449,79 @@ class ReservaController extends Controller
 
     public function reservaPaineisCliente(Request $request) {
 
-        // $paineis = $request->idPaineis[0];
-        if (!empty($request->idPaineis[0])) {
-            $paineis = $request->idPaineis[0];
-        } else {
-            $paineis = $request->idPaineis ?? [];
+        $extensiva = (int)($request->input('extensiva', 0));
+        $bsIdInicial = (int)$request->bsId;
+        $bsIdFinal = (int)($request->input('bsFinal') ?? 0);
+
+        // Extrai ids dos painéis
+        $paineisInput = !empty($request->idPaineis[0]) ? $request->idPaineis[0] : ($request->idPaineis ?? []);
+        $idPaineis = [];
+        foreach ($paineisInput as $painel) {
+            $idPaineis[] = intval(substr($painel, -3));
         }
-                $idPaineis = [];
 
-        foreach($paineis as $painel) {
-            array_push($idPaineis, intval(substr($painel, -3)));
-        }
-
-        foreach($idPaineis as $idPainel) {
-
-            // Verifica se o painel já foi reservado
-            $reserva_atual = Reserva::where([['outdoor_id', $idPainel],['bisemana_id', $request->bsId]])->first();
-
-            if($reserva_atual != []) {
-
-                return response()->json(['cod' => 0, 'msg' => 'Painel reservado anteriormente.']);
-
-            } else {
-
-                Reserva::create([
-                    'cliente_id' => $request->clienteId,
-                    'outdoor_id' => $idPainel,
-                    'bisemana_id' => $request->bsId,
-                    'dt_reserva' => Carbon::now()->toDateString(),
-                    'campanha' => $request->campanha,
-                    'observacao' => $request->obs,
-                    'pi_ok' => 0, //$request->checkPi,
-                    'user_id' => auth()->user()->id
-                ]);
+        // Calcula intervalo de bisemanas
+        $intervaloBs = [$bsIdInicial];
+        if ($extensiva && $bsIdFinal && $bsIdFinal > $bsIdInicial) {
+            $bsIni = Bisemana::find($bsIdInicial);
+            $bsFim = Bisemana::find($bsIdFinal);
+            if (!$bsIni || !$bsFim || $bsIni->ano_id !== $bsFim->ano_id) {
+                return response()->json(['cod' => 0, 'msg' => 'Intervalo de bi-semanas inválido'], 422);
             }
-
-
+            $intervaloBs = Bisemana::where('ano_id', $bsIni->ano_id)
+                ->whereBetween('id', [$bsIdInicial, $bsIdFinal])
+                ->orderBy('id')
+                ->pluck('id')
+                ->toArray();
         }
 
-        return response()->json(['cod' => 1, 'message' => 'Painel reservado!']);
+        $criados = [];
+        \DB::beginTransaction();
+        try {
+            foreach ($intervaloBs as $bsId) {
+                foreach ($idPaineis as $idPainel) {
+                    $existe = Reserva::where([
+                        ['outdoor_id', $idPainel],
+                        ['bisemana_id', $bsId],
+                        ['cliente_id', $request->clienteId],
+                    ])->first();
+                    if ($existe) {
+                        // pular duplicatas
+                        continue;
+                    }
+                    $res = Reserva::create([
+                        'cliente_id' => $request->clienteId,
+                        'outdoor_id' => $idPainel,
+                        'bisemana_id' => $bsId,
+                        'dt_reserva' => Carbon::now()->toDateString(),
+                        'campanha' => $request->campanha,
+                        'observacao' => $request->obs,
+                        'pi_ok' => 0,
+                        'user_id' => auth()->user()->id
+                    ]);
+                    $criados[] = $res->id;
+                }
+            }
+            \DB::commit();
+        } catch (\Throwable $e) {
+            \DB::rollBack();
+            return response()->json(['cod' => 0, 'msg' => 'Falha ao criar reservas: '.$e->getMessage()], 500);
+        }
 
+        return response()->json([
+            'cod' => 1,
+            'message' => 'Reservas criadas com sucesso',
+            'qtd' => count($criados),
+            'ids' => $criados
+        ]);
 
     }
-
-
     public function getCliente(Request $request)
     {
         if (!isset($request->cliente) || !isset($request->cliente['id'])) {
             return response()->json(['error' => 'Cliente inválido ou não informado.'], 400);
         }
+        
 
         $id_cliente = intval($request->cliente['id']);
         $cliente = Cliente::find($id_cliente);

@@ -7,14 +7,19 @@ import { useToastr } from '@/Components/toastr';
 
 const props = defineProps(['ambiente',  'anos', 'bisemanas', 'pis'])
 const page = usePage();
+const toastr = useToastr();
 
 const listaBisemana = ref(0);
 const anoAtual = new Date().getFullYear(); // Obtém o ano atual
 const idAno = ref(0); // Inicializa a variável reativa
 const idBisemana = ref(0);
 const listaPi = ref([])
+const agrupar = ref(false)
+const bsFinal = ref(0)
 
 const criaFinanceiro = page.props.user.permissions.includes('criar financeiro');
+const selectedClienteId = ref(null)
+const selectedPiId = ref(null)
 
 
 onMounted(() => {
@@ -66,6 +71,64 @@ function openPiGerada(val, tipo) {
 
 }
 
+async function openPiGrupo(pi) {
+    if (!agrupar.value) return
+    if (!idBisemana.value || !bsFinal.value || bsFinal.value <= idBisemana.value) {
+        toastr.error('Selecione uma Bi-semana final válida para agrupar')
+        return
+    }
+    const bsIniObj = (listaBisemana.value || []).find(b => b.id === idBisemana.value)
+    const bsFimObj = (listaBisemana.value || []).find(b => b.id === bsFinal.value)
+    if (!bsIniObj || !bsFimObj || bsIniObj.ano_id !== bsFimObj.ano_id) {
+        toastr.error('A Bi-semana final deve ser do mesmo ano da inicial')
+        return
+    }
+    try {
+        const resp = await axios.post('/groupPiPdf', { clienteId: pi.id_cliente ?? pi.cliente?.id, bsIni: idBisemana.value, bsFim: bsFinal.value }, { responseType: 'blob' })
+        const url = window.URL.createObjectURL(resp.data)
+        window.open(url, '_blank')
+    } catch (e) {
+        let msg = 'Falha ao gerar PDF agrupado'
+        try {
+            if (e.response && e.response.data) {
+                const txt = await new Response(e.response.data).text()
+                const j = JSON.parse(txt)
+                if (j && j.msg) msg = j.msg
+            }
+        } catch(_) {}
+        toastr.error(msg)
+    }
+}
+
+async function openPiGrupoTop() {
+    if (!agrupar.value) { toastr.error('Ative o Agrupar PIs'); return }
+    if (!selectedClienteId.value) { toastr.error('Selecione um cliente na lista'); return }
+    if (!idBisemana.value || !bsFinal.value || bsFinal.value <= idBisemana.value) {
+        toastr.error('Selecione uma Bi-semana final válida')
+        return
+    }
+    const bsIniObj = (listaBisemana.value || []).find(b => b.id === idBisemana.value)
+    const bsFimObj = (listaBisemana.value || []).find(b => b.id === bsFinal.value)
+    if (!bsIniObj || !bsFimObj || bsIniObj.ano_id !== bsFimObj.ano_id) {
+        toastr.error('A Bi-semana final deve ser do mesmo ano da inicial')
+        return
+    }
+    try {
+        const resp = await axios.post('/groupPiPdf', { clienteId: selectedClienteId.value, bsIni: idBisemana.value, bsFim: bsFinal.value }, { responseType: 'blob' })
+        const url = window.URL.createObjectURL(resp.data)
+        window.open(url, '_blank')
+    } catch (e) {
+        let msg = 'Falha ao gerar PDF agrupado'
+        try {
+            if (e.response && e.response.data) {
+                const txt = await new Response(e.response.data).text()
+                const j = JSON.parse(txt)
+                if (j && j.msg) msg = j.msg
+            }
+        } catch(_) {}
+        toastr.error(msg)
+    }
+}
 
 </script>
 
@@ -86,7 +149,7 @@ function openPiGerada(val, tipo) {
             <!-- Filtros de Pesquisa -->
             <div class="w-full flex flex-row flex-wrap items-center lg:mb-4">
                 <!-- Ano Bi-semana, e CLiente -->
-                <div class="w-full lg:w-6/12 flex items-center sm:justify-start flex-wrap lg:flex-nowrap">
+                <div class="w-full lg:w-8/12 flex items-center sm:justify-start flex-wrap lg:flex-nowrap">
 
                      <!-- Anos -->
                      <div class="w-[23%] lg:w-[11%] flex flex-col me-4 sm:me-6 -mt-6 mb-2">
@@ -109,6 +172,25 @@ function openPiGerada(val, tipo) {
                         </select>
                     </div>
 
+                    <!-- Agrupar -->
+                    <div class="flex w-[50%] items-center space-x-4 mb-2">
+                        <label class="label cursor-pointer space-x-2">
+                            <input type="checkbox" class="checkbox checkbox-sm" v-model="agrupar">
+                            <span class="label-text">Agrupar PIs</span>
+                        </label>
+                        <div v-show="agrupar" class="w-[66%] lg:w-[30%] flex flex-col me-4 sm:me-6 -mt-6 mb-2">
+                            <label class="label"><span class="label-text">Bi-semana Final</span></label>
+                            <select class="select select-bordered" v-model.number="bsFinal">
+                                <option :value="0" disabled>Selecione</option>
+                                <option v-for="(bs, index) in listaBisemana"
+                                        :key="index"
+                                        :disabled="bs.id <= idBisemana"
+                                        :value="bs.id">
+                                    BS: {{ bs.num_bisemana }} {{ new Date(bs.inicio).toLocaleDateString('pt-br', {timeZone:'UTC'}) }} até {{ new Date(bs.fim).toLocaleDateString('pt-br', {timeZone:'UTC'}) }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -120,7 +202,15 @@ function openPiGerada(val, tipo) {
                         <div class="flex">
                             <div class="w-full flex flex-col md:flex-row space-y-6 md:space-y-0">
                                 <div class="md:w-3/12">
-                                    <p class="text-sm text-gray-600 font-semibold">Cliente: <span class="text-red-500">{{ pi.cliente.nome_fantasia ? pi.cliente.nome_fantasia : pi.cliente.razao_social }}</span></p>
+                                    <p class="text-sm text-gray-600 font-semibold">
+                                      Cliente:
+                                      <span class="text-red-500 cursor-pointer"
+                                            @click="selectedClienteId = (pi.cliente?.id || pi.id_cliente); selectedPiId = pi.id"
+                                            :class="{'underline': selectedClienteId === (pi.cliente?.id || pi.id_cliente)}">
+                                        {{ pi.cliente.nome_fantasia ? pi.cliente.nome_fantasia : pi.cliente.razao_social }}
+                                      </span>
+                                      <span v-if="selectedClienteId === (pi.cliente?.id || pi.id_cliente)" class="badge badge-neutral ml-2">Selecionado</span>
+                                    </p>
                                 </div>
 
                                 <div class="md:w-3/12">
@@ -145,6 +235,14 @@ function openPiGerada(val, tipo) {
                                         data-tip="Baixar PI do Financeiro">
                                         <i class="fa-solid fa-dollar-sign"></i>
                                     </button>
+
+                                    <button v-if="agrupar && idBisemana && bsFinal && bsFinal > idBisemana"
+                                            tabindex="0"
+                                            @click="openPiGrupo(pi)"
+                                            class="btn btn-sm btn-square btn-primary text-white tooltip tooltip-top"
+                                            data-tip="Gerar PDF Agrupado (cliente)">
+                                        <i class="fa-solid fa-layer-group"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -156,4 +254,3 @@ function openPiGerada(val, tipo) {
     </AuthenticatedLayout>
 
 </template>
-
