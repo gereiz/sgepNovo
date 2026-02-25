@@ -230,8 +230,9 @@ watch((bonificado), (val) => {
     vlrTotal.value = (((parseFloat(vlrUnit.value || 0) - parseFloat(vlrDesc.value || 0))) * qb).toFixed(2)
     vlrTotalFin.value = (((parseFloat(vlrUnit.value || 0) - parseFloat(vlrDesc.value || 0)) - parseFloat(vlrCusto.value || 0)) * qb).toFixed(2)
     formFour.vlr_total =  vlrTotal.value
-
+})
 function getUsuarios() {
+    axios.get('/getUsuarios')
     axios.get('/getUsuarios')
     .then((response) => {
         usuarios.value = response.data
