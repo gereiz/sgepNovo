@@ -77,9 +77,9 @@
                 $totalFinanceiro = 0;
                 $totalCliente = 0;
                 foreach ($servicos as $serv) {
-                    $qtd = $serv['quantidade'] ?? 1;
-                    $totalFinanceiro += (($serv['vlr_unit'] - $serv['vlr_desc'] - $serv['vlr_custo']) * $qtd);
-                    $totalCliente += (($serv['vlr_unit'] - $serv['vlr_desc']) * $qtd);
+                    $qtd_cobrada = max(0, ($serv['quantidade'] ?? 0) - ($serv['bonificado'] ?? 0));
+                    $totalFinanceiro += (($serv['vlr_unit'] - $serv['vlr_desc'] - $serv['vlr_custo']) * $qtd_cobrada);
+                    $totalCliente += (($serv['vlr_unit'] - $serv['vlr_desc']) * $qtd_cobrada);
                 }
             @endphp
 

@@ -10,7 +10,8 @@
                 @endphp
                 @foreach ($servicos as $serv)
                     @php
-                        $total += (($serv['vlr_unit'] - $serv['vlr_desc']) * $serv['quantidade']);
+                        $qtd_cobrada = max(0, ($serv['quantidade'] ?? 0) - ($serv['bonificado'] ?? 0));
+                        $total += (($serv['vlr_unit'] - $serv['vlr_desc']) * $qtd_cobrada);
                     @endphp
                 @endforeach
                 <strong style="font-size: 12px;">{{formataCash($total)}}</strong>
