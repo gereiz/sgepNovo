@@ -53,6 +53,16 @@ const updateLanc = (val) => {
 }
 
 
+function toggleStatus(l) {
+    axios.post('/ToggleLancamentoStatus', { id: l.id })
+        .then((resp) => {
+            const novo = resp?.data?.status || (l.status_pagamento === 'QUITADO' ? 'PENDENTE' : 'QUITADO')
+            l.status_pagamento = novo
+            toastr.success('Status atualizado para ' + novo)
+        })
+        .catch(() => toastr.error('Falha ao atualizar status'))
+}
+
 </script>
 
 
@@ -70,6 +80,7 @@ const updateLanc = (val) => {
                 <th scope="col" class="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-2">C. Custo</th>
                 <th scope="col" class="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-2">Tipo</th>
 
+                <th scope="col" class="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-2">Status</th>
                 <th scope="col" class="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-2">Obs</th>
                 <th scope="col" class="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-2">Ações</th>
             </tr>
@@ -99,6 +110,11 @@ const updateLanc = (val) => {
                     </button>
                 </td>
 
+                <td class="w-[8%] whitespace-nowrap text-center py-4 text-sm font-medium text-gray-900 sm:pl-2">
+                    <span v-if="(lancamento.status_pagamento || 'PENDENTE') === 'QUITADO'" class="badge badge-success">Quitado</span>
+                    <span v-else class="badge badge-warning">Pendente</span>
+                    <button class="btn btn-xs ml-2" @click="toggleStatus(lancamento)">{{ (lancamento.status_pagamento || 'PENDENTE') === 'QUITADO' ? 'Reabrir' : 'Quitar' }}</button>
+                </td>
                 <td v-if="lancamento.observacoes" class="w-[5%] whitespace-nowrap text-center py-4 text-sm font-medium text-gray-900 sm:pl-2">
                     <button class="btn btn-sm btn-square btn-success btn-outline text-white tooltip tooltip-left" :data-tip="lancamento.observacoes">
                         <i class="fa-solid fa-circle-exclamation"></i>
@@ -140,5 +156,4 @@ const updateLanc = (val) => {
     <DelLancamento :lancamento="lancamento" :centrosCusto="centrosCusto" :tipos_lancamento="tipos_lancamento" @delLancamento="updateLanc" />
 
 </template>
-
 

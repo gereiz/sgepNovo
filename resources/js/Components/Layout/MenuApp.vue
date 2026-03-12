@@ -61,6 +61,7 @@
       href: '/RelOcupacao', 
       icon: NewspaperIcon
      },
+    { name: 'Contas a Pagar/Receber', description: 'Relatório financeiro de lançamentos (entradas/saídas).', href: '/RelLancamentos', icon: NewspaperIcon },
     // { name: 'Gerador de Relatórios', description: '.', href: '/report-generator', icon: NewspaperIcon },
 
   ]

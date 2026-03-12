@@ -190,6 +190,7 @@ class CaixaService
             'tipo_lancamento' => $lancamento['tipo_lancamento'],
             'id_reserva' => $lancamento['id_reserva'],
             'observacoes' => $lancamento['observacoes'],
+            'status_pagamento' => $lancamento['status_pagamento'] ?? 'PENDENTE',
         ]);
 
         $lancamento = Lancamento::with('tipoLancamento', 'centroCusto')->find($lancamento->id);
@@ -230,12 +231,27 @@ class CaixaService
             $lancamento->tipo_lancamento = $dados_lancamento['tipo_lancamento']['id'];
             $lancamento->id_reserva = $dados_lancamento['id_reserva'];
             $lancamento->observacoes = $dados_lancamento['observacoes'];
+            if (isset($dados_lancamento['status_pagamento'])) {
+                $lancamento->status_pagamento = $dados_lancamento['status_pagamento'];
+            }
 
             // Salva as alterações
             $lancamento->save();
         });
 
 
+    }
+
+    public function toggleLancamentoStatus(Request $request)
+    {
+        $id = $request->id;
+        $l = Lancamento::find($id);
+        if (!$l) {
+            return response()->json(['msg' => 'Lançamento não encontrado'], 404);
+        }
+        $l->status_pagamento = ($l->status_pagamento === 'QUITADO') ? 'PENDENTE' : 'QUITADO';
+        $l->save();
+        return response()->json(['ok' => true, 'status' => $l->status_pagamento]);
     }
 
     public function deleteLancamento(Request $request)

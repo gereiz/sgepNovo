@@ -12,7 +12,9 @@ const idAno = ref(0); // Inicializa a variável reativa
 const open = ref(false)
 const mes = ref(0)
 const agenteSel = ref(0)
+const statusSel = ref('todos') // 'todos' | 'recebidos' | 'a_receber'
 const anoSelecionado = ref(0)
+const agrupar = ref(false)
 
 const pisFiltradas = ref([])
 const bisemanasFiltradas = ref([])
@@ -83,15 +85,33 @@ function getReservasMes(mes) {
             bisemanasFiltradas.value.some(bs => pi.id_bisemana === bs.id)
         );
 
-        // filtra os agentes que tem comissão no mês selecionado
-        agentesFiltrados.value = props.clientes.filter(agente => {
-            return props.comissoes.some(comissao => agente.id === comissao.agente_id && pisFiltradas.value.some(pi => pi.id === comissao.pi_id))
-        });
+        // Lista de agentes: exibir todos agentes (ou todos clientes caso não exista flag)
+        // Se existir propriedade 'agent' igual a 1, filtra por ela; senão, usa todos os clientes
+        agentesFiltrados.value = (props.clientes || []).filter(a => (a.agent === 1) || (a.agent === undefined));
 
-        // filtra as comissões por agente e pis
-        comissoesFiltradas.value = props.comissoes.filter(comissao => {
-            return pisFiltradas.value.some(pi => pi.id === comissao.pi_id) && agentesFiltrados.value.some(agente => agente.id === comissao.agente_id);
+        // filtra as comissões por PIs e, se selecionado, por agente
+        let base = props.comissoes.filter(comissao => {
+            return pisFiltradas.value.some(pi => pi.id === comissao.pi_id);
         });
+        if (agenteSel.value && Number(agenteSel.value) !== 0) {
+            base = base.filter(c => Number(c.agente_id) === Number(agenteSel.value));
+        }
+        if (statusSel.value !== 'todos') {
+            const recebida = (piId) => {
+                const ls = (props.lancamentos || []).filter(l => l.id_reserva === piId)
+                if (ls.length === 0) return false
+                return ls.every(l => (l.status_pagamento || 'PENDENTE') === 'QUITADO')
+            }
+            base = base.filter(c => statusSel.value === 'recebidos' ? recebida(c.pi_id) : !recebida(c.pi_id))
+        }
+        // Deduplica comissões (evita linhas repetidas no PDF)
+        const seen = new Set()
+        comissoesFiltradas.value = base.filter(c => {
+            const key = [c.agente_id, c.comissao_id, c.pi_id, Number(c.valor_comissao||0).toFixed(2)].join('|')
+            if (seen.has(key)) return false
+            seen.add(key)
+            return true
+        })
         console.warn(comissoesFiltradas.value);
 
     }
@@ -107,7 +127,9 @@ function getRelComissoes() {
         agentes: agentesFiltrados.value,
         bisemanas: bisemanasFiltradas.value,
         comissoes: comissoesFiltradas.value,
-        agenteSel: agenteSel.value
+        agenteSel: agenteSel.value,
+        statusSel: statusSel.value,
+        agruparSel: agrupar.value
 
     })
     .then(res => {
@@ -173,16 +195,34 @@ function getRelComissoes() {
                             </select>
                         </div>
 
-                        <!-- Vendedor -->
+                        <!-- Agente -->
                         <div class="w-[66%] lg:w-[30%] flex flex-col me-4 sm:me-6 mb-2">
                             <label for="agentes">Agente</label>
-                            <select class="select select-bordered" name="agentes" id="agentes" v-model="agenteSel" disabled>
+                            <select class="select select-bordered" name="agentes" id="agentes" v-model="agenteSel">
                                 <option value="0" selected>TODOS</option>
                                 <option v-for="(agente, index) in agentesFiltrados"
                                     :key="index"
                                     :value="agente.id">{{ agente.nome_fantasia ? agente.nome_fantasia : agente.razao_social }}
                                 </option>
                             </select>
+                        </div>
+
+                        <!-- Status -->
+                        <div class="w-[66%] lg:w-[30%] flex flex-col me-4 sm:me-6 mb-2">
+                            <label for="status">Status</label>
+                            <select class="select select-bordered" name="status" id="status" v-model="statusSel">
+                                <option value="todos">Todos</option>
+                                <option value="recebidos">Recebidos</option>
+                                <option value="a_receber">A Receber</option>
+                            </select>
+                        </div>
+
+                        <!-- Agrupar Valores -->
+                        <div class="w-[66%] lg:w-[20%] flex flex-col me-4 sm:me-6 mb-2">
+                            <label class="label cursor-pointer space-x-2">
+                                <input type="checkbox" class="checkbox checkbox-sm" v-model="agrupar">
+                                <span class="label-text">Agrupar valores</span>
+                            </label>
                         </div>
                     </div>
 
@@ -204,4 +244,3 @@ function getRelComissoes() {
     </TransitionRoot>
 
 </template>
-

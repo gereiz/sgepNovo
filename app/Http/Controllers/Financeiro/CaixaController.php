@@ -120,6 +120,11 @@ class CaixaController extends Controller
         return $this->caixaService->deleteLancamento($request);
     }
 
+    public function toggleLancamentoStatus(Request $request)
+    {
+        return $this->caixaService->toggleLancamentoStatus($request);
+    }
 
 
 }
+

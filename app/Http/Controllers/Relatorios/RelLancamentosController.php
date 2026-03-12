@@ -28,10 +28,20 @@ class RelLancamentosController extends Controller
         $dt_inicial = $request->query('dtInicial');
         $dt_final = $request->query('dtFinal');
         $id_centro_custo = $request->query('centrosCustoId');
-        $tipo_lancamento = $request->query('tipoLancamento'); // opcional
+        $tipo_lancamento = $request->query('tipoLancamento'); // opcional: T,E,S
+        $status = $request->query('status'); // opcional: todos, pendente, quitado
+        $mes = $request->query('mes'); // opcional: 1..12
+        $ano = $request->query('ano'); // opcional: YYYY
 
-        // Debug para ver se os valores chegaram
-        // dd($dt_inicial, $dt_final, $id_centro_custo, $tipo_lancamento);
+        // Se informado mês/ano, sobrepõe o range de datas
+        if ($mes && $ano) {
+            // $ano recebido é o ID da tabela anos; buscar o ano real
+            $anoRow = Ano::find($ano);
+            $year = $anoRow ? $anoRow->ano_bisemana : $ano;
+            $month = str_pad((string)$mes, 2, '0', STR_PAD_LEFT);
+            $dt_inicial = "$year-$month-01";
+            $dt_final = date('Y-m-t', strtotime($dt_inicial));
+        }
 
         if (empty($dt_inicial) || empty($dt_final) || empty($id_centro_custo)) {
             return response()->json(['error' => 'Parâmetros obrigatórios ausentes'], 400);
@@ -53,6 +63,10 @@ class RelLancamentosController extends Controller
 
         if ($tipo_lancamento && $tipo_lancamento == 'S') {
             $query->where('tipo_lancamento', 2);
+        }
+
+        if ($status && in_array(strtolower($status), ['pendente','quitado'])) {
+            $query->where('status_pagamento', strtoupper($status));
         }
 
         $lancamentos = $query->get();

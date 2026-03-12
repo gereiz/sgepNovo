@@ -9,9 +9,20 @@
 
     const centrosCusto = ref(props.centros_custo || []);
 
-    const dtInicial = ref('');
-    const dtFinal = ref('');
+    // Removido filtro por datas: usaremos apenas Mês/Ano
     const tipoLancamento = ref('T');
+    const status = ref('todos'); // todos | pendente | quitado
+    const mes = ref(0);
+    const ano = ref(0);
+    const anos = ref(props.anos || []);
+    const anosDesc = computed(() => {
+        return [...(anos.value || [])].sort((a,b) => Number(b.ano_bisemana) - Number(a.ano_bisemana))
+    })
+    onMounted(() => {
+        const current = new Date().getFullYear()
+        const found = anosDesc.value.find(a => Number(a.ano_bisemana) === current)
+        ano.value = found ? found.id : (anosDesc.value[0]?.id || 0)
+    })
     const centrosCustoId = ref(999);
 
 
@@ -19,12 +30,14 @@
         let btn = document.getElementById('gera_rel');
         btn.innerHTML = 'Carregando...';
 
-        const params = new URLSearchParams({
-            dtInicial: dtInicial.value,
-            dtFinal: dtFinal.value,
-            tipoLancamento: tipoLancamento.value,
-            centrosCustoId: centrosCustoId.value,
-        });
+        const params = new URLSearchParams();
+        if (mes.value && ano.value) {
+            params.set('mes', mes.value);
+            params.set('ano', ano.value);
+        }
+        params.set('tipoLancamento', tipoLancamento.value);
+        params.set('centrosCustoId', centrosCustoId.value);
+        params.set('status', status.value);
 
         const url = `/getRelLancamentos?${params.toString()}`;
         console.log('Abrindo URL:', url); // 👈 veja se os parâmetros aparecem corretamente
@@ -55,40 +68,15 @@
                 <div class="card-body space-y-10">
                     <div class="w-full flex flex-col flex-wrap md:flex-row">
                         <div class="w-full sm:w-10/12 flex flex-wrap space-y-6 sm:space-y-0 sm:space-x-6">
-                         
-                            <!-- Bi-semana Inicial -->
-                            <div class="w-full sm:w-[12%] flex flex-col">
-                                <div class="flex">
-                                    <label class="label">
-                                        <span class="label-text">Data Inicial</span>
-                                    </label>                           
-                                </div>
-                                <div class="w-full flex items-center space-x-4">
-                                        <input type="date"
-                                        v-model="dtInicial"
-                                        placeholder="Data Iniciaç"
-                                        class="input input-bordered"
-                                        name="dtInicial"
-                                        id="dtInicial"
-                                    />
-                                </div>
-                            </div>
-
-                            <!-- Bi-semana Final -->
-                            <div class="w-full sm:w-[12%] flex flex-col">
-                                <div class="flex">
-                                    <label class="label">
-                                        <span class="label-text">Data Final</span>
-                                    </label>                           
-                                </div>
-                                <div class="w-full flex items-center space-x-4">
-                                        <input type="date"
-                                        v-model="dtFinal"
-                                        placeholder="Data Final"
-                                        class="input input-bordered"
-                                        name="dtFinal"
-                                    />
-                                </div>
+                            <!-- Ano -->
+                            <div class="w-full sm:w-2/12 flex flex-col">
+                                <label class="label">
+                                    <span class="label-text">Ano</span>
+                                </label>
+                                <select v-model="ano" class="select select-bordered w-full max-w-xs">
+                                    <option value="0" disabled>Selecione</option>
+                                    <option v-for="(a, idx) in anosDesc" :key="idx" :value="a.id">{{ a.ano_bisemana }}</option>
+                                </select>
                             </div>
 
                             <!-- Tipo de Lançamento-->
@@ -103,6 +91,18 @@
                                 </select>
                             </div>
 
+                            <!-- Status -->
+                            <div class="w-full sm:w-2/12 flex flex-col">
+                                <label class="label">
+                                    <span class="label-text">Status</span>
+                                </label>
+                                <select v-model="status" class="select select-bordered w-full max-w-xs">
+                                    <option value="todos" selected>Todos</option>
+                                    <option value="pendente">Pendente</option>
+                                    <option value="quitado">Quitado</option>
+                                </select>
+                            </div>
+
                             <!-- Centros de Custo -->
                             <div class="w-full sm:w-2/12 flex flex-col">
                                 <label class="label">
@@ -113,6 +113,29 @@
                                     <option v-for="centro, index in centrosCusto" :key="index" :value="centro.id">{{ centro.centro_custo }}</option>
                                 </select>
                             </div>
+
+                            <!-- Mês/Ano -->
+                            <div class="w-full sm:w-2/12 flex flex-col">
+                                <label class="label">
+                                    <span class="label-text">Mês</span>
+                                </label>
+                                <select v-model="mes" class="select select-bordered w-full max-w-xs">
+                                    <option value="0">—</option>
+                                    <option value="1">Janeiro</option>
+                                    <option value="2">Fevereiro</option>
+                                    <option value="3">Março</option>
+                                    <option value="4">Abril</option>
+                                    <option value="5">Maio</option>
+                                    <option value="6">Junho</option>
+                                    <option value="7">Julho</option>
+                                    <option value="8">Agosto</option>
+                                    <option value="9">Setembro</option>
+                                    <option value="10">Outubro</option>
+                                    <option value="11">Novembro</option>
+                                    <option value="12">Dezembro</option>
+                                </select>
+                            </div>
+                            
             
                         </div>
                     </div>

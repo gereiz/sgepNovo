@@ -164,6 +164,7 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::post('/CreateLancamento', [CaixaController::class, 'createLancamento']);
     route::any('/UpdateLancamento', [CaixaController::class, 'updateLancamento']);
     route::post('/DeleteLancamento', [CaixaController::class, 'deleteLancamento']);
+    route::post('/ToggleLancamentoStatus', [CaixaController::class, 'toggleLancamentoStatus']);
 
 
     // Comissões

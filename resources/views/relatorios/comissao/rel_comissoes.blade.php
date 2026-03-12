@@ -36,15 +36,30 @@
                 {{-- <h5 class="text-center mt-5">Bi-semana: </h5> --}}
             </th>
         </tr>
+        @if(isset($totais))
+        <tr>
+            <th colspan="6" class="text-end small" style="font-weight: 800; font-size: 14px;">
+                Recebidos:
+            </th>
+            <th colspan="2" class="text-start small" style="font-weight: 800; font-size: 14px;">
+                {{ formataCash($totais['recebidos'] ?? 0) }}
+            </th>
+            <th colspan="2" class="text-end small" style="font-weight: 800; font-size: 14px;">
+                A Receber:
+            </th>
+            <th colspan="2" class="text-start small" style="font-weight: 800; font-size: 14px;">
+                {{ formataCash($totais['a_receber'] ?? 0) }}
+            </th>
+        </tr>
+        @endif
     </thead>
 
     <tbody>
         <tr class="thead-dark">
-            <th colspan="2" class="text-center small">Agente</th>
-            <th colspan="3" class="text-center small">Comissão</th>
-            {{-- <th colspan="3" class="text-center small">Bi-Semana</th> --}}
-            <th colspan="2" class="text-center small">PI</th>
-            <th colspan="2" class="text-center small">Data Venda</th>
+            <th colspan="4" class="text-center small">Agente</th>
+            <th colspan="2" class="text-center small">Comissão</th>
+            <th colspan="3" class="text-center small">PI</th>
+            <th colspan="3" class="text-center small">Data Venda</th>
         </tr>
 
         @php
@@ -55,22 +70,26 @@
         <tr>
             @foreach ($agentes as $agente)
                 @if($agente['id'] == $comissao['agente_id'])
-                    <td colspan="2" class="text-center small">{{ $agente['nome_fantasia'] ?? $agente['raza_social'] }}</td>
+                    <td colspan="4" class="text-center small">{{ $agente['nome_fantasia'] ?? $agente['razao_social'] ?? '' }}</td>
                 @endif
             @endforeach
 
             @php
                 $totalComissao += $comissao['valor_comissao'];
             @endphp
-            <th colspan="3" class="text-center small">{{ formataCash($comissao['valor_comissao']) }}</th>
+            <th colspan="2" class="text-center small">{{ formataCash($comissao['valor_comissao']) }}</th>
 
-            @foreach ($pis as $pi)
-                @if($pi['id'] == $comissao['pi_id'])
-                    <th colspan="2" class="text-center small">PI nº {{ $pi['id'] }}</th>
-                @endif
-            @endforeach
+            @if(isset($agrupar) && $agrupar)
+                <th colspan="3" class="text-center small">—</th>
+            @else
+                @foreach ($pis as $pi)
+                    @if($pi['id'] == $comissao['pi_id'])
+                        <th colspan="3" class="text-center small">PI nº {{ $pi['id'] }}</th>
+                    @endif
+                @endforeach
+            @endif
 
-            <th colspan="2" class="text-center small">{{ formataDataCompleta($comissao['created_at']) }}</th>
+            <th colspan="3" class="text-center small">{{ isset($agrupar) && $agrupar ? formataDataCompleta($comissao['created_at']) : formataDataCompleta($comissao['created_at']) }}</th>
         </tr>
         @endforeach
     </tbody>

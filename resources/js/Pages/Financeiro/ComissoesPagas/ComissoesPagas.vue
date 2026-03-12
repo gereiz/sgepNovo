@@ -100,6 +100,31 @@ function getVencimentoPorPi(piId) {
     return dt.toLocaleDateString('pt-BR', { timeZone: 'UTC' })
 }
 
+function statusRecebimentoPi(piId) {
+    const lans = (props.lancamentos || []).filter(l => l.id_reserva === piId)
+    if (lans.length === 0) return 'A Receber'
+    return lans.every(l => (l.status_pagamento || 'PENDENTE') === 'QUITADO') ? 'Recebida' : 'A Receber'
+}
+
+function pctRecebidoPi(piId) {
+  const lans = (props.lancamentos || []).filter(l => l.id_reserva === piId)
+  if (lans.length === 0) return 0
+  const total = lans.reduce((s,l)=> s + parseFloat(l.valor || 0), 0)
+  if (!total) return 0
+  const rec = lans.filter(l => (l.status_pagamento || 'PENDENTE') === 'QUITADO').reduce((s,l)=> s + parseFloat(l.valor || 0), 0)
+  return Math.round((rec/total)*100)
+}
+
+const totalizadores = computed(() => {
+    const pis = pisFiltradas.value || []
+    let qtdRecebidas = 0, qtdAReceber = 0
+    pis.forEach(p => {
+        const status = statusRecebimentoPi(p.id)
+        if (status === 'Recebida') qtdRecebidas++
+        else qtdAReceber++
+    })
+    return { qtdRecebidas, qtdAReceber }
+})
 function comissoesUnicasPorPi(piId) {
     const lista = (props.comissoes || []).filter(com => com.pi_id === piId)
     const seen = new Set()
@@ -139,6 +164,10 @@ async function openPiPdf(pi) {
             <div class="w-full h-14 flex mb-4">
                 <div class="sm:w-2/12 h-14 flex items-center">
                     <h1 class="titulo">Comissões Pagas</h1>
+                </div>
+                <div class="ml-4 flex items-center space-x-2">
+                    <span class="badge badge-success">Recebidas: {{ totalizadores.qtdRecebidas }}</span>
+                    <span class="badge badge-warning">A Receber: {{ totalizadores.qtdAReceber }}</span>
                 </div>
             </div>
 
@@ -189,7 +218,13 @@ async function openPiPdf(pi) {
                     <div v-for="(pi, index) in pisFiltradas" :key="index" class="card card-compact bg-base-200 shadow-lg ring-1 ring-base-300 rounded-xl transition-all">
                         <div class="card-body gap-2">
                             <div class="flex items-center justify-between">
-                                <button class="badge badge-neutral cursor-pointer" @click="openPiPdf(pi)">PI nº {{ pi.id }}</button>
+                                <div class="flex items-center space-x-2">
+                                  <button class="badge badge-neutral cursor-pointer" @click="openPiPdf(pi)">PI nº {{ pi.id }}</button>
+                                  <span :class="statusRecebimentoPi(pi.id)==='Recebida' ? 'badge badge-success' : 'badge badge-warning'"
+                                        :title="pctRecebidoPi(pi.id)+'% recebido'">
+                                    {{ statusRecebimentoPi(pi.id) }}
+                                  </span>
+                                </div>
                                 <div class="badge badge-neutral">
                                   BS {{
                                     (bisemanas.find(b => b.id === pi.id_bisemana)?.num_bisemana) || pi.id_bisemana
