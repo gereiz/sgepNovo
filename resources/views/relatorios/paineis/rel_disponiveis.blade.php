@@ -149,14 +149,48 @@
                                         $dir = public_path('storage/outdoorImages/'.$p->identificacao);
                                         $reportImage = $originalImage;
                                         if (is_dir($dir)) {
-                                            $files = array_values(array_diff(scandir($dir), ['.', '..']));
-                                            $files = array_map(fn($f) => $dir.'/'.$f, $files);
-                                            $files = array_filter($files, function ($f) {
-                                                return is_file($f) && basename($f) !== 'CompressedJpgImage.jpg';
-                                            });
-                                            usort($files, fn($a, $b) => filemtime($b) <=> filemtime($a));
-                                            if (!empty($files)) {
-                                                $reportImage = $files[0];
+                                            $compressedCandidate = $dir.'/CompressedJpgImage.jpg';
+                                            if (is_file($compressedCandidate)) {
+                                                $reportImage = $compressedCandidate;
+                                            } else {
+                                                $files = array_values(array_diff(scandir($dir), ['.', '..']));
+                                                $files = array_map(fn($f) => $dir.'/'.$f, $files);
+                                                $files = array_filter($files, function ($f) {
+                                                    return is_file($f);
+                                                });
+                                                usort($files, fn($a, $b) => filemtime($b) <=> filemtime($a));
+                                                if (!empty($files)) {
+                                                    $reportImage = $files[0];
+                                                }
+                                                try {
+                                                    $info = @getimagesize($reportImage);
+                                                    if ($info && isset($info['mime'])) {
+                                                        $mime = strtolower($info['mime']);
+                                                        $img = null;
+                                                        if (in_array($mime, ['image/jpeg','image/jpg','image/pjpeg']) && function_exists('imagecreatefromjpeg')) {
+                                                            $img = @imagecreatefromjpeg($reportImage);
+                                                        } elseif ($mime === 'image/png' && function_exists('imagecreatefrompng')) {
+                                                            $img = @imagecreatefrompng($reportImage);
+                                                        } elseif ($mime === 'image/webp' && function_exists('imagecreatefromwebp')) {
+                                                            $img = @imagecreatefromwebp($reportImage);
+                                                        }
+                                                        if ($img) {
+                                                            $ow = imagesx($img);
+                                                            $oh = imagesy($img);
+                                                            $maxW = 800;
+                                                            $scale = $ow > $maxW ? ($maxW / $ow) : 1;
+                                                            $nw = max(1, (int)($ow * $scale));
+                                                            $nh = max(1, (int)($oh * $scale));
+                                                            $dstImg = imagecreatetruecolor($nw, $nh);
+                                                            imagecopyresampled($dstImg, $img, 0, 0, 0, 0, $nw, $nh, $ow, $oh);
+                                                            @imagejpeg($dstImg, $compressedCandidate, 65);
+                                                            imagedestroy($dstImg);
+                                                            imagedestroy($img);
+                                                            $reportImage = $compressedCandidate;
+                                                        }
+                                                    }
+                                                } catch (\Throwable $e) {
+                                                }
                                             }
                                         }
 

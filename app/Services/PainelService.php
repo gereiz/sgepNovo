@@ -37,6 +37,41 @@ class PainelService
          $painel->image_url = $path.'/'.$filname;
         $painel->save();
 
+        $disk = Storage::disk('public');
+        $compressedRel = $path.'/CompressedJpgImage.jpg';
+        if (!$disk->exists($compressedRel)) {
+            $src = $disk->path($path.'/'.$filname);
+            $dst = $disk->path($compressedRel);
+            try {
+                $info = @getimagesize($src);
+                if ($info && isset($info['mime'])) {
+                    $mime = strtolower($info['mime']);
+                    $img = null;
+                    if (in_array($mime, ['image/jpeg','image/jpg','image/pjpeg']) && function_exists('imagecreatefromjpeg')) {
+                        $img = @imagecreatefromjpeg($src);
+                    } elseif ($mime === 'image/png' && function_exists('imagecreatefrompng')) {
+                        $img = @imagecreatefrompng($src);
+                    } elseif ($mime === 'image/webp' && function_exists('imagecreatefromwebp')) {
+                        $img = @imagecreatefromwebp($src);
+                    }
+                    if ($img) {
+                        $ow = imagesx($img);
+                        $oh = imagesy($img);
+                        $maxW = 800;
+                        $scale = $ow > $maxW ? ($maxW / $ow) : 1;
+                        $nw = max(1, (int)($ow * $scale));
+                        $nh = max(1, (int)($oh * $scale));
+                        $dstImg = imagecreatetruecolor($nw, $nh);
+                        imagecopyresampled($dstImg, $img, 0, 0, 0, 0, $nw, $nh, $ow, $oh);
+                        @imagejpeg($dstImg, $dst, 65);
+                        imagedestroy($dstImg);
+                        imagedestroy($img);
+                    }
+                }
+            } catch (\Throwable $e) {
+            }
+        }
+
        return back()->with('success', 'Painel Cadastrado com sucesso.');
 
 
