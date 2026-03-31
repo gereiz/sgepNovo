@@ -289,6 +289,7 @@ route::middleware(['auth', 'verified'])->group(function () {
         route::post('/getTextoPadrao', [TextosPadraoController::class, 'getTextoPadrao']);
         route::post('/deleteTextoPadrao', [TextosPadraoController::class, 'deleteTextoPadrao']);
 
+        route::post('/atualizarImagens', [ConfiguracoesController::class, 'atualizarImagens']);
 
 
     });
