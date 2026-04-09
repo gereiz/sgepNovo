@@ -6,6 +6,7 @@ import { ref, reactive, onMounted, computed } from 'vue';
 import AddAno from './Gerais/AddAno.vue';
 import AddRegra from './Gerais/AddRegra.vue';
 import BtnConfig from '../Components/BtnConfig.vue'
+import axios from 'axios'
 
 
 

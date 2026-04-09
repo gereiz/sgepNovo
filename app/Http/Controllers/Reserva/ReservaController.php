@@ -453,11 +453,10 @@ class ReservaController extends Controller
         $bsIdInicial = (int)$request->bsId;
         $bsIdFinal = (int)($request->input('bsFinal') ?? 0);
 
-        // Extrai ids dos painéis
-        $paineisInput = !empty($request->idPaineis[0]) ? $request->idPaineis[0] : ($request->idPaineis ?? []);
+        $paineisInput = is_array($request->idPaineis ?? null) ? \Illuminate\Support\Arr::flatten($request->idPaineis) : [];
         $idPaineis = [];
         foreach ($paineisInput as $painel) {
-            $idPaineis[] = intval(substr($painel, -3));
+            $idPaineis[] = (int)$painel;
         }
 
         // Calcula intervalo de bisemanas
@@ -476,6 +475,7 @@ class ReservaController extends Controller
         }
 
         $criados = [];
+        $pulados = [];
         \DB::beginTransaction();
         try {
             foreach ($intervaloBs as $bsId) {
@@ -483,10 +483,9 @@ class ReservaController extends Controller
                     $existe = Reserva::where([
                         ['outdoor_id', $idPainel],
                         ['bisemana_id', $bsId],
-                        ['cliente_id', $request->clienteId],
                     ])->first();
                     if ($existe) {
-                        // pular duplicatas
+                        $pulados[] = $idPainel;
                         continue;
                     }
                     $res = Reserva::create([
@@ -512,7 +511,8 @@ class ReservaController extends Controller
             'cod' => 1,
             'message' => 'Reservas criadas com sucesso',
             'qtd' => count($criados),
-            'ids' => $criados
+            'ids' => $criados,
+            'skipped' => array_values(array_unique($pulados))
         ]);
 
     }

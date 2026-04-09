@@ -36,8 +36,7 @@ function getChecked(val) {
 }
 
 function getheCkedId(val) {
-    checkedPaineisId.value = []
-    checkedPaineisId.value.push(val)
+    checkedPaineisId.value = Array.isArray(val) ? val : [val]
 }
 
 function getCampanha(val) {
@@ -98,6 +97,9 @@ function reservaPaineis() {
         bsFinal: props.extensiva ? props.bsFinal : null
     })
     .then(res => {
+            if (res.data?.skipped && res.data.skipped.length) {
+                toastr.warning(`Alguns painéis foram ignorados por já estarem reservados: ${res.data.skipped.join(', ')}`)
+            }
             toastr.success(res.data.message || 'Reservas criadas')
             closeAdd()
     })
