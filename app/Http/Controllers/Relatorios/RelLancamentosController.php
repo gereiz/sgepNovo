@@ -11,31 +11,18 @@ use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Inertia\Inertia;
 use PDF;
+use Illuminate\Support\Facades\DB;
 
 class RelLancamentosController extends Controller
 {
-    public function index() {
-        $anos = Ano::all();
-        $centros_custo = CentroCusto::all();
-
-        return Inertia::render('Relatorios/Financeiro/RelLancamentos', compact('anos', 'centros_custo'));
-    }
-
-
-    public function getRelLancamentos(Request $request)
+    private function resolveDateRange(Request $request): array
     {
-        // Use query() para garantir leitura via GET
         $dt_inicial = $request->query('dtInicial');
         $dt_final = $request->query('dtFinal');
-        $id_centro_custo = $request->query('centrosCustoId');
-        $tipo_lancamento = $request->query('tipoLancamento'); // opcional: T,E,S
-        $status = $request->query('status'); // opcional: todos, pendente, quitado
-        $mes = $request->query('mes'); // opcional: 1..12
-        $ano = $request->query('ano'); // opcional: YYYY
+        $mes = $request->query('mes');
+        $ano = $request->query('ano');
 
-        // Se informado mês/ano, sobrepõe o range de datas
         if ($mes && $ano) {
-            // $ano recebido é o ID da tabela anos; buscar o ano real
             $anoRow = Ano::find($ano);
             $year = $anoRow ? $anoRow->ano_bisemana : $ano;
             $month = str_pad((string)$mes, 2, '0', STR_PAD_LEFT);
@@ -43,35 +30,173 @@ class RelLancamentosController extends Controller
             $dt_final = date('Y-m-t', strtotime($dt_inicial));
         }
 
-        if (empty($dt_inicial) || empty($dt_final) || empty($id_centro_custo)) {
-            return response()->json(['error' => 'Parâmetros obrigatórios ausentes'], 400);
+        return [$dt_inicial, $dt_final];
+    }
+
+    private function isModoPiReceber(Request $request): bool
+    {
+        return (int)$request->query('piReceber', 0) === 1;
+    }
+
+    private function applyCommonFilters($query, Request $request, bool $modoPi = false)
+    {
+        [$dt_inicial, $dt_final] = $this->resolveDateRange($request);
+        $id_centro_custo = $request->query('centrosCustoId');
+        $tipo_lancamento = $request->query('tipoLancamento');
+        $status = $request->query('status');
+        $origem = $request->query('origem');
+        $search = trim((string)$request->query('search', ''));
+        $pfx = $modoPi ? 'l.' : '';
+
+        if (empty($dt_inicial) || empty($dt_final)) {
+            return [null, null];
         }
 
-        $dt_atual = Carbon::today()->format('d/m/Y');
+        $query->whereDate($pfx.'dt_faturamento', '>=', $dt_inicial)
+            ->whereDate($pfx.'dt_faturamento', '<=', $dt_final);
 
-        $query = Lancamento::with('centroCusto', 'tipoLancamento')
-            ->whereDate('dt_faturamento', '>=', $dt_inicial)
-            ->whereDate('dt_faturamento', '<=', $dt_final);
-        
-        if($id_centro_custo && $id_centro_custo != 999) {
-            $query->where('centro_custo', $id_centro_custo);
+        if ($id_centro_custo && $id_centro_custo != 999) {
+            $query->where($pfx.'centro_custo', $id_centro_custo);
         }
 
         if ($tipo_lancamento && $tipo_lancamento == 'E') {
-            $query->where('tipo_lancamento', 1);
+            $query->where($pfx.'tipo_lancamento', 1);
         }
 
         if ($tipo_lancamento && $tipo_lancamento == 'S') {
-            $query->where('tipo_lancamento', 2);
+            $query->where($pfx.'tipo_lancamento', 2);
         }
 
-        if ($status && in_array(strtolower($status), ['pendente','quitado'])) {
-            $query->where('status_pagamento', strtoupper($status));
+        if ($status && in_array(strtolower($status), ['pendente', 'quitado'])) {
+            $query->where($pfx.'status_pagamento', strtoupper($status));
         }
 
-        $lancamentos = $query->get();
+        if ($origem) {
+            $o = strtoupper((string)$origem);
+            if ($o === 'PI') {
+                $query->where($pfx.'descricao', 'LIKE', 'PI nº %');
+            } elseif ($o === 'OS') {
+                $query->where($pfx.'descricao', 'LIKE', 'OS nº %');
+            } elseif ($o === 'MANUAL') {
+                $query->where($pfx.'descricao', 'NOT LIKE', 'PI nº %')
+                    ->where($pfx.'descricao', 'NOT LIKE', 'OS nº %');
+            }
+        }
 
-        $pdf = PDF::loadView('relatorios.financeiro.rel_lancamentos', compact('dt_atual', 'lancamentos'));
+        if ($search !== '') {
+            if ($modoPi) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('l.descricao', 'LIKE', '%'.$search.'%')
+                        ->orWhere('l.observacoes', 'LIKE', '%'.$search.'%')
+                        ->orWhere('c.nome_fantasia', 'LIKE', '%'.$search.'%')
+                        ->orWhere('c.razao_social', 'LIKE', '%'.$search.'%')
+                        ->orWhere('p.id', (int)$search);
+                });
+            } else {
+                $query->where(function ($q) use ($search) {
+                    $q->where('descricao', 'LIKE', '%'.$search.'%')
+                        ->orWhere('observacoes', 'LIKE', '%'.$search.'%');
+                });
+            }
+        }
+
+        return [$dt_inicial, $dt_final];
+    }
+
+    public function index() {
+        $anos = Ano::all();
+        $centros_custo = CentroCusto::all();
+
+        return Inertia::render('Relatorios/Financeiro/RelLancamentos', compact('anos', 'centros_custo'));
+    }
+
+    public function getRelLancamentosData(Request $request)
+    {
+        $modoPi = $this->isModoPiReceber($request);
+
+        if ($modoPi) {
+            $query = DB::table('lancamentos as l')
+                ->join('pi as p', 'p.id', '=', 'l.id_reserva')
+                ->join('clientes as c', 'c.id', '=', 'p.id_cliente')
+                ->select([
+                    'l.id',
+                    'p.id as pi_id',
+                    'l.parcelas',
+                    'p.created_at as emissao',
+                    DB::raw("COALESCE(NULLIF(c.nome_fantasia,''), c.razao_social) as cliente"),
+                    'l.valor',
+                    'l.dt_faturamento as vencimento',
+                ]);
+
+            [$dt_inicial, $dt_final] = $this->applyCommonFilters($query, $request, true);
+            if (!$dt_inicial || !$dt_final) {
+                return response()->json(['error' => 'Parâmetros obrigatórios ausentes'], 400);
+            }
+            $query->where('l.descricao', 'LIKE', 'PI nº %')
+                ->where('l.tipo_lancamento', 1)
+                ->where('l.status_pagamento', 'PENDENTE');
+
+            $query->orderBy('l.dt_faturamento')
+                ->orderBy('p.id')
+                ->orderByRaw("CAST(SUBSTRING_INDEX(l.parcelas,'/',1) AS UNSIGNED)");
+
+            return response()->json($query->paginate(25));
+        }
+
+        $query = Lancamento::with('centroCusto', 'tipoLancamento');
+        [$dt_inicial, $dt_final] = $this->applyCommonFilters($query, $request, false);
+        if (!$dt_inicial || !$dt_final) {
+            return response()->json(['error' => 'Parâmetros obrigatórios ausentes'], 400);
+        }
+        $query->orderBy('dt_faturamento')->orderBy('id');
+        return response()->json($query->paginate(25));
+    }
+
+
+    public function getRelLancamentos(Request $request)
+    {
+        $modoPi = $this->isModoPiReceber($request);
+        $dt_atual = Carbon::today()->format('d/m/Y');
+
+        if ($modoPi) {
+            $query = DB::table('lancamentos as l')
+                ->join('pi as p', 'p.id', '=', 'l.id_reserva')
+                ->join('clientes as c', 'c.id', '=', 'p.id_cliente')
+                ->select([
+                    'l.id',
+                    'p.id as pi_id',
+                    'l.parcelas',
+                    'p.created_at as emissao',
+                    DB::raw("COALESCE(NULLIF(c.nome_fantasia,''), c.razao_social) as cliente"),
+                    'l.valor',
+                    'l.dt_faturamento as vencimento',
+                ]);
+            [$dt_inicial, $dt_final] = $this->applyCommonFilters($query, $request, true);
+            if (!$dt_inicial || !$dt_final) {
+                return response('Parâmetros obrigatórios ausentes', 400);
+            }
+            $query->where('l.descricao', 'LIKE', 'PI nº %')
+                ->where('l.tipo_lancamento', 1)
+                ->where('l.status_pagamento', 'PENDENTE');
+            $lancamentos = $query->orderBy('l.dt_faturamento')
+                ->orderBy('p.id')
+                ->orderByRaw("CAST(SUBSTRING_INDEX(l.parcelas,'/',1) AS UNSIGNED)")
+                ->get();
+        } else {
+            $query = Lancamento::with('centroCusto', 'tipoLancamento');
+            [$dt_inicial, $dt_final] = $this->applyCommonFilters($query, $request, false);
+            if (!$dt_inicial || !$dt_final) {
+                return response('Parâmetros obrigatórios ausentes', 400);
+            }
+            $lancamentos = $query->orderBy('dt_faturamento')->orderBy('id')->get();
+        }
+
+        $pdf = PDF::loadView('relatorios.financeiro.rel_lancamentos', [
+            'dt_atual' => $dt_atual,
+            'lancamentos' => $lancamentos,
+            'modo_pi' => $modoPi,
+            'titulo' => $modoPi ? "PI's a Receber" : 'RELATÓRIO DE LANÇAMENTOS',
+        ]);
         return $pdf->setPaper('a4', 'landscape')->stream('Rel-Lancamentos.pdf');
     }
 

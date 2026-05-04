@@ -241,6 +241,7 @@ route::middleware(['auth', 'verified'])->group(function () {
 
     // Relatório de Lançamentos
     route::get('/RelLancamentos', [RelLancamentosController::class, 'index']);
+    route::get('/getRelLancamentosData', [RelLancamentosController::class, 'getRelLancamentosData']);
     route::any('/getRelLancamentos', [RelLancamentosController::class, 'getRelLancamentos']);
 
 
