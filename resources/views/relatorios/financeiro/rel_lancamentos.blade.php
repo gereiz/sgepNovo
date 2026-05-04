@@ -17,7 +17,7 @@
 <table class="table fin-table" style="border-collapse: collapse; width: 100%; margin-top: 6px; border: 1px solid #cfcfcf;">
     <thead>
         <tr style="background: #e6e6e6;">
-            <th colspan="{{ !empty($modo_pi) ? 7 : 9 }}" class="text-center font-italic py-0" style="border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px;">
+            <th colspan="{{ !empty($modo_pi) ? 8 : 9 }}" class="text-center font-italic py-0" style="border: 1px solid #cfcfcf; font-size: 12px; padding: 2px 4px;">
                 Data do Relatório: {{ $dt_atual }}
             </th>
         </tr>
@@ -27,6 +27,7 @@
                 <th style="border:1px solid #cfcfcf; padding: 2px 3px;">Parcela</th>
                 <th style="border:1px solid #cfcfcf; padding: 2px 3px;">Emissão</th>
                 <th style="border:1px solid #cfcfcf; padding: 2px 3px;">Cliente</th>
+                <th style="border:1px solid #cfcfcf; padding: 2px 3px;">Agente</th>
                 <th style="border:1px solid #cfcfcf; padding: 2px 3px;">Valor</th>
                 <th style="border:1px solid #cfcfcf; padding: 2px 3px;">Vencimento</th>
                 <th style="border:1px solid #cfcfcf; padding: 2px 3px;">Status</th>
@@ -53,6 +54,7 @@
                     <td style="border:1px solid #cfcfcf; padding: 2px 3px;">{{ $l->parcelas ?? '' }}</td>
                     <td style="border:1px solid #cfcfcf; padding: 2px 3px;">{{ fmtData($l->emissao ?? null) }}</td>
                     <td style="border:1px solid #cfcfcf; padding: 2px 3px;">{{ $l->cliente ?? '' }}</td>
+                    <td style="border:1px solid #cfcfcf; padding: 2px 3px;">{{ $l->agente ?? '—' }}</td>
                     <td style="border:1px solid #cfcfcf; padding: 2px 3px;">{{ fmtValor($l->valor ?? 0) }}</td>
                     <td style="border:1px solid #cfcfcf; padding: 2px 3px;">{{ fmtData($l->vencimento ?? null) }}</td>
                     <td style="border:1px solid #cfcfcf; padding: 2px 3px;">

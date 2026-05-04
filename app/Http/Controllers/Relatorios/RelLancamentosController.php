@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Relatorios;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Config\Ano;
+use App\Models\Clientes\Cliente;
 use App\Models\Financeiro\CentroCusto;
 use App\Models\Financeiro\Lancamento;
 use Illuminate\Support\Facades\Validator;
@@ -90,6 +91,8 @@ class RelLancamentosController extends Controller
                         ->orWhere('l.observacoes', 'LIKE', '%'.$search.'%')
                         ->orWhere('c.nome_fantasia', 'LIKE', '%'.$search.'%')
                         ->orWhere('c.razao_social', 'LIKE', '%'.$search.'%')
+                        ->orWhere('ag.nome_fantasia', 'LIKE', '%'.$search.'%')
+                        ->orWhere('ag.razao_social', 'LIKE', '%'.$search.'%')
                         ->orWhere('p.id', (int)$search);
                 });
             } else {
@@ -106,24 +109,32 @@ class RelLancamentosController extends Controller
     public function index() {
         $anos = Ano::all();
         $centros_custo = CentroCusto::all();
+        $agentes = Cliente::where('ativo', 1)
+            ->where('agent', 1)
+            ->orderBy('nome_fantasia')
+            ->get();
 
-        return Inertia::render('Relatorios/Financeiro/RelLancamentos', compact('anos', 'centros_custo'));
+        return Inertia::render('Relatorios/Financeiro/RelLancamentos', compact('anos', 'centros_custo', 'agentes'));
     }
 
     public function getRelLancamentosData(Request $request)
     {
         $modoPi = $this->isModoPiReceber($request);
+        $agenteId = (int)$request->query('agenteId', 0);
 
         if ($modoPi) {
             $query = DB::table('lancamentos as l')
                 ->join('pi as p', 'p.id', '=', 'l.id_reserva')
                 ->join('clientes as c', 'c.id', '=', 'p.id_cliente')
+                ->leftJoin('comissao_venda as cv', 'cv.pi_id', '=', 'p.id')
+                ->leftJoin('clientes as ag', 'ag.id', '=', 'cv.agente_id')
                 ->select([
                     'l.id',
                     'p.id as pi_id',
                     'l.parcelas',
                     'p.created_at as emissao',
                     DB::raw("COALESCE(NULLIF(c.nome_fantasia,''), c.razao_social) as cliente"),
+                    DB::raw("GROUP_CONCAT(DISTINCT COALESCE(NULLIF(ag.nome_fantasia,''), ag.razao_social) SEPARATOR ', ') as agente"),
                     'l.valor',
                     'l.dt_faturamento as vencimento',
                 ]);
@@ -135,6 +146,20 @@ class RelLancamentosController extends Controller
             $query->where('l.descricao', 'LIKE', 'PI nº %')
                 ->where('l.tipo_lancamento', 1)
                 ->where('l.status_pagamento', 'PENDENTE');
+            if ($agenteId > 0) {
+                $query->where('cv.agente_id', $agenteId);
+            }
+
+            $query->groupBy(
+                'l.id',
+                'p.id',
+                'l.parcelas',
+                'p.created_at',
+                'c.nome_fantasia',
+                'c.razao_social',
+                'l.valor',
+                'l.dt_faturamento'
+            );
 
             $query->orderBy('l.dt_faturamento')
                 ->orderBy('p.id')
@@ -156,18 +181,22 @@ class RelLancamentosController extends Controller
     public function getRelLancamentos(Request $request)
     {
         $modoPi = $this->isModoPiReceber($request);
+        $agenteId = (int)$request->query('agenteId', 0);
         $dt_atual = Carbon::today()->format('d/m/Y');
 
         if ($modoPi) {
             $query = DB::table('lancamentos as l')
                 ->join('pi as p', 'p.id', '=', 'l.id_reserva')
                 ->join('clientes as c', 'c.id', '=', 'p.id_cliente')
+                ->leftJoin('comissao_venda as cv', 'cv.pi_id', '=', 'p.id')
+                ->leftJoin('clientes as ag', 'ag.id', '=', 'cv.agente_id')
                 ->select([
                     'l.id',
                     'p.id as pi_id',
                     'l.parcelas',
                     'p.created_at as emissao',
                     DB::raw("COALESCE(NULLIF(c.nome_fantasia,''), c.razao_social) as cliente"),
+                    DB::raw("GROUP_CONCAT(DISTINCT COALESCE(NULLIF(ag.nome_fantasia,''), ag.razao_social) SEPARATOR ', ') as agente"),
                     'l.valor',
                     'l.dt_faturamento as vencimento',
                 ]);
@@ -178,6 +207,19 @@ class RelLancamentosController extends Controller
             $query->where('l.descricao', 'LIKE', 'PI nº %')
                 ->where('l.tipo_lancamento', 1)
                 ->where('l.status_pagamento', 'PENDENTE');
+            if ($agenteId > 0) {
+                $query->where('cv.agente_id', $agenteId);
+            }
+            $query->groupBy(
+                'l.id',
+                'p.id',
+                'l.parcelas',
+                'p.created_at',
+                'c.nome_fantasia',
+                'c.razao_social',
+                'l.valor',
+                'l.dt_faturamento'
+            );
             $lancamentos = $query->orderBy('l.dt_faturamento')
                 ->orderBy('p.id')
                 ->orderByRaw("CAST(SUBSTRING_INDEX(l.parcelas,'/',1) AS UNSIGNED)")

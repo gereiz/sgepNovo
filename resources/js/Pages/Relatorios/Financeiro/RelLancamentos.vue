@@ -6,15 +6,17 @@
     import axios from 'axios';
 
     const toastr = useToastr();
-    const props = defineProps(['anos', 'centros_custo']);
+    const props = defineProps(['anos', 'centros_custo', 'agentes']);
 
     const centrosCusto = ref(props.centros_custo || []);
+    const agentes = ref(props.agentes || []);
 
     // Removido filtro por datas: usaremos apenas Mês/Ano
     const tipoLancamento = ref('T');
     const status = ref('todos'); // todos | pendente | quitado
     const origem = ref('todos'); // todos | PI | OS | Manual
     const piReceber = ref(false);
+    const agenteId = ref(0);
     const mes = ref(0);
     const ano = ref(0);
     const anos = ref(props.anos || []);
@@ -57,6 +59,7 @@
                 status: modoPi.value ? 'pendente' : status.value,
                 origem: modoPi.value ? 'PI' : origem.value,
                 piReceber: modoPi.value ? 1 : 0,
+                agenteId: modoPi.value ? agenteId.value : 0,
                 search: search.value,
                 page: p
             }
@@ -89,6 +92,7 @@
         params.set('status', modoPi.value ? 'pendente' : status.value);
         params.set('origem', modoPi.value ? 'PI' : origem.value);
         params.set('piReceber', modoPi.value ? '1' : '0');
+        if (modoPi.value && agenteId.value) params.set('agenteId', String(agenteId.value));
         if (search.value) params.set('search', search.value);
 
         const url = `/getRelLancamentos?${params.toString()}`;
@@ -100,7 +104,7 @@
         }, 500);
     }
 
-    watch([mes, ano, tipoLancamento, status, centrosCustoId, origem, piReceber], () => {
+    watch([mes, ano, tipoLancamento, status, centrosCustoId, origem, piReceber, agenteId], () => {
         fetchLancamentos(1)
     })
 
@@ -114,10 +118,12 @@
             tipoLancamento.value = 'E'
             status.value = 'pendente'
             origem.value = 'PI'
+            agenteId.value = 0
         } else {
             tipoLancamento.value = 'T'
             status.value = 'todos'
             origem.value = 'todos'
+            agenteId.value = 0
         }
     })
 
@@ -185,18 +191,26 @@
                                 </select>
                             </div>
 
-                            <!-- Origem -->
-                            <div class="flex flex-col">
+                            <!-- Origem / Agente -->
+                            <div v-if="!modoPi" class="flex flex-col">
                                 <label class="label">
                                     <span class="label-text">Origem</span>
                                 </label>
-                                <select v-model="origem" class="select select-bordered w-full" :disabled="modoPi">
-                                    <option v-if="modoPi" value="PI">PI</option>
-                                    <template v-else>
-                                        <option value="todos" selected>Todos</option>
-                                        <option value="OS">OS</option>
-                                        <option value="Manual">Manual</option>
-                                    </template>
+                                <select v-model="origem" class="select select-bordered w-full">
+                                    <option value="todos" selected>Todos</option>
+                                    <option value="OS">OS</option>
+                                    <option value="Manual">Manual</option>
+                                </select>
+                            </div>
+                            <div v-else class="flex flex-col">
+                                <label class="label">
+                                    <span class="label-text">Agente</span>
+                                </label>
+                                <select v-model="agenteId" class="select select-bordered w-full">
+                                    <option :value="0" selected>Todos</option>
+                                    <option v-for="a in agentes" :key="a.id" :value="a.id">
+                                        {{ a.nome_fantasia ? a.nome_fantasia : a.razao_social }}
+                                    </option>
                                 </select>
                             </div>
 
@@ -285,6 +299,7 @@
                                                 <th>Parcela</th>
                                                 <th>Emissão</th>
                                                 <th>Cliente</th>
+                                                <th>Agente</th>
                                                 <th>Valor</th>
                                                 <th>Vencimento</th>
                                                 <th>Status</th>
@@ -314,6 +329,7 @@
                                                 <td>{{ l.parcelas }}</td>
                                                 <td>{{ l.emissao ? new Date(l.emissao).toLocaleDateString() : '' }}</td>
                                                 <td>{{ l.cliente }}</td>
+                                                <td class="max-w-[280px] truncate" :title="l.agente">{{ l.agente || '—' }}</td>
                                                 <td>R$ {{ Number(l.valor || 0).toFixed(2) }}</td>
                                                 <td>{{ l.vencimento ? new Date(l.vencimento).toLocaleDateString() : '' }}</td>
                                                 <td><span class="badge badge-warning">A Receber</span></td>
