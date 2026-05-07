@@ -34,7 +34,6 @@ onMounted(() => {
         }
 })
 
-
 watch(() => props.openRelScreen, (val)  =>{
     if(val === true) {
         open.value = true
@@ -123,10 +122,8 @@ function getRelComissoes() {
     btn.innerHTML = 'Carregando...';
 
     axios.post('/setRelComissoes', {
-        pis: pisFiltradas.value,
-        agentes: agentesFiltrados.value,
-        bisemanas: bisemanasFiltradas.value,
-        comissoes: comissoesFiltradas.value,
+        anoId: idAno.value,
+        mes: mes.value,
         agenteSel: agenteSel.value,
         statusSel: statusSel.value,
         agruparSel: agrupar.value
@@ -136,7 +133,13 @@ function getRelComissoes() {
         console.warn(res)
         setTimeout(() => {
             btn.innerHTML = 'Gerar Relatório';
-            window.open('/getRelComissoes', '_blank');
+            const params = new URLSearchParams()
+            params.set('anoId', String(idAno.value))
+            params.set('mes', String(mes.value))
+            params.set('agenteSel', String(agenteSel.value))
+            params.set('statusSel', String(statusSel.value))
+            params.set('agruparSel', agrupar.value ? '1' : '0')
+            window.open(`/getRelComissoes?${params.toString()}`, '_blank');
         }, 500);
     })
 }

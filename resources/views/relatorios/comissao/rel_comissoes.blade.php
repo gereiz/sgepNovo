@@ -26,85 +26,89 @@
 
 <div class="page-number"></div>
 
-@include('relatorios.includes.rel_header', ['titulo' => 'RELATÓRIO COMISSÕES', 'doc' => 'REL', 'num' => ''])
+@php
+    $statusLabel = ($status_sel ?? 'todos') === 'a_receber' ? 'A RECEBER' : (($status_sel ?? 'todos') === 'recebidos' ? 'RECEBIDOS' : 'TODOS');
+    $showAgenteCol = !empty($show_agente_col);
+    $colCount = $showAgenteCol ? 8 : 7;
+    $agenteNome = trim((string)($agente_nome ?? ''));
+    $periodo = trim((string)($periodo ?? ''));
+@endphp
 
-<div style="margin-top: -1.7%;">
-    <table class="table table-striped table-bordered">
-    <thead>
-        <tr class="text-center">
-            <th colspan="12">
-                {{-- <h5 class="text-center mt-5">Bi-semana: </h5> --}}
-            </th>
-        </tr>
-        @if(isset($totais))
-        <tr>
-            <th colspan="6" class="text-end small" style="font-weight: 800; font-size: 14px;">
-                Recebidos:
-            </th>
-            <th colspan="2" class="text-start small" style="font-weight: 800; font-size: 14px;">
-                {{ formataCash($totais['recebidos'] ?? 0) }}
-            </th>
-            <th colspan="2" class="text-end small" style="font-weight: 800; font-size: 14px;">
-                A Receber:
-            </th>
-            <th colspan="2" class="text-start small" style="font-weight: 800; font-size: 14px;">
-                {{ formataCash($totais['a_receber'] ?? 0) }}
-            </th>
-        </tr>
-        @endif
-    </thead>
+@if (empty($grupos) || count($grupos) === 0)
+    @include('relatorios.includes.rel_header', ['titulo' => 'COMISSÕES '.$statusLabel.($agenteNome ? ' - '.$agenteNome : '').($periodo ? ' - '.$periodo : ''), 'doc' => 'REL', 'num' => ''])
+    <div style="margin-top: 20px; text-align: center;">
+        <h4>Nenhuma comissão encontrada para os filtros selecionados.</h4>
+    </div>
+@endif
 
-    <tbody>
-        <tr class="thead-dark">
-            <th colspan="4" class="text-center small">Agente</th>
-            <th colspan="2" class="text-center small">Comissão</th>
-            <th colspan="3" class="text-center small">PI</th>
-            <th colspan="3" class="text-center small">Data Venda</th>
-        </tr>
+@foreach(($grupos ?? []) as $percent => $linhas)
+    @if(!$loop->first)
+        <div class="page-break"></div>
+    @endif
 
-        @php
-            $totalComissao = 0;
-        @endphp
+    @include('relatorios.includes.rel_header', ['titulo' => 'COMISSÕES '.$statusLabel.($agenteNome ? ' - '.$agenteNome : '').' - '.$percent.($periodo ? ' - '.$periodo : ''), 'doc' => 'REL', 'num' => ''])
 
-        @foreach ($comissoes as $comissao)
-        <tr>
-            @foreach ($agentes as $agente)
-                @if($agente['id'] == $comissao['agente_id'])
-                    <td colspan="4" class="text-center small">{{ $agente['nome_fantasia'] ?? $agente['razao_social'] ?? '' }}</td>
+    <div style="margin-top: -1.7%;">
+        <table class="table table-striped table-bordered">
+            <thead>
+                @if(isset($totais) && $loop->first)
+                    <tr>
+                        <th colspan="{{ $showAgenteCol ? 4 : 3 }}" class="text-end small" style="font-weight: 800; font-size: 14px;">
+                            Recebidos:
+                        </th>
+                        <th colspan="1" class="text-start small" style="font-weight: 800; font-size: 14px;">
+                            {{ formataCash($totais['recebidos'] ?? 0) }}
+                        </th>
+                        <th colspan="{{ $showAgenteCol ? 2 : 2 }}" class="text-end small" style="font-weight: 800; font-size: 14px;">
+                            A Receber:
+                        </th>
+                        <th colspan="1" class="text-start small" style="font-weight: 800; font-size: 14px;">
+                            {{ formataCash($totais['a_receber'] ?? 0) }}
+                        </th>
+                    </tr>
                 @endif
-            @endforeach
-
-            @php
-                $totalComissao += $comissao['valor_comissao'];
-            @endphp
-            <th colspan="2" class="text-center small">{{ formataCash($comissao['valor_comissao']) }}</th>
-
-            @if(isset($agrupar) && $agrupar)
-                <th colspan="3" class="text-center small">—</th>
-            @else
-                @foreach ($pis as $pi)
-                    @if($pi['id'] == $comissao['pi_id'])
-                        <th colspan="3" class="text-center small">PI nº {{ $pi['id'] }}</th>
+                <tr class="thead-dark">
+                    <th class="text-center small">PI</th>
+                    <th class="text-center small">Parcela</th>
+                    <th class="text-center small">Cliente</th>
+                    @if($showAgenteCol)
+                        <th class="text-center small">Agente</th>
                     @endif
+                    <th class="text-center small">Vencimento</th>
+                    <th class="text-center small">Valor da Parcela</th>
+                    <th class="text-center small">Valor da Comissão</th>
+                    <th class="text-center small">Tipo (Serviço)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php $totalGrupo = 0; @endphp
+                @foreach($linhas as $l)
+                    @php $totalGrupo += (float)($l['valor_comissao'] ?? 0); @endphp
+                    <tr>
+                        <td class="text-center small">PI nº {{ $l['pi'] ?? '' }}</td>
+                        <td class="text-center small">{{ $l['parcela'] ?? '' }}</td>
+                        <td class="text-center small">{{ $l['cliente'] ?? '' }}</td>
+                        @if($showAgenteCol)
+                            <td class="text-center small">{{ $l['agente'] ?? '' }}</td>
+                        @endif
+                        <td class="text-center small">{{ !empty($l['data_pagamento']) ? formataDataCompleta($l['data_pagamento']) : '—' }}</td>
+                        <td class="text-center small">{{ isset($l['valor_parcela']) ? formataCash($l['valor_parcela']) : '—' }}</td>
+                        <td class="text-center small">{{ formataCash($l['valor_comissao'] ?? 0) }}</td>
+                        <td class="text-center small">{{ $l['tipo'] ?? '' }}</td>
+                    </tr>
                 @endforeach
-            @endif
-
-            <th colspan="3" class="text-center small">{{ isset($agrupar) && $agrupar ? formataDataCompleta($comissao['created_at']) : formataDataCompleta($comissao['created_at']) }}</th>
-        </tr>
-        @endforeach
-    </tbody>
-
-    <tfoot>
-        <tr>
-            <td colspan="6" class="small text-end" style="font-weight: 800; font-size: 16px">
-                Total Comissões do Período:
-            </td>
-            <td colspan="1"></td>
-            <td colspan="2" class="text-center small" style="font-weight: 800; font-size: 16px">
-                {{ formataCash($totalComissao) }}
-            </td>
-        </tr>
-    </tfoot>
-</table>
-
-</div>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="{{ $showAgenteCol ? 6 : 5 }}" class="small text-end" style="font-weight: 800; font-size: 14px">
+                        Total Comissão ({{ $percent }}):
+                    </td>
+                    <td class="text-center small" style="font-weight: 800; font-size: 14px">
+                        {{ formataCash($totalGrupo) }}
+                    </td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+@endforeach
