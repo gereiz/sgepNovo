@@ -17,12 +17,21 @@ const lancamento = ref({
     centro_custo: 0,
     tipo_lancamento: 0,
     valor: '',
-    parcelas: 0,
+    parcelas: 1,
     data_lancamento: dataAtual,
     observacoes: ''
 })
 
 const addLancamento = () => {
+    const rawValor = String(lancamento.value.valor ?? '');
+    const valorNum = parseFloat(
+        rawValor
+            .replace('R$', '')
+            .replace(/\s+/g, '')
+            .replace(/\./g, '')
+            .replace(',', '.')
+            .replace(/[^0-9.]/g, '')
+    );
 
     if(lancamento.value.descricao == ''){
         toastr.error('Preencha o campo Descrição do Lançamento')
@@ -39,10 +48,10 @@ const addLancamento = () => {
     } else if(lancamento.value.valor == ''){
         toastr.error('Preencha o campo Valor do Lançamento')
         return
-    } else if(lancamento.value.valor.length < 5){
-        toastr.error('O campo Valor do Lançamento deve ter no mínimo 5 caracteres')
+    } else if(!Number.isFinite(valorNum) || valorNum <= 0){
+        toastr.error('Informe um Valor do Lançamento válido')
         return
-    } else if(lancamento.value.parcelas == 0){
+    } else if(!lancamento.value.parcelas || Number(lancamento.value.parcelas) < 1){
         toastr.error('Selecione o número de Parcelas')
         return
     } else if(lancamento.value.data_lancamento == ''){
@@ -67,7 +76,7 @@ const addLancamento = () => {
         lancamento.value.centro_custo = 0
         lancamento.value.tipo_lancamento = 0
         lancamento.value.valor = ''
-        lancamento.value.parcelas = 0
+        lancamento.value.parcelas = 1
         lancamento.value.data_lancamento = dataAtual
         lancamento.value.observacoes = ''
 
@@ -115,19 +124,26 @@ const addLancamento = () => {
                 <div class="w-full flex space-x-4">
                     <input :disabled="!criaLancamento" type="text" v-model="lancamento.valor"
                         placeholder="Valor do Lançamento"
-                        class="input input-bordered w-6/12"
+                        class="input input-bordered w-4/12"
                         v-maska
                         data-maska=
                         "[
+                            'R$ #,##',
                             'R$ ##,##',
-                            ' R$ ###,##',
-                            ' R$ ####,##',
-                            ' R$ #####,##'
+                            'R$ ###,##',
+                            'R$ ####,##',
+                            'R$ #####,##',
+                            'R$ ######,##',
+                            'R$ #.###,##',
+                            'R$ ##.###,##',
+                            'R$ ###.###,##',
+                            'R$ #.###.###,##',
+                            'R$ ##.###.###,##',
+                            'R$ ###.###.###,##'
                             ]"
                     />
 
-                    <!-- <select :disabled="!criaLancamento" class="select select-bordered w-6/12" v-model="lancamento.parcelas">
-                        <option value="0" disabled selected>Número de Parcelas</option>
+                    <select :disabled="!criaLancamento" class="select select-bordered w-4/12" v-model="lancamento.parcelas">
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
@@ -140,8 +156,8 @@ const addLancamento = () => {
                         <option value="10">10</option>
                         <option value="11">11</option>
                         <option value="12">12</option>
-                    </select> -->
-                    <div class="w-full flex items-center space-x-4">
+                    </select>
+                    <div class="w-4/12 flex items-center space-x-4">
                         <input :disabled="!criaLancamento" type="date" v-model="lancamento.data_lancamento"
                         placeholder="Data Lançamento"
                         class="input input-bordered w-full"

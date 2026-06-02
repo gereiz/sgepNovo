@@ -163,7 +163,7 @@ class CaixaService
             'centro_custo' => 'required',
             'tipo_lancamento' => 'required',
             'valor' => 'required',
-            'parcelas' => 'required',
+            'parcelas' => 'required|integer|min:1',
             'data_lancamento' => 'required',
 
         ]);
@@ -172,10 +172,12 @@ class CaixaService
             return response()->json(['message' => $validator->errors()], 400);
         }
 
-        //Remove o R$, troca virgula por ponto e transforma o valor para float
-        $lancamento['valor'] = str_replace('R$ ', '', $lancamento['valor']);
+        $lancamento['valor'] = str_replace(['R$', ' ', '.'], '', (string)$lancamento['valor']);
         $lancamento['valor'] = str_replace(',', '.', $lancamento['valor']);
         $lancamento['valor'] = floatval($lancamento['valor']);
+        if ($lancamento['valor'] <= 0) {
+            return response()->json(['message' => ['valor' => ['Valor do lançamento inválido']]], 400);
+        }
 
         //Transforma a data para o formato do banco de dados
         $lancamento['data_lancamento'] = date('Y-m-d', strtotime($lancamento['data_lancamento']));
