@@ -47,14 +47,31 @@ class RelLancamentosController extends Controller
         $status = $request->query('status');
         $origem = $request->query('origem');
         $search = trim((string)$request->query('search', ''));
+        $filtroData = strtolower((string)($request->query('filtroData') ?? 'vencimento'));
         $pfx = $modoPi ? 'l.' : '';
 
         if (empty($dt_inicial) || empty($dt_final)) {
             return [null, null];
         }
 
-        $query->whereDate($pfx.'dt_faturamento', '>=', $dt_inicial)
-            ->whereDate($pfx.'dt_faturamento', '<=', $dt_final);
+        if ($filtroData === 'pagamento') {
+            $colDtPag = $pfx.'dt_pagamento_real';
+            $colDtFat = $pfx.'dt_faturamento';
+            $query->where(function ($q) use ($colDtPag, $colDtFat, $dt_inicial, $dt_final) {
+                $q->where(function ($qq) use ($colDtPag, $dt_inicial, $dt_final) {
+                    $qq->whereNotNull($colDtPag)
+                        ->whereDate($colDtPag, '>=', $dt_inicial)
+                        ->whereDate($colDtPag, '<=', $dt_final);
+                })->orWhere(function ($qq) use ($colDtPag, $colDtFat, $dt_inicial, $dt_final) {
+                    $qq->whereNull($colDtPag)
+                        ->whereDate($colDtFat, '>=', $dt_inicial)
+                        ->whereDate($colDtFat, '<=', $dt_final);
+                });
+            });
+        } else {
+            $query->whereDate($pfx.'dt_faturamento', '>=', $dt_inicial)
+                ->whereDate($pfx.'dt_faturamento', '<=', $dt_final);
+        }
 
         if ($id_centro_custo && $id_centro_custo != 999) {
             $query->where($pfx.'centro_custo', $id_centro_custo);

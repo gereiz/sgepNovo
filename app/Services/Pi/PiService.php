@@ -41,6 +41,25 @@ class PiService
      */
     public function storeOrUpdatePi($dados, $nome_cliente, $data_pi, $vlr_unt, $vlr_desc, $vlr_custo, $vl_total, $data_pgto_formated)
     {
+        $idsPaineis = $dados['Two']['paineis'] ?? [];
+        $temLed = false;
+        if (!empty($idsPaineis)) {
+            try {
+                $temLed = \App\Models\Paineis\Painel::whereIn('identificacao', $idsPaineis)
+                    ->where('is_led', 1)
+                    ->exists();
+            } catch (\Throwable $e) {
+                $temLed = false;
+            }
+        }
+
+        $obsOriginal = $dados['Four']['servicos'][0]['detalhes'] ?? null;
+        $obsFinal = $obsOriginal;
+        if ($temLed) {
+            $prefixo = '[PAINÉIS LED INCLUÍDOS]';
+            $obsFinal = $obsOriginal ? ($prefixo . ' | ' . $obsOriginal) : $prefixo;
+        }
+
         $pi = Pi::updateOrCreate(
             [
                 'id_cliente'  => $dados['One']['clienteId'],
@@ -59,7 +78,7 @@ class PiService
                 'dt_pgto'         => $data_pgto_formated ?? now()->toDateString(),
                 'forma_pagamento' => $dados['Four']['formaPgto'] ?? null,
                 'vendedor'        => $dados['Two']['vendedorId'] ?? null,
-                'obs'             => $dados['Four']['servicos'][0]['detalhes'] ?? null,
+                'obs'             => $obsFinal,
             ]
         );
 

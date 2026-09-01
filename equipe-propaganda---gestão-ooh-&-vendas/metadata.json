@@ -1,0 +1,6 @@
+{
+  "name": "Equipe Propaganda - Gestão OOH & Vendas",
+  "description": "Sistema completo de gestão comercial e operacional de mídia exterior (Out-Of-Home / Painéis / Outdoors) com dashboards de bi-semana, gestão de clientes, endereços, reservas e financeiro.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

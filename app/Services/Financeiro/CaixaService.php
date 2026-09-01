@@ -251,9 +251,34 @@ class CaixaService
         if (!$l) {
             return response()->json(['msg' => 'Lançamento não encontrado'], 404);
         }
-        $l->status_pagamento = ($l->status_pagamento === 'QUITADO') ? 'PENDENTE' : 'QUITADO';
+
+        $saindoDe = $l->status_pagamento ?? 'PENDENTE';
+        $entrandoEm = ($saindoDe === 'QUITADO') ? 'PENDENTE' : 'QUITADO';
+
+        if ($entrandoEm === 'QUITADO') {
+            $dtReal = trim((string)($request->dt_pagamento_real ?? ''));
+            if ($dtReal === '') {
+                $dtReal = now()->toDateString();
+            }
+            $validator = Validator::make(['dt_pagamento_real' => $dtReal], [
+                'dt_pagamento_real' => 'required|date',
+            ]);
+            if ($validator->fails()) {
+                return response()->json(['msg' => 'Data Real de Pagamento inválida', 'errors' => $validator->errors()], 400);
+            }
+            try {
+                $dtRealFormatted = date('Y-m-d', strtotime($dtReal));
+            } catch (\Throwable $e) {
+                return response()->json(['msg' => 'Data Real de Pagamento inválida'], 400);
+            }
+            $l->dt_pagamento_real = $dtRealFormatted;
+        } else {
+            $l->dt_pagamento_real = null;
+        }
+
+        $l->status_pagamento = $entrandoEm;
         $l->save();
-        return response()->json(['ok' => true, 'status' => $l->status_pagamento]);
+        return response()->json(['ok' => true, 'status' => $l->status_pagamento, 'dt_pagamento_real' => $l->dt_pagamento_real]);
     }
 
     public function deleteLancamento(Request $request)

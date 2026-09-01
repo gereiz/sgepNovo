@@ -113,9 +113,13 @@ class PiController extends Controller
         $vendedor = session('dadosPi')['Two']['vendedor'];
 
 
-        // Grava as reservas
+        // Grava as reservas e detecta painéis LED
+        $temPaineisLed = false;
         foreach($idPaineis as $idPainel) {
             $painel = Painel::where('identificacao', $idPainel)->first();
+            if ($painel && !empty($painel->is_led)) {
+                $temPaineisLed = true;
+            }
 
             $grava_reservas = $this->piService->storeReservation($cliente->id, $painel->id, $bsId, $campanha);
 
@@ -155,6 +159,11 @@ class PiController extends Controller
 
                 // dd($grava_pi);
 
+                // Observação: prefixa tag LED se houver painéis LED no PI
+                $obsOriginal = session('dadosPi')['Four']['servicos'][0]['detalhes'] ?? '';
+                $prefixoLed = $temPaineisLed ? "[PAINÉIS LED INCLUÍDOS]\n" : '';
+                $obsFinal = trim($prefixoLed . $obsOriginal);
+
                 $pi = Pi::updateOrCreate([
                     'id_cliente' => session('dadosPi')['One']['clienteId'],
                     'id_paineis' => json_encode(session('dadosPi')['Two']['paineis']),
@@ -170,7 +179,7 @@ class PiController extends Controller
                     'dt_pgto' => session('dadosPi')['Four']['dtPgto'],
                     'forma_pagamento' => session('dadosPi')['Four']['formaPgto'],
                     'vendedor' => session('dadosPi')['Two']['vendedorId'],
-                    'obs' => session('dadosPi')['Four']['servicos'][0]['detalhes']
+                    'obs' => $obsFinal
                 ]);
 
             }

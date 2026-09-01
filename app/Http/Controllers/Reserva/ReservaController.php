@@ -32,7 +32,9 @@ class ReservaController extends Controller
 
     public function index() {
 
-        $paineis = Painel::with('bairro.regiao.cidade')->get();
+        $paineis = Painel::with('bairro.regiao.cidade')
+            ->orderByRaw("CAST(identificacao AS UNSIGNED) ASC")
+            ->get();
 
         $anos = Ano::all();
 
@@ -101,6 +103,7 @@ class ReservaController extends Controller
         $bairro = $request->bairro;
         $regiao = $request->regiao;
         $cidade = $request->cidade;
+        $tipo_painel = $request->input('tipo_painel', 'T');
 
         $paineis = Painel::with('bairro.regiao.cidade')->get();
 
@@ -113,6 +116,7 @@ class ReservaController extends Controller
                                      'outdoors.latitude',
                                      'outdoors.longitude',
                                      'outdoors.tipo',
+                                     'outdoors.is_led',
                                      'outdoors.image_url',
                                      'bai.nome AS bnome',
                                      'reg.nome AS rnome',
@@ -131,9 +135,15 @@ class ReservaController extends Controller
                            ->when($bairro, function (Builder $query, $bairro) {
                                     $query->where('outdoors.bairro_id', '=', $bairro);
                            })
+                           ->when($tipo_painel === 'L', function (Builder $query) {
+                                    $query->where('outdoors.is_led', 1);
+                           })
+                           ->when($tipo_painel === 'C', function (Builder $query) {
+                                    $query->where('outdoors.is_led', 0);
+                           })
 
                            ->groupBY('outdoors.id')
-                           ->orderBy('outdoors.identificacao')
+                           ->orderByRaw("CAST(outdoors.identificacao AS UNSIGNED) ASC")
                            ->distinct()
         ->get();
 
@@ -146,6 +156,7 @@ class ReservaController extends Controller
                                       'outdoors.latitude',
                                       'outdoors.longitude',
                                       'outdoors.tipo',
+                                      'outdoors.is_led',
                                       'outdoors.image_url',
                                       'bai.nome AS bnome',
                                       'reg.nome AS rnome',
@@ -164,9 +175,15 @@ class ReservaController extends Controller
                           ->when($bairro, function (Builder $query, $bairro) {
                                     $query->where('outdoors.bairro_id', '=', $bairro);
                           })
+                          ->when($tipo_painel === 'L', function (Builder $query) {
+                                    $query->where('outdoors.is_led', 1);
+                          })
+                          ->when($tipo_painel === 'C', function (Builder $query) {
+                                    $query->where('outdoors.is_led', 0);
+                          })
 
                           ->groupBY('outdoors.id')
-                          ->orderBy('outdoors.identificacao')
+                          ->orderByRaw("CAST(outdoors.identificacao AS UNSIGNED) ASC")
         ->get();
 
 
@@ -577,6 +594,76 @@ class ReservaController extends Controller
 
     }
 
+    // ============ MÓDULO LED ============
 
+    public function getMapaOcupacaoLed(Request $request)
+    {
+        $ledService = new \App\Services\Reserva\LedService();
+        $filtros = $request->all();
+        $dados = $ledService->getMapaOcupacao($filtros);
+        return response()->json($dados);
+    }
+
+    public function getReservasLed(Request $request)
+    {
+        $ledService = new \App\Services\Reserva\LedService();
+        $filtros = $request->all();
+        $dados = $ledService->getReservasLed($filtros);
+        return response()->json($dados);
+    }
+
+    public function getContratosProximosTerminoLed(Request $request)
+    {
+        $ledService = new \App\Services\Reserva\LedService();
+        $dias = $request->input('dias');
+        $dados = $ledService->getContratosProximosTermino($dias ? (int)$dias : null);
+        return response()->json($dados);
+    }
+
+    public function extenderReservaLed(Request $request)
+    {
+        $request->validate([
+            'reserva_id'          => 'required|integer',
+            'nova_bisemana_fim_id' => 'required|integer',
+        ]);
+
+        $ledService = new \App\Services\Reserva\LedService();
+        $result = $ledService->extenderReservaLed(
+            (int)$request->reserva_id,
+            (int)$request->nova_bisemana_fim_id,
+            auth()->id() ?? 1
+        );
+
+        $status = $result['cod'] === 1 ? 200 : 422;
+        return response()->json($result, $status);
+    }
+
+    public function getStatusContratoLed(Request $request)
+    {
+        $request->validate([
+            'reserva_id' => 'required|integer',
+        ]);
+
+        $ledService = new \App\Services\Reserva\LedService();
+        $reserva = Reserva::findOrFail((int)$request->reserva_id);
+        return response()->json($ledService->getStatusContrato($reserva));
+    }
+
+    public function verificaConflitoLed(Request $request)
+    {
+        $request->validate([
+            'painel_id'   => 'required|integer',
+            'bisemana_id' => 'required|integer',
+            'reserva_id'  => 'nullable|integer',
+        ]);
+
+        $ledService = new \App\Services\Reserva\LedService();
+        $result = $ledService->verificaConflitoReserva(
+            (int)$request->painel_id,
+            (int)$request->bisemana_id,
+            $request->reserva_id ? (int)$request->reserva_id : null
+        );
+        return response()->json($result);
+    }
 
 }

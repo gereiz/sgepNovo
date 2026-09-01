@@ -56,12 +56,14 @@
     { name: 'Reservas por Cliente', description: 'Relatório com a quantidade de painéis por cliente específico na bi-semana.', href: '/ReservaCliente', icon: NewspaperIcon },
     { name: 'Painéis por Cliente', description: 'Relatório geral com a quantidade de painéis por cliente na bi-semana', href: '/PaineisCliente', icon: NewspaperIcon },
     { name: 'Painéis por Bisemana', description: 'Relatório com a lista de painéis por bisemana.', href: '/RelPainelBisemana', icon: NewspaperIcon },
-    { name: 'Relatório de Ocupação', 
-      description: 'Acompanhamento de ocupação.', 
-      href: '/RelOcupacao', 
+    { name: 'Relatório de Ocupação',
+      description: 'Acompanhamento de ocupação.',
+      href: '/RelOcupacao',
       icon: NewspaperIcon
      },
     { name: 'Contas a Pagar/Receber', description: 'Relatório financeiro de lançamentos (entradas/saídas).', href: '/RelLancamentos', icon: NewspaperIcon },
+    { name: 'Mapa de Ocupação • LEDs', description: 'Visualização em timeline/grade da ocupação dos painéis LED por bi-semana, com status de contrato.', href: '/MapaOcupacaoLed', icon: NewspaperIcon },
+    { name: 'Relatório de Reservas • LEDs', description: 'Lista e PDF de reservas de LEDs com filtros, valores, PI e status de contrato.', href: '/RelReservasLed', icon: NewspaperIcon },
     // { name: 'Gerador de Relatórios', description: '.', href: '/report-generator', icon: NewspaperIcon },
 
   ]
@@ -329,6 +331,26 @@
           </Popover>
 
         </PopoverGroup>
+
+        <!-- Botão alternar para Frontend React (Dashboard novo) -->
+        <div class="hidden sm:ml-4 sm:flex sm:items-center">
+          <a
+            href="/r/dashboard"
+            class="inline-flex items-center gap-x-2 rounded-full bg-white/10 hover:bg-white/20 px-3 py-1.5 text-xs font-bold text-white ring-1 ring-white/20 transition-all hover:ring-white/40"
+            title="Abrir o novo Dashboard em React + shadcn/ui"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-cyan-300">
+              <path d="M12 2 2 7l10 5 10-5-10-5Z"/>
+              <path d="m2 17 10 5 10-5"/>
+              <path d="m2 12 10 5 10-5"/>
+            </svg>
+            <span class="hidden md:inline">NOVO Frontend</span>
+            <span class="inline md:hidden">React</span>
+            <span class="hidden lg:inline-flex items-center px-2 py-0.5 rounded-full bg-cyan-500 text-[10px] font-black tracking-wider text-white ml-0.5">
+              BETA
+            </span>
+          </a>
+        </div>
 
       </nav>
       <Dialog as="div" class="lg:hidden" @close="mobileMenuOpen = false" :open="mobileMenuOpen">

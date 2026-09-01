@@ -19,6 +19,7 @@ const form = useForm({ident: null,
                        dimLona: null,
                        posicao: null,
                        tipo: null,
+                       is_led: 0,
                        imagem: null,
                        idPainel: null
 })
@@ -33,6 +34,7 @@ onMounted(() => {
         form.dimLona = painelEdit.value[0].dimensao_lona
         form.posicao = painelEdit.value[0].posicao
         form.tipo = painelEdit.value[0].tipo
+        form.is_led = painelEdit.value[0].is_led ? Number(painelEdit.value[0].is_led) : 0
         
         // Verifica se existe uma imagem e define o preview
         if (painelEdit.value[0].image_url) {
@@ -213,6 +215,22 @@ function toSubmitStep() {
                         <option value="2">Convencional</option>
 
                     </select>
+                </div>
+            </div>
+
+            <div class="w-full sm:w-3/12">
+                <label class="block text-sm font-medium leading-6 text-gray-900 mb-2">Painel LED</label>
+                <div class="mt-2 flex items-center gap-6 justify-center">
+                    <label class="inline-flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="is_led" :value="0" v-model="form.is_led"
+                               class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600" />
+                        <span class="text-sm text-gray-700">Não</span>
+                    </label>
+                    <label class="inline-flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="is_led" :value="1" v-model="form.is_led"
+                               class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600" />
+                        <span class="text-sm text-gray-700">Sim</span>
+                    </label>
                 </div>
             </div>
 

@@ -22,7 +22,7 @@ class RelPainelBisemanaController extends Controller
     public function index() {
 
         $anos = Ano::orderBy('ano_bisemana', 'desc')->get();
-        $paineis = Painel::all();
+        $paineis = Painel::orderByRaw("CAST(identificacao AS UNSIGNED) ASC")->get();
         
         return Inertia::render('Relatorios/PaineisXBisemana/RelPainelBisemana', compact('anos', 'paineis'));
     }
@@ -50,7 +50,7 @@ class RelPainelBisemanaController extends Controller
         $bairros = Bairro::all(); 
         // $bisemana_id = $request->bisemana_id;
         // $bisemana = Bisemana::where('id', $bisemana_id)->first();
-        $paineis = Painel::all();
+        $paineis = Painel::orderByRaw("CAST(identificacao AS UNSIGNED) ASC")->get();
         $outdoors = session('paineis_id');
         // $out = explode(',', $outdoors);
         

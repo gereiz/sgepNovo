@@ -3,6 +3,7 @@
     "compilerOptions": {
         "baseUrl": ".",
         "allowJs": true,
+        "jsx": "react-jsx",
         "paths": {
             "@/*": ["resources/js/*"]
         }

@@ -21,6 +21,7 @@ class Painel extends Model
     protected $fillable = ['identificacao',
                             'ident_antiga',
                             'tipo',
+                            'is_led',
                             'bairro_id',
                             'logradouro',
                             'numero',

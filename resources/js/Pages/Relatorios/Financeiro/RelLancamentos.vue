@@ -16,6 +16,7 @@
     const status = ref('todos'); // todos | pendente | quitado
     const origem = ref('todos'); // todos | PI | OS | Manual
     const piReceber = ref(false);
+    const filtroData = ref('vencimento'); // 'vencimento' | 'pagamento'
     const agenteId = ref(0);
     const mes = ref(0);
     const ano = ref(0);
@@ -59,6 +60,7 @@
                 status: modoPi.value ? 'pendente' : status.value,
                 origem: modoPi.value ? 'PI' : origem.value,
                 piReceber: modoPi.value ? 1 : 0,
+                filtroData: modoPi.value ? 'vencimento' : filtroData.value,
                 agenteId: modoPi.value ? agenteId.value : 0,
                 search: search.value,
                 page: p
@@ -92,6 +94,7 @@
         params.set('status', modoPi.value ? 'pendente' : status.value);
         params.set('origem', modoPi.value ? 'PI' : origem.value);
         params.set('piReceber', modoPi.value ? '1' : '0');
+        params.set('filtroData', modoPi.value ? 'vencimento' : filtroData.value);
         if (modoPi.value && agenteId.value) params.set('agenteId', String(agenteId.value));
         if (search.value) params.set('search', search.value);
 
@@ -104,7 +107,7 @@
         }, 500);
     }
 
-    watch([mes, ano, tipoLancamento, status, centrosCustoId, origem, piReceber, agenteId], () => {
+    watch([mes, ano, tipoLancamento, status, centrosCustoId, origem, piReceber, agenteId, filtroData], () => {
         fetchLancamentos(1)
     })
 
@@ -119,6 +122,7 @@
             status.value = 'pendente'
             origem.value = 'PI'
             agenteId.value = 0
+            filtroData.value = 'vencimento'
         } else {
             tipoLancamento.value = 'T'
             status.value = 'todos'
@@ -237,6 +241,17 @@
                                 </select>
                             </div>
 
+                            <!-- Filtro de Data (Vencimento x Pagamento) -->
+                            <div v-if="!modoPi" class="flex flex-col">
+                                <label class="label">
+                                    <span class="label-text">Filtrar por</span>
+                                </label>
+                                <select v-model="filtroData" class="select select-bordered w-full">
+                                    <option value="vencimento">Data Vencimento</option>
+                                    <option value="pagamento">Data Real Pagamento</option>
+                                </select>
+                            </div>
+
                             <div class="flex flex-col">
                                 <label class="label">
                                     <span class="label-text">PI a Receber</span>
@@ -305,7 +320,8 @@
                                                 <th>Status</th>
                                             </tr>
                                             <tr v-else>
-                                                <th>Data</th>
+                                                <th>Data Venc.</th>
+                                                <th>Data Pagto.</th>
                                                 <th>Valor</th>
                                                 <th>Parcela</th>
                                                 <th>Tipo</th>
@@ -318,10 +334,10 @@
                                         </thead>
                                         <tbody>
                                             <tr v-if="loading">
-                                                <td :colspan="modoPi ? 7 : 9">Carregando...</td>
+                                                <td :colspan="modoPi ? 8 : 10">Carregando...</td>
                                             </tr>
                                             <tr v-else-if="!pageData.data || pageData.data.length === 0">
-                                                <td :colspan="modoPi ? 7 : 9">Nenhum lançamento encontrado.</td>
+                                                <td :colspan="modoPi ? 8 : 10">Nenhum lançamento encontrado.</td>
                                             </tr>
 
                                             <tr v-else-if="modoPi" v-for="l in pageData.data" :key="l.id">
@@ -337,6 +353,7 @@
 
                                             <tr v-else v-for="l in pageData.data" :key="l.id">
                                                 <td>{{ l.dt_faturamento ? new Date(l.dt_faturamento).toLocaleDateString() : '' }}</td>
+                                                <td>{{ l.dt_pagamento_real ? new Date(l.dt_pagamento_real).toLocaleDateString() : '—' }}</td>
                                                 <td>R$ {{ Number(l.valor || 0).toFixed(2) }}</td>
                                                 <td>{{ l.parcelas }}</td>
                                                 <td>{{ l.tipo_lancamento?.tipo || '' }}</td>

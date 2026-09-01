@@ -15,6 +15,7 @@ use App\Http\Controllers\Relatorios\RelPainXCliController;
 use App\Http\Controllers\Relatorios\RelLancamentosController;
 use App\Http\Controllers\Relatorios\RelComissaoController;
 use App\Http\Controllers\Relatorios\RelOcupacaoController;
+use App\Http\Controllers\Relatorios\RelLedController;
 use App\Http\Controllers\Reserva\PiController;
 use App\Http\Controllers\Vendas\VendaController;
 use App\Http\Controllers\User\UserController;
@@ -22,9 +23,10 @@ use App\Http\Controllers\Financeiro\ServicosController;
 use App\Http\Controllers\Financeiro\ComissoesController;
 use App\Http\Controllers\Config\UsuarioController;
 use App\Http\Controllers\Config\RolesController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\Financeiro\CaixaController;
 use App\Http\Controllers\Config\TextosPadraoController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ReactDashboardController;
+use App\Http\Controllers\Financeiro\CaixaController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -50,9 +52,13 @@ route::get('/home', function() {
 
 
 route::middleware(['auth', 'verified'])->group(function () {
-    // Dashboard
+    // Dashboard Vue (legado)
     route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     route::post('/getClienteReservas', [DashboardController::class, 'getClienteReservas']);
+
+    // ============== NOVO FRONTEND REACT ==============
+    route::get('/r/dashboard', [ReactDashboardController::class, 'index'])->name('react.dashboard');
+    // =================================================
 
     // Usuários
     route::get('/ListaUsuarios', [UsuarioController::class, 'index'])->name('lista.usuarios');
@@ -296,6 +302,20 @@ route::middleware(['auth', 'verified'])->group(function () {
     });
 
 
+    // ============ MÓDULO LED ============
+
+    // Endpoints de API do ReservaController para LEDs
+    route::post('/MapaOcupacaoLed', [ReservaController::class, 'getMapaOcupacaoLed'])->name('mapa.ocupacao.led.json');
+    route::post('/GetReservasLed', [ReservaController::class, 'getReservasLed'])->name('get.reservas.led');
+    route::post('/GetContratosProximosTerminoLed', [ReservaController::class, 'getContratosProximosTerminoLed'])->name('get.contratos.proximos.led');
+    route::post('/ExtenderReservaLed', [ReservaController::class, 'extenderReservaLed'])->name('extender.reserva.led');
+    route::post('/GetStatusContratoLed', [ReservaController::class, 'getStatusContratoLed'])->name('get.status.contrato.led');
+    route::post('/VerificaConflitoLed', [ReservaController::class, 'verificaConflitoLed'])->name('verifica.conflito.led');
+
+    // Telas e Relatórios de LED (Inertia e PDF)
+    route::get('/MapaOcupacaoLed', [RelLedController::class, 'mapaOcupacao'])->name('mapa.ocupacao.led');
+    route::get('/RelReservasLed', [RelLedController::class, 'relReservas'])->name('rel.reservas.led');
+    route::post('/RelReservasLedPdf', [RelLedController::class, 'relReservasPdf'])->name('rel.reservas.led.pdf');
 
 
 });

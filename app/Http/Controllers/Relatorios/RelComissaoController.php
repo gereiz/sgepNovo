@@ -212,13 +212,17 @@ class RelComissaoController extends Controller
             foreach ($listaLanc as $l) {
                 $vp = (float)($l->valor ?? 0);
                 $ratio = $totalPi > 0 ? ($vp / $totalPi) : (1 / max(1, $listaLanc->count()));
+                $dataVencimento = $l->dt_faturamento ?? null;
+                $dataRealPagto = $l->dt_pagamento_real ?? null;
                 $linhas[] = [
                     'percent' => $percentLabel,
                     'pi' => $piId,
                     'parcela' => $l->parcelas ?? '',
                     'cliente' => $clienteNome,
                     'agente' => $agentesMap->get((int)($c['agente_id'] ?? 0)) ?: '',
-                    'data_pagamento' => $l->dt_faturamento ?? null,
+                    'vencimento' => $dataVencimento,
+                    'data_pagamento' => $dataRealPagto ?? $dataVencimento,
+                    'data_pagamento_real' => $dataRealPagto,
                     'valor_parcela' => $vp,
                     'valor_comissao' => $valorComissaoTotal * $ratio,
                     'tipo' => $tipoServico,
@@ -237,7 +241,11 @@ class RelComissaoController extends Controller
                 })
                 ->map(function ($items) {
                     $first = $items->first();
-                    $minVenc = $items->pluck('data_pagamento')->filter()->min();
+                    $minVenc = $items->pluck('vencimento')->filter()->min();
+                    $minPagtoReal = $items->pluck('data_pagamento_real')->filter()->min();
+                    if (!$minPagtoReal) {
+                        $minPagtoReal = $items->pluck('data_pagamento')->filter()->min();
+                    }
                     $sumParcela = (float)$items->sum(function ($i) { return (float)($i['valor_parcela'] ?? 0); });
                     $sumCom = (float)$items->sum(function ($i) { return (float)($i['valor_comissao'] ?? 0); });
                     $parcelasArr = $items->pluck('parcela')
@@ -282,7 +290,9 @@ class RelComissaoController extends Controller
                         'parcela' => $parcelaLabel,
                         'cliente' => $first['cliente'] ?? '',
                         'agente' => $agente,
-                        'data_pagamento' => $minVenc,
+                        'vencimento' => $minVenc,
+                        'data_pagamento' => $minPagtoReal,
+                        'data_pagamento_real' => $minPagtoReal,
                         'valor_parcela' => $sumParcela ?: null,
                         'valor_comissao' => $sumCom,
                         'tipo' => $tipoLabel,

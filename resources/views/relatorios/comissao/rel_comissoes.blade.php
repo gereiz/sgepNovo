@@ -29,7 +29,7 @@
 @php
     $statusLabel = ($status_sel ?? 'todos') === 'a_receber' ? 'A RECEBER' : (($status_sel ?? 'todos') === 'recebidos' ? 'RECEBIDOS' : 'TODOS');
     $showAgenteCol = !empty($show_agente_col);
-    $colCount = $showAgenteCol ? 8 : 7;
+    $colCount = $showAgenteCol ? 9 : 8;
     $agenteNome = trim((string)($agente_nome ?? ''));
     $periodo = trim((string)($periodo ?? ''));
 @endphp
@@ -53,7 +53,7 @@
             <thead>
                 @if(isset($totais) && $loop->first)
                     <tr>
-                        <th colspan="{{ $showAgenteCol ? 4 : 3 }}" class="text-end small" style="font-weight: 800; font-size: 14px;">
+                        <th colspan="{{ $showAgenteCol ? 5 : 4 }}" class="text-end small" style="font-weight: 800; font-size: 14px;">
                             Recebidos:
                         </th>
                         <th colspan="1" class="text-start small" style="font-weight: 800; font-size: 14px;">
@@ -75,6 +75,7 @@
                         <th class="text-center small">Agente</th>
                     @endif
                     <th class="text-center small">Vencimento</th>
+                    <th class="text-center small">Pagamento</th>
                     <th class="text-center small">Valor da Parcela</th>
                     <th class="text-center small">Valor da Comissão</th>
                     <th class="text-center small">Tipo (Serviço)</th>
@@ -91,7 +92,8 @@
                         @if($showAgenteCol)
                             <td class="text-center small">{{ $l['agente'] ?? '' }}</td>
                         @endif
-                        <td class="text-center small">{{ !empty($l['data_pagamento']) ? formataDataCompleta($l['data_pagamento']) : '—' }}</td>
+                        <td class="text-center small">{{ !empty($l['vencimento']) ? formataDataCompleta($l['vencimento']) : (!empty($l['data_pagamento']) ? formataDataCompleta($l['data_pagamento']) : '—') }}</td>
+                        <td class="text-center small">{{ !empty($l['data_pagamento_real']) ? formataDataCompleta($l['data_pagamento_real']) : ( (!empty($l['data_pagamento']) && (!empty($l['vencimento']))) ? formataDataCompleta($l['data_pagamento']) : '—') }}</td>
                         <td class="text-center small">{{ isset($l['valor_parcela']) ? formataCash($l['valor_parcela']) : '—' }}</td>
                         <td class="text-center small">{{ formataCash($l['valor_comissao'] ?? 0) }}</td>
                         <td class="text-center small">{{ $l['tipo'] ?? '' }}</td>
@@ -100,13 +102,13 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="{{ $showAgenteCol ? 6 : 5 }}" class="small text-end" style="font-weight: 800; font-size: 14px">
+                    <td colspan="{{ $showAgenteCol ? 7 : 6 }}" class="small text-end" style="font-weight: 800; font-size: 14px">
                         Total Comissão ({{ $percent }}):
                     </td>
                     <td class="text-center small" style="font-weight: 800; font-size: 14px">
                         {{ formataCash($totalGrupo) }}
                     </td>
-                    <td></td>
+                    <td colspan="2"></td>
                 </tr>
             </tfoot>
         </table>

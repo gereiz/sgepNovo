@@ -24,6 +24,7 @@ class Lancamento extends Model
         'id_reserva',
         'observacoes',
         'status_pagamento',
+        'dt_pagamento_real',
     ];
 
     protected $softDelete = true;

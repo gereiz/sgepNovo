@@ -17,6 +17,7 @@ class PainelService
             'identificacao' => $request->dados['sTwo']['ident'],
             'ident_antiga' => $request->dados['sTwo']['ident_ant'],
             'tipo' => $request->dados['sTwo']['tipo'],
+            'is_led' => isset($request->dados['sTwo']['is_led']) ? (int)$request->dados['sTwo']['is_led'] : 0,
             'bairro_id' => $request->dados['sOne']['bairro'],
             'logradouro' => $request->dados['sOne']['ender'],
             'numero' => $request->dados['sOne']['numero'],

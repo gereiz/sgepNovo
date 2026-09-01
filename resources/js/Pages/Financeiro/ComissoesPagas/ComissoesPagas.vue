@@ -88,7 +88,22 @@ function getParcelasPorPi(piId) {
     return (props.lancamentos || [])
         .filter(l => l.id_reserva === piId)
         .sort((a,b)=> new Date(a.dt_faturamento) - new Date(b.dt_faturamento))
-        .map(l => ({ data: new Date(l.dt_faturamento).toLocaleDateString('pt-BR', { timeZone: 'UTC' }), label: l.parcelas }))
+        .map(l => {
+            const venc = new Date(l.dt_faturamento).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
+            const pag = l.dt_pagamento_real
+                ? new Date(l.dt_pagamento_real).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
+                : null
+            return { data: venc, label: l.parcelas, pagto: pag }
+        })
+}
+
+function getPagamentoRealPorPi(piId) {
+    const lans = (props.lancamentos || [])
+        .filter(l => l.id_reserva === piId && (l.status_pagamento || 'PENDENTE') === 'QUITADO' && l.dt_pagamento_real)
+        .sort((a,b)=> new Date(a.dt_pagamento_real) - new Date(b.dt_pagamento_real))
+    if (lans.length === 0) return null
+    const last = lans[lans.length - 1]
+    return new Date(last.dt_pagamento_real).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
 }
 
 function getVencimentoPorPi(piId) {
@@ -256,7 +271,11 @@ async function openPiPdf(pi) {
                                             </div>
                                             <div class="text-xs opacity-70">ID {{ comissao.agente_id }} • {{ getServicoNome(comissao.comissao_id) }}</div>
                                             <div class="text-xs opacity-70 flex flex-wrap gap-1">
-                                                <span v-for="(parc, idx) in getParcelasPorPi(pi.id)" :key="idx" class="badge badge-ghost">{{ parc.data }} {{ parc.label }}</span>
+                                                <span v-for="(parc, idx) in getParcelasPorPi(pi.id)" :key="idx" class="badge badge-ghost">
+                                                    <span class="opacity-75">{{ parc.label }}</span>
+                                                    <span class="mx-1">V.:{{ parc.data }}</span>
+                                                    <span v-if="parc.pagto" class="text-success">P.:{{ parc.pagto }}</span>
+                                                </span>
                                             </div>
                                         </div>
                                         <div class="badge badge-primary">R$ {{ comissao.valor_comissao }}</div>
@@ -264,6 +283,17 @@ async function openPiPdf(pi) {
                                 </template>
                                 <div v-else class="alert alert-info rounded-lg">
                                     <span>Nenhuma comissão encontrada para esta PI.</span>
+                                </div>
+                            </div>
+
+                            <div class="text-xs opacity-75">
+                                <div v-if="getPagamentoRealPorPi(pi.id)">
+                                    <span class="font-semibold">Último Pagto. Real:</span>
+                                    <span class="text-success">{{ getPagamentoRealPorPi(pi.id) }}</span>
+                                </div>
+                                <div v-else-if="getVencimentoPorPi(pi.id)">
+                                    <span class="font-semibold">1º Vencimento:</span>
+                                    {{ getVencimentoPorPi(pi.id) }}
                                 </div>
                             </div>
                         </div>
