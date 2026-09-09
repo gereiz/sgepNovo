@@ -26,6 +26,7 @@ use App\Http\Controllers\Config\RolesController;
 use App\Http\Controllers\Config\TextosPadraoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReactDashboardController;
+use App\Http\Controllers\ReactCaixaController;
 use App\Http\Controllers\Financeiro\CaixaController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -58,6 +59,7 @@ route::middleware(['auth', 'verified'])->group(function () {
 
     // ============== NOVO FRONTEND REACT ==============
     route::get('/r/dashboard', [ReactDashboardController::class, 'index'])->name('react.dashboard');
+    route::get('/r/caixa', [ReactCaixaController::class, 'index'])->name('react.caixa');
     // =================================================
 
     // Usuários

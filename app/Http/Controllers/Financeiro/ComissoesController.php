@@ -59,11 +59,39 @@ class ComissoesController extends Controller
 
         $anos = Ano::all();
         $bisemanas = Bisemana::all();
-        $comissoes = ComissaoVenda::all();
-        $pis = Pi::all();
+
+        $anoId = (int)($request->input('anoId') ?? $request->query('anoId') ?? 0);
+        $bisemanaId = (int)($request->input('bisemanaId') ?? $request->query('bisemanaId') ?? 0);
+
+        if ($anoId === 0 && $bisemanaId === 0) {
+            $anoAtual = (int)date('Y');
+            $anoRow = Ano::where('ano_bisemana', $anoAtual)->first();
+            if (!$anoRow) {
+                $anoRow = Ano::orderBy('ano_bisemana', 'desc')->first();
+            }
+            if ($anoRow) {
+                $anoId = (int)$anoRow->id;
+            }
+        }
+
+        $pisQ = Pi::query();
+        if ($bisemanaId > 0) {
+            $pisQ->where('id_bisemana', $bisemanaId);
+        } elseif ($anoId > 0) {
+            $bsDoAno = Bisemana::where('ano_id', $anoId)->pluck('id')->values()->all();
+            if (!empty($bsDoAno)) {
+                $pisQ->whereIn('id_bisemana', $bsDoAno);
+            } else {
+                $pisQ->whereRaw('0 = 1');
+            }
+        }
+        $pis = $pisQ->get();
+
+        $piIds = $pis->pluck('id')->values()->all();
+        $comissoes = empty($piIds) ? collect() : ComissaoVenda::whereIn('pi_id', $piIds)->get();
         $clientes = Cliente::all();
         $comissoes_defs = $this->financeiroService->listaComissoes();
-        $lancamentos = \App\Models\Financeiro\Lancamento::whereIn('id_reserva', $pis->pluck('id'))->get();
+        $lancamentos = empty($piIds) ? collect() : \App\Models\Financeiro\Lancamento::whereIn('id_reserva', $piIds)->get();
 
         return Inertia::render('Financeiro/ComissoesPagas/ComissoesPagas', compact('anos', 'bisemanas', 'comissoes', 'pis', 'clientes', 'comissoes_defs', 'lancamentos'));
     }

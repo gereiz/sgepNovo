@@ -8,6 +8,7 @@ const props = defineProps(['openRelScreen', 'anos', 'pis',  'bisemanas', 'comiss
 const emit = defineEmits(['closeRel']);
 
 const anoAtual = new Date().getFullYear(); // Obtém o ano atual
+const mesAtual = new Date().getMonth() + 1; // meses js = 0..11
 const idAno = ref(0); // Inicializa a variável reativa
 const open = ref(false)
 const mes = ref(0)
@@ -32,6 +33,15 @@ onMounted(() => {
         if (anoEncontrado) {
             idAno.value = anoEncontrado.id;
         }
+    // Default mês atual para já abrir período coerente
+    if (mesAtual >= 1 && mesAtual <= 12) {
+        mes.value = mesAtual;
+    }
+    setTimeout(() => {
+        if (mes.value) {
+            getReservasMes(mes.value);
+        }
+    }, 50);
 })
 
 watch(() => props.openRelScreen, (val)  =>{

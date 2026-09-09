@@ -39,11 +39,24 @@ class RelComissaoController extends Controller
     public function getRelComissoes(Request $request) {
 
         $dt_atual = Carbon::today()->format('d/m/Y');
-        $anoSel = (int)($request->query('anoId') ?? session('ano_sel'));
-        $mesSel = (int)($request->query('mes') ?? session('mes_sel'));
+        $anoSel = (int)($request->query('anoId') ?? session('ano_sel') ?? 0);
+        $mesSel = (int)($request->query('mes') ?? session('mes_sel') ?? 0);
         $agente_sel = $request->query('agenteSel') ?? session('agente_sel');
         $status_sel = $request->query('statusSel') ?? (session('status_sel') ?? 'todos');
         $agrupar = (int)($request->query('agruparSel') ?? (session('agrupar_sel') ? 1 : 0)) === 1;
+
+        if ($anoSel === 0) {
+            $anoRowDefault = Ano::where('ano_bisemana', (int)Carbon::today()->format('Y'))->first();
+            if (!$anoRowDefault) {
+                $anoRowDefault = Ano::orderBy('ano_bisemana', 'desc')->first();
+            }
+            if ($anoRowDefault) {
+                $anoSel = (int)$anoRowDefault->id;
+            }
+        }
+        if ($mesSel === 0) {
+            $mesSel = (int)Carbon::today()->format('n');
+        }
 
         $agenteSelId = (int)($agente_sel ?? 0);
 
@@ -55,75 +68,48 @@ class RelComissaoController extends Controller
         ];
         $periodo = ($mesSel && $year) ? (($mesMap[$mesSel] ?? str_pad((string)$mesSel, 2, '0', STR_PAD_LEFT)).'/'.$year) : '';
 
-        $bisemanaIds = [];
-        if ($anoSel && $mesSel) {
-            $bisemanaIds = Bisemana::where('ano_id', $anoSel)
-                ->get()
-                ->filter(function ($bs) use ($mesSel) {
-                    try {
-                        $mIni = (int)Carbon::parse($bs->inicio)->format('n');
-                        $mFim = (int)Carbon::parse($bs->fim)->format('n');
-                        return $mIni === (int)$mesSel || $mFim === (int)$mesSel;
-                    } catch (\Throwable $e) {
-                        return false;
-                    }
-                })
-                ->pluck('id')
-                ->values()
-                ->toArray();
-        }
-        if (empty($bisemanaIds) && $year && $mesSel) {
-            $bisemanaIds = Bisemana::query()
-                ->get()
-                ->filter(function ($bs) use ($mesSel, $year) {
-                    try {
-                        $ini = Carbon::parse($bs->inicio);
-                        $fim = Carbon::parse($bs->fim);
-                        $matchIni = ((int)$ini->format('Y') === (int)$year) && ((int)$ini->format('n') === (int)$mesSel);
-                        $matchFim = ((int)$fim->format('Y') === (int)$year) && ((int)$fim->format('n') === (int)$mesSel);
-                        return $matchIni || $matchFim;
-                    } catch (\Throwable $e) {
-                        return false;
-                    }
-                })
-                ->pluck('id')
-                ->values()
-                ->toArray();
+        $lansMesQuitados = collect();
+        $piIds = [];
+        if ($year > 0 && $mesSel > 0) {
+            $start = Carbon::create($year, $mesSel, 1, 0, 0, 0)->startOfMonth();
+            $end = (clone $start)->endOfMonth();
+            $lansMesQuitados = Lancamento::where('status_pagamento', 'QUITADO')
+                ->whereNotNull('dt_pagamento_real')
+                ->whereBetween('dt_pagamento_real', [$start->format('Y-m-d 00:00:00'), $end->format('Y-m-d 23:59:59')])
+                ->get();
+            $piIds = $lansMesQuitados->pluck('id_reserva')->filter()->unique()->values()->all();
         }
 
-        $pis = [];
-        if (!empty($bisemanaIds)) {
-            $pis = Pi::whereIn('id_bisemana', $bisemanaIds)->get()->toArray();
+        if (empty($piIds)) {
+            $pis = [];
+        } else {
+            $pis = Pi::whereIn('id', $piIds)->get()->toArray();
         }
 
-        $piIds = collect($pis)->pluck('id')->filter()->unique()->values()->all();
-        $lans = Lancamento::whereIn('id_reserva', $piIds)->get()->groupBy('id_reserva');
-        $isRecebida = function($piId) use ($lans) {
-            $ls = $lans->get($piId, collect());
+        $allLansPi = Lancamento::whereIn('id_reserva', $piIds)->get()->groupBy('id_reserva');
+        $isRecebida = function($piId) use ($allLansPi) {
+            $ls = $allLansPi->get($piId, collect());
             if ($ls->isEmpty()) return false;
             return $ls->every(fn($l) => ($l->status_pagamento ?? 'PENDENTE') === 'QUITADO');
         };
 
-        $comissoesQ = ComissaoVenda::whereIn('pi_id', $piIds);
+        $comissoesQ = empty($piIds) ? ComissaoVenda::whereRaw('0 = 1') : ComissaoVenda::whereIn('pi_id', $piIds);
         if ($agenteSelId !== 0) {
             $comissoesQ->where('agente_id', $agenteSelId);
         }
         $comissoes = $comissoesQ->get()->toArray();
 
-        // Filtra por status de recebimento, se necessário
         if ($status_sel !== 'todos') {
             $comissoes = collect($comissoes)->filter(function($c) use ($status_sel, $isRecebida) {
                 return $status_sel === 'recebidos' ? $isRecebida($c['pi_id']) : !$isRecebida($c['pi_id']);
             })->values()->all();
         }
 
-        // Deduplica combinações iguais (agente, comissao, pi, valor)
         $comissoes = collect($comissoes)->unique(function ($c) {
             $valor = number_format((float)($c['valor_comissao'] ?? 0), 2, '.', '');
             return ($c['agente_id'] ?? '0').'|'.($c['comissao_id'] ?? '0').'|'.($c['pi_id'] ?? '0').'|'.$valor;
         })->values()->all();
 
-        // Totalizadores Recebidos x A Receber (valores de comissão)
         $totais = collect($comissoes)->reduce(function($acc, $c) use ($isRecebida) {
             if (!empty($c['pi_id']) && $isRecebida($c['pi_id'])) {
                 $acc['recebidos'] += (float)$c['valor_comissao'];
@@ -183,7 +169,7 @@ class RelComissaoController extends Controller
                 }
             }
 
-            $listaLanc = $lans->get($piId, collect())->sortBy(function ($l) {
+            $listaLanc = $allLansPi->get($piId, collect())->sortBy(function ($l) {
                 $p = (string)($l->parcelas ?? '');
                 if (strpos($p, '/') !== false) {
                     $i = (int)explode('/', $p)[0];
@@ -214,6 +200,10 @@ class RelComissaoController extends Controller
                 $ratio = $totalPi > 0 ? ($vp / $totalPi) : (1 / max(1, $listaLanc->count()));
                 $dataVencimento = $l->dt_faturamento ?? null;
                 $dataRealPagto = $l->dt_pagamento_real ?? null;
+                $statusLan = (string)($l->status_pagamento ?? 'PENDENTE');
+                if ($statusLan !== 'QUITADO') {
+                    continue;
+                }
                 $linhas[] = [
                     'percent' => $percentLabel,
                     'pi' => $piId,

@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, usePage } from '@inertiajs/vue3';
+import { Head, usePage, router } from '@inertiajs/vue3';
 import { useToastr } from '@/Components/toastr';
 import { ref, reactive, onMounted, computed, watch } from 'vue';
 import RelComissoes from '../../Relatorios/Financeiro/RelComissoes.vue';
@@ -14,53 +14,80 @@ const emit = defineEmits(['']);
 const toastr = useToastr();
 
 const open = ref(false)
-const anoAtual = new Date().getFullYear(); // Obtém o ano atual
-const idAno = ref(0); // Inicializa a variável reativa
-const listaBisemana = ref(0);
+const anoAtual = new Date().getFullYear();
+const idAno = ref(0);
+const listaBisemana = ref([]);
 const idBisemana = ref(0);
 const pisFiltradas = ref([]);
+const initialLoad = ref(true);
 
-// Função para encontrar o cliente pelo ID
 const getClienteById = (id) => {
     return props.clientes.find(cliente => cliente.id === id) || null;
 }
 
-// Função para encontrar o agente pelo ID
 const getAgenteById = (id) => {
     return props.clientes.find(cliente => cliente.id === id) || null;
 }
 
 onMounted(() => {
-     // Procura o ID do ano atual na lista de anos disponíveis
      const anoEncontrado = props.anos.find(ano => ano.ano_bisemana == anoAtual);
-        if (anoEncontrado) {
-            idAno.value = anoEncontrado.id;
-        }
+     if (anoEncontrado) {
+         idAno.value = anoEncontrado.id;
+     }
 
-     // Inicializa pisFiltradas com todas as PIs
      pisFiltradas.value = props.pis;
+     if (idAno.value) {
+         listaBisemana.value = props.bisemanas.filter(b => b.ano_id === idAno.value);
+     }
+
+     const qsAtual = new URLSearchParams(window.location.search);
+     const temAnoOuBs = qsAtual.has('anoId') || qsAtual.has('bisemanaId');
+     setTimeout(() => {
+         initialLoad.value = false;
+         if (!temAnoOuBs && idAno.value) {
+             const qs = {};
+             if (idAno.value) qs.anoId = idAno.value;
+             if (idBisemana.value) qs.bisemanaId = idBisemana.value;
+             router.get('/ListaComissoesPagas', qs, { preserveState: true, replace: true });
+         }
+     }, 50);
 })
+
+watch(() => props.pis, (novos) => {
+    pisFiltradas.value = novos || [];
+});
 
 watch(idAno, (val) => {
-    getBisemanas()
+    if (initialLoad.value) return;
+    idBisemana.value = 0;
+    getBisemanas();
+    recarregarFiltros();
 })
 
+watch(idBisemana, (val) => {
+    if (initialLoad.value) return;
+    recarregarFiltros();
+})
+
+function recarregarFiltros() {
+    const qs = {};
+    if (idAno.value) qs.anoId = idAno.value;
+    if (idBisemana.value) qs.bisemanaId = idBisemana.value;
+    router.get('/ListaComissoesPagas', qs, { preserveState: true, replace: true });
+}
+
 function getBisemanas() {
-    axios.post('/getBisemanas', {anoId: idAno.value})
-        .then(res => {
-            listaBisemana.value = Object.values(res.data)
-            idBisemana.value = 0
-            // Resetar as PIs filtradas para mostrar todas quando mudar o ano
-            pisFiltradas.value = props.pis;
-        })
+    if (idAno.value) {
+        listaBisemana.value = props.bisemanas.filter(b => b.ano_id === idAno.value);
+    } else {
+        listaBisemana.value = [];
+    }
 }
 
 function getReservas(idBisemana) {
     if (idBisemana === 0) {
-        // Se nenhuma bisemana for selecionada, mostrar todas as PIs
         pisFiltradas.value = props.pis;
     } else {
-        // Filtrar as PIs pela bisemana selecionada
         pisFiltradas.value = props.pis.filter(pi => pi.id_bisemana === idBisemana);
     }
 }
