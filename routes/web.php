@@ -54,12 +54,12 @@ route::get('/home', function() {
 
 route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard Vue (legado)
-    route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    // route::get('/r/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     route::post('/getClienteReservas', [DashboardController::class, 'getClienteReservas']);
 
     // ============== NOVO FRONTEND REACT ==============
-    route::get('/r/dashboard', [ReactDashboardController::class, 'index'])->name('react.dashboard');
-    route::get('/r/caixa', [ReactCaixaController::class, 'index'])->name('react.caixa');
+    route::get('/dashboard', [ReactDashboardController::class, 'index'])->name('react.dashboard');
+    route::get('/caixa', [ReactCaixaController::class, 'index'])->name('react.caixa');
     // =================================================
 
     // Usuários
@@ -276,7 +276,7 @@ route::middleware(['auth', 'verified'])->group(function () {
         route::post('/addAno', [ConfiguracoesController::class, 'AddAno'])->name('add.ano');
 
         // Roles
-        route::get('/roles', [RolesController::class, 'index']); 
+        route::get('/roles', [RolesController::class, 'index']);
         route::post('/createRole', [RolesController::class, 'createRole']);
         route::post('/updateRole', [RolesController::class, 'updateRole']);
         route::get('/getRoles', [RolesController::class, 'getRoles']);

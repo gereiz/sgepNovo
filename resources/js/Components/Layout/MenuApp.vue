@@ -15,7 +15,7 @@
     MapIcon ,
     UserIcon ,
     XMarkIcon,
-    PhotoIcon, 
+    PhotoIcon,
     ViewColumnsIcon,
     NewspaperIcon,
     CurrencyDollarIcon
@@ -335,7 +335,7 @@
         <!-- Botão alternar para Frontend React (Dashboard novo) -->
         <div class="hidden sm:ml-4 sm:flex sm:items-center">
           <a
-            href="/r/dashboard"
+            href="/dashboard"
             class="inline-flex items-center gap-x-2 rounded-full bg-white/10 hover:bg-white/20 px-3 py-1.5 text-xs font-bold text-white ring-1 ring-white/20 transition-all hover:ring-white/40"
             title="Abrir o novo Dashboard em React + shadcn/ui"
           >

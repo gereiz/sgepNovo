@@ -263,7 +263,7 @@ export function Navbar({
 
         {/* ========== ESQUERDA: LOGO ========== */}
         <a
-          href="/r/dashboard"
+          href="/dashboard"
           className="flex items-center gap-2 min-w-0 max-w-[140px] md:max-w-[160px] md:min-w-[160px] no-underline shrink-0 overflow-hidden"
         >
           <img
