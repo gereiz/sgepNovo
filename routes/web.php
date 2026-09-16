@@ -27,6 +27,7 @@ use App\Http\Controllers\Config\TextosPadraoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReactDashboardController;
 use App\Http\Controllers\ReactCaixaController;
+use App\Http\Controllers\ReactReservasSemPIController;
 use App\Http\Controllers\Financeiro\CaixaController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -60,6 +61,8 @@ route::middleware(['auth', 'verified'])->group(function () {
     // ============== NOVO FRONTEND REACT ==============
     route::get('/dashboard', [ReactDashboardController::class, 'index'])->name('react.dashboard');
     route::get('/caixa', [ReactCaixaController::class, 'index'])->name('react.caixa');
+    route::get('/reservas-sem-pi', [ReactReservasSemPIController::class, 'index'])->name('react.reservassempi');
+    route::post('/GerarPIPorReserva', [ReactReservasSemPIController::class, 'gerarPIPorReserva'])->name('react.gerarpi');
     // =================================================
 
     // Usuários

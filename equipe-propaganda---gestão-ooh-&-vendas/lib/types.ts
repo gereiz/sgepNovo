@@ -107,3 +107,53 @@ export interface CheckingReport {
   status: 'Aprovado' | 'Aguardando Aprovação' | 'Necessita Reparo';
   observations: string;
 }
+
+export interface PreReservation {
+  id: string;
+  clientName: string;
+  corporateReason: string;
+  cpfCnpj: string;
+  address: string;
+  cep: string;
+  uf: string;
+  city: string;
+  phone: string;
+  stateRegistration: string;
+  responsibleName: string;
+  email: string;
+  financialEmail: string;
+  datePreReserva: string;
+  expirationText: string;
+  campaignTitle: string;
+  segment: string;
+  panelsCount: number;
+  panelIdsList: string;
+  panelDetails: string[];
+  sellerName: string;
+  agents: string[];
+  serviceType: string;
+  quantity: number;
+  unitPrice: number;
+  unitDiscount: number;
+  unitCost: number;
+  paymentStatus: 'SIM' | 'NÃO (A Faturar)' | 'PAGO PARCIAL';
+  paymentMethod: string;
+  installments: string;
+  paymentDueDate: string;
+  notes: string;
+  isHot?: boolean;
+}
+
+export interface PedidoInsercao {
+  id: string;
+  piCode: string;
+  preReservationId: string;
+  clientName: string;
+  campaignTitle: string;
+  biSemanaLabel: string;
+  totalValue: number;
+  panelsCount: number;
+  status: 'Emitido' | 'Assinado' | 'Em Veiculação';
+  issuedAt: string;
+  sellerName: string;
+}

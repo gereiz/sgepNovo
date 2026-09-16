@@ -46,6 +46,14 @@ import {
 
 const NAV_GRUPOS = [
   {
+    key: 'home',
+    label: 'Início',
+    icon: LayoutGrid,
+    items: [
+      { name: 'Dashboard • Novo React', description: 'Painel executivo de indicadores comerciais e operacionais.', href: '/dashboard', badge: { text: 'REACT', color: 'bg-cyan-500' } },
+    ],
+  },
+  {
     key: 'enderecos',
     label: 'Endereços',
     icon: MapPin,
@@ -71,7 +79,8 @@ const NAV_GRUPOS = [
       { name: 'Lista de Painéis', description: 'Realize o cadastro / edição de painéis.', href: '/Paineis' },
       { name: 'Envio de Disponibilidades', description: 'Consulte painéis disponíveis, reservados e envie disponibilidades.', href: '/ResPaineis' },
       { name: 'Reserva de Painéis', description: 'Realize a reserva / cancelamento de reserva para clientes.', href: '/ResPaineisCli' },
-      { name: 'Gerar PI', description: 'Gera PI das reservas na Bi-Semana selecionada.', href: '/ReservaSemPi' },
+      { name: 'Gerar PI (Vue Legado)', description: 'Fluxo antigo Vue de emissão de PI por reserva.', href: '/ReservaSemPi' },
+      { name: 'Reservas sem PI • Novo React', description: 'Nova interface React com cards agrupados e stepper de emissão.', href: '/reservas-sem-pi', badge: { text: 'NOVO', color: 'bg-emerald-500' } },
     ],
   },
   {
@@ -85,7 +94,7 @@ const NAV_GRUPOS = [
   {
     key: 'arquivos',
     label: 'Arquivos',
-    icon: LayoutGrid,
+    icon: Sparkles,
     items: [
       { name: 'Disponibilidades Enviadas', description: 'Em Breve.', href: '#' },
       { name: "Pi's Geradas", description: "Exibe todas as Pi's geradas nos ultimos 60 dias", href: '/PisGeradas' },
@@ -114,7 +123,8 @@ const NAV_GRUPOS = [
     items: [
       { name: 'Cadastro de Serviços', description: 'Realize o cadastro / edição de serviços.', href: '/Servicos' },
       { name: 'Cadastro de Comissões', description: 'Realize o cadastro / edição de comissões.', href: '/Comissoes' },
-      { name: 'Controle de Caixa', description: 'Realize o controle de Entradas e Saídas de valores.', href: '/Caixa' },
+      { name: 'Controle de Caixa (Vue Legado)', description: 'Fluxo antigo Vue de entradas e saídas.', href: '/Caixa' },
+      { name: 'Caixa • Novo React', description: 'Nova interface com modais de Quitar, Editar, Excluir e emissão.', href: '/caixa', badge: { text: 'REACT', color: 'bg-cyan-500' } },
       { name: 'Comissões Pagas', description: 'Lista as comissões pagas por PI.', href: '/ListaComissoesPagas' },
     ],
   },
@@ -239,8 +249,15 @@ export function Navbar({
                                       <IconL className="h-4 w-4 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
                                     </div>
                                     <div className="flex-auto min-w-0">
-                                      <div className="block font-semibold text-[13.5px] text-gray-900 truncate">
-                                        {item.name}
+                                      <div className="flex items-center gap-1.5 flex-wrap">
+                                        <div className="block font-semibold text-[13.5px] text-gray-900 truncate">
+                                          {item.name}
+                                        </div>
+                                        {item.badge && (
+                                          <span className={`inline-flex items-center px-1.5 py-0 text-[9px] h-4 rounded font-black tracking-wider text-white ${item.badge.color || 'bg-cyan-500'}`}>
+                                            {item.badge.text}
+                                          </span>
+                                        )}
                                       </div>
                                       <p className="mt-0.5 text-gray-500 text-[12px] leading-snug line-clamp-2">
                                         {item.description}
@@ -325,8 +342,15 @@ export function Navbar({
                             <IconL className="h-6 w-6 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
                           </div>
                           <div className="flex-auto min-w-0">
-                            <div className="block font-semibold text-gray-900 truncate">
-                              {item.name}
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <div className="block font-semibold text-gray-900 truncate">
+                                {item.name}
+                              </div>
+                              {item.badge && (
+                                <span className={`inline-flex items-center px-1.5 py-0 text-[9px] h-4 rounded font-black tracking-wider text-white ${item.badge.color || 'bg-cyan-500'}`}>
+                                  {item.badge.text}
+                                </span>
+                              )}
                             </div>
                             <p className="mt-1 text-gray-500 text-[13px] leading-snug line-clamp-2">
                               {item.description}

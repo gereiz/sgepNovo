@@ -1,4 +1,4 @@
-import { BiSemana, Seller, Client, AddressLocation, Panel, Reservation, CheckingReport, PanelType } from './types';
+import { BiSemana, Seller, Client, AddressLocation, Panel, Reservation, CheckingReport, PanelType, PreReservation, PedidoInsercao } from './types';
 
 // Curated high quality direct image links for Out-of-Home panels & Billboards
 export const SAMPLE_OOH_IMAGES = [
@@ -48,20 +48,25 @@ export const INITIAL_SELLERS: Seller[] = [
   },
 ];
 
-// Bi-semanas calendar for OOH standard (26 bi-semanas/year)
+// Bi-semanas calendar for OOH standard (26 bi-semanas/year or 52 numbered weeks)
 export const BI_SEMANAS: BiSemana[] = [
-  { id: 'BS-14-2025', number: 14, year: 2025, label: 'BS: 14 (10/03/2025 - 23/03/2025)', startDate: '2025-03-10', endDate: '2025-03-23' },
-  { id: 'BS-15-2025', number: 15, year: 2025, label: 'BS: 15 (24/03/2025 - 06/04/2025)', startDate: '2025-03-24', endDate: '2025-04-06' },
-  { id: 'BS-16-2025', number: 16, year: 2025, label: 'BS: 16 (07/04/2025 - 20/04/2025)', startDate: '2025-04-07', endDate: '2025-04-20' },
-  { id: 'BS-17-2025', number: 17, year: 2025, label: 'BS: 17 (21/04/2025 - 04/05/2025)', startDate: '2025-04-21', endDate: '2025-05-04' },
-  { id: 'BS-18-2025', number: 18, year: 2025, label: 'BS: 18 (05/05/2025 - 18/05/2025)', startDate: '2025-05-05', endDate: '2025-05-18' },
-  { id: 'BS-19-2025', number: 19, year: 2025, label: 'BS: 19 (19/05/2025 - 01/06/2025)', startDate: '2025-05-19', endDate: '2025-06-01' },
-  { id: 'BS-20-2025', number: 20, year: 2025, label: 'BS: 20 (02/06/2025 - 15/06/2025)', startDate: '2025-06-02', endDate: '2025-06-15' },
-  // 2024
-  { id: 'BS-16-2024', number: 16, year: 2024, label: 'BS: 16 (08/04/2024 - 21/04/2024)', startDate: '2024-04-08', endDate: '2024-04-21' },
-  { id: 'BS-15-2024', number: 15, year: 2024, label: 'BS: 15 (25/03/2024 - 07/04/2024)', startDate: '2024-03-25', endDate: '2024-04-07' },
   // 2026
-  { id: 'BS-16-2026', number: 16, year: 2026, label: 'BS: 16 (06/04/2026 - 19/04/2026)', startDate: '2026-04-06', endDate: '2026-04-19' },
+  { id: 'BS-52-2026', number: 52, year: 2026, label: 'BS: 52 (14/12/2026 até 27/12/2026)', startDate: '2026-12-14', endDate: '2026-12-27' },
+  { id: 'BS-51-2026', number: 51, year: 2026, label: 'BS: 51 (30/11/2026 até 13/12/2026)', startDate: '2026-11-30', endDate: '2026-12-13' },
+  { id: 'BS-50-2026', number: 50, year: 2026, label: 'BS: 50 (16/11/2026 até 29/11/2026)', startDate: '2026-11-16', endDate: '2026-11-29' },
+  { id: 'BS-49-2026', number: 49, year: 2026, label: 'BS: 49 (02/11/2026 até 15/11/2026)', startDate: '2026-11-02', endDate: '2026-11-15' },
+  { id: 'BS-16-2026', number: 16, year: 2026, label: 'BS: 16 (06/04/2026 até 19/04/2026)', startDate: '2026-04-06', endDate: '2026-04-19' },
+  // 2025
+  { id: 'BS-14-2025', number: 14, year: 2025, label: 'BS: 14 (10/03/2025 até 23/03/2025)', startDate: '2025-03-10', endDate: '2025-03-23' },
+  { id: 'BS-15-2025', number: 15, year: 2025, label: 'BS: 15 (24/03/2025 até 06/04/2025)', startDate: '2025-03-24', endDate: '2025-04-06' },
+  { id: 'BS-16-2025', number: 16, year: 2025, label: 'BS: 16 (07/04/2025 até 20/04/2025)', startDate: '2025-04-07', endDate: '2025-04-20' },
+  { id: 'BS-17-2025', number: 17, year: 2025, label: 'BS: 17 (21/04/2025 até 04/05/2025)', startDate: '2025-04-21', endDate: '2025-05-04' },
+  { id: 'BS-18-2025', number: 18, year: 2025, label: 'BS: 18 (05/05/2025 até 18/05/2025)', startDate: '2025-05-05', endDate: '2025-05-18' },
+  { id: 'BS-19-2025', number: 19, year: 2025, label: 'BS: 19 (19/05/2025 até 01/06/2025)', startDate: '2025-05-19', endDate: '2025-06-01' },
+  { id: 'BS-20-2025', number: 20, year: 2025, label: 'BS: 20 (02/06/2025 até 15/06/2025)', startDate: '2025-06-02', endDate: '2025-06-15' },
+  // 2024
+  { id: 'BS-16-2024', number: 16, year: 2024, label: 'BS: 16 (08/04/2024 até 21/04/2024)', startDate: '2024-04-08', endDate: '2024-04-21' },
+  { id: 'BS-15-2024', number: 15, year: 2024, label: 'BS: 15 (25/03/2024 até 07/04/2024)', startDate: '2024-03-25', endDate: '2024-04-07' },
 ];
 
 export const INITIAL_CLIENTS: Client[] = [

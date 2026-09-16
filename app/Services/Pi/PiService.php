@@ -67,7 +67,6 @@ class PiService
                 'id_bisemana' => $dados['Two']['bisemanaId'],
             ],
             [
-                'arquivo'         => 'pi_'.$nome_cliente.'_'.$data_pi.'.pdf',
                 'contato'         => $dados['One']['responsavel'] ?? null,
                 'campanha'        => $dados['Two']['campanha'] ?? null,
                 'vl_unit'         => $vlr_unt,
@@ -81,6 +80,11 @@ class PiService
                 'obs'             => $obsFinal,
             ]
         );
+
+        $nomeClienteSeguro = preg_replace('/[^A-Za-z0-9_-]+/', '_', (string)$nome_cliente);
+        $ano = substr((string)$data_pi, 0, 4);
+        $nomeArquivo = 'PI' . $pi->id . '_' . $ano . '_' . $nomeClienteSeguro . '_' . $data_pi . '.pdf';
+        $pi->update(['arquivo' => $nomeArquivo]);
 
         return $pi;
     }

@@ -38,9 +38,13 @@ class AuthenticatedSessionController extends Controller
 
         Inertia::share('user', session('user'));
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        $intended = redirect()->intended(RouteServiceProvider::HOME)->getTargetUrl();
+        $separator = (parse_url($intended, PHP_URL_QUERY) === null) ? '?' : '&';
+        $redirectUrl = $intended . $separator . 'refresh=1';
 
-        
+        Inertia::share('redirect', $redirectUrl);
+
+        return redirect()->to($redirectUrl);
     }
 
     /**

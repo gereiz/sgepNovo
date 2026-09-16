@@ -167,7 +167,6 @@ class PiController extends Controller
                 $pi = Pi::updateOrCreate([
                     'id_cliente' => session('dadosPi')['One']['clienteId'],
                     'id_paineis' => json_encode(session('dadosPi')['Two']['paineis']),
-                    'arquivo' => $cliente_nome.'_'.$dt_pi.'.pdf',
                     'contato' => session('dadosPi')['One']['responsavel'],
                     'campanha' => session('dadosPi')['Two']['campanha'],
                     'id_bisemana' => session('dadosPi')['Two']['bisemanaId'],
@@ -181,6 +180,11 @@ class PiController extends Controller
                     'vendedor' => session('dadosPi')['Two']['vendedorId'],
                     'obs' => $obsFinal
                 ]);
+
+                $nomeClienteSeguroPi = preg_replace('/[^A-Za-z0-9_-]+/', '_', (string)$cliente_nome);
+                $anoPi = substr((string)$dt_pi, 0, 4);
+                $nomeArquivoPi = 'PI' . $pi->id . '_' . $anoPi . '_' . $nomeClienteSeguroPi . '_' . $dt_pi . '.pdf';
+                $pi->update(['arquivo' => $nomeArquivoPi]);
 
             }
 
@@ -340,7 +344,10 @@ class PiController extends Controller
 
                 $pi_fin->setPaper('a4', 'landscape');
 
-                $pi_fin->save(storage_path('app/public/pdf/pi/pi_fin_'.$cliente_nome.'_'.$dt_pi.'.pdf'));
+                $nomeClienteSeguroFin = preg_replace('/[^A-Za-z0-9_-]+/', '_', (string)$cliente_nome);
+                $anoFin = substr((string)$dt_pi, 0, 4);
+                $nomeArquivoFin = 'pi_fin_PI' . $pi->id . '_' . $anoFin . '_' . $nomeClienteSeguroFin . '_' . $dt_pi . '.pdf';
+                $pi_fin->save(storage_path('app/public/pdf/pi/' . $nomeArquivoFin));
 
                 // Via do Cliente
                 $pi_cli =  PDF::loadview('relatorios.pi.pi_nova', compact('pi', 'idPaineis', 'cliente', 'agentes', 'comissoes', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
@@ -348,7 +355,8 @@ class PiController extends Controller
 
                 $pi_cli->setPaper('a4', 'landscape');
 
-                $pi_cli->save(storage_path('app/public/pdf/pi/pi_cli_'.$cliente_nome.'_'.$dt_pi.'.pdf'));
+                $nomeArquivoCli = 'pi_cli_PI' . $pi->id . '_' . $anoFin . '_' . $nomeClienteSeguroFin . '_' . $dt_pi . '.pdf';
+                $pi_cli->save(storage_path('app/public/pdf/pi/' . $nomeArquivoCli));
 
 
                 return $pi_cli->stream('paineis_bisemana.pdf');

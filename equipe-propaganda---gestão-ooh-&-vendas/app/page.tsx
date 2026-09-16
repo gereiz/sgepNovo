@@ -10,6 +10,8 @@ import { VendasView } from '@/components/VendasView';
 import { ArquivosCheckingView } from '@/components/ArquivosCheckingView';
 import { RelatoriosView } from '@/components/RelatoriosView';
 import { FinanceiroView } from '@/components/FinanceiroView';
+import { ReservasSemPIView } from '@/components/ReservasSemPIView';
+import { NovaPIModal } from '@/components/NovaPIModal';
 import { DirectImageViewerModal } from '@/components/DirectImageViewerModal';
 import { NewReservationModal } from '@/components/NewReservationModal';
 import { GlobalSearchModal } from '@/components/GlobalSearchModal';
@@ -25,12 +27,13 @@ import {
   INITIAL_CHECKING_REPORTS,
   SAMPLE_OOH_IMAGES,
 } from '@/lib/mock-data';
-import { AddressLocation, CheckingReport, Client, Panel, Reservation } from '@/lib/types';
+import { INITIAL_PRE_RESERVATIONS } from '@/lib/prereservations-data';
+import { AddressLocation, CheckingReport, Client, Panel, Reservation, PreReservation, PedidoInsercao } from '@/lib/types';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<NavTab>('vendas');
-  const [selectedYear, setSelectedYear] = useState<number>(2025);
-  const [currentBiSemana, setCurrentBiSemana] = useState(BI_SEMANAS[2]); // BS 16 (07/04/2025 - 20/04/2025)
+  const [selectedYear, setSelectedYear] = useState<number>(2026);
+  const [currentBiSemana, setCurrentBiSemana] = useState(BI_SEMANAS[0]); // BS 52 (14/12/2026 até 27/12/2026)
 
   // System state
   const [sellers] = useState(INITIAL_SELLERS);
@@ -39,12 +42,16 @@ export default function App() {
   const [panels, setPanels] = useState<Panel[]>(INITIAL_PANELS);
   const [reservations, setReservations] = useState<Reservation[]>(generateInitialReservations());
   const [checkingReports, setCheckingReports] = useState<CheckingReport[]>(INITIAL_CHECKING_REPORTS);
+  const [preReservations, setPreReservations] = useState<PreReservation[]>(INITIAL_PRE_RESERVATIONS);
+  const [pedidosInsercao, setPedidosInsercao] = useState<any[]>([]);
 
   // Modals state
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isNewReservationOpen, setIsNewReservationOpen] = useState(false);
+  const [isNovaPIOpen, setIsNovaPIOpen] = useState(false);
+  const [selectedPreReservationForPI, setSelectedPreReservationForPI] = useState<PreReservation | null>(null);
 
   // Direct image viewer modal state
   const [imageViewerData, setImageViewerData] = useState<{
@@ -148,6 +155,43 @@ export default function App() {
     setCheckingReports((prev) => [newReport, ...prev]);
   };
 
+  // Handler to open Nova PI modal for a pre-reservation
+  const handleOpenNovaPI = (item: PreReservation) => {
+    setSelectedPreReservationForPI(item);
+    setIsNovaPIOpen(true);
+  };
+
+  // Handler to emit and formalize a PI
+  const handleEmitPI = (newPI: any) => {
+    setPedidosInsercao((prev) => [newPI, ...prev]);
+    // Remove or mark the pre-reservation as processed
+    setPreReservations((prev) => prev.filter((p) => p.id !== newPI.preReservationId));
+
+    // Also register into official reservations list
+    const newFormalReservation: Reservation = {
+      id: `res-formal-${Date.now()}`,
+      code: newPI.piCode,
+      biSemanaId: currentBiSemana.id,
+      biSemanaLabel: currentBiSemana.label,
+      year: currentBiSemana.year,
+      panelId: 'pan-pi-alloc',
+      panelCode: `${newPI.panelsCount} PAINÉIS`,
+      panelType: 'Outdoor 9x3',
+      addressTitle: `Gov. Valadares - Circuito ${newPI.panelsCount} Faces`,
+      clientId: `cli-${Date.now()}`,
+      clientName: newPI.clientName,
+      sellerId: 'taynara',
+      sellerName: newPI.sellerName || 'Taynara (Comercial)',
+      campaignTitle: newPI.campaignTitle,
+      value: newPI.totalValue,
+      status: 'Confirmada',
+      artImageUrl: SAMPLE_OOH_IMAGES[0],
+      checkingPhotoUrl: SAMPLE_OOH_IMAGES[1],
+      notes: newPI.observations,
+    };
+    setReservations((prev) => [newFormalReservation, ...prev]);
+  };
+
   // Navigation from Global Search
   const handleSearchResultSelect = (type: 'address' | 'panel' | 'client' | 'reservation', item: any) => {
     if (type === 'address') {
@@ -174,10 +218,12 @@ export default function App() {
           setActiveTab(tab);
           setIsNotificationsOpen(false);
         }}
+        onOpenNewReservation={() => setIsNewReservationOpen(true)}
         onOpenSearch={() => setIsSearchOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenNotifications={() => setIsNotificationsOpen((prev) => !prev)}
         notificationCount={3}
+        pendingPICount={preReservations.length}
       />
 
       {/* Notifications Dropdown */}
@@ -206,6 +252,21 @@ export default function App() {
             onViewSellerDetails={(sellerId) => {
               setActiveTab('vendas');
             }}
+            onNavigateToGerarPI={() => setActiveTab('gerar-pi')}
+            pendingPICount={preReservations.length}
+          />
+        )}
+
+        {activeTab === 'gerar-pi' && (
+          <ReservasSemPIView
+            preReservations={preReservations}
+            biSemanas={BI_SEMANAS}
+            currentBiSemana={currentBiSemana}
+            onSelectBiSemana={setCurrentBiSemana}
+            selectedYear={selectedYear}
+            onSelectYear={setSelectedYear}
+            sellers={sellers}
+            onOpenNovaPI={handleOpenNovaPI}
           />
         )}
 
@@ -259,6 +320,15 @@ export default function App() {
           />
         )}
       </main>
+
+      {/* Nova PI Creation Form Modal (5 Steps) */}
+      <NovaPIModal
+        isOpen={isNovaPIOpen}
+        onClose={() => setIsNovaPIOpen(false)}
+        preReservation={selectedPreReservationForPI}
+        currentBiSemana={currentBiSemana}
+        onEmitPI={handleEmitPI}
+      />
 
       {/* Direct Image Viewer Modal (Full preview with direct links and zoom) */}
       <DirectImageViewerModal

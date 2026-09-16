@@ -41,6 +41,8 @@ interface SalesOverviewProps {
   onOpenNewReservation: () => void;
   onOpenImageGallery: () => void;
   onViewSellerDetails?: (sellerId: string) => void;
+  onNavigateToGerarPI?: () => void;
+  pendingPICount?: number;
 }
 
 export function SalesOverview({
@@ -54,6 +56,8 @@ export function SalesOverview({
   onOpenNewReservation,
   onOpenImageGallery,
   onViewSellerDetails,
+  onNavigateToGerarPI,
+  pendingPICount = 36,
 }: SalesOverviewProps) {
   const [isClientsModalOpen, setIsClientsModalOpen] = useState(false);
   const [hoveredSeller, setHoveredSeller] = useState<string | null>(null);
@@ -173,11 +177,30 @@ export function SalesOverview({
             </Select>
           </div>
 
+          {/* Gerar PI Button */}
+          {onNavigateToGerarPI && (
+            <div className="flex flex-col justify-end pt-4 sm:pt-0">
+              <Button
+                variant="outline"
+                onClick={onNavigateToGerarPI}
+                className="border-rose-300 text-rose-700 hover:bg-rose-50 hover:text-rose-800 shadow-xs cursor-pointer font-semibold gap-1.5"
+              >
+                <FileText className="w-4 h-4 text-rose-600" />
+                <span>Gerar PI</span>
+                {pendingPICount > 0 && (
+                  <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-rose-600 text-white">
+                    {pendingPICount}
+                  </span>
+                )}
+              </Button>
+            </div>
+          )}
+
           {/* New Reservation Button */}
           <div className="flex flex-col justify-end pt-4 sm:pt-0">
             <Button
               onClick={onOpenNewReservation}
-              className="bg-[#006397] hover:bg-[#004f7a] shadow-xs"
+              className="bg-[#006397] hover:bg-[#004f7a] shadow-xs cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Nova Reserva</span>
@@ -186,6 +209,26 @@ export function SalesOverview({
         </div>
 
       </div>
+
+      {/* Gerar PI Banner Notification if pending */}
+      {pendingPICount > 0 && onNavigateToGerarPI && (
+        <div className="mx-4 md:mx-8 mt-3 p-3 bg-rose-50/70 border border-rose-200/80 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+          <div className="flex items-center gap-2.5 text-xs text-rose-950 font-medium">
+            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse flex-shrink-0" />
+            <span>
+              Existem <strong>{pendingPICount} pré-reservas ativas</strong> sem Pedido de Inserção oficial emitido nesta Bi-Semana.
+            </span>
+          </div>
+          <Button
+            size="sm"
+            onClick={onNavigateToGerarPI}
+            className="bg-[#006397] hover:bg-[#004b73] text-white text-xs h-7 px-3 gap-1.5 cursor-pointer font-semibold whitespace-nowrap"
+          >
+            <FileText className="w-3.5 h-3.5" />
+            Emitir PIs Pendentes
+          </Button>
+        </div>
+      )}
 
       {/* KPI Highlights Bar with Badges */}
       <div className="px-4 md:px-8 py-3 bg-slate-50 border-b border-slate-200/80 flex flex-wrap items-center justify-between gap-3 text-xs">

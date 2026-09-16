@@ -90,7 +90,6 @@ class VendaController extends Controller
         $cliNomeFile = preg_replace('/[^A-Za-z0-9_-]+/', '_', $cliNomeFile);
         $os = Os::create([
             'id_cliente' => $clienteId ?? 0,
-            'arquivo' => 'os_cli_'.$cliNomeFile.'_'.$dtFile.'.pdf',
             'id_paineis' => json_encode($two['paineis'] ?? ['VENDA']),
             'contato' => $dados['One']['responsavel'] ?? '',
             'campanha' => $two['campanha'] ?? '',
@@ -106,6 +105,11 @@ class VendaController extends Controller
             'obs' => strip_tags($five['observacao'] ?? ($servicos[0]['detalhes'] ?? '')),
             'cancelada' => 0,
         ]);
+
+        $anoOs = substr((string)$dtFile, 0, 4);
+        $nomeArquivoOsBanco = 'OS' . $os->id . '_' . $anoOs . '_' . $cliNomeFile . '_' . $dtFile . '.pdf';
+        $os->update(['arquivo' => $nomeArquivoOsBanco]);
+
         $descricaoBase = 'OS nº ' . ($os->id ?? 0) . ' Cliente: ' . ($cliNome ?? '');
 
         // Monta lista de lançamentos
@@ -213,7 +217,8 @@ class VendaController extends Controller
         $dir = storage_path('app/public/pdf/os');
         if (!is_dir($dir)) { @mkdir($dir, 0777, true); }
         $cliNome = preg_replace('/[^A-Za-z0-9_-]+/', '_', $cliNome);
-        $fileName = 'os_cli_'.$cliNome.'_'.$dtFile.'.pdf';
+        $anoOs = substr((string)$dtFile, 0, 4);
+        $fileName = 'os_cli_OS' . $os->id . '_' . $anoOs . '_' . $cliNome . '_' . $dtFile . '.pdf';
         try {
             $osPdf->save($dir.'/'.$fileName);
             $os->update(['arquivo' => $fileName]);
