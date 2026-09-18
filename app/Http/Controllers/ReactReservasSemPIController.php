@@ -522,6 +522,7 @@ class ReactReservasSemPIController extends Controller
             }
 
             $faturamento = !empty($formThree) ? $formThree : null;
+
             $vendedorNome = $vendedorId > 0 ? (User::find($vendedorId)?->name ?? null) : null;
             $textoAtivo = TextoPadrao::where('active', 1)->first();
 
@@ -531,18 +532,37 @@ class ReactReservasSemPIController extends Controller
                 if (!is_array($sp)) continue;
                 $svVlrTotal = (float)($sp['vlr_total'] ?? 0);
                 $svVlrDesc = (float)($sp['vlr_desc'] ?? 0);
-                $svVlrLiquido = $svVlrTotal - $svVlrDesc;
+                $svVlrCusto = (float)($sp['vlr_custo'] ?? 0);
+                $base_comissao = $svVlrTotal - $svVlrDesc;
                 $svId = (int)($sp['id'] ?? 0);
                 foreach ($agentes as $agente) {
-                    $comissao = Comissao::where('id_funcionario', $agente->id)
+                    $agId = isset($agente->id) ? (int)$agente->id : 0;
+                    if ($agId <= 0) continue;
+                    $comissao = Comissao::where('id_funcionario', $agId)
                         ->where('id_servico', $svId)->first();
                     if ($comissao) {
                         if ((int)($comissao->tipo_comissao ?? 0) === 1) {
-                            $vlrCom = $svVlrLiquido * ((float)($comissao->valor ?? 0) / 100);
+                            $vlrCom = $base_comissao * ((float)($comissao->valor ?? 0) / 100);
                             $vlrTotalComissoes -= $vlrCom;
                         } else {
-                            $vlrCom = $svVlrLiquido - (float)($comissao->valor ?? 0);
+                            $vlrCom = $base_comissao - (float)($comissao->valor ?? 0);
                             $vlrTotalComissoes -= $vlrCom;
+                        }
+                        try {
+                            $jaExiste = ComissaoVenda::where('pi_id', $pi->id)
+                                ->where('comissao_id', (int)$comissao->id)
+                                ->where('agente_id', $agId)
+                                ->exists();
+                            if (!$jaExiste) {
+                                ComissaoVenda::create([
+                                    'pi_id' => $pi->id,
+                                    'comissao_id' => (int)$comissao->id,
+                                    'agente_id' => $agId,
+                                    'valor_comissao' => (float)($vlrCom ?? 0),
+                                ]);
+                            }
+                        } catch (\Throwable $eCV) {
+                            Log::warning('Erro ao salvar ComissaoVenda PI #' . $pi->id . ': ' . $eCV->getMessage());
                         }
                     }
                 }
@@ -584,6 +604,33 @@ class ReactReservasSemPIController extends Controller
                         'observacoes' => $obsFinal,
                     ];
                 }
+            }
+
+            try {
+                $caixaService = new CaixaService();
+                $lancamento_existe = $caixaService->getLancamentosReserva($pi->id);
+                foreach ($lista_lancamentos as $lanc) {
+                    $request_lancamento = new Request();
+                    $request_lancamento->replace($lanc);
+                    if (!$lancamento_existe) {
+                        $caixaService->createLancamento($request_lancamento);
+                    } else {
+                        if (is_object($lancamento_existe) && $lancamento_existe instanceof \Illuminate\Database\Eloquent\Model) {
+                            $lancamento_existe->update($lanc);
+                        } elseif (is_countable($lancamento_existe) && count($lancamento_existe) === 1) {
+                            if (is_array($lancamento_existe)) {
+                                $first = reset($lancamento_existe);
+                            } else {
+                                $first = $lancamento_existe->first();
+                            }
+                            if ($first && is_object($first) && method_exists($first, 'update')) {
+                                $first->update($lanc);
+                            }
+                        }
+                    }
+                }
+            } catch (\Throwable $eCaixa) {
+                Log::warning('Erro ao criar lançamentos caixa PI #' . $pi->id . ': ' . $eCaixa->getMessage());
             }
 
             if (count($agentes) === 0) {

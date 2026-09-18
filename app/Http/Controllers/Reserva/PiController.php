@@ -197,52 +197,22 @@ class PiController extends Controller
 
             $valor_liq_comissoes = 0;
 
-            // Calcula as comissões para salvar o valor liquido e o valor total
-            $this->piService->calculateComission($servicos, $agentes, $pi, $valor_liq_comissoes);
-
-            foreach($servicos as $servico) {
-                $vlr_total = $servico['vlr_total'];
-                $vlr_unit = $servico['vlr_unit'];
-                $vlr_desc = $servico['vlr_desc'];
-                $vlr_custo = $servico['vlr_custo'];
-
-                $vlr_liquido = $vlr_total - $vlr_desc;
-                $vlr_liquido_financeiro = $vlr_total - $vlr_desc - $vlr_custo;
-
-
-                foreach($agentes as $agente) {
-                    $comissao = Comissao::where('id_funcionario', $agente->id)
-                                          ->where('id_servico', $servico['id'])->first();
-
-                    $comissoes = Comissao::where('id_funcionario', $agente->id)->get()->toArray();
-
-
-                    $comissao_venda = new ComissaoVenda();
-
-
-                    if (optional($comissao)->exists()) {
-                        if($comissao->tipo_comissao == 1) {
-                            $comissao_venda->Create([
-                                'pi_id' => $pi->id,
-                                'comissao_id' => $comissao->id,
-                                'agente_id' => $agente->id,
-                                'valor_comissao' => $vlr_liquido * ($comissao->valor / 100),
-                            ]);
-                            $vlr_total -= $vlr_liquido * ($comissao->valor / 100);
-                        } else {
-                            $comissao_venda->Create([
-                                'pi_id' => $pi->id,
-                                'comissao_id' => $comissao->id,
-                                'agente_id' => $agente->id,
-                                'valor_comissao' => $vlr_liquido - $comissao->valor,
-                            ]);
-                            $vlr_total -= $vlr_liquido - $comissao->valor;
-                        }
+            $comissoes = [];
+            if (count($agentes) > 0) {
+                try {
+                    $agenteIds = [];
+                    foreach ($agentes as $ag) {
+                        if (!empty($ag->id)) $agenteIds[] = (int)$ag->id;
                     }
+                    if (count($agenteIds) > 0) {
+                        $comissoes = Comissao::whereIn('id_funcionario', $agenteIds)->get()->toArray();
+                    }
+                } catch (\Throwable $e) {
+                    $comissoes = [];
                 }
-
-                $valor_liq_comissoes += $vlr_total;
             }
+
+            $valor_liq_comissoes = $this->piService->calculateComission($servicos, $agentes, $pi, $valor_liq_comissoes);
 
 
 

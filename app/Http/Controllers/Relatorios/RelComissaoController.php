@@ -105,10 +105,17 @@ class RelComissaoController extends Controller
             })->values()->all();
         }
 
-        $comissoes = collect($comissoes)->unique(function ($c) {
-            $valor = number_format((float)($c['valor_comissao'] ?? 0), 2, '.', '');
-            return ($c['agente_id'] ?? '0').'|'.($c['comissao_id'] ?? '0').'|'.($c['pi_id'] ?? '0').'|'.$valor;
-        })->values()->all();
+        $chavesVistas = [];
+        $comissoesDedup = [];
+        foreach ($comissoes as $c) {
+            $ch = (int)($c['agente_id'] ?? 0).'|'.(int)($c['comissao_id'] ?? 0).'|'.(int)($c['pi_id'] ?? 0);
+            if (isset($chavesVistas[$ch])) {
+                continue;
+            }
+            $chavesVistas[$ch] = true;
+            $comissoesDedup[] = $c;
+        }
+        $comissoes = $comissoesDedup;
 
         $totais = collect($comissoes)->reduce(function($acc, $c) use ($isRecebida) {
             if (!empty($c['pi_id']) && $isRecebida($c['pi_id'])) {
@@ -120,6 +127,29 @@ class RelComissaoController extends Controller
         }, ['recebidos' => 0.0, 'a_receber' => 0.0]);
 
         $pisMap = collect($pis)->keyBy('id');
+
+        $parcelasPorPi = [];
+        $parcelasUnicasPorPi = [];
+        foreach ($allLansPi as $piId => $lans) {
+            $piIdInt = (int)$piId;
+            $soma = 0.0;
+            $unicas = [];
+            foreach ($lans as $l) {
+                $lId = (int)($l->id ?? 0);
+                $vl = (float)($l->valor ?? 0);
+                $soma += $vl;
+                $unicas[$lId] = [
+                    'valor' => $vl,
+                    'parcelas' => $l->parcelas ?? null,
+                    'dt_faturamento' => $l->dt_faturamento ?? null,
+                    'dt_pagamento_real' => $l->dt_pagamento_real ?? null,
+                    'status_pagamento' => $l->status_pagamento ?? 'PENDENTE',
+                ];
+            }
+            $parcelasPorPi[$piIdInt] = $soma;
+            $parcelasUnicasPorPi[$piIdInt] = $unicas;
+        }
+
         $clientesMap = Cliente::whereIn('id', $pisMap->pluck('id_cliente')->filter()->unique()->values()->all())
             ->get()
             ->keyBy('id');
@@ -229,23 +259,52 @@ class RelComissaoController extends Controller
                     }
                     return $k;
                 })
-                ->map(function ($items) {
+                ->map(function ($items) use ($parcelasPorPi, $parcelasUnicasPorPi) {
                     $first = $items->first();
+                    $piId = (int)($first['pi'] ?? 0);
                     $minVenc = $items->pluck('vencimento')->filter()->min();
                     $minPagtoReal = $items->pluck('data_pagamento_real')->filter()->min();
                     if (!$minPagtoReal) {
                         $minPagtoReal = $items->pluck('data_pagamento')->filter()->min();
                     }
-                    $sumParcela = (float)$items->sum(function ($i) { return (float)($i['valor_parcela'] ?? 0); });
+                    $unicasLan = $parcelasUnicasPorPi[$piId] ?? [];
+                    $quitadosIds = [];
+                    foreach ($unicasLan as $lid => $ldata) {
+                        $st = (string)($ldata['status_pagamento'] ?? 'PENDENTE');
+                        if ($st === 'QUITADO') $quitadosIds[$lid] = true;
+                    }
+                    if (count($quitadosIds) > 0) {
+                        $sumParcela = 0.0;
+                        foreach ($unicasLan as $lid => $ldata) {
+                            if (isset($quitadosIds[$lid])) {
+                                $sumParcela += (float)($ldata['valor'] ?? 0);
+                            }
+                        }
+                    } else {
+                        $sumParcela = (float)($parcelasPorPi[$piId] ?? 0);
+                    }
                     $sumCom = (float)$items->sum(function ($i) { return (float)($i['valor_comissao'] ?? 0); });
-                    $parcelasArr = $items->pluck('parcela')
-                        ->filter(function ($p) {
-                            $p = trim((string)$p);
-                            return $p !== '' && $p !== '—';
-                        })
-                        ->unique()
-                        ->values()
-                        ->all();
+                    $parcelasArr = [];
+                    if (count($quitadosIds) > 0) {
+                        foreach ($unicasLan as $lid => $ldata) {
+                            if (isset($quitadosIds[$lid])) {
+                                $p = trim((string)($ldata['parcelas'] ?? ''));
+                                if ($p !== '' && $p !== '—') $parcelasArr[] = $p;
+                            }
+                        }
+                    }
+                    if (count($parcelasArr) === 0) {
+                        $parcelasArr = $items->pluck('parcela')
+                            ->filter(function ($p) {
+                                $p = trim((string)$p);
+                                return $p !== '' && $p !== '—';
+                            })
+                            ->unique()
+                            ->values()
+                            ->all();
+                    } else {
+                        $parcelasArr = array_values(array_unique($parcelasArr));
+                    }
                     usort($parcelasArr, function ($a, $b) {
                         $a = trim((string)$a);
                         $b = trim((string)$b);
@@ -276,14 +335,14 @@ class RelComissaoController extends Controller
                     }
                     return [
                         'percent' => $first['percent'] ?? '—',
-                        'pi' => $first['pi'] ?? 0,
+                        'pi' => $piId,
                         'parcela' => $parcelaLabel,
                         'cliente' => $first['cliente'] ?? '',
                         'agente' => $agente,
                         'vencimento' => $minVenc,
                         'data_pagamento' => $minPagtoReal,
                         'data_pagamento_real' => $minPagtoReal,
-                        'valor_parcela' => $sumParcela ?: null,
+                        'valor_parcela' => $sumParcela > 0 ? $sumParcela : null,
                         'valor_comissao' => $sumCom,
                         'tipo' => $tipoLabel,
                     ];

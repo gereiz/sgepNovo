@@ -99,30 +99,47 @@ class PiService
             $vlr_unit   = (float)($servico['vlr_unit'] ?? 0);
             $vlr_desc   = (float)($servico['vlr_desc'] ?? 0);
             $vlr_custo  = (float)($servico['vlr_custo'] ?? 0);
-            $vlr_liquido = $vlr_total - $vlr_desc - $vlr_custo;
+
+            $base_comissao = $vlr_total - $vlr_desc;
 
             foreach ($agentes as $agente) {
-                $comissao = Comissao::where('id_funcionario', $agente->id)
+                $agenteId = isset($agente->id) ? (int)$agente->id : 0;
+                if ($agenteId <= 0) continue;
+                $comissao = Comissao::where('id_funcionario', $agenteId)
                                     ->where('id_servico', $servico['id'])
                                     ->first();
 
                 if ($comissao) {
-                    if ($comissao->tipo_comissao == 1) {
-                        ComissaoVenda::create([
-                            'pi_id'          => $pi->id,
-                            'comissao_id'    => $comissao->id,
-                            'agente_id'      => $agente->id,
-                            'valor_comissao' => $vlr_liquido * ($comissao->valor / 100),
-                        ]);
-                        $vlr_total -= $vlr_liquido * ($comissao->valor / 100);
+                    if ((int)$comissao->tipo_comissao === 1) {
+                        $vlrComissao = $base_comissao * ((float)($comissao->valor ?? 0) / 100);
+                        $jaExiste = ComissaoVenda::where('pi_id', $pi->id)
+                            ->where('comissao_id', (int)$comissao->id)
+                            ->where('agente_id', $agenteId)
+                            ->exists();
+                        if (!$jaExiste) {
+                            ComissaoVenda::create([
+                                'pi_id'          => $pi->id,
+                                'comissao_id'    => (int)$comissao->id,
+                                'agente_id'      => $agenteId,
+                                'valor_comissao' => $vlrComissao,
+                            ]);
+                        }
+                        $vlr_total -= $vlrComissao;
                     } else {
-                        ComissaoVenda::create([
-                            'pi_id'          => $pi->id,
-                            'comissao_id'    => $comissao->id,
-                            'agente_id'      => $agente->id,
-                            'valor_comissao' => $vlr_liquido - $comissao->valor,
-                        ]);
-                        $vlr_total -= $vlr_liquido - $comissao->valor;
+                        $vlrComissao = $base_comissao - (float)($comissao->valor ?? 0);
+                        $jaExiste = ComissaoVenda::where('pi_id', $pi->id)
+                            ->where('comissao_id', (int)$comissao->id)
+                            ->where('agente_id', $agenteId)
+                            ->exists();
+                        if (!$jaExiste) {
+                            ComissaoVenda::create([
+                                'pi_id'          => $pi->id,
+                                'comissao_id'    => (int)$comissao->id,
+                                'agente_id'      => $agenteId,
+                                'valor_comissao' => $vlrComissao,
+                            ]);
+                        }
+                        $vlr_total -= $vlrComissao;
                     }
                 }
             }
