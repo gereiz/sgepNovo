@@ -310,6 +310,53 @@ class ReactReservasSemPIController extends Controller
         $formFour = is_array($formPi) && isset($formPi['Four']) && is_array($formPi['Four']) ? $formPi['Four'] : [];
         $formFive = is_array($formPi) && isset($formPi['Five']) && is_array($formPi['Five']) ? $formPi['Five'] : [];
 
+        $participantesComissoes = $formTwo['participantesComissoes'] ?? null;
+        $isNovoFluxoComissao = is_array($participantesComissoes) && count($participantesComissoes) > 0;
+
+        if ($isNovoFluxoComissao) {
+            foreach ($participantesComissoes as $idx => $pc) {
+                $tipo = $pc['pessoa_tipo'] ?? '';
+                $pid  = (int)($pc['pessoa_id'] ?? 0);
+                $cid  = (int)($pc['comissao_id'] ?? 0);
+                $ctip = (int)($pc['comissao_tipo'] ?? 0);
+                $cval = (float)($pc['comissao_valor_numerico'] ?? -1);
+                if (!in_array($tipo, ['user','cliente'], true) || $pid <= 0 || $cid <= 0 || !in_array($ctip, [1,2], true) || $cval < 0) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Participante #'.($idx+1).' inválido ou comissão inválida no Step 2. Verifique a seleção.',
+                    ], 422);
+                }
+            }
+            $temUser = false;
+            $agIdsFallback = [];
+            $primeiroUserId = 0;
+            $primeiroUserName = '';
+            foreach ($participantesComissoes as $pc) {
+                if ($pc['pessoa_tipo'] === 'user') {
+                    $temUser = true;
+                    if ($primeiroUserId === 0) {
+                        $primeiroUserId = (int)$pc['pessoa_id'];
+                        $primeiroUserName = (string)($pc['nome'] ?? '');
+                    }
+                } elseif ($pc['pessoa_tipo'] === 'cliente') {
+                    $agIdsFallback[] = (int)$pc['pessoa_id'];
+                }
+            }
+            $vIdLeg = (int)($formTwo['vendedorId'] ?? 0);
+            if ($vIdLeg <= 0 && $primeiroUserId > 0) {
+                $formTwo['vendedorId'] = $primeiroUserId;
+                $formTwo['vendedor']   = $primeiroUserName;
+            }
+            $agIdsLeg = $formTwo['agentesId'] ?? [];
+            if ((!is_array($agIdsLeg) || count($agIdsLeg) === 0) && count($agIdsFallback) > 0) {
+                $formTwo['agentesId'] = $agIdsFallback;
+            }
+        } else {
+            if ($participantesComissoes === null && function_exists('Log::debug')) {
+                Log::debug('PI fallback legado: participantesComissoes ausente');
+            }
+        }
+
         $clienteId = (int)($formOne['clienteId'] ?? 0);
         if ($clienteId <= 0 && count($reservaIds) > 0) {
             $primReserva = Reserva::find((int)$reservaIds[0]);
@@ -513,61 +560,175 @@ class ReactReservasSemPIController extends Controller
             $cidade = $clienteModel && !empty($clienteModel->cidade) ? Cidade::find($clienteModel->cidade) : null;
             $uf = $clienteModel && !empty($clienteModel->uf) ? UF::find($clienteModel->uf) : null;
 
-            $twoAgentes = $formTwo['agentesId'] ?? [];
-            if (!is_array($twoAgentes)) $twoAgentes = [];
-            $agentes = [];
-            foreach ($twoAgentes as $ag) {
-                $agente = Cliente::where('agent', 1)->where('id', (int)$ag)->first();
-                if ($agente) $agentes[] = $agente;
-            }
-
             $faturamento = !empty($formThree) ? $formThree : null;
 
             $vendedorNome = $vendedorId > 0 ? (User::find($vendedorId)?->name ?? null) : null;
             $textoAtivo = TextoPadrao::where('active', 1)->first();
 
+            $agentes = [];
+            $comissoesHelperData = [];
             $valor_liq_comissoes = 0;
             $vlrTotalComissoes = $vlrTotal;
-            foreach ($servicos as $sp) {
-                if (!is_array($sp)) continue;
-                $svVlrTotal = (float)($sp['vlr_total'] ?? 0);
-                $svVlrDesc = (float)($sp['vlr_desc'] ?? 0);
-                $svVlrCusto = (float)($sp['vlr_custo'] ?? 0);
-                $base_comissao = $svVlrTotal - $svVlrDesc;
-                $svId = (int)($sp['id'] ?? 0);
-                foreach ($agentes as $agente) {
-                    $agId = isset($agente->id) ? (int)$agente->id : 0;
-                    if ($agId <= 0) continue;
-                    $comissao = Comissao::where('id_funcionario', $agId)
-                        ->where('id_servico', $svId)->first();
-                    if ($comissao) {
-                        if ((int)($comissao->tipo_comissao ?? 0) === 1) {
-                            $vlrCom = $base_comissao * ((float)($comissao->valor ?? 0) / 100);
-                            $vlrTotalComissoes -= $vlrCom;
+
+            if ($isNovoFluxoComissao) {
+                foreach ($participantesComissoes as $pc) {
+                    $tipo = $pc['pessoa_tipo'];
+                    $pid  = (int)$pc['pessoa_id'];
+                    $idSintetico = $tipo === 'user'
+                        ? 1000000 + $pid
+                        : 2000000 + $pid;
+                    $nomeExibir = trim((string)($pc['nome'] ?? ''));
+
+                    $agObj = new \stdClass();
+                    $agObj->id_sintetico = $idSintetico;
+                    $agObj->id = $idSintetico;
+                    $agObj->pessoa_tipo_real = $tipo;
+                    $agObj->pessoa_id_real = $pid;
+                    $agObj->nome_fantasia = $nomeExibir;
+                    $agObj->razao_social   = $nomeExibir;
+                    $agObj->nome           = $nomeExibir;
+                    $agObj->cpf_cnpj = '';
+                    $agObj->nro_insc = '';
+                    $agObj->endereco = '';
+                    $agObj->num = '';
+                    $agObj->complemento = '';
+                    $agObj->cep = '';
+                    $agentes[] = $agObj;
+                }
+
+                foreach ($servicos as $sp) {
+                    if (!is_array($sp)) continue;
+                    $svVlrUnit  = (float)($sp['vlr_unit'] ?? 0);
+                    $svDescUnit = (float)($sp['vlr_desc'] ?? 0);
+                    $svCustUnit = (float)($sp['vlr_custo'] ?? 0);
+                    $svQtdCob   = (int)($sp['qtd_cobrada']  ?? ((int)($sp['quantidade'] ?? 0) - (int)($sp['bonificado'] ?? 0)));
+                    $svBaseUnit = max(0, $svVlrUnit - $svDescUnit - $svCustUnit);
+                    $svBase = max(0, $svQtdCob * $svBaseUnit);
+                    $svId = (int)($sp['id'] ?? 0);
+                    $overrides = isset($sp['comissoesOverride']) && is_array($sp['comissoesOverride'])
+                        ? $sp['comissoesOverride']
+                        : [];
+
+                    foreach ($participantesComissoes as $pc) {
+                        $tipo = $pc['pessoa_tipo'];
+                        $pid  = (int)$pc['pessoa_id'];
+                        $chave = $tipo.':'.$pid;
+                        $idSintetico = $tipo === 'user' ? 1000000 + $pid : 2000000 + $pid;
+
+                        $override = isset($overrides[$chave]) && is_array($overrides[$chave])
+                            ? $overrides[$chave]
+                            : null;
+
+                        $overrideRawId = $override ? ($override['comissao_id'] ?? null) : null;
+                        $overrideZerado = $override && (($override['zerado'] ?? false) === true || (int)$overrideRawId === -1);
+                        $temOverrideReal = $override && !$overrideZerado && (int)$overrideRawId > 0;
+
+                        if ($overrideZerado) {
+                            $vlrCom = 0.0;
+                            $regraIdCadastro = null;
+                            $regraTipoFinal = 0;
+                            $regraIdRaw = -1;
                         } else {
-                            $vlrCom = $base_comissao - (float)($comissao->valor ?? 0);
-                            $vlrTotalComissoes -= $vlrCom;
+                            $regraIdRaw   = (int)($override['comissao_id']            ?? $pc['comissao_id']);
+                            $regraTipo = (int)($override['comissao_tipo']          ?? $pc['comissao_tipo']);
+                            $regraVal  = (float)($override['comissao_valor_numerico'] ?? $pc['comissao_valor_numerico']);
+                            $regraVal  = max(0, $regraVal);
+                            if ($regraTipo === 1) {
+                                $vlrCom = $svBase * $regraVal / 100;
+                            } else {
+                                $vlrCom = $regraVal;
+                            }
+                            $regraIdCadastro = $regraIdRaw > 0 ? $regraIdRaw : null;
+                            $regraTipoFinal = $regraTipo;
                         }
+                        $vlrCom = (float)number_format($vlrCom, 2, '.', '');
+                        $vlrTotalComissoes -= $vlrCom;
+
+                        $comissoesHelperData[] = [
+                            'id_servico'     => $svId,
+                            'id_funcionario' => $idSintetico,
+                            'valor'          => ($regraTipoFinal === 1 ? $regraVal : $vlrCom),
+                            'tipo_comissao'  => $regraTipoFinal,
+                            'comissao_cadastro_id' => $regraIdCadastro,
+                            'vlr_comissao_calculado' => $vlrCom,
+                        ];
+
                         try {
-                            $jaExiste = ComissaoVenda::where('pi_id', $pi->id)
-                                ->where('comissao_id', (int)$comissao->id)
-                                ->where('agente_id', $agId)
-                                ->exists();
+                            $jaExisteQ = ComissaoVenda::where('pi_id', $pi->id)
+                                ->where('pessoa_tipo', $tipo)
+                                ->where('pessoa_id', $pid);
+                            if ($regraIdCadastro === null) {
+                                $jaExisteQ->whereNull('comissao_cadastro_id');
+                            } else {
+                                $jaExisteQ->where('comissao_cadastro_id', $regraIdCadastro);
+                            }
+                            $jaExiste = $jaExisteQ->exists();
                             if (!$jaExiste) {
                                 ComissaoVenda::create([
                                     'pi_id' => $pi->id,
-                                    'comissao_id' => (int)$comissao->id,
-                                    'agente_id' => $agId,
-                                    'valor_comissao' => (float)($vlrCom ?? 0),
+                                    'comissao_cadastro_id' => $regraIdCadastro,
+                                    'pessoa_tipo' => $tipo,
+                                    'pessoa_id' => $pid,
+                                    'valor_comissao' => $vlrCom,
+                                    'comissao_id' => null,
+                                    'agente_id' => null,
                                 ]);
                             }
                         } catch (\Throwable $eCV) {
-                            Log::warning('Erro ao salvar ComissaoVenda PI #' . $pi->id . ': ' . $eCV->getMessage());
+                            Log::warning('Erro salvar ComissaoVenda (novo) PI #'.$pi->id.' '.$chave.': '.$eCV->getMessage());
                         }
                     }
                 }
+                $valor_liq_comissoes = max(0, $vlrTotalComissoes);
+            } else {
+                $twoAgentes = $formTwo['agentesId'] ?? [];
+                if (!is_array($twoAgentes)) $twoAgentes = [];
+                foreach ($twoAgentes as $ag) {
+                    $agente = Cliente::where('agent', 1)->where('id', (int)$ag)->first();
+                    if ($agente) $agentes[] = $agente;
+                }
+
+                foreach ($servicos as $sp) {
+                    if (!is_array($sp)) continue;
+                    $svVlrTotal = (float)($sp['vlr_total'] ?? 0);
+                    $svVlrDesc = (float)($sp['vlr_desc'] ?? 0);
+                    $svVlrCusto = (float)($sp['vlr_custo'] ?? 0);
+                    $base_comissao = $svVlrTotal - $svVlrDesc;
+                    $svId = (int)($sp['id'] ?? 0);
+                    foreach ($agentes as $agente) {
+                        $agId = isset($agente->id) ? (int)$agente->id : 0;
+                        if ($agId <= 0) continue;
+                        $comissao = Comissao::where('id_funcionario', $agId)
+                            ->where('id_servico', $svId)->first();
+                        if ($comissao) {
+                            if ((int)($comissao->tipo_comissao ?? 0) === 1) {
+                                $vlrCom = $base_comissao * ((float)($comissao->valor ?? 0) / 100);
+                                $vlrTotalComissoes -= $vlrCom;
+                            } else {
+                                $vlrCom = $base_comissao - (float)($comissao->valor ?? 0);
+                                $vlrTotalComissoes -= $vlrCom;
+                            }
+                            try {
+                                $jaExiste = ComissaoVenda::where('pi_id', $pi->id)
+                                    ->where('comissao_id', (int)$comissao->id)
+                                    ->where('agente_id', $agId)
+                                    ->exists();
+                                if (!$jaExiste) {
+                                    ComissaoVenda::create([
+                                        'pi_id' => $pi->id,
+                                        'comissao_id' => (int)$comissao->id,
+                                        'agente_id' => $agId,
+                                        'valor_comissao' => (float)($vlrCom ?? 0),
+                                    ]);
+                                }
+                            } catch (\Throwable $eCV) {
+                                Log::warning('Erro ao salvar ComissaoVenda PI #' . $pi->id . ': ' . $eCV->getMessage());
+                            }
+                        }
+                    }
+                }
+                $valor_liq_comissoes = $vlrTotalComissoes;
             }
-            $valor_liq_comissoes = $vlrTotalComissoes;
 
             $lista_lancamentos = [];
             $parcelasDetalhe = $formFour['parcelasDetalhe'] ?? null;
@@ -672,11 +833,15 @@ class ReactReservasSemPIController extends Controller
                 if ($agId > 0) $agenteIds[] = $agId;
             }
             $comissoes = [];
-            if (count($agenteIds) > 0) {
-                try {
-                    $comissoes = Comissao::whereIn('id_funcionario', $agenteIds)->get()->toArray();
-                } catch (\Throwable $e) {
-                    $comissoes = [];
+            if ($isNovoFluxoComissao) {
+                $comissoes = $comissoesHelperData;
+            } else {
+                if (count($agenteIds) > 0) {
+                    try {
+                        $comissoes = Comissao::whereIn('id_funcionario', $agenteIds)->get()->toArray();
+                    } catch (\Throwable $e) {
+                        $comissoes = [];
+                    }
                 }
             }
 

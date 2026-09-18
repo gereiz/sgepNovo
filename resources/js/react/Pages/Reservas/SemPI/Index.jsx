@@ -60,6 +60,12 @@ import {
 } from '@/react/Components/ui/card';
 import { Badge } from '@/react/Components/ui/badge';
 import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '@/react/Components/ui/accordion';
+import {
   cn,
   formatCurrencyBRL,
   formatNumberBR,
@@ -326,11 +332,23 @@ function NovaPIModal({ isOpen, onClose, preReservation, currentBiSemana, onEmitS
   const [campanha, setCampanha] = useState(preReservation?.campaign_title || '');
   const [vendedorId, setVendedorId] = useState(Number(preReservation?.seller_id || 0));
   const [agentesId, setAgentesId] = useState([]);
+  const [participantesOptions, setParticipantesOptions] = useState([]);
+  const [comissoesAtivas, setComissoesAtivas] = useState([]);
+  const [participantesSelected, setParticipantesSelected] = useState([]);
+  const [participantesComissoes, setParticipantesComissoes] = useState([]);
   useEffect(() => {
     if (!isOpen) return;
     setCampanha(preReservation?.campaign_title || '');
     setVendedorId(Number(preReservation?.seller_id || 0));
     setAgentesId([]);
+    setParticipantesSelected([]);
+    setParticipantesComissoes([]);
+    if (participantesOptions.length === 0 || comissoesAtivas.length === 0) {
+      handleGetUsuarios();
+    }
+    if (servicoList.length === 0) {
+      handleGetUsuariosServicos();
+    }
   }, [isOpen, preReservation?.grupo_key]);
   const totalPaineis = Number(preReservation?.panels_count || 0);
 
@@ -376,7 +394,7 @@ function NovaPIModal({ isOpen, onClose, preReservation, currentBiSemana, onEmitS
     setVlrTotalFinCalc(vlrTotalFinServ);
   }, [vlrUnit, vlrDesc, vlrCusto, quantidade, bonificado]);
 
-  const [pgto, setPgto] = useState('');
+  const [pgto, setPgto] = useState('0');
   const [formaPgto, setFormaPgto] = useState(0);
   const todayYmd = (() => { const d = new Date(); const y = d.getFullYear(); const m = String(d.getMonth()+1).padStart(2,'0'); const dd = String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${dd}`; })();
   const [dtPgto, setDtPgto] = useState(todayYmd);
@@ -460,8 +478,18 @@ function NovaPIModal({ isOpen, onClose, preReservation, currentBiSemana, onEmitS
     setCurrentStep(2);
   };
   const handleNextStepTwo = () => {
-    if (Number(vendedorId) === 0) { toastr.error('Selecione o Vendedor'); return; }
-    if (!Array.isArray(agentesId) || agentesId.length === 0) { toastr.error('Selecione pelo menos um Agente'); return; }
+    if (!Array.isArray(participantesSelected) || participantesSelected.length === 0) {
+      toastr.error('Selecione pelo menos um Participante (Vendedor ou Agente)'); return;
+    }
+    const algumSemComissao = participantesSelected.some(key => {
+      const reg = (participantesComissoes || []).find(pc => pc.chave === key);
+      return !reg || Number(reg.comissao_id) <= 0;
+    });
+    if (algumSemComissao) {
+      toastr.error('Cada participante selecionado deve ter uma Regra de Comissão Padrão definida.'); return;
+    }
+    const temUser = participantesSelected.some(k => String(k).startsWith('user:'));
+    if (!temUser) { toastr.error('Selecione pelo menos um Vendedor como participante.'); return; }
     setHighestCompletedStep(s => Math.max(s, 2));
     setCurrentStep(3);
   };
@@ -516,6 +544,7 @@ function NovaPIModal({ isOpen, onClose, preReservation, currentBiSemana, onEmitS
       vlr_total: formatMoney(vlrTotalServ.toFixed(2)),
       vlr_total_fin: formatMoney(vlrTotalFinServ.toFixed(2)),
       detalhes: detalhesServ,
+      comissoesOverride: {},
     }]);
     setServicoComboId(0);
     setServicoSelecionado(null);
@@ -556,31 +585,183 @@ function NovaPIModal({ isOpen, onClose, preReservation, currentBiSemana, onEmitS
     setCurrentStep(5);
   };
 
+  const calcularValorComissao = ({ regraTipo, regraValor, vlrServicoUnit, vlrServicoDescUnit, vlrServicoCustoUnit, qtdCobrada }) => {
+    const unit = parseNumber(vlrServicoUnit);
+    const desc = parseNumber(vlrServicoDescUnit);
+    const cust = parseNumber(vlrServicoCustoUnit);
+    const qtd  = Number(qtdCobrada) || 0;
+    const baseUnit = Math.max(0, unit - desc - cust);
+    const base = Math.max(0, qtd * baseUnit);
+    const tipo = Number(regraTipo) || 0;
+    const valor = Number(regraValor) || 0;
+    if (tipo === 1) return parseFloat((base * (valor / 100)).toFixed(2));
+    if (tipo === 2) return parseFloat(valor.toFixed(2));
+    return 0;
+  };
+
+  const handleParticipanteComissaoChange = (chave, action) => {
+    if (action && action.remove) {
+      setParticipantesComissoes(prev => prev.filter(pc => pc.chave !== chave));
+      return;
+    }
+    if (action && action.add) {
+      const opt = action.opt || {};
+      setParticipantesComissoes(prev => {
+        if (prev.some(pc => pc.chave === chave)) return prev;
+        return [...prev, {
+          chave,
+          pessoa_tipo: opt.pessoa_tipo || '',
+          pessoa_id: Number(opt.pessoa_id) || 0,
+          nome: opt.nome || '',
+          badge_label: opt.badge_label || '',
+          comissao_id: 0,
+          comissao_tipo: 0,
+          comissao_valor_numerico: 0,
+          comissao_nome: '',
+        }];
+      });
+      return;
+    }
+    if (action && typeof action.comissao_id !== 'undefined') {
+      const cid = Number(action.comissao_id) || 0;
+      const reg = (comissoesAtivas || []).find(c => Number(c.id) === cid) || null;
+      setParticipantesComissoes(prev => prev.map(pc => {
+        if (pc.chave !== chave) return pc;
+        return {
+          ...pc,
+          comissao_id: cid,
+          comissao_tipo: reg ? Number(reg.tipo_comissao) || 0 : 0,
+          comissao_valor_numerico: reg ? Number(reg.valor_numerico) || 0 : 0,
+          comissao_nome: reg ? (reg.nome || '') : '',
+        };
+      }));
+    }
+  };
+
+  const handleServicoOverrideComissaoChange = (servIdx, chave, novoComissaoId) => {
+    const cidRaw = Number(novoComissaoId);
+    const cid = isNaN(cidRaw) ? 0 : cidRaw;
+    const pc = (participantesComissoes || []).find(p => p.chave === chave);
+    setServicosPagos(prev => prev.map((sp, si) => {
+      if (si !== servIdx) return sp;
+      const ov = sp.comissoesOverride && typeof sp.comissoesOverride === 'object' ? { ...sp.comissoesOverride } : {};
+      if (cid === 0) {
+        delete ov[chave];
+      } else if (cid === -1) {
+        ov[chave] = {
+          comissao_id: -1,
+          comissao_tipo: 0,
+          comissao_valor_numerico: 0,
+          zerado: true,
+        };
+      } else {
+        const reg = (comissoesAtivas || []).find(c => Number(c.id) === cid) || null;
+        const heranca = pc ? {
+          comissao_id: Number(pc.comissao_id) || 0,
+          comissao_tipo: Number(pc.comissao_tipo) || 0,
+          comissao_valor_numerico: Number(pc.comissao_valor_numerico) || 0,
+        } : { comissao_id: 0, comissao_tipo: 0, comissao_valor_numerico: 0 };
+        const novo = {
+          comissao_id: cid,
+          comissao_tipo: reg ? Number(reg.tipo_comissao) || 0 : heranca.comissao_tipo,
+          comissao_valor_numerico: reg ? Number(reg.valor_numerico) || 0 : heranca.comissao_valor_numerico,
+        };
+        const isPadrao = (
+          novo.comissao_id === heranca.comissao_id &&
+          novo.comissao_tipo === heranca.comissao_tipo &&
+          Math.abs(novo.comissao_valor_numerico - heranca.comissao_valor_numerico) < 0.001
+        );
+        if (isPadrao) delete ov[chave];
+        else ov[chave] = novo;
+      }
+      return { ...sp, comissoesOverride: ov };
+    }));
+  };
+
+  const handleServicoZerarTodasComissoes = (servIdx) => {
+    setServicosPagos(prev => prev.map((sp, si) => {
+      if (si !== servIdx) return sp;
+      const ov = {};
+      (participantesComissoes || []).forEach(pc => {
+        ov[pc.chave] = {
+          comissao_id: -1,
+          comissao_tipo: 0,
+          comissao_valor_numerico: 0,
+          zerado: true,
+        };
+      });
+      return { ...sp, comissoesOverride: ov };
+    }));
+  };
+
+  const handleServicoRestaurarTodasComissoes = (servIdx) => {
+    setServicosPagos(prev => prev.map((sp, si) => {
+      if (si !== servIdx) return sp;
+      return { ...sp, comissoesOverride: {} };
+    }));
+  };
+
   const buildFormPiPayload = () => {
     const One = { clienteId, clienteNome, cnpj, endereco, cep, uf: Number(uf) || 0, cidade: Number(cidade) || 0, celular, inscEst, responsavel, email };
-    const vendedorNome = (userList.find(u => Number(u.id) === Number(vendedorId)) || {}).name || '';
+
+    const participantesCompletos = (participantesComissoes || []).map(pc => ({
+      pessoa_tipo: pc.pessoa_tipo,
+      pessoa_id: Number(pc.pessoa_id) || 0,
+      nome: pc.nome || '',
+      comissao_id: Number(pc.comissao_id) || 0,
+      comissao_tipo: Number(pc.comissao_tipo) || 0,
+      comissao_valor_numerico: Number(pc.comissao_valor_numerico) || 0,
+      comissao_nome: pc.comissao_nome || '',
+    })).filter(pc => pc.pessoa_tipo && pc.pessoa_id > 0 && pc.comissao_id > 0);
+
+    let finalVendedorId = Number(vendedorId) || 0;
+    let finalVendedorNome = (userList.find(u => Number(u.id) === finalVendedorId) || {}).name || '';
+    let finalAgentesId = Array.isArray(agentesId) ? agentesId.filter(Boolean).map(Number) : [];
+
+    if (participantesCompletos.length > 0) {
+      const primeiroUser = participantesCompletos.find(pc => pc.pessoa_tipo === 'user');
+      if (primeiroUser) {
+        finalVendedorId = Number(primeiroUser.pessoa_id) || 0;
+        finalVendedorNome = primeiroUser.nome || '';
+      }
+      finalAgentesId = participantesCompletos
+        .filter(pc => pc.pessoa_tipo === 'cliente')
+        .map(pc => Number(pc.pessoa_id))
+        .filter(Boolean);
+    }
+
     const bsArr = [currentBiSemana || preReservation?.bisemana_id || 0];
     const Two = {
       paineis: preReservation?.panel_ids || preReservation?.panel_details || [],
       bisemanaId: Number(currentBiSemana?.id || preReservation?.bisemana_id || 0),
       campanha,
-      vendedorId: Number(vendedorId) || 0,
-      vendedor: vendedorNome,
-      agentesId
+      vendedorId: finalVendedorId,
+      vendedor: finalVendedorNome,
+      agentesId: finalAgentesId,
+      participantesComissoes: participantesCompletos.length > 0 ? participantesCompletos : null,
     };
     const Three = { faturar_sobre: Number(faturar_sobre) || 0, faturar_contra: Number(faturar_contra) || 0, enviar_faturamento: Number(enviar_faturamento) || 0 };
     const parcelasNumericas = (parcelas || []).map(p => ({
       valor: parseNumber(p.valor || 0).toFixed(2),
       data: p.data,
     }));
-    const servicosNumericos = (servicosPagos || []).map(sp => ({
-      ...sp,
-      vlr_unit: parseNumber(sp.vlr_unit),
-      vlr_desc: parseNumber(sp.vlr_desc),
-      vlr_custo: parseNumber(sp.vlr_custo),
-      vlr_total: parseNumber(sp.vlr_total),
-      vlr_total_fin: parseNumber(sp.vlr_total_fin),
-    }));
+    const servicosNumericos = (servicosPagos || []).map(sp => {
+      const ov = sp.comissoesOverride && typeof sp.comissoesOverride === 'object' ? sp.comissoesOverride : {};
+      return {
+        id: Number(sp.id) || 0,
+        nome: sp.nome || '',
+        quantidade: Number(sp.quantidade) || 0,
+        bonificado: Number(sp.bonificado) || 0,
+        qtd_cobrada: Number(sp.qtd_cobrada) || 0,
+        vlr_unit: parseNumber(sp.vlr_unit),
+        vlr_desc: parseNumber(sp.vlr_desc),
+        vlr_custo: parseNumber(sp.vlr_custo),
+        vlr_total: parseNumber(sp.vlr_total),
+        vlr_total_fin: parseNumber(sp.vlr_total_fin),
+        detalhes: sp.detalhes || '',
+        comissoesOverride: Object.keys(ov).length > 0 ? ov : undefined,
+      };
+    });
     const Four = {
       servicos: servicosNumericos,
       formaPgto: Number(formaPgto) || 0,
@@ -821,7 +1002,7 @@ function NovaPIModal({ isOpen, onClose, preReservation, currentBiSemana, onEmitS
                   <p className="text-sm text-gray-500 mt-1">Confira os dados da reserva do Pedido de Inserção.</p>
                   <p className="text-xs font-bold text-red-500 text-center mt-1">Bi-Semana: {biSemanaLabel}</p> */}
                 </div>
-                <button type="button" onClick={() => { setEditStepTwo(v => !v); if (!editStepTwo) handleGetUsuarios(); }}
+                <button type="button" onClick={() => { setEditStepTwo(v => !v); handleGetUsuarios(); }}
                   className={cn('rounded-full h-10 w-10 text-white flex items-center justify-center',
                     editStepTwo ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-amber-500 hover:bg-amber-600')}>
                   <User className="w-5 h-5" />
@@ -852,21 +1033,84 @@ function NovaPIModal({ isOpen, onClose, preReservation, currentBiSemana, onEmitS
                   <label className="label text-sm font-medium text-slate-700">Campanha</label>
                   <Input value={campanha} onChange={(e) => setCampanha(e.target.value)} disabled={!editStepTwo} className="h-10" />
                 </div>
-                <div className="sm:col-span-6 space-y-1.5">
-                  <label className="label text-sm font-medium text-slate-700">Vendedor</label>
-                  <Select value={String(Number(vendedorId) || 0)} onValueChange={(v) => setVendedorId(parseInt(v) || 0)} disabled={!editStepTwo}>
-                    <SelectTrigger className="bg-white h-10"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="0" disabled>SELECIONE</SelectItem>
-                      {(userList || []).map((u) => <SelectItem key={u.id} value={String(u.id)}>{u.name}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="sm:col-span-6 space-y-1.5">
-                  <label className="label text-sm font-medium text-slate-700">Agentes</label>
-                  <SelectMultiAgentes value={agentesId} options={agenteList || []} onChange={setAgentesId} disabled={!editStepTwo} />
+                <div className="sm:col-span-12 space-y-1.5">
+                  <label className="label text-sm font-medium text-slate-700">Participantes que receberão comissão *</label>
+                  <SelectParticipantesComissao
+                    value={participantesSelected}
+                    options={participantesOptions || []}
+                    onChange={setParticipantesSelected}
+                    onComissaoChange={handleParticipanteComissaoChange}
+                    disabled={!editStepTwo}
+                  />
+                  <p className="text-[11px] leading-4 text-slate-500 mt-1 pl-0.5">
+                    <span className="font-medium text-slate-600">Dica:</span> digite o nome no dropdown para pesquisar. Inclua o <span className="font-semibold text-slate-700">Vendedor</span> como participante para ele também receber comissão.
+                  </p>
                 </div>
               </div>
+              {(participantesComissoes || []).length > 0 && (
+                <div className="space-y-2.5 pt-2">
+                  <label className="label text-sm font-semibold text-slate-800 block">Regras de comissão por participante</label>
+                  <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-3">
+                    {(participantesComissoes || []).map((pc) => {
+                      const selId = Number(pc.comissao_id) || 0;
+                      const selReg = (comissoesAtivas || []).find(c => Number(c.id) === selId);
+                      const isUser = pc.pessoa_tipo === 'user';
+                      return (
+                        <div key={pc.chave} className="rounded-lg border border-slate-200 bg-gradient-to-br from-white to-slate-50/60 p-3 flex flex-col gap-2 shadow-sm">
+                          <div className="flex items-center justify-between gap-2 flex-wrap">
+                            <div className="flex items-center gap-2 min-w-0 flex-1">
+                              <span className={cn(
+                                'w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-[11px] font-bold text-white',
+                                isUser ? 'bg-slate-600' : 'bg-sky-600'
+                              )}>
+                                {getInitials(pc.nome)}
+                              </span>
+                              <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                                <span className="truncate text-sm font-semibold text-slate-800">{pc.nome || pc.chave}</span>
+                                <span className={cn(
+                                  'flex-shrink-0 text-[10px] font-semibold uppercase tracking-tight rounded px-1.5 py-0.5',
+                                  isUser ? 'bg-slate-100 text-slate-600 border border-slate-200' : 'bg-sky-50 text-sky-700 border border-sky-200'
+                                )}>
+                                  {pc.badge_label || (isUser ? 'Vendedor' : 'Agente')}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="space-y-1">
+                            <label className="label text-xs font-medium text-slate-600">Regra de comissão padrão *</label>
+                            <Select
+                              value={String(selId)}
+                              onValueChange={(v) => handleParticipanteComissaoChange(pc.chave, { comissao_id: Number(v) || 0 })}
+                              disabled={!editStepTwo}
+                            >
+                              <SelectTrigger className={cn('bg-white h-9 text-xs', selId <= 0 && 'text-rose-600 ring-rose-200')}>
+                                <SelectValue placeholder="Selecione a regra..." />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="0" disabled>Selecione</SelectItem>
+                                {(comissoesAtivas || []).map(c => (
+                                  <SelectItem key={c.id} value={String(c.id)}>
+                                    <span className="inline-flex items-center gap-2">
+                                      <span className="text-sm text-slate-800">{c.nome}</span>
+                                      <span className="text-xs text-slate-500 font-mono">• {c.valor_apresentavel || ''}</span>
+                                    </span>
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            {selReg && (
+                              <div className="flex items-center justify-between text-[11px] text-slate-500 pt-0.5 px-0.5">
+                                <span><span className="font-medium text-slate-600">Tipo:</span> {selReg.tipo_comissao === 1 ? 'Percentual (%)' : 'Valor Fixo (R$)'}</span>
+                                <span className="font-mono font-semibold text-slate-700">{selReg.valor_apresentavel || ''}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -932,7 +1176,7 @@ function NovaPIModal({ isOpen, onClose, preReservation, currentBiSemana, onEmitS
                   <p className="text-sm text-gray-500 mt-1">Confira os dados Financeiros do Pedido de Inserção.</p>
                   <p className="text-xs font-bold text-red-500 text-center mt-1">Bi-Semana: {biSemanaLabel}</p> */}
                 </div>
-                <button type="button" onClick={() => { setEditStepFour(v => !v); if (!editStepFour) handleGetUsuariosServicos(); }}
+                <button type="button" onClick={() => { setEditStepFour(v => !v); handleGetUsuariosServicos(); }}
                   className={cn('rounded-full h-10 w-10 text-white flex items-center justify-center',
                     editStepFour ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-amber-500 hover:bg-amber-600')}>
                   <User className="w-5 h-5" />
@@ -951,14 +1195,34 @@ function NovaPIModal({ isOpen, onClose, preReservation, currentBiSemana, onEmitS
                 </div>
                 <div className="sm:col-span-5 space-y-1.5">
                   <label className="label text-sm font-medium text-slate-700">Pago</label>
-                  <Select value={String(pgto)} onValueChange={(v) => setPgto(v)} disabled={!editStepFour}>
-                    <SelectTrigger className="bg-white"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="" disabled>SELECIONE</SelectItem>
-                      <SelectItem value="0">NÃO</SelectItem>
-                      <SelectItem value="1">SIM</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <label className={cn(
+                    'inline-flex items-center justify-between w-full h-10 px-3 border border-slate-200 rounded-md bg-white transition-colors',
+                    !editStepFour ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                  )}>
+                    <span className={cn(
+                      'text-sm font-semibold transition-colors',
+                      String(pgto) === '1' ? 'text-slate-400' : 'text-slate-700'
+                    )}>
+                      NÃO
+                    </span>
+                    <span className="relative inline-block mx-2">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={String(pgto) === '1'}
+                        onChange={(e) => setPgto(e.target.checked ? '1' : '0')}
+                        disabled={!editStepFour}
+                      />
+                      <div className="w-12 h-6 bg-slate-200 peer-checked:bg-emerald-500 rounded-full transition-colors"></div>
+                      <div className="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform peer-checked:translate-x-6"></div>
+                    </span>
+                    <span className={cn(
+                      'text-sm font-semibold transition-colors',
+                      String(pgto) === '1' ? 'text-emerald-600' : 'text-slate-400'
+                    )}>
+                      SIM
+                    </span>
+                  </label>
                 </div>
               </div>
               {Number(servicoComboId) > 0 && (
@@ -1048,44 +1312,232 @@ function NovaPIModal({ isOpen, onClose, preReservation, currentBiSemana, onEmitS
                 </div>
               )}
               {servicosPagos.length > 0 && (
-                <div className="space-y-1.5">
-                  <label className="label text-sm font-medium text-slate-700">Serviços Adicionados ({servicosPagos.length})</label>
-                  <div className="overflow-x-auto border border-slate-200 rounded-lg">
-                    <table className="min-w-full divide-y divide-slate-200 text-xs">
-                      <thead className="bg-slate-50">
-                        <tr>
-                          <th className="px-3 py-2 text-left">Serviço</th>
-                          <th className="px-2 py-2 text-center w-16">Qtd</th>
-                          <th className="px-2 py-2 text-center w-16">Bon</th>
-                          <th className="px-2 py-2 text-right w-24">Vlr.Unit</th>
-                          <th className="px-2 py-2 text-right w-24">Desc</th>
-                          <th className="px-2 py-2 text-right w-24">Total</th>
-                          <th className="px-2 py-2 w-10"></th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100 bg-white">
-                        {servicosPagos.map((sp, idx) => (
-                          <tr key={idx}>
-                            <td className="px-3 py-2 font-medium text-slate-800">{sp.nome}</td>
-                            <td className="px-2 py-2 text-center">{sp.quantidade}</td>
-                            <td className="px-2 py-2 text-center">{sp.bonificado}</td>
-                            <td className="px-2 py-2 text-right font-mono">{brl(sp.vlr_unit)}</td>
-                            <td className="px-2 py-2 text-right font-mono">{brl(sp.vlr_desc)}</td>
-                            <td className="px-2 py-2 text-right font-bold font-mono text-[#006397]">{brl(sp.vlr_total)}</td>
-                            <td className="px-2 py-2 text-center">
-                              <button type="button" onClick={() => handleRemoveServicoPago(idx)} className="text-slate-400 hover:text-rose-600 cursor-pointer">
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                        <tr className="bg-slate-50">
-                          <td colSpan="5" className="px-3 py-2 text-right font-bold uppercase text-slate-600">Total Serviços</td>
-                          <td className="px-2 py-2 text-right font-black text-[#006397] text-sm">{brl(totalServicosN || 0)}</td>
-                          <td></td>
-                        </tr>
-                      </tbody>
-                    </table>
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <label className="label text-sm font-medium text-slate-700 m-0">Serviços Adicionados ({servicosPagos.length})</label>
+                    {(participantesComissoes || []).length > 0 && (
+                      <span className="inline-flex items-center gap-1 text-[11px] text-slate-500">
+                        <Info className="w-3.5 h-3.5" /> Expanda o serviço para ajustar comissões por participante
+                      </span>
+                    )}
+                  </div>
+                  <div className="space-y-2.5">
+                    {servicosPagos.map((sp, idx) => {
+                      const ovKeys = sp.comissoesOverride && typeof sp.comissoesOverride === 'object' ? Object.keys(sp.comissoesOverride) : [];
+                      const temOverride = ovKeys.length > 0;
+                      return (
+                        <Accordion key={idx} type="multiple">
+                          <AccordionItem value={`svc-${idx}`} className="border border-slate-200 rounded-lg overflow-hidden shadow-sm bg-white">
+                            <AccordionTrigger className="px-3.5 py-2.5 hover:bg-slate-50/80 transition-colors">
+                              <div className="flex items-center justify-between w-full gap-3 text-left">
+                                <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                                  <span className="w-8 h-8 rounded-md bg-[#006397]/10 text-[#006397] font-bold text-[11px] flex items-center justify-center flex-shrink-0">
+                                    #{idx + 1}
+                                  </span>
+                                  <div className="flex flex-col min-w-0 flex-1">
+                                    <span className="truncate text-sm font-semibold text-slate-800">{sp.nome}</span>
+                                    <div className="flex items-center gap-2.5 text-[11px] text-slate-500 flex-wrap">
+                                      <span>Qtd: <span className="font-medium text-slate-700">{sp.quantidade}</span></span>
+                                      {Number(sp.bonificado) > 0 && <span>Bon: <span className="font-medium text-amber-700">{sp.bonificado}</span></span>}
+                                      <span>Unit.: <span className="font-mono font-medium text-slate-700">{brl(sp.vlr_unit)}</span></span>
+                                      {parseNumber(sp.vlr_desc) > 0 && <span>Desc: <span className="font-mono font-medium text-rose-600">-{brl(sp.vlr_desc)}</span></span>}
+                                      {parseNumber(sp.vlr_custo) > 0 && <span>Custo: <span className="font-mono font-medium text-orange-600">-{brl(sp.vlr_custo)}</span></span>}
+                                      {(participantesComissoes || []).length > 0 && temOverride && (
+                                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 border-amber-300 bg-amber-50 text-amber-700 font-semibold uppercase tracking-wide">
+                                          {ovKeys.length} overrides
+                                        </Badge>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1.5 flex-shrink-0">
+                                  <div className="text-right mr-1.5">
+                                    <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wide leading-none">Total</div>
+                                    <div className="font-black font-mono text-[#006397] text-sm leading-tight">{brl(sp.vlr_total)}</div>
+                                  </div>
+                                  <button type="button" onClick={(e) => { e.stopPropagation(); handleRemoveServicoPago(idx); }} className="h-8 w-8 rounded-md flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors flex-shrink-0">
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </div>
+                            </AccordionTrigger>
+                            <AccordionContent className="px-3.5 pb-3.5 pt-1 bg-slate-50/40 border-t border-slate-100">
+                              {(participantesComissoes || []).length === 0 ? (
+                                <div className="text-[11px] text-slate-500 italic text-center py-2.5">
+                                  Volte ao Step 2 e selecione participantes com regras de comissão para configurar overrides por serviço.
+                                </div>
+                              ) : (
+                                <div className="space-y-2">
+                                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                                    <span className="text-xs font-semibold text-slate-700 uppercase tracking-wide">Comissões por participante para este serviço</span>
+                                    <div className="flex flex-wrap items-center gap-2">
+                                      {editStepFour && (
+                                        <>
+                                          <button
+                                            type="button"
+                                            onClick={() => handleServicoZerarTodasComissoes(idx)}
+                                            className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide px-2 py-1 rounded-md border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 transition-colors cursor-pointer"
+                                          >
+                                            Zerar Todas
+                                          </button>
+                                          <button
+                                            type="button"
+                                            onClick={() => handleServicoRestaurarTodasComissoes(idx)}
+                                            className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide px-2 py-1 rounded-md border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors cursor-pointer"
+                                          >
+                                            Restaurar Padrão
+                                          </button>
+                                        </>
+                                      )}
+                                      <span className="inline-flex items-center gap-1 text-[11px] text-slate-500">
+                                        <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                        Base cálculo = Líq. (Bruto - Desc - Custo)
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div className="rounded-md border border-slate-200 overflow-hidden bg-white shadow-sm">
+                                    <div className="grid grid-cols-12 gap-2 px-2.5 py-1.5 bg-slate-100 text-[10px] font-bold uppercase tracking-wide text-slate-600">
+                                      <div className="col-span-12 sm:col-span-4">Participante</div>
+                                      <div className="col-span-12 sm:col-span-5">Regra de Comissão</div>
+                                      <div className="col-span-8 sm:col-span-2 text-right">Valor Calculado</div>
+                                      <div className="col-span-4 sm:col-span-1 text-right pr-1">Ação</div>
+                                    </div>
+                                    <div className="divide-y divide-slate-100">
+                                      {(participantesComissoes || []).map((pc, pIdx) => {
+                                        const chave = pc.chave;
+                                        const isUser = pc.pessoa_tipo === 'user';
+                                        const padraoCid = Number(pc.comissao_id) || 0;
+                                        const override = sp.comissoesOverride && typeof sp.comissoesOverride === 'object' ? sp.comissoesOverride[chave] : null;
+                                        const overrideCidRaw = override ? Number(override.comissao_id) : null;
+                                        const atualCid = overrideCidRaw !== null && !isNaN(overrideCidRaw) ? overrideCidRaw : padraoCid;
+                                        const isZerado = override && (atualCid === -1 || override.zerado === true);
+                                        const regTipo = isZerado ? 0 : (override ? Number(override.comissao_tipo) || 0 : Number(pc.comissao_tipo) || 0);
+                                        const regVal = isZerado ? 0 : (override ? Number(override.comissao_valor_numerico) || 0 : Number(pc.comissao_valor_numerico) || 0);
+                                        const isPadrao = !override;
+                                        const vlrCalc = isZerado ? 0 : calcularValorComissao({
+                                          regraTipo: regTipo,
+                                          regraValor: regVal,
+                                          vlrServicoUnit: sp.vlr_unit,
+                                          vlrServicoDescUnit: sp.vlr_desc,
+                                          vlrServicoCustoUnit: sp.vlr_custo,
+                                          qtdCobrada: sp.qtd_cobrada,
+                                        });
+                                        return (
+                                          <div key={chave} className="grid grid-cols-12 gap-2 px-2.5 py-2 items-center text-xs">
+                                            <div className="col-span-12 sm:col-span-4 flex items-center gap-2 min-w-0">
+                                              <span className={cn(
+                                                'w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-bold text-white',
+                                                isUser ? 'bg-slate-600' : 'bg-sky-600'
+                                              )}>
+                                                {getInitials(pc.nome)}
+                                              </span>
+                                              <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                                                <span className="truncate text-slate-800 font-medium">{pc.nome}</span>
+                                                <span className={cn(
+                                                  'flex-shrink-0 text-[9px] font-semibold uppercase tracking-tight rounded px-1 py-0.5',
+                                                  isUser ? 'bg-slate-100 text-slate-600 border border-slate-200' : 'bg-sky-50 text-sky-700 border border-sky-200'
+                                                )}>
+                                                  {pc.badge_label || (isUser ? 'Vend' : 'Agt')}
+                                                </span>
+                                              </div>
+                                            </div>
+                                            <div className="col-span-12 sm:col-span-5 flex items-center gap-1.5">
+                                              <Select
+                                                value={String(atualCid)}
+                                                onValueChange={(v) => handleServicoOverrideComissaoChange(idx, chave, Number(v))}
+                                                disabled={!editStepFour}
+                                              >
+                                                <SelectTrigger className="bg-white h-8 text-[11px]">
+                                                  <SelectValue placeholder="(herdado Step 2)" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                  <SelectItem value="0">— Usar Padrão (Step 2) —</SelectItem>
+                                                  <SelectItem value="-1">— Zerar Comissão (R$ 0,00) —</SelectItem>
+                                                  {(comissoesAtivas || []).map(c => (
+                                                    <SelectItem key={c.id} value={String(c.id)}>
+                                                      <span className="inline-flex items-center gap-2">
+                                                        <span>{c.nome}</span>
+                                                        <span className="text-slate-500 font-mono text-[10px]">{c.valor_apresentavel || ''}</span>
+                                                      </span>
+                                                    </SelectItem>
+                                                  ))}
+                                                </SelectContent>
+                                              </Select>
+                                              {isPadrao ? (
+                                                <Badge variant="outline" className="hidden sm:inline-flex text-[9px] px-1.5 py-0 h-5 border-emerald-200 bg-emerald-50 text-emerald-700 font-bold uppercase tracking-tight whitespace-nowrap">
+                                                  Padrão Step 2
+                                                </Badge>
+                                              ) : isZerado ? (
+                                                <Badge variant="outline" className="hidden sm:inline-flex text-[9px] px-1.5 py-0 h-5 border-rose-300 bg-rose-50 text-rose-700 font-bold uppercase tracking-tight whitespace-nowrap">
+                                                  Zerada
+                                                </Badge>
+                                              ) : (
+                                                <Badge variant="outline" className="hidden sm:inline-flex text-[9px] px-1.5 py-0 h-5 border-amber-300 bg-amber-50 text-amber-700 font-bold uppercase tracking-tight whitespace-nowrap">
+                                                  Override
+                                                </Badge>
+                                              )}
+                                            </div>
+                                            <div className="col-span-8 sm:col-span-2 text-right">
+                                              <div className={cn(
+                                                'font-mono font-bold text-sm',
+                                                isZerado ? 'text-slate-400 line-through' : 'text-[#006397]'
+                                              )}>{brl(vlrCalc)}</div>
+                                              <div className="text-[9px] text-slate-500 uppercase tracking-wide">
+                                                {isZerado ? 'Sem comissão' : (regTipo === 1 ? `${(regVal).toFixed(2).replace('.',',')}% × Líq.` : 'Valor fixo')}
+                                              </div>
+                                            </div>
+                                            <div className="col-span-4 sm:col-span-1 flex items-center justify-end pr-1">
+                                              {!isPadrao && (
+                                                <button type="button" onClick={() => handleServicoOverrideComissaoChange(idx, chave, 0)} title="Restaurar padrão" className="text-slate-400 hover:text-emerald-600 cursor-pointer p-1">
+                                                  <RefreshCw className="w-3.5 h-3.5" />
+                                                </button>
+                                              )}
+                                            </div>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                    <div className="grid grid-cols-12 gap-2 px-2.5 py-2 bg-gradient-to-r from-slate-50 to-white border-t border-slate-200">
+                                      <div className="col-span-12 sm:col-span-9 text-right flex items-center justify-end gap-2">
+                                        <span className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                                          Soma comissões este serviço
+                                        </span>
+                                      </div>
+                                      <div className="col-span-12 sm:col-span-3 text-right">
+                                        <span className="font-mono font-bold text-sm text-rose-600">
+                                          - {brl((participantesComissoes || []).reduce((sum, pc) => {
+                                            const chave = pc.chave;
+                                            const override = sp.comissoesOverride && typeof sp.comissoesOverride === 'object' ? sp.comissoesOverride[chave] : null;
+                                            const ovCid = override ? Number(override.comissao_id) : null;
+                                            const isZ = override && (ovCid === -1 || override.zerado === true);
+                                            if (isZ) return sum;
+                                            const regTipo = override ? Number(override.comissao_tipo) || 0 : Number(pc.comissao_tipo) || 0;
+                                            const regVal = override ? Number(override.comissao_valor_numerico) || 0 : Number(pc.comissao_valor_numerico) || 0;
+                                            return sum + calcularValorComissao({
+                                              regraTipo: regTipo, regraValor: regVal,
+                                              vlrServicoUnit: sp.vlr_unit,
+                                              vlrServicoDescUnit: sp.vlr_desc,
+                                              vlrServicoCustoUnit: sp.vlr_custo,
+                                              qtdCobrada: sp.qtd_cobrada,
+                                            });
+                                          }, 0))}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
+                      );
+                    })}
+                    <div className="rounded-md bg-gradient-to-r from-slate-50 via-emerald-50/30 to-slate-50 border border-slate-200 px-3.5 py-2.5 flex items-center justify-between">
+                      <div>
+                        <div className="text-[11px] uppercase font-bold tracking-wide text-slate-600">Total Serviços (Líquido)</div>
+                      </div>
+                      <div className="font-black font-mono text-[#006397] text-base">{brl(totalServicosN || 0)}</div>
+                    </div>
                   </div>
                 </div>
               )}
@@ -1314,17 +1766,61 @@ function NovaPIModal({ isOpen, onClose, preReservation, currentBiSemana, onEmitS
   );
 
   async function handleGetUsuarios() {
-    try { const r = await axios.get('/getUsuarios'); if (Array.isArray(r.data)) setUserList(r.data); } catch (_) {}
+    try {
+      const extractArr = (prom) => prom
+        .then(r => {
+          const d = r?.data;
+          if (Array.isArray(d)) return d;
+          if (d && Array.isArray(d.data)) return d.data;
+          return [];
+        })
+        .catch(err => {
+          console.warn('handleGetUsuarios falhou:', err?.config?.url, err?.response?.status, err?.message);
+          return [];
+        });
+      const [us, ag, cm] = await Promise.all([
+        extractArr(axios.get('/getUsuarios')),
+        extractArr(axios.get('/listarParticipantesComissao')),
+        extractArr(axios.get('/listarComissoesAtivas')),
+      ]);
+      if (Array.isArray(us)) setUserList(us);
+      if (Array.isArray(ag)) setParticipantesOptions(ag);
+      if (Array.isArray(cm)) setComissoesAtivas(cm);
+      if (ag.length === 0) {
+        toastr.warning('Nenhum participante (vendedor/agente) retornou no carregamento inicial. Verifique os cadastros.');
+      }
+    } catch (err) {
+      console.error('handleGetUsuarios erro geral:', err);
+      toastr.error('Erro ao carregar participantes e comissões. Tente novamente.');
+    }
   }
   async function handleGetUsuariosServicos() {
     try {
-      const [us, svcs] = await Promise.all([
-        axios.get('/getUsuarios').then(r => r.data).catch(() => []),
-        axios.get('/ListaServicos').then(r => r.data).catch(() => []),
+      const extractArr = (prom) => prom
+        .then(r => {
+          const d = r?.data;
+          if (Array.isArray(d)) return d;
+          if (d && Array.isArray(d.data)) return d.data;
+          return [];
+        })
+        .catch(err => {
+          console.warn('handleGetUsuariosServicos falhou:', err?.config?.url, err?.response?.status, err?.message);
+          return [];
+        });
+      const [us, svcs, partOpt, comsAt] = await Promise.all([
+        extractArr(axios.get('/getUsuarios')),
+        extractArr(axios.get('/ListaServicos')),
+        extractArr(axios.get('/listarParticipantesComissao')),
+        extractArr(axios.get('/listarComissoesAtivas')),
       ]);
       if (Array.isArray(us)) setUserList(us);
       if (Array.isArray(svcs)) setServicoList(svcs);
-    } catch (_) {}
+      if (Array.isArray(partOpt)) setParticipantesOptions(partOpt);
+      if (Array.isArray(comsAt)) setComissoesAtivas(comsAt);
+    } catch (err) {
+      console.error('handleGetUsuariosServicos erro geral:', err);
+      toastr.error('Erro ao carregar dados para serviços. Tente novamente.');
+    }
   }
 }
 
@@ -1378,6 +1874,145 @@ function SelectMultiAgentes({ value = [], options = [], onChange, disabled }) {
                     <Check className="w-3 h-3 stroke-[3]" />
                   </span>
                   <span className="truncate text-slate-800">{nome}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SelectParticipantesComissao({ value = [], options = [], onChange, disabled, onComissaoChange, comissoesMap = {}, participantesComissoes = [] }) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const [activeIdx, setActiveIdx] = useState(-1);
+  const wrapRef = React.useRef(null);
+  const inputRef = React.useRef(null);
+
+  const filteredOptions = useMemo(() => {
+    const s = tirarAcentos(String(search || '')).trim().toLowerCase();
+    if (!s) return options || [];
+    return (options || []).filter(o => {
+      const nome = tirarAcentos(String(o.nome || '')).toLowerCase();
+      const badge = tirarAcentos(String(o.badge_label || '')).toLowerCase();
+      return nome.includes(s) || badge.includes(s);
+    });
+  }, [options, search]);
+
+  useEffect(() => {
+    if (!open) { setSearch(''); setActiveIdx(-1); return; }
+    const handler = (e) => {
+      if (!wrapRef.current) return;
+      if (!wrapRef.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    setTimeout(() => { if (inputRef.current) inputRef.current.focus(); }, 0);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  useEffect(() => { if (activeIdx >= filteredOptions.length) setActiveIdx(Math.max(0, filteredOptions.length - 1)); }, [filteredOptions.length, activeIdx]);
+
+  const toggle = (opt) => {
+    if (disabled) return;
+    const chave = `${opt.pessoa_tipo}:${opt.pessoa_id}`;
+    let novoSelected;
+    if (value.includes(chave)) {
+      novoSelected = value.filter(v => v !== chave);
+      onComissaoChange && onComissaoChange(chave, { remove: true });
+    } else {
+      novoSelected = [...value, chave];
+      onComissaoChange && onComissaoChange(chave, { add: true, opt });
+    }
+    onChange(novoSelected);
+  };
+
+  const display = (() => {
+    if (value.length === 0) return 'Selecione os participantes';
+    let cntUser = 0, cntAg = 0;
+    value.forEach(k => { if (String(k).startsWith('user:')) cntUser++; else cntAg++; });
+    const primeiro = (options || []).find(o => `${o.pessoa_tipo}:${o.pessoa_id}` === value[0]);
+    const primeiroNome = primeiro ? primeiro.nome : '';
+    const resumo = `${value.length} participante${value.length === 1 ? '' : 's'} (${cntUser} Vendedor${cntUser === 1 ? '' : 'es'} / ${cntAg} Agente${cntAg === 1 ? '' : 's'})`;
+    return primeiroNome ? `${primeiroNome} · ${resumo}` : resumo;
+  })();
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveIdx(prev => Math.min(filteredOptions.length - 1, prev + 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveIdx(prev => Math.max(0, prev - 1));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      const target = filteredOptions[activeIdx >= 0 ? activeIdx : 0];
+      if (target) toggle(target);
+    } else if (e.key === 'Escape') {
+      setOpen(false);
+    }
+  };
+
+  return (
+    <div className="relative w-full" ref={wrapRef}>
+      <button type="button" disabled={disabled} onClick={() => !disabled && setOpen(!open)}
+        className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#006397]/50 focus:border-[#006397] disabled:cursor-not-allowed disabled:opacity-50">
+        <span className={cn('truncate text-left', value.length === 0 && 'text-slate-400')}>{display}</span>
+        <ChevronRight className={cn('w-4 h-4 transition-transform text-slate-400 flex-shrink-0', open && 'rotate-90')} />
+      </button>
+      {open && (
+        <div className="absolute z-[70] mt-1 w-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-2xl">
+          <div className="p-1.5 border-b border-slate-100 bg-slate-50/80">
+            <div className="flex items-center gap-1.5 px-1 py-1 rounded-md border border-slate-200 bg-white focus-within:ring-1 focus-within:ring-[#006397]/40 focus-within:border-[#006397]">
+              <Search className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+              <input
+                ref={inputRef}
+                type="text"
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setActiveIdx(0); }}
+                onKeyDown={handleKeyDown}
+                placeholder="Digite o nome do participante..."
+                className="flex-1 bg-transparent outline-none text-xs text-slate-800 placeholder:text-slate-400"
+                disabled={disabled}
+              />
+              {search && (
+                <button type="button" onClick={(e) => { e.stopPropagation(); setSearch(''); }} className="text-slate-400 hover:text-slate-600 flex-shrink-0 p-0.5">
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="max-h-60 overflow-y-auto overflow-x-hidden p-1 text-sm">
+            {filteredOptions.length === 0 && (
+              (options?.length ?? 0) === 0
+                ? (search.trim() === ''
+                    ? (<div className="p-3 text-xs text-slate-500 text-center leading-relaxed"><Loader2 className="w-4 h-4 animate-spin inline-block mr-1.5 align-[-2px] text-[#006397]"/>Carregando lista de vendedores e agentes... Se demorar, clique no botão lápis acima para atualizar.</div>)
+                    : (<div className="p-2 text-xs text-amber-600 text-center italic">Nenhum participante cadastrado ainda — verifique cadastros de Usuário (ativo) e Cliente (agente).</div>))
+                : (<div className="p-2 text-xs text-slate-400 text-center italic">Nenhum participante encontrado para: <span className="font-semibold text-slate-600 not-italic">"{String(search).trim()}"</span>. Tente outra digitação (acentos são ignorados).</div>)
+            )}
+            {filteredOptions.map((a, i) => {
+              const chave = `${a.pessoa_tipo}:${a.pessoa_id}`;
+              const checked = value.includes(chave);
+              const isActive = i === activeIdx;
+              return (
+                <div key={chave} onClick={() => toggle(a)}
+                  className={cn(
+                    'flex items-center gap-2 px-2.5 py-2 cursor-pointer hover:bg-slate-100 rounded-md',
+                    checked && 'bg-blue-50',
+                    isActive && !checked && 'bg-slate-100/70 ring-1 ring-slate-200'
+                  )}>
+                  <span className={cn('w-4 h-4 flex items-center justify-center border rounded flex-shrink-0',
+                    checked ? 'bg-[#006397] border-[#006397] text-white' : 'border-slate-300 text-transparent')}>
+                    <Check className="w-3 h-3 stroke-[3]" />
+                  </span>
+                  <span className="flex-1 min-w-0 truncate text-slate-800">{a.nome}</span>
+                  <span className={cn(
+                    'flex-shrink-0 text-[10px] font-semibold uppercase tracking-tight rounded px-1.5 py-0.5',
+                    a.pessoa_tipo === 'user' ? 'bg-slate-100 text-slate-600 border border-slate-200' : 'bg-sky-50 text-sky-700 border border-sky-200'
+                  )}>
+                    {a.badge_label || (a.pessoa_tipo === 'user' ? 'Vendedor' : 'Agente')}
+                  </span>
                 </div>
               );
             })}

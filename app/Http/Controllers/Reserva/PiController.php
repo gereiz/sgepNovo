@@ -373,8 +373,26 @@ class PiController extends Controller
         $vendedor = $two['vendedor'] ?? null;
         $agentes = [];
         foreach (($two['agentesId'] ?? []) as $ag) {
-            $agente = Cliente::where('agent', 1)->where('id', $ag)->first();
-            array_push($agentes, $agente);
+            if ((int)$ag <= 0) continue;
+            $agente = Cliente::where('agent', 1)->where('id', (int)$ag)->first();
+            if ($agente) array_push($agentes, $agente);
+        }
+        if (count($agentes) === 0) {
+            $agDummy = new \stdClass();
+            $agDummy->id = 0;
+            $agDummy->razao_social = '— Não há agências/parceiros vinculados a esta PI —';
+            $agDummy->nome_fantasia = '';
+            $agDummy->cpf_cnpj = '';
+            $agDummy->nro_insc = '';
+            $agDummy->endereco = '';
+            $agDummy->num = '';
+            $agDummy->complemento = '';
+            $agDummy->bairro = 0;
+            $agDummy->cidade = $cliente->cidade ?? 0;
+            $agDummy->uf = $cliente->uf ?? 0;
+            $agDummy->cep = '';
+            $agDummy->agent = 1;
+            $agentes[] = $agDummy;
         }
         $textoAtivo = TextoPadrao::where('active', 1)->first();
         $observacao = $dados['Five']['observacao'] ?? null;

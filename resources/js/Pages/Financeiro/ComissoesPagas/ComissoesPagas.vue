@@ -171,7 +171,9 @@ function comissoesUnicasPorPi(piId) {
     const lista = (props.comissoes || []).filter(com => com.pi_id === piId)
     const seen = new Set()
     return lista.filter(c => {
-        const key = `${c.agente_id}|${c.comissao_id}|${Number(c.valor_comissao).toFixed(2)}`
+        const benefKey = c.beneficiario_chave_logica || `${c.agente_id || 0}`
+        const defKey = c.comissao_definicao_id ?? c.comissao_id ?? 0
+        const key = `${benefKey}|${defKey}|${Number(c.valor_comissao).toFixed(2)}`
         if (seen.has(key)) return false
         seen.add(key)
         return true
@@ -294,9 +296,20 @@ async function openPiPdf(pi) {
                                     <div v-for="(comissao, comIndex) in comissoesUnicasPorPi(pi.id)" :key="comIndex" class="flex items-center justify-between p-2 rounded-md border">
                                         <div class="flex-1">
                                             <div class="text-sm font-medium">
-                                                {{ getAgenteById(comissao.agente_id) ? (getAgenteById(comissao.agente_id).nome_fantasia || getAgenteById(comissao.agente_id).razao_social) : 'Agente' }}
+                                                {{ (comissao.beneficiario_nome && comissao.beneficiario_nome !== '—')
+                                                    ? comissao.beneficiario_nome
+                                                    : (getAgenteById(comissao.agente_id) ? (getAgenteById(comissao.agente_id).nome_fantasia || getAgenteById(comissao.agente_id).razao_social) : 'Agente') }}
+                                                <span v-if="comissao.comissao_percent_label && comissao.comissao_percent_label !== '—'" class="ml-1 text-xs opacity-75 font-normal">
+                                                    - {{ comissao.comissao_percent_label }}
+                                                </span>
                                             </div>
-                                            <div class="text-xs opacity-70">ID {{ comissao.agente_id }} • {{ getServicoNome(comissao.comissao_id) }}</div>
+                                            <div class="text-xs opacity-70">
+                                                ID {{ comissao.beneficiario_id_real || comissao.agente_id || '—' }}
+                                                •
+                                                {{ (comissao.comissao_nome && comissao.comissao_nome !== '')
+                                                    ? comissao.comissao_nome
+                                                    : getServicoNome(comissao.comissao_id) }}
+                                            </div>
                                             <div class="text-xs opacity-70 flex flex-wrap gap-1">
                                                 <span v-for="(parc, idx) in getParcelasPorPi(pi.id)" :key="idx" class="badge badge-ghost">
                                                     <span class="opacity-75">{{ parc.label }}</span>
@@ -305,7 +318,9 @@ async function openPiPdf(pi) {
                                                 </span>
                                             </div>
                                         </div>
-                                        <div class="badge badge-primary">R$ {{ comissao.valor_comissao }}</div>
+                                        <div class="badge badge-primary">
+                                            R$ {{ Number(comissao.valor_comissao).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) }}
+                                        </div>
                                     </div>
                                 </template>
                                 <div v-else class="alert alert-info rounded-lg">

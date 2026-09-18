@@ -123,6 +123,7 @@ const NAV_GRUPOS = [
     items: [
       { name: 'Cadastro de Serviços', description: 'Realize o cadastro / edição de serviços.', href: '/Servicos' },
       { name: 'Cadastro de Comissões', description: 'Realize o cadastro / edição de comissões.', href: '/Comissoes' },
+      { name: 'Cadastro de Comissões - Novo', description: 'Tela React para gestão de regras de comissão usadas em PIs e OSs.', href: '/cadastro-comissoes', badge: { text: 'NOVO', color: 'bg-emerald-500' } },
       { name: 'Controle de Caixa (Vue Legado)', description: 'Fluxo antigo Vue de entradas e saídas.', href: '/Caixa' },
       { name: 'Caixa • Novo React', description: 'Nova interface com modais de Quitar, Editar, Excluir e emissão.', href: '/caixa', badge: { text: 'REACT', color: 'bg-cyan-500' } },
       { name: 'Comissões Pagas', description: 'Lista as comissões pagas por PI.', href: '/ListaComissoesPagas' },

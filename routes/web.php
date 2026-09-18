@@ -28,6 +28,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReactDashboardController;
 use App\Http\Controllers\ReactCaixaController;
 use App\Http\Controllers\ReactReservasSemPIController;
+use App\Http\Controllers\ReactComissoesController;
 use App\Http\Controllers\Financeiro\CaixaController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -63,6 +64,12 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::get('/caixa', [ReactCaixaController::class, 'index'])->name('react.caixa');
     route::get('/reservas-sem-pi', [ReactReservasSemPIController::class, 'index'])->name('react.reservassempi');
     route::post('/GerarPIPorReserva', [ReactReservasSemPIController::class, 'gerarPIPorReserva'])->name('react.gerarpi');
+
+    route::get('/cadastro-comissoes', [ReactComissoesController::class, 'index'])->name('react.comissoes.cadastro');
+    route::post('/cadastro-comissoes', [ReactComissoesController::class, 'store'])->name('react.comissoes.store');
+    route::put('/cadastro-comissoes/{id}', [ReactComissoesController::class, 'update'])->name('react.comissoes.update');
+    route::delete('/cadastro-comissoes/{id}', [ReactComissoesController::class, 'destroy'])->name('react.comissoes.destroy');
+    route::post('/cadastro-comissoes/{id}/toggle-status', [ReactComissoesController::class, 'toggleStatus'])->name('react.comissoes.toggle');
     // =================================================
 
     // Usuários
@@ -203,6 +210,9 @@ route::middleware(['auth', 'verified'])->group(function () {
     // Agentes
     route::get('/getAgentes', [ClienteController::class, 'getAgentes']);
 
+    // Comissões (nova arquitetura por pessoa)
+    route::get('/listarComissoesAtivas', [DataController::class, 'listarComissoesAtivas']);
+    route::get('/listarParticipantesComissao', [DataController::class, 'listarParticipantesComissao']);
 
         // Relatórios
     // Dispopnibilidade

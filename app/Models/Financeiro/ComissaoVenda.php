@@ -16,6 +16,15 @@ class ComissaoVenda extends Model
         'comissao_id',
         'agente_id',
         'valor_comissao',
+        'comissao_cadastro_id',
+        'pessoa_tipo',
+        'pessoa_id',
+    ];
+
+    protected $casts = [
+        'comissao_cadastro_id' => 'integer',
+        'pessoa_id' => 'integer',
+        'valor_comissao' => 'decimal:2',
     ];
 
     // protected $softDelete = true;

@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Clientes\Cliente;
 use App\Models\Financeiro\ComissaoVenda;
+use App\Models\Financeiro\Comissao;
+use App\Models\Financeiro\ComissaoCadastro;
+use App\Models\User;
 use App\Services\FinanceiroService;
 use App\Services\UsuarioService;
 use App\Models\Config\Ano;
@@ -88,10 +91,22 @@ class ComissoesController extends Controller
         $pis = $pisQ->get();
 
         $piIds = $pis->pluck('id')->values()->all();
-        $comissoes = empty($piIds) ? collect() : ComissaoVenda::whereIn('pi_id', $piIds)->get();
+        $comissoesRaw = empty($piIds) ? collect() : ComissaoVenda::whereIn('pi_id', $piIds)->get();
         $clientes = Cliente::all();
         $comissoes_defs = $this->financeiroService->listaComissoes();
         $lancamentos = empty($piIds) ? collect() : \App\Models\Financeiro\Lancamento::whereIn('id_reserva', $piIds)->get();
+
+        $usuariosMap = User::where('active', 1)->get()->keyBy('id')->map(fn($u) => trim((string)$u->name));
+        $clientesMap = $clientes->keyBy('id')->map(fn($c) => trim((string)($c->nome_fantasia ?: $c->razao_social)));
+        $comissoesNovaMap = ComissaoCadastro::whereNull('deleted_at')->get()->keyBy('id');
+        $comissoesLegadaMap = Comissao::with('servico')->get()->keyBy('id');
+
+        $comissoes = hidratarComissoesLegadoNovo($comissoesRaw, [
+            'usuariosMap'        => $usuariosMap,
+            'clientesMap'        => $clientesMap,
+            'comissoesNovaMap'   => $comissoesNovaMap,
+            'comissoesLegadaMap' => $comissoesLegadaMap,
+        ]);
 
         return Inertia::render('Financeiro/ComissoesPagas/ComissoesPagas', compact('anos', 'bisemanas', 'comissoes', 'pis', 'clientes', 'comissoes_defs', 'lancamentos'));
     }

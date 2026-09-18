@@ -9,11 +9,13 @@ use Inertia\Inertia;
 use PDF;
 use App\Models\Clientes\Cliente;
 use App\Models\Financeiro\Comissao;
+use App\Models\Financeiro\ComissaoCadastro;
 use App\Models\Financeiro\ComissaoVenda;
 use App\Models\Financeiro\Lancamento;
 use App\Models\Config\Ano;
 use App\Models\Bisemanas\Bisemana;
 use App\Models\PI\Pi;
+use App\Models\User;
 
 class RelComissaoController extends Controller
 {
@@ -77,7 +79,23 @@ class RelComissaoController extends Controller
                 ->whereNotNull('dt_pagamento_real')
                 ->whereBetween('dt_pagamento_real', [$start->format('Y-m-d 00:00:00'), $end->format('Y-m-d 23:59:59')])
                 ->get();
-            $piIds = $lansMesQuitados->pluck('id_reserva')->filter()->unique()->values()->all();
+            $piIdsQuitados = $lansMesQuitados->pluck('id_reserva')->filter()->unique()->values()->all();
+
+            $bsIdsMes = collect();
+            if ($anoRow) {
+                $bsDoAno = Bisemana::where('ano_id', (int)$anoRow->id)->get();
+                $bsIdsMes = $bsDoAno->filter(function ($bs) use ($mesSel, $year, $start, $end) {
+                    $inicio = Carbon::parse($bs->inicio ?? null);
+                    $fim = Carbon::parse($bs->fim ?? null);
+                    if (!$inicio || !$fim) return false;
+                    $bsStart = (clone $inicio)->startOfDay();
+                    $bsEnd = (clone $fim)->endOfDay();
+                    return $bsStart->lte($end) && $bsEnd->gte($start);
+                })->pluck('id')->values()->all();
+            }
+            $piIdsPorBs = empty($bsIdsMes) ? [] : Pi::whereIn('id_bisemana', $bsIdsMes)->pluck('id')->filter()->unique()->values()->all();
+
+            $piIds = array_values(array_unique(array_merge($piIdsQuitados, $piIdsPorBs)));
         }
 
         if (empty($piIds)) {
@@ -95,9 +113,27 @@ class RelComissaoController extends Controller
 
         $comissoesQ = empty($piIds) ? ComissaoVenda::whereRaw('0 = 1') : ComissaoVenda::whereIn('pi_id', $piIds);
         if ($agenteSelId !== 0) {
-            $comissoesQ->where('agente_id', $agenteSelId);
+            $comissoesQ->where(function ($q) use ($agenteSelId) {
+                $q->where(function ($q2) use ($agenteSelId) {
+                    $q2->whereNotNull('pessoa_tipo')
+                       ->whereRaw("( (pessoa_tipo = 'cliente' AND pessoa_id = {$agenteSelId}) OR (pessoa_tipo = 'user' AND pessoa_id = {$agenteSelId}) )");
+                })
+                ->orWhere('agente_id', $agenteSelId);
+            });
         }
-        $comissoes = $comissoesQ->get()->toArray();
+        $comissoesRaw = $comissoesQ->get();
+
+        $usuariosMap = User::where('active', 1)->get()->keyBy('id')->map(fn($u) => trim((string)$u->name));
+        $clientesMapAll = Cliente::all()->keyBy('id')->map(fn($c) => trim((string)($c->nome_fantasia ?: $c->razao_social)));
+        $comissoesNovaMap = ComissaoCadastro::whereNull('deleted_at')->get()->keyBy('id');
+        $comissoesLegadaMap = Comissao::with('servico')->get()->keyBy('id');
+
+        $comissoes = hidratarComissoesLegadoNovo($comissoesRaw, [
+            'usuariosMap'        => $usuariosMap,
+            'clientesMap'        => $clientesMapAll,
+            'comissoesNovaMap'   => $comissoesNovaMap,
+            'comissoesLegadaMap' => $comissoesLegadaMap,
+        ]);
 
         if ($status_sel !== 'todos') {
             $comissoes = collect($comissoes)->filter(function($c) use ($status_sel, $isRecebida) {
@@ -108,7 +144,9 @@ class RelComissaoController extends Controller
         $chavesVistas = [];
         $comissoesDedup = [];
         foreach ($comissoes as $c) {
-            $ch = (int)($c['agente_id'] ?? 0).'|'.(int)($c['comissao_id'] ?? 0).'|'.(int)($c['pi_id'] ?? 0);
+            $chaveBenef = $c['beneficiario_chave_logica'] ?? ((int)($c['agente_id'] ?? 0));
+            $chaveDef   = $c['comissao_definicao_id']   ?? ((int)($c['comissao_id'] ?? 0));
+            $ch = (string)$chaveBenef.'|'.(int)$chaveDef.'|'.(int)($c['pi_id'] ?? 0);
             if (isset($chavesVistas[$ch])) {
                 continue;
             }
@@ -154,19 +192,27 @@ class RelComissaoController extends Controller
             ->get()
             ->keyBy('id');
 
-        $agenteIds = collect($comissoes)->pluck('agente_id')->filter()->unique()->values()->all();
+        $agenteIdsLegado = collect($comissoes)->pluck('agente_id')->filter()->unique()->values()->all();
+        $beneficiarioIds = collect($comissoes)->pluck('beneficiario_id_real')->filter()->unique()->values()->all();
+        $agenteIds = array_values(array_unique(array_merge($agenteIdsLegado, $beneficiarioIds)));
         if ($agenteSelId) {
             $agenteIds[] = $agenteSelId;
+            $agenteIds = array_values(array_unique($agenteIds));
         }
-        $agentesDb = Cliente::whereIn('id', array_values(array_unique($agenteIds)))->get()->keyBy('id');
+        $agentesDb = Cliente::whereIn('id', $agenteIds)->get()->keyBy('id');
 
-        $comissaoIds = collect($comissoes)->pluck('comissao_id')->filter()->unique()->values()->all();
+        $comissaoIdsLegado = collect($comissoes)->pluck('comissao_id')->filter()->unique()->values()->all();
+        $comissaoIdsDef = collect($comissoes)->pluck('comissao_definicao_id')->filter()->unique()->values()->all();
+        $comissaoIds = array_values(array_unique(array_merge($comissaoIdsLegado, $comissaoIdsDef)));
         $defs = Comissao::with('servico')->whereIn('id', $comissaoIds)->get()->keyBy('id');
 
         $agentesMap = $agentesDb->mapWithKeys(function ($a) {
             $nome = trim((string)($a->nome_fantasia ?: $a->razao_social));
             return [(int)$a->id => $nome];
         });
+        foreach ($usuariosMap as $uid => $uname) {
+            $agentesMap->put((int)$uid, trim((string)$uname));
+        }
         $agenteSelNome = $agenteSelId ? ($agentesMap->get($agenteSelId) ?: '') : '';
         $showAgenteCol = $agenteSelId === 0;
 
@@ -188,14 +234,27 @@ class RelComissaoController extends Controller
                 $clienteNome = trim((string)($pi['cliente'] ?? ''));
             }
 
-            $def = $defs->get((int)($c['comissao_id'] ?? 0));
-            $tipoServico = $def && $def->servico ? ($def->servico->nome ?? '') : '';
-            $percentLabel = '—';
-            if ($def) {
-                if ((int)$def->tipo_comissao === 1) {
-                    $percentLabel = rtrim(rtrim(number_format((float)$def->valor, 2, ',', '.'), '0'), ',').'%';
-                } else {
-                    $percentLabel = 'Fixo';
+            $benefNome = trim((string)($c['beneficiario_nome'] ?? ''));
+            if ($benefNome === '' || $benefNome === '—') {
+                $benefNome = (string)($agentesMap->get((int)($c['agente_id'] ?? 0)) ?: '');
+            }
+
+            $tipoServico = trim((string)($c['comissao_nome'] ?? ''));
+            if ($tipoServico === '') {
+                $def = $defs->get((int)($c['comissao_id'] ?? 0));
+                $tipoServico = $def && $def->servico ? ($def->servico->nome ?? '') : '';
+            }
+
+            $percentLabel = trim((string)($c['comissao_percent_label'] ?? ''));
+            if ($percentLabel === '' || $percentLabel === '—') {
+                $def = $defs->get((int)($c['comissao_id'] ?? 0));
+                $percentLabel = '—';
+                if ($def) {
+                    if ((int)$def->tipo_comissao === 1) {
+                        $percentLabel = rtrim(rtrim(number_format((float)$def->valor, 2, ',', '.'), '0'), ',').'%';
+                    } else {
+                        $percentLabel = 'Fixo';
+                    }
                 }
             }
 
@@ -215,7 +274,7 @@ class RelComissaoController extends Controller
                     'pi' => $piId,
                     'parcela' => $c['parcelas'] ?? '—',
                     'cliente' => $clienteNome,
-                    'agente' => $agentesMap->get((int)($c['agente_id'] ?? 0)) ?: '',
+                    'agente' => $benefNome,
                     'data_pagamento' => null,
                     'valor_parcela' => null,
                     'valor_comissao' => $valorComissaoTotal,
@@ -224,27 +283,44 @@ class RelComissaoController extends Controller
                 continue;
             }
 
+            $incluirSomenteQuitados = ($status_sel === 'recebidos');
             $totalPi = (float)$listaLanc->sum(function ($l) { return (float)($l->valor ?? 0); });
+            $incluiuAlguma = false;
             foreach ($listaLanc as $l) {
                 $vp = (float)($l->valor ?? 0);
                 $ratio = $totalPi > 0 ? ($vp / $totalPi) : (1 / max(1, $listaLanc->count()));
                 $dataVencimento = $l->dt_faturamento ?? null;
                 $dataRealPagto = $l->dt_pagamento_real ?? null;
                 $statusLan = (string)($l->status_pagamento ?? 'PENDENTE');
-                if ($statusLan !== 'QUITADO') {
+                $ehQuitado = $statusLan === 'QUITADO';
+                if ($incluirSomenteQuitados && !$ehQuitado) {
                     continue;
                 }
+                $incluiuAlguma = true;
                 $linhas[] = [
                     'percent' => $percentLabel,
                     'pi' => $piId,
                     'parcela' => $l->parcelas ?? '',
                     'cliente' => $clienteNome,
-                    'agente' => $agentesMap->get((int)($c['agente_id'] ?? 0)) ?: '',
+                    'agente' => $benefNome,
                     'vencimento' => $dataVencimento,
-                    'data_pagamento' => $dataRealPagto ?? $dataVencimento,
+                    'data_pagamento' => $ehQuitado ? ($dataRealPagto ?? $dataVencimento) : null,
                     'data_pagamento_real' => $dataRealPagto,
                     'valor_parcela' => $vp,
                     'valor_comissao' => $valorComissaoTotal * $ratio,
+                    'tipo' => $tipoServico,
+                ];
+            }
+            if (!$incluiuAlguma && !$incluirSomenteQuitados) {
+                $linhas[] = [
+                    'percent' => $percentLabel,
+                    'pi' => $piId,
+                    'parcela' => $c['parcelas'] ?? '—',
+                    'cliente' => $clienteNome,
+                    'agente' => $benefNome,
+                    'data_pagamento' => null,
+                    'valor_parcela' => null,
+                    'valor_comissao' => $valorComissaoTotal,
                     'tipo' => $tipoServico,
                 ];
             }
