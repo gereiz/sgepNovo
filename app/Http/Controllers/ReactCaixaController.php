@@ -43,6 +43,9 @@ class ReactCaixaController extends Controller
 
     public function index(Request $request)
     {
+        $caixaService = new \App\Services\Financeiro\CaixaService();
+        $caixaService->syncLancamentosPiOsFaltantes();
+
         $search = trim((string)($request->query('search') ?? ''));
         $status = (string)($request->query('status') ?? 'todos');
         $centroCustoId = (int)($request->query('cc') ?? 0);
@@ -89,7 +92,8 @@ class ReactCaixaController extends Controller
 
         $reservaIds = [];
         foreach ($lancamentos as $l) {
-            if ($l->id_reserva && (int)$l->id_reserva > 0) {
+            $desc = (string)($l->descricao ?? '');
+            if ($l->id_reserva && (int)$l->id_reserva > 0 && strpos($desc, 'OS nº') === false) {
                 $reservaIds[] = (int)$l->id_reserva;
             }
         }
@@ -138,7 +142,8 @@ class ReactCaixaController extends Controller
             }
             $valorBruto = (float)($l->valor ?? 0);
             $comissaoRestar = 0.0;
-            if ($l->id_reserva && (int)$l->id_reserva > 0) {
+            $desc = (string)($l->descricao ?? '');
+            if ($l->id_reserva && (int)$l->id_reserva > 0 && strpos($desc, 'OS nº') === false) {
                 $comissaoRestar = (float)($comissoesPorReserva[(int)$l->id_reserva] ?? 0);
             }
             $valorLiquido = max(0.0, $valorBruto - $comissaoRestar);

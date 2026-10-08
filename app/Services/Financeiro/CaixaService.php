@@ -154,6 +154,71 @@ class CaixaService
         return Lancamento::where('id_reserva', $id_reserva)->first();
     }
 
+    public function syncLancamentosPiOsFaltantes()
+    {
+        try {
+            // 1. Sincronizar PIs que não possuem lançamentos registrados
+            $pis = DB::table('pi')->where('id', '>=', 24)->orderBy('id')->get();
+            foreach ($pis as $pi) {
+                $existe = Lancamento::where('id_reserva', $pi->id)
+                    ->where('descricao', 'LIKE', 'PI nº ' . $pi->id . '%')
+                    ->exists();
+                if (!$existe) {
+                    $cliente = DB::table('clientes')->where('id', $pi->id_cliente)->first();
+                    $nomeCliente = $cliente ? ($cliente->razao_social ?: ($cliente->nome_fantasia ?: 'Cliente #' . $pi->id_cliente)) : 'Cliente #' . $pi->id_cliente;
+                    $dtFaturamento = !empty($pi->dt_pgto) && $pi->dt_pgto !== '0000-00-00'
+                        ? date('Y-m-d', strtotime($pi->dt_pgto))
+                        : (!empty($pi->created_at) ? date('Y-m-d', strtotime($pi->created_at)) : date('Y-m-d'));
+                    $pago = (int)($pi->pago ?? 0);
+
+                    Lancamento::create([
+                        'descricao' => 'PI nº ' . $pi->id . ' Cliente: ' . $nomeCliente,
+                        'valor' => (float)($pi->vl_total ?? 0),
+                        'parcelas' => '1/1',
+                        'dt_faturamento' => $dtFaturamento,
+                        'centro_custo' => 1,
+                        'tipo_lancamento' => 1,
+                        'id_reserva' => (int)$pi->id,
+                        'observacoes' => strip_tags((string)($pi->obs ?? '')),
+                        'status_pagamento' => ($pago === 1 ? 'QUITADO' : 'PENDENTE'),
+                        'dt_pagamento_real' => ($pago === 1 ? $dtFaturamento : null),
+                    ]);
+                }
+            }
+
+            // 2. Sincronizar OSs que não possuem lançamentos registrados
+            $oss = DB::table('os')->where('id', '>=', 1)->orderBy('id')->get();
+            foreach ($oss as $os) {
+                $existe = Lancamento::where('id_reserva', $os->id)
+                    ->where('descricao', 'LIKE', 'OS nº ' . $os->id . '%')
+                    ->exists();
+                if (!$existe) {
+                    $cliente = DB::table('clientes')->where('id', $os->id_cliente)->first();
+                    $nomeCliente = $cliente ? ($cliente->razao_social ?: ($cliente->nome_fantasia ?: 'Cliente #' . $os->id_cliente)) : 'Cliente #' . $os->id_cliente;
+                    $dtFaturamento = !empty($os->dt_pgto) && $os->dt_pgto !== '0000-00-00'
+                        ? date('Y-m-d', strtotime($os->dt_pgto))
+                        : (!empty($os->created_at) ? date('Y-m-d', strtotime($os->created_at)) : date('Y-m-d'));
+                    $pago = (int)($os->pago ?? 0);
+
+                    Lancamento::create([
+                        'descricao' => 'OS nº ' . $os->id . ' Cliente: ' . $nomeCliente,
+                        'valor' => (float)($os->vl_total ?? 0),
+                        'parcelas' => '1/1',
+                        'dt_faturamento' => $dtFaturamento,
+                        'centro_custo' => 1,
+                        'tipo_lancamento' => 1,
+                        'id_reserva' => (int)$os->id,
+                        'observacoes' => strip_tags((string)($os->obs ?? '')),
+                        'status_pagamento' => ($pago === 1 ? 'QUITADO' : 'PENDENTE'),
+                        'dt_pagamento_real' => ($pago === 1 ? $dtFaturamento : null),
+                    ]);
+                }
+            }
+        } catch (\Throwable $e) {
+            \Log::warning('Erro em syncLancamentosPiOsFaltantes: ' . $e->getMessage());
+        }
+    }
+
     public function createLancamento(Request $request)
     {
 
@@ -163,7 +228,7 @@ class CaixaService
             'centro_custo' => 'required',
             'tipo_lancamento' => 'required',
             'valor' => 'required',
-            'parcelas' => 'required|integer|min:1',
+            'parcelas' => 'required',
             'data_lancamento' => 'required',
 
         ]);
@@ -172,30 +237,42 @@ class CaixaService
             return response()->json(['message' => $validator->errors()], 400);
         }
 
-        $lancamento['valor'] = str_replace(['R$', ' ', '.'], '', (string)$lancamento['valor']);
-        $lancamento['valor'] = str_replace(',', '.', $lancamento['valor']);
-        $lancamento['valor'] = floatval($lancamento['valor']);
+        if (is_numeric($lancamento['valor'])) {
+            $lancamento['valor'] = floatval($lancamento['valor']);
+        } else {
+            $valStr = str_replace(['R$', ' '], '', (string)$lancamento['valor']);
+            if (strpos($valStr, ',') !== false) {
+                $valStr = str_replace('.', '', $valStr);
+                $valStr = str_replace(',', '.', $valStr);
+            }
+            $lancamento['valor'] = floatval($valStr);
+        }
         if ($lancamento['valor'] <= 0) {
             return response()->json(['message' => ['valor' => ['Valor do lançamento inválido']]], 400);
         }
 
-        //Transforma a data para o formato do banco de dados
-        $lancamento['data_lancamento'] = date('Y-m-d', strtotime($lancamento['data_lancamento']));
+        // Transforma a data para o formato do banco de dados
+        $dtLanc = !empty($lancamento['data_lancamento']) ? date('Y-m-d', strtotime($lancamento['data_lancamento'])) : date('Y-m-d');
+        $statusPgto = !empty($lancamento['status_pagamento']) ? $lancamento['status_pagamento'] : 'PENDENTE';
+        $dtPagamentoReal = ($statusPgto === 'QUITADO')
+            ? (!empty($lancamento['dt_pagamento_real']) ? date('Y-m-d', strtotime($lancamento['dt_pagamento_real'])) : $dtLanc)
+            : null;
 
-        $lancamento = Lancamento::create(
+        $created = Lancamento::create(
             [
             'descricao' => $lancamento['descricao'],
             'valor' => $lancamento['valor'],
-            'parcelas' => $lancamento['parcelas'],
-            'dt_faturamento' => $lancamento['data_lancamento'],
+            'parcelas' => (string)$lancamento['parcelas'],
+            'dt_faturamento' => $dtLanc,
             'centro_custo' => $lancamento['centro_custo'],
             'tipo_lancamento' => $lancamento['tipo_lancamento'],
-            'id_reserva' => $lancamento['id_reserva'],
-            'observacoes' => $lancamento['observacoes'],
-            'status_pagamento' => $lancamento['status_pagamento'] ?? 'PENDENTE',
+            'id_reserva' => $lancamento['id_reserva'] ?? null,
+            'observacoes' => $lancamento['observacoes'] ?? null,
+            'status_pagamento' => $statusPgto,
+            'dt_pagamento_real' => $dtPagamentoReal,
         ]);
 
-        $lancamento = Lancamento::with('tipoLancamento', 'centroCusto')->find($lancamento->id);
+        $lancamento = Lancamento::with('tipoLancamento', 'centroCusto')->find($created->id);
 
         return response()->json($lancamento, 200);
     }
@@ -278,6 +355,24 @@ class CaixaService
 
         $l->status_pagamento = $entrandoEm;
         $l->save();
+
+        if ($l->id_reserva && $l->id_reserva > 0) {
+            $desc = (string)($l->descricao ?? '');
+            if (strpos($desc, 'PI nº') !== false) {
+                $todosQuitados = Lancamento::where('id_reserva', $l->id_reserva)
+                    ->where('descricao', 'LIKE', 'PI nº ' . $l->id_reserva . '%')
+                    ->where('status_pagamento', '!=', 'QUITADO')
+                    ->count() === 0;
+                DB::table('pi')->where('id', $l->id_reserva)->update(['pago' => $todosQuitados ? 1 : 0]);
+            } elseif (strpos($desc, 'OS nº') !== false) {
+                $todosQuitados = Lancamento::where('id_reserva', $l->id_reserva)
+                    ->where('descricao', 'LIKE', 'OS nº ' . $l->id_reserva . '%')
+                    ->where('status_pagamento', '!=', 'QUITADO')
+                    ->count() === 0;
+                DB::table('os')->where('id', $l->id_reserva)->update(['pago' => $todosQuitados ? 1 : 0]);
+            }
+        }
+
         return response()->json(['ok' => true, 'status' => $l->status_pagamento, 'dt_pagamento_real' => $l->dt_pagamento_real]);
     }
 
