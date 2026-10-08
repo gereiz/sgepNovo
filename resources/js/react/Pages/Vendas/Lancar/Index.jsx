@@ -1746,8 +1746,8 @@ export default function VendasLancarIndex() {
         {/* Sales List */}
         <div className="space-y-3.5">
           {paginatedItems.length === 0 ? (
-            <Card className="border border-slate-200 bg-white rounded-xl p-12 text-center shadow-2xs">
-              <div className="max-w-md mx-auto space-y-3 py-4">
+            <Card className="border border-slate-200 bg-white rounded-xl p-4 text-center shadow-2xs">
+              <div className="max-w-md mx-auto space-y-3">
                 <div className="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
                   <FileText className="w-6 h-6" />
                 </div>
