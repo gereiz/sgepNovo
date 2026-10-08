@@ -97,12 +97,27 @@ class ReactCaixaController extends Controller
         $comissoesPorReserva = [];
         if (count($reservaIds) > 0) {
             try {
-                $rows = ComissaoVenda::whereIn('pi_id', $reservaIds)
-                    ->selectRaw('pi_id, COALESCE(SUM(valor_comissao),0) as total_comissao')
-                    ->groupBy('pi_id')
+                $cvRows = ComissaoVenda::whereIn('pi_id', $reservaIds)
+                    ->orderBy('id', 'desc')
                     ->get();
-                foreach ($rows as $row) {
-                    $comissoesPorReserva[(int)$row->pi_id] = (float)$row->total_comissao;
+                $seenChaves = [];
+                foreach ($cvRows as $cvr) {
+                    $piIdInt = (int)$cvr->pi_id;
+                    $benefKey = $cvr->pessoa_tipo && $cvr->pessoa_id
+                        ? $cvr->pessoa_tipo . ':' . $cvr->pessoa_id
+                        : 'agente:' . ($cvr->agente_id ?? 0);
+                    $defKey = $cvr->comissao_cadastro_id
+                        ? 'cad:' . $cvr->comissao_cadastro_id
+                        : 'com:' . ($cvr->comissao_id ?? 0);
+                    $chave = $piIdInt . '|' . $benefKey . '|' . $defKey;
+                    if (isset($seenChaves[$chave])) {
+                        continue;
+                    }
+                    $seenChaves[$chave] = true;
+                    if (!isset($comissoesPorReserva[$piIdInt])) {
+                        $comissoesPorReserva[$piIdInt] = 0.0;
+                    }
+                    $comissoesPorReserva[$piIdInt] += (float)($cvr->valor_comissao ?? 0);
                 }
             } catch (\Throwable $e) {
                 $comissoesPorReserva = [];

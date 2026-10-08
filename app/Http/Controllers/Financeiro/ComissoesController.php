@@ -91,7 +91,7 @@ class ComissoesController extends Controller
         $pis = $pisQ->get();
 
         $piIds = $pis->pluck('id')->values()->all();
-        $comissoesRaw = empty($piIds) ? collect() : ComissaoVenda::whereIn('pi_id', $piIds)->get();
+        $comissoesRaw = empty($piIds) ? collect() : ComissaoVenda::whereIn('pi_id', $piIds)->orderBy('id', 'desc')->get();
         $clientes = Cliente::all();
         $comissoes_defs = $this->financeiroService->listaComissoes();
         $lancamentos = empty($piIds) ? collect() : \App\Models\Financeiro\Lancamento::whereIn('id_reserva', $piIds)->get();
@@ -107,6 +107,20 @@ class ComissoesController extends Controller
             'comissoesNovaMap'   => $comissoesNovaMap,
             'comissoesLegadaMap' => $comissoesLegadaMap,
         ]);
+
+        $chavesVistas = [];
+        $comissoesDedup = [];
+        foreach ($comissoes as $c) {
+            $chaveBenef = $c['beneficiario_chave_logica'] ?? ((int)($c['agente_id'] ?? 0));
+            $chaveDef   = $c['comissao_definicao_id']   ?? ((int)($c['comissao_id'] ?? 0));
+            $ch = (string)$chaveBenef.'|'.(int)$chaveDef.'|'.(int)($c['pi_id'] ?? 0);
+            if (isset($chavesVistas[$ch])) {
+                continue;
+            }
+            $chavesVistas[$ch] = true;
+            $comissoesDedup[] = $c;
+        }
+        $comissoes = $comissoesDedup;
 
         return Inertia::render('Financeiro/ComissoesPagas/ComissoesPagas', compact('anos', 'bisemanas', 'comissoes', 'pis', 'clientes', 'comissoes_defs', 'lancamentos'));
     }

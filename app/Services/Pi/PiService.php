@@ -115,7 +115,7 @@ class PiService
                         $jaExiste = ComissaoVenda::where('pi_id', $pi->id)
                             ->where('comissao_id', (int)$comissao->id)
                             ->where('agente_id', $agenteId)
-                            ->exists();
+                            ->first();
                         if (!$jaExiste) {
                             ComissaoVenda::create([
                                 'pi_id'          => $pi->id,
@@ -123,6 +123,8 @@ class PiService
                                 'agente_id'      => $agenteId,
                                 'valor_comissao' => $vlrComissao,
                             ]);
+                        } else {
+                            $jaExiste->update(['valor_comissao' => $vlrComissao]);
                         }
                         $vlr_total -= $vlrComissao;
                     } else {
@@ -130,7 +132,7 @@ class PiService
                         $jaExiste = ComissaoVenda::where('pi_id', $pi->id)
                             ->where('comissao_id', (int)$comissao->id)
                             ->where('agente_id', $agenteId)
-                            ->exists();
+                            ->first();
                         if (!$jaExiste) {
                             ComissaoVenda::create([
                                 'pi_id'          => $pi->id,
@@ -138,6 +140,8 @@ class PiService
                                 'agente_id'      => $agenteId,
                                 'valor_comissao' => $vlrComissao,
                             ]);
+                        } else {
+                            $jaExiste->update(['valor_comissao' => $vlrComissao]);
                         }
                         $vlr_total -= $vlrComissao;
                     }

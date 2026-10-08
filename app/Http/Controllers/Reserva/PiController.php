@@ -70,11 +70,12 @@ class PiController extends Controller
         $campanha = session('dadosPi')['Two']['campanha'];
 
         $agentes = [];
-
-        foreach (session('dadosPi')['Two']['agentesId'] as $ag) {
+        $agentesIds = array_unique(session('dadosPi')['Two']['agentesId'] ?? []);
+        foreach ($agentesIds as $ag) {
             $agente = Cliente::where('agent', 1)->where('id', $ag)->first();
-
-            array_push($agentes, $agente);
+            if ($agente) {
+                array_push($agentes, $agente);
+            }
         }
 
 

@@ -14,6 +14,8 @@ import {
   FileText,
   DollarSign,
   Globe,
+  LogOut,
+  ExternalLink,
 } from 'lucide-react';
 import { cn } from '@/react/lib/utils';
 import {
@@ -51,6 +53,7 @@ const NAV_GRUPOS = [
     icon: LayoutGrid,
     items: [
       { name: 'Dashboard • Novo React', description: 'Painel executivo de indicadores comerciais e operacionais.', href: '/dashboard', badge: { text: 'REACT', color: 'bg-cyan-500' } },
+      { name: 'Dashboard Antigo • Vue Legado', description: 'Painel clássico de bi-semanas e clientes.', href: '/dashboard-antigo', badge: { text: 'LEGADO', color: 'bg-amber-600' } },
     ],
   },
   {
@@ -88,7 +91,8 @@ const NAV_GRUPOS = [
     label: 'Vendas',
     icon: DollarSign,
     items: [
-      { name: 'Lançar Venda', description: 'Lançar venda de serviços sem reserva.', href: '/Vendas/Lancar' },
+      { name: 'Lançar Venda • Novo React', description: 'Nova interface React com cards, filtros e stepper de venda.', href: '/vendas/lancar', badge: { text: 'NOVO', color: 'bg-emerald-500' } },
+      { name: 'Lançar Venda (Vue Legado)', description: 'Fluxo antigo Vue de lançamento de venda.', href: '/Vendas/Lancar-antigo' },
     ],
   },
   {
@@ -154,10 +158,10 @@ export function Navbar({
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 text-white shadow-nav overflow-x-hidden max-w-[100vw]"
+      className="fixed top-0 left-0 right-0 z-50 text-white shadow-nav"
       style={{ backgroundColor: '#0F172A' }}
     >
-      <div className="flex h-[56px] w-full max-w-[100vw] items-center px-3 lg:px-6 gap-1 md:gap-3 relative overflow-x-hidden">
+      <div className="flex h-[56px] w-full items-center px-3 lg:px-6 gap-1 md:gap-3 relative">
         {/* ========== MOBILE: BOTÃO HAMBÚRGUER ========== */}
         <div className="md:hidden flex items-center justify-center shrink-0 min-w-0">
           <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
@@ -212,7 +216,7 @@ export function Navbar({
               {/* Botão LEGADO no drawer */}
               <div className="px-4 pt-3">
                 <a
-                  href="/dashboard"
+                  href="/dashboard-antigo"
                   className="inline-flex w-full items-center justify-center gap-2 h-10 px-3 text-[13px] font-semibold rounded-lg border border-amber-300/70 bg-amber-100/95 hover:bg-amber-50 text-amber-900 no-underline transition-colors"
                 >
                   <Sparkles className="w-4 h-4 text-amber-700 shrink-0" />
@@ -274,6 +278,26 @@ export function Navbar({
                     );
                   })}
                 </Accordion>
+              </div>
+
+              {/* Links de suporte e logout no rodapé do drawer */}
+              <div className="p-4 border-t border-gray-100 bg-gray-50/50 space-y-1">
+                <a
+                  href="https://ibitweb.atlassian.net/servicedesk/customer/portal/1/group/1/create/10"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100 rounded-lg no-underline transition-colors"
+                >
+                  <span>Abrir Chamado</span>
+                  <ExternalLink className="w-3.5 h-3.5 text-gray-400" />
+                </a>
+                <a
+                  href="/logout"
+                  className="flex items-center justify-between px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-lg no-underline transition-colors"
+                >
+                  <span>Sair do Sistema</span>
+                  <LogOut className="w-3.5 h-3.5 text-red-500" />
+                </a>
               </div>
             </SheetContent>
           </Sheet>
@@ -371,7 +395,7 @@ export function Navbar({
         <div className="flex items-center gap-0.5 md:gap-1 ml-auto shrink-0 pl-1 md:pl-2 min-w-0 overflow-hidden">
           {/* Botão LEGADO (apenas md+) */}
           <a
-            href="/dashboard"
+            href="/dashboard-antigo"
             title="Voltar para o Dashboard Vue (legado)"
             className="hidden md:inline-flex items-center gap-1.5 h-8 px-2.5 text-[11px] font-semibold rounded-lg border border-amber-300/70 bg-amber-100/95 hover:bg-amber-50 text-amber-900 no-underline mr-1 lg:mr-2 transition-colors whitespace-nowrap"
           >
@@ -404,23 +428,52 @@ export function Navbar({
           </button>
 
           {/* Settings */}
-          <button
-            type="button"
+          <a
+            href="/configuracoes"
             title="Configurações"
-            className="hidden sm:flex h-9 w-9 rounded-lg items-center justify-center text-gray-300 hover:text-white hover:bg-white/10 transition-colors bg-transparent border-0 shrink-0"
+            className="hidden sm:flex h-9 w-9 rounded-lg items-center justify-center text-gray-300 hover:text-white hover:bg-white/10 transition-colors bg-transparent border-0 shrink-0 no-underline"
           >
             <Settings className="w-[18px] h-[18px]" />
-          </button>
+          </a>
 
-          {/* User avatar */}
+          {/* User avatar com Popover */}
           <div className="pl-1 ml-0.5 shrink-0">
-            <div
-              className="w-9 h-9 rounded-full font-bold flex items-center justify-center text-white text-sm select-none ring-2 ring-white/10 shrink-0 cursor-pointer"
-              style={{ backgroundColor: '#ef4444' }}
-              title={`${userName}${userEmail ? ' • ' + userEmail : ''}`}
-            >
-              {String(userName || 'G').trim().charAt(0).toUpperCase()}
-            </div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  className="w-9 h-9 rounded-full font-bold flex items-center justify-center text-white text-sm select-none ring-2 ring-white/10 shrink-0 cursor-pointer border-0 p-0 outline-none hover:ring-white/40 transition-all"
+                  style={{ backgroundColor: '#ef4444' }}
+                  title={`${userName}${userEmail ? ' • ' + userEmail : ''}`}
+                >
+                  {String(userName || 'G').trim().charAt(0).toUpperCase()}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-56 p-2 rounded-2xl shadow-xl">
+                <div className="px-3 py-2 border-b border-gray-100">
+                  <div className="font-semibold text-sm text-gray-900 truncate">{userName}</div>
+                  {userEmail && <div className="text-xs text-gray-500 truncate">{userEmail}</div>}
+                </div>
+                <div className="py-1">
+                  <a
+                    href="https://ibitweb.atlassian.net/servicedesk/customer/portal/1/group/1/create/10"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100 rounded-lg no-underline transition-colors"
+                  >
+                    <span>Abrir Chamado</span>
+                    <ExternalLink className="w-3.5 h-3.5 text-gray-400" />
+                  </a>
+                  <a
+                    href="/logout"
+                    className="flex items-center justify-between px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-lg no-underline transition-colors"
+                  >
+                    <span>Sair</span>
+                    <LogOut className="w-3.5 h-3.5 text-red-500" />
+                  </a>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </div>

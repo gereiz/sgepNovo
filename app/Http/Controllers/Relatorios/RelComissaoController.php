@@ -111,7 +111,7 @@ class RelComissaoController extends Controller
             return $ls->every(fn($l) => ($l->status_pagamento ?? 'PENDENTE') === 'QUITADO');
         };
 
-        $comissoesQ = empty($piIds) ? ComissaoVenda::whereRaw('0 = 1') : ComissaoVenda::whereIn('pi_id', $piIds);
+        $comissoesQ = empty($piIds) ? ComissaoVenda::whereRaw('0 = 1') : ComissaoVenda::whereIn('pi_id', $piIds)->orderBy('id', 'desc');
         if ($agenteSelId !== 0) {
             $comissoesQ->where(function ($q) use ($agenteSelId) {
                 $q->where(function ($q2) use ($agenteSelId) {
@@ -300,6 +300,7 @@ class RelComissaoController extends Controller
                 $linhas[] = [
                     'percent' => $percentLabel,
                     'pi' => $piId,
+                    'lancamento_id' => (int)($l->id ?? 0),
                     'parcela' => $l->parcelas ?? '',
                     'cliente' => $clienteNome,
                     'agente' => $benefNome,
@@ -315,6 +316,7 @@ class RelComissaoController extends Controller
                 $linhas[] = [
                     'percent' => $percentLabel,
                     'pi' => $piId,
+                    'lancamento_id' => 0,
                     'parcela' => $c['parcelas'] ?? '—',
                     'cliente' => $clienteNome,
                     'agente' => $benefNome,
@@ -356,10 +358,14 @@ class RelComissaoController extends Controller
                                 $sumParcela += (float)($ldata['valor'] ?? 0);
                             }
                         }
+                        $sumCom = (float)$items->filter(function ($i) use ($quitadosIds) {
+                            $lid = (int)($i['lancamento_id'] ?? 0);
+                            return $lid === 0 || isset($quitadosIds[$lid]);
+                        })->sum(function ($i) { return (float)($i['valor_comissao'] ?? 0); });
                     } else {
                         $sumParcela = (float)($parcelasPorPi[$piId] ?? 0);
+                        $sumCom = (float)$items->sum(function ($i) { return (float)($i['valor_comissao'] ?? 0); });
                     }
-                    $sumCom = (float)$items->sum(function ($i) { return (float)($i['valor_comissao'] ?? 0); });
                     $parcelasArr = [];
                     if (count($quitadosIds) > 0) {
                         foreach ($unicasLan as $lid => $ldata) {
@@ -427,6 +433,15 @@ class RelComissaoController extends Controller
                 ->all();
         }
 
+        $totais = collect($linhas)->reduce(function($acc, $l) {
+            if (!empty($l['data_pagamento_real']) || !empty($l['data_pagamento'])) {
+                $acc['recebidos'] += (float)($l['valor_comissao'] ?? 0);
+            } else {
+                $acc['a_receber'] += (float)($l['valor_comissao'] ?? 0);
+            }
+            return $acc;
+        }, ['recebidos' => 0.0, 'a_receber' => 0.0]);
+
         $grupos = collect($linhas)
             ->sortBy(function ($l) {
                 $p = (string)($l['percent'] ?? '—');
@@ -436,6 +451,9 @@ class RelComissaoController extends Controller
                 return 9999;
             })
             ->groupBy('percent')
+            ->map(function ($items) {
+                return $items->sortBy('pi')->values();
+            })
             ->all();
 
 
@@ -452,3 +470,4 @@ class RelComissaoController extends Controller
         return $pdf->setPaper('a4', 'landscape')->stream('Rel-Comissoes.pdf');
     }
 }
+

@@ -29,6 +29,7 @@ use App\Http\Controllers\ReactDashboardController;
 use App\Http\Controllers\ReactCaixaController;
 use App\Http\Controllers\ReactReservasSemPIController;
 use App\Http\Controllers\ReactComissoesController;
+use App\Http\Controllers\ReactVendaController;
 use App\Http\Controllers\Financeiro\CaixaController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -56,7 +57,7 @@ route::get('/home', function() {
 
 route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard Vue (legado)
-    // route::get('/r/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    route::get('/dashboard-antigo', [DashboardController::class, 'index'])->name('dashboard.antigo');
     route::post('/getClienteReservas', [DashboardController::class, 'getClienteReservas']);
 
     // ============== NOVO FRONTEND REACT ==============
@@ -70,6 +71,13 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::put('/cadastro-comissoes/{id}', [ReactComissoesController::class, 'update'])->name('react.comissoes.update');
     route::delete('/cadastro-comissoes/{id}', [ReactComissoesController::class, 'destroy'])->name('react.comissoes.destroy');
     route::post('/cadastro-comissoes/{id}/toggle-status', [ReactComissoesController::class, 'toggleStatus'])->name('react.comissoes.toggle');
+
+    // Vendas React
+    route::get('/vendas-lancar', [ReactVendaController::class, 'index'])->name('react.vendas.lancar');
+    route::get('/vendas/lancar', [ReactVendaController::class, 'index']);
+    route::post('/vendas/lancar/salvar', [ReactVendaController::class, 'store'])->name('react.vendas.store');
+    route::post('/vendas/lancar/preview', [ReactVendaController::class, 'preview'])->name('react.vendas.preview');
+    route::post('/vendas/lancar/cancelar', [ReactVendaController::class, 'cancel'])->name('react.vendas.cancel');
     // =================================================
 
     // Usuários
@@ -201,7 +209,8 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::any('/storePi', [PiController::class, 'storePi']);
 
     // Vendas
-    route::get('/Vendas/Lancar', [VendaController::class, 'index'])->name('vendas.lancar');
+    route::get('/Vendas/Lancar-antigo', [VendaController::class, 'index'])->name('vendas.lancar.antigo');
+    route::get('/Vendas/Lancar', [ReactVendaController::class, 'index'])->name('vendas.lancar');
     route::any('/vendas/sessionData', [VendaController::class, 'sessionData']);
     route::get('/vendas/preview', [VendaController::class, 'preview']);
     route::any('/vendas/store', [VendaController::class, 'store']);

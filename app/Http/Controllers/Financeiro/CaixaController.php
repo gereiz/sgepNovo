@@ -24,10 +24,29 @@ class CaixaController extends Controller
         $tipos_lancamento = $this->caixaService->getTiposLancamentos();
         $lancamentos = $this->caixaService->getLancamentos();
 
+        $reservaIds = $lancamentos->pluck('id_reserva')->filter()->unique()->values()->all();
         $comissoes_por_reserva = [];
-
-        foreach ($lancamentos as $lancamento) {
-            $comissoes_por_reserva[$lancamento->id_reserva] = ComissaoVenda::where('pi_id', $lancamento->id_reserva)->sum('valor_comissao');
+        if (!empty($reservaIds)) {
+            $cvRows = ComissaoVenda::whereIn('pi_id', $reservaIds)->orderBy('id', 'desc')->get();
+            $seenChaves = [];
+            foreach ($cvRows as $cvr) {
+                $piIdInt = (int)$cvr->pi_id;
+                $benefKey = $cvr->pessoa_tipo && $cvr->pessoa_id
+                    ? $cvr->pessoa_tipo . ':' . $cvr->pessoa_id
+                    : 'agente:' . ($cvr->agente_id ?? 0);
+                $defKey = $cvr->comissao_cadastro_id
+                    ? 'cad:' . $cvr->comissao_cadastro_id
+                    : 'com:' . ($cvr->comissao_id ?? 0);
+                $chave = $piIdInt . '|' . $benefKey . '|' . $defKey;
+                if (isset($seenChaves[$chave])) {
+                    continue;
+                }
+                $seenChaves[$chave] = true;
+                if (!isset($comissoes_por_reserva[$piIdInt])) {
+                    $comissoes_por_reserva[$piIdInt] = 0.0;
+                }
+                $comissoes_por_reserva[$piIdInt] += (float)($cvr->valor_comissao ?? 0);
+            }
         }
 
         // dd($comissoes_por_reserva);

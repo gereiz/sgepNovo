@@ -662,7 +662,7 @@ class ReactReservasSemPIController extends Controller
                             } else {
                                 $jaExisteQ->where('comissao_cadastro_id', $regraIdCadastro);
                             }
-                            $jaExiste = $jaExisteQ->exists();
+                            $jaExiste = $jaExisteQ->first();
                             if (!$jaExiste) {
                                 ComissaoVenda::create([
                                     'pi_id' => $pi->id,
@@ -673,6 +673,8 @@ class ReactReservasSemPIController extends Controller
                                     'comissao_id' => null,
                                     'agente_id' => null,
                                 ]);
+                            } else {
+                                $jaExiste->update(['valor_comissao' => $vlrCom]);
                             }
                         } catch (\Throwable $eCV) {
                             Log::warning('Erro salvar ComissaoVenda (novo) PI #'.$pi->id.' '.$chave.': '.$eCV->getMessage());
@@ -681,7 +683,7 @@ class ReactReservasSemPIController extends Controller
                 }
                 $valor_liq_comissoes = max(0, $vlrTotalComissoes);
             } else {
-                $twoAgentes = $formTwo['agentesId'] ?? [];
+                $twoAgentes = array_unique($formTwo['agentesId'] ?? []);
                 if (!is_array($twoAgentes)) $twoAgentes = [];
                 foreach ($twoAgentes as $ag) {
                     $agente = Cliente::where('agent', 1)->where('id', (int)$ag)->first();
@@ -712,7 +714,7 @@ class ReactReservasSemPIController extends Controller
                                 $jaExiste = ComissaoVenda::where('pi_id', $pi->id)
                                     ->where('comissao_id', (int)$comissao->id)
                                     ->where('agente_id', $agId)
-                                    ->exists();
+                                    ->first();
                                 if (!$jaExiste) {
                                     ComissaoVenda::create([
                                         'pi_id' => $pi->id,
@@ -720,6 +722,8 @@ class ReactReservasSemPIController extends Controller
                                         'agente_id' => $agId,
                                         'valor_comissao' => (float)($vlrCom ?? 0),
                                     ]);
+                                } else {
+                                    $jaExiste->update(['valor_comissao' => (float)($vlrCom ?? 0)]);
                                 }
                             } catch (\Throwable $eCV) {
                                 Log::warning('Erro ao salvar ComissaoVenda PI #' . $pi->id . ': ' . $eCV->getMessage());
