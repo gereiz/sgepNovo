@@ -49,8 +49,13 @@
                 Outros Agentes:
             </td>
             <td colspan="8" style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">
-                @foreach(collect($agentes)->slice(1) as $agente)
-                    {{ $agente->nome_fantasia ? $agente->nome_fantasia : $agente->razao_social }}
+                @php
+                    $outrosAgentes = collect($agentes)->filter(function($ag) {
+                        return !isset($ag->pessoa_tipo_real) || $ag->pessoa_tipo_real !== 'user';
+                    })->slice(1);
+                @endphp
+                @foreach($outrosAgentes as $agente)
+                    {{ $agente->nome_fantasia ? $agente->nome_fantasia : ($agente->razao_social ?? '') }}
                     @if (!$loop->last) || @endif
                 @endforeach
             </td>

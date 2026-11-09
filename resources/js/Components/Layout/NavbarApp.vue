@@ -68,7 +68,7 @@ const NAV_GRUPOS = [
       { name: 'Lista de Painéis', description: 'Inventário OOH com visualização em cards/tabela, cadastro e edição.', href: '/Paineis' },
       { name: 'Envio de Disponibilidades', description: 'Consulte painéis disponíveis, reservados e envie disponibilidades.', href: '/ResPaineis' },
       { name: 'Reserva de Painéis', description: 'Realize a reserva / cancelamento de reserva para clientes.', href: '/ResPaineisCli' },
-      { name: 'Reservas sem PI', description: 'Interface com cards agrupados e stepper de emissão.', href: '/reservas-sem-pi' },
+      { name: 'Gerar PI / Reservas sem PI', description: 'Fluxo clássico de emissão de PI por reserva.', href: '/ReservaSemPi' },
     ],
   },
   {
@@ -148,10 +148,10 @@ const NAV_GRUPOS = [
         badge: { text: 'LEGADO', color: 'bg-amber-600' },
       },
       {
-        name: 'Gerar PI / Reservas sem PI (Legado)',
-        description: 'Fluxo clássico Vue de emissão de PI por reserva.',
-        href: '/ReservaSemPi',
-        badge: { text: 'LEGADO', color: 'bg-amber-600' },
+        name: 'Reservas sem PI (React)',
+        description: 'Interface React com cards agrupados e stepper de emissão.',
+        href: '/reservas-sem-pi',
+        badge: { text: 'REACT', color: 'bg-sky-600' },
       },
       {
         name: 'Lançar Venda (React)',

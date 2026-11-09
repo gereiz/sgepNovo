@@ -64,6 +64,7 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::get('/dashboard', [ReactDashboardController::class, 'index'])->name('react.dashboard');
     route::get('/caixa', [ReactCaixaController::class, 'index'])->name('react.caixa');
     route::get('/reservas-sem-pi', [ReactReservasSemPIController::class, 'index'])->name('react.reservassempi');
+    route::get('/reservas-sem-pi-react', [ReactReservasSemPIController::class, 'index']);
     route::post('/GerarPIPorReserva', [ReactReservasSemPIController::class, 'gerarPIPorReserva'])->name('react.gerarpi');
 
     route::get('/cadastro-comissoes', [ReactComissoesController::class, 'index'])->name('react.comissoes.cadastro');
@@ -147,9 +148,11 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::post('/ReservaPainel', [ReservaController::class, 'reservaPainel'])->name('reserva.painel');
     route::post('/CancelaReserva', [ReservaController::class, 'cancelaReserva'])->name('cancela.reserva');
 
-    //Reservas sem PI
+    //Reservas sem PI (padrão legado)
     route::get('/ReservaSemPi', [ReservaController::class, 'reservaSemPi'])->name('get.reservas.sem.pi');
-    route::post('/GetResSemPi', [ReservaController::class, 'getReservaSemPI'])->name('get.reservas.sem.pi');
+    route::get('/reserva-sem-pi', [ReservaController::class, 'reservaSemPi']);
+    route::get('/reservas-sem-pi-antigo', [ReservaController::class, 'reservaSemPi'])->name('reservas.sem.pi.antigo');
+    route::post('/GetResSemPi', [ReservaController::class, 'getReservaSemPI'])->name('post.reservas.sem.pi');
 
     // Reseva de painés por cliente
     route::get('/ResPaineisCli', [ReservaController::class, 'reservaPainelIndex'])->name('reserva.paineis.cli');
