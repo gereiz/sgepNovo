@@ -184,9 +184,72 @@ class VendaController extends Controller
         $textoAtivo = TextoPadrao::where('active', 1)->first();
         $idPaineis = $two['paineis'] ?? ['VENDA'];
         $agentes = [];
-        foreach (($two['agentesId'] ?? []) as $ag) {
-            $agente = Cliente::where('agent', 1)->where('id', $ag)->first();
-            if ($agente) { $agentes[] = $agente; }
+        $comissoes = [];
+        $participantesComissoes = $two['participantesComissoes'] ?? [];
+
+        if (is_array($participantesComissoes) && count($participantesComissoes) > 0) {
+            foreach ($participantesComissoes as $pc) {
+                $pTipo = $pc['pessoa_tipo'] ?? '';
+                $pId   = (int)($pc['pessoa_id'] ?? 0);
+                $pNome = trim((string)($pc['nome'] ?? ''));
+                $pIdSintetico = $pTipo === 'user' ? (1000000 + $pId) : $pId;
+
+                $agObj = new \stdClass();
+                $agObj->id = $pIdSintetico;
+                $agObj->pessoa_tipo_real = $pTipo;
+                $agObj->pessoa_id_real = $pId;
+                $agObj->nome_fantasia = $pNome;
+                $agObj->razao_social = $pNome;
+                $agObj->cpf_cnpj = '';
+                $agObj->nro_insc = '';
+                $agObj->endereco = '';
+                $agObj->num = '';
+                $agObj->bairro = '';
+                $agObj->cidade = '';
+                $agObj->uf = '';
+                $agObj->complemento = '';
+                $agObj->cep = '';
+
+                if ($pTipo === 'cliente' && $pId > 0) {
+                    $cliAg = Cliente::find($pId);
+                    if ($cliAg) {
+                        $agObj->cpf_cnpj    = $cliAg->cpf_cnpj ?? '';
+                        $agObj->nro_insc    = $cliAg->nro_insc ?? '';
+                        $agObj->endereco    = $cliAg->endereco ?? '';
+                        $agObj->num         = $cliAg->num ?? '';
+                        $agObj->bairro      = $cliAg->bairro ?? '';
+                        $agObj->cidade      = $cliAg->cidade ?? '';
+                        $agObj->uf          = $cliAg->uf ?? '';
+                        $agObj->complemento = $cliAg->complemento ?? '';
+                        $agObj->cep         = $cliAg->cep ?? '';
+                        if (!empty($cliAg->nome_fantasia)) {
+                            $agObj->nome_fantasia = $cliAg->nome_fantasia;
+                        }
+                        if (!empty($cliAg->razao_social)) {
+                            $agObj->razao_social = $cliAg->razao_social;
+                        }
+                    }
+                }
+                $agentes[] = $agObj;
+
+                $cValor = (float)($pc['comissao_valor_numerico'] ?? 0);
+                $cTipo  = (int)($pc['comissao_tipo'] ?? 1);
+
+                foreach ($servicos as $serv) {
+                    $sId = (int)($serv['id'] ?? 0);
+                    $comissoes[] = [
+                        'id_servico' => $sId,
+                        'id_funcionario' => $pIdSintetico,
+                        'valor' => $cValor,
+                        'tipo_comissao' => $cTipo,
+                    ];
+                }
+            }
+        } else {
+            foreach (($two['agentesId'] ?? []) as $ag) {
+                $agente = Cliente::where('agent', 1)->where('id', $ag)->first();
+                if ($agente) { $agentes[] = $agente; }
+            }
         }
 
         $osPdf = PDF::loadview('relatorios.os.os_nova', [
@@ -210,6 +273,7 @@ class VendaController extends Controller
             'vendedor' => $vendedor,
             'textoAtivo' => $textoAtivo,
             'agentes' => $agentes,
+            'comissoes' => $comissoes,
         ]);
         $osPdf->setPaper('a4','landscape');
         $cliNome = $cliente ? ($cliente->nome_fantasia ?: $cliente->razao_social) : ($cliNomeSess ?: 'cliente');
@@ -249,6 +313,7 @@ class VendaController extends Controller
                 'vendedor' => $vendedor,
                 'textoAtivo' => $textoAtivo,
                 'agentes' => $agentes,
+                'comissoes' => $comissoes,
             ]);
             $osFin->setPaper('a4','landscape');
             $finName = str_replace('os_cli_', 'os_fin_', $fileName);
@@ -337,9 +402,72 @@ class VendaController extends Controller
         $textoAtivo = TextoPadrao::where('active', 1)->first();
         $idPaineis = $two['paineis'] ?? ['VENDA'];
         $agentes = [];
-        foreach (($two['agentesId'] ?? []) as $ag) {
-            $agente = Cliente::where('agent', 1)->where('id', $ag)->first();
-            if ($agente) { $agentes[] = $agente; }
+        $comissoes = [];
+        $participantesComissoes = $two['participantesComissoes'] ?? [];
+
+        if (is_array($participantesComissoes) && count($participantesComissoes) > 0) {
+            foreach ($participantesComissoes as $pc) {
+                $pTipo = $pc['pessoa_tipo'] ?? '';
+                $pId   = (int)($pc['pessoa_id'] ?? 0);
+                $pNome = trim((string)($pc['nome'] ?? ''));
+                $pIdSintetico = $pTipo === 'user' ? (1000000 + $pId) : $pId;
+
+                $agObj = new \stdClass();
+                $agObj->id = $pIdSintetico;
+                $agObj->pessoa_tipo_real = $pTipo;
+                $agObj->pessoa_id_real = $pId;
+                $agObj->nome_fantasia = $pNome;
+                $agObj->razao_social = $pNome;
+                $agObj->cpf_cnpj = '';
+                $agObj->nro_insc = '';
+                $agObj->endereco = '';
+                $agObj->num = '';
+                $agObj->bairro = '';
+                $agObj->cidade = '';
+                $agObj->uf = '';
+                $agObj->complemento = '';
+                $agObj->cep = '';
+
+                if ($pTipo === 'cliente' && $pId > 0) {
+                    $cliAg = Cliente::find($pId);
+                    if ($cliAg) {
+                        $agObj->cpf_cnpj    = $cliAg->cpf_cnpj ?? '';
+                        $agObj->nro_insc    = $cliAg->nro_insc ?? '';
+                        $agObj->endereco    = $cliAg->endereco ?? '';
+                        $agObj->num         = $cliAg->num ?? '';
+                        $agObj->bairro      = $cliAg->bairro ?? '';
+                        $agObj->cidade      = $cliAg->cidade ?? '';
+                        $agObj->uf          = $cliAg->uf ?? '';
+                        $agObj->complemento = $cliAg->complemento ?? '';
+                        $agObj->cep         = $cliAg->cep ?? '';
+                        if (!empty($cliAg->nome_fantasia)) {
+                            $agObj->nome_fantasia = $cliAg->nome_fantasia;
+                        }
+                        if (!empty($cliAg->razao_social)) {
+                            $agObj->razao_social = $cliAg->razao_social;
+                        }
+                    }
+                }
+                $agentes[] = $agObj;
+
+                $cValor = (float)($pc['comissao_valor_numerico'] ?? 0);
+                $cTipo  = (int)($pc['comissao_tipo'] ?? 1);
+
+                foreach ($servicos as $serv) {
+                    $sId = (int)($serv['id'] ?? 0);
+                    $comissoes[] = [
+                        'id_servico' => $sId,
+                        'id_funcionario' => $pIdSintetico,
+                        'valor' => $cValor,
+                        'tipo_comissao' => $cTipo,
+                    ];
+                }
+            }
+        } else {
+            foreach (($two['agentesId'] ?? []) as $ag) {
+                $agente = Cliente::where('agent', 1)->where('id', $ag)->first();
+                if ($agente) { $agentes[] = $agente; }
+            }
         }
         $osPreview = new Os();
         $osPreview->id = 0;
@@ -365,6 +493,7 @@ class VendaController extends Controller
             'vendedor' => $vendedor,
             'textoAtivo' => $textoAtivo,
             'agentes' => $agentes,
+            'comissoes' => $comissoes,
         ]);
         $osPdf->setPaper('a4','landscape');
         return $osPdf->stream('os_preview.pdf');

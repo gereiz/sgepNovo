@@ -16,6 +16,7 @@ import {
   Globe,
   LogOut,
   ExternalLink,
+  History,
 } from 'lucide-react';
 import { cn } from '@/react/lib/utils';
 import {
@@ -52,8 +53,7 @@ const NAV_GRUPOS = [
     label: 'Início',
     icon: LayoutGrid,
     items: [
-      { name: 'Dashboard • Novo React', description: 'Painel executivo de indicadores comerciais e operacionais.', href: '/dashboard', badge: { text: 'REACT', color: 'bg-cyan-500' } },
-      { name: 'Dashboard Antigo • Vue Legado', description: 'Painel clássico de bi-semanas e clientes.', href: '/dashboard-antigo', badge: { text: 'LEGADO', color: 'bg-amber-600' } },
+      { name: 'Dashboard', description: 'Painel executivo de indicadores comerciais e operacionais.', href: '/dashboard' },
     ],
   },
   {
@@ -79,11 +79,11 @@ const NAV_GRUPOS = [
     label: 'Painéis',
     icon: Image,
     items: [
-      { name: 'Lista de Painéis', description: 'Realize o cadastro / edição de painéis.', href: '/Paineis' },
+      { name: 'Lista de Painéis', description: 'Inventário OOH com visualização em cards/tabela, cadastro e edição.', href: '/Paineis' },
       { name: 'Envio de Disponibilidades', description: 'Consulte painéis disponíveis, reservados e envie disponibilidades.', href: '/ResPaineis' },
-      { name: 'Reserva de Painéis', description: 'Realize a reserva / cancelamento de reserva para clientes.', href: '/ResPaineisCli' },
-      { name: 'Gerar PI (Vue Legado)', description: 'Fluxo antigo Vue de emissão de PI por reserva.', href: '/ReservaSemPi' },
-      { name: 'Reservas sem PI • Novo React', description: 'Nova interface React com cards agrupados e stepper de emissão.', href: '/reservas-sem-pi', badge: { text: 'NOVO', color: 'bg-emerald-500' } },
+      { name: 'Reserva de Painéis e LEDs', description: 'Gerencie reservas de painéis convencionais (BS) e LEDs digitais (mensal).', href: '/ResPaineisCli' },
+      { name: 'Mapa de Ocupação • LEDs', description: 'Visualização em timeline e grade de ocupação dos painéis e LEDs digitais.', href: '/MapaOcupacaoLed' },
+      { name: 'Reservas sem PI', description: 'Interface com cards agrupados e stepper de emissão.', href: '/reservas-sem-pi' },
     ],
   },
   {
@@ -91,8 +91,7 @@ const NAV_GRUPOS = [
     label: 'Vendas',
     icon: DollarSign,
     items: [
-      { name: 'Lançar Venda • Novo React', description: 'Nova interface React com cards, filtros e stepper de venda.', href: '/vendas/lancar', badge: { text: 'NOVO', color: 'bg-emerald-500' } },
-      { name: 'Lançar Venda (Vue Legado)', description: 'Fluxo antigo Vue de lançamento de venda.', href: '/Vendas/Lancar-antigo' },
+      { name: 'Lançar Venda', description: 'Fluxo clássico de lançamento de venda e ordens de serviço.', href: '/vendas/lancar' },
     ],
   },
   {
@@ -126,10 +125,8 @@ const NAV_GRUPOS = [
     icon: DollarSign,
     items: [
       { name: 'Cadastro de Serviços', description: 'Realize o cadastro / edição de serviços.', href: '/Servicos' },
-      { name: 'Cadastro de Comissões', description: 'Realize o cadastro / edição de comissões.', href: '/Comissoes' },
-      { name: 'Cadastro de Comissões - Novo', description: 'Tela React para gestão de regras de comissão usadas em PIs e OSs.', href: '/cadastro-comissoes', badge: { text: 'NOVO', color: 'bg-emerald-500' } },
-      { name: 'Controle de Caixa (Vue Legado)', description: 'Fluxo antigo Vue de entradas e saídas.', href: '/Caixa' },
-      { name: 'Caixa • Novo React', description: 'Nova interface com modais de Quitar, Editar, Excluir e emissão.', href: '/caixa', badge: { text: 'REACT', color: 'bg-cyan-500' } },
+      { name: 'Cadastro de Comissões', description: 'Gestão de regras de comissão usadas em PIs e OSs.', href: '/cadastro-comissoes' },
+      { name: 'Controle de Caixa', description: 'Gestão financeira com modais de Quitar, Editar, Excluir e emissão.', href: '/caixa' },
       { name: 'Comissões Pagas', description: 'Lista as comissões pagas por PI.', href: '/ListaComissoesPagas' },
     ],
   },
@@ -140,6 +137,55 @@ const NAV_GRUPOS = [
     items: [
       { name: 'Cadastro de Usuários', description: 'Realize o cadastro / edição de usuários no sistema.', href: '/ListaUsuarios' },
       { name: 'Configurações Gerais', description: 'Configurações Diversas', href: '/configuracoes' },
+    ],
+  },
+  {
+    key: 'legado',
+    label: 'Legado',
+    icon: History,
+    items: [
+      {
+        name: 'Cadastro de Comissões (Legado)',
+        description: 'Versão clássica Vue do cadastro de regras de comissão.',
+        href: '/Comissoes',
+        badge: { text: 'LEGADO', color: 'bg-amber-600' },
+      },
+      {
+        name: 'Controle de Caixa (Legado)',
+        description: 'Versão clássica Vue de controle de entradas e saídas.',
+        href: '/Caixa',
+        badge: { text: 'LEGADO', color: 'bg-amber-600' },
+      },
+      {
+        name: 'Dashboard (Legado)',
+        description: 'Painel clássico Vue de bi-semanas e clientes.',
+        href: '/dashboard-antigo',
+        badge: { text: 'LEGADO', color: 'bg-amber-600' },
+      },
+      {
+        name: 'Gerar PI / Reservas sem PI (Legado)',
+        description: 'Fluxo clássico Vue de emissão de PI por reserva.',
+        href: '/ReservaSemPi',
+        badge: { text: 'LEGADO', color: 'bg-amber-600' },
+      },
+      {
+        name: 'Lançar Venda (React)',
+        description: 'Interface React com cards, filtros e stepper de venda.',
+        href: '/vendas-react',
+        badge: { text: 'REACT', color: 'bg-sky-600' },
+      },
+      {
+        name: 'Lista de Painéis (Legado)',
+        description: 'Versão clássica Vue da listagem de painéis.',
+        href: '/paineis-antigo',
+        badge: { text: 'LEGADO', color: 'bg-amber-600' },
+      },
+      {
+        name: 'Reserva de Painéis (Legado)',
+        description: 'Versão clássica Vue da reserva de painéis por cliente.',
+        href: '/ResPaineisCli-antigo',
+        badge: { text: 'LEGADO', color: 'bg-amber-600' },
+      },
     ],
   },
 ];
@@ -213,21 +259,7 @@ export function Navbar({
                 </div>
               </div>
 
-              {/* Botão LEGADO no drawer */}
-              <div className="px-4 pt-3">
-                <a
-                  href="/dashboard-antigo"
-                  className="inline-flex w-full items-center justify-center gap-2 h-10 px-3 text-[13px] font-semibold rounded-lg border border-amber-300/70 bg-amber-100/95 hover:bg-amber-50 text-amber-900 no-underline transition-colors"
-                >
-                  <Sparkles className="w-4 h-4 text-amber-700 shrink-0" />
-                  <span className="font-bold">Dashboard antigo</span>
-                  <span className="inline-flex items-center px-2 py-0 text-[10px] h-5 rounded font-black text-white bg-amber-600">
-                    LEGADO
-                  </span>
-                </a>
-              </div>
-
-              {/* Accordion com os 8 grupos */}
+              {/* Accordion com os grupos */}
               <div className="flex-1 overflow-y-auto px-2 pt-2 pb-24">
                 <Accordion type="multiple">
                   {NAV_GRUPOS.map((grupo) => {
@@ -393,19 +425,6 @@ export function Navbar({
 
         {/* ========== DIREITA: AÇÕES ========== */}
         <div className="flex items-center gap-0.5 md:gap-1 ml-auto shrink-0 pl-1 md:pl-2 min-w-0 overflow-hidden">
-          {/* Botão LEGADO (apenas md+) */}
-          <a
-            href="/dashboard-antigo"
-            title="Voltar para o Dashboard Vue (legado)"
-            className="hidden md:inline-flex items-center gap-1.5 h-8 px-2.5 text-[11px] font-semibold rounded-lg border border-amber-300/70 bg-amber-100/95 hover:bg-amber-50 text-amber-900 no-underline mr-1 lg:mr-2 transition-colors whitespace-nowrap"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-amber-700 shrink-0" />
-            <span className="inline font-bold">Dashboard antigo</span>
-            <span className="inline-flex items-center px-1.5 py-0 text-[9px] h-4 rounded font-black text-white bg-amber-600">
-              LEGADO
-            </span>
-          </a>
-
           {/* Search */}
           <button
             type="button"

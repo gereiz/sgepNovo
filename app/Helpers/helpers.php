@@ -25,12 +25,15 @@ function formatCpfCnpj($cpfCnpj) {
     return $cpfCnpj;
 }
 
-// formata o cep no formato xxxxx-xxx
+// formata o cep no formato xx.xxx-xxx
 function formatCep($cep) {
-    $cep = str_replace('-', '', $cep);
-    $cep = substr($cep, 0, 5) . '-' . substr($cep, 5, 3);
-
-    return $cep;
+    if (!$cep) return '';
+    $digits = preg_replace('/\D/', '', (string)$cep);
+    if (strlen($digits) === 0) return '';
+    if (strlen($digits) < 8) {
+        $digits = str_pad($digits, 8, '0', STR_PAD_LEFT);
+    }
+    return substr($digits, 0, 2) . '.' . substr($digits, 2, 3) . '-' . substr($digits, 5, 3);
 }
 
 // formata o valor no formato R$ 1.000,00

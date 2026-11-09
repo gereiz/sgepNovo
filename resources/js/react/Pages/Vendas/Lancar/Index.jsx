@@ -1448,7 +1448,7 @@ export default function VendasLancarIndex() {
     setIsRefreshing(true);
     opts.onSuccess = () => setIsRefreshing(false);
     opts.onError = () => setIsRefreshing(false);
-    router.get('/vendas/lancar', params, opts);
+    router.get(window.location.pathname || '/vendas-react', params, opts);
   };
 
   const buildParams = (overrides = {}) => {

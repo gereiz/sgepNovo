@@ -39,8 +39,7 @@ const NAV_GRUPOS = [
     label: 'Início',
     icon: 'layout-grid',
     items: [
-      { name: 'Dashboard • Novo React', description: 'Painel executivo de indicadores comerciais e operacionais.', href: '/dashboard', badge: { text: 'REACT', color: 'bg-cyan-500' } },
-      { name: 'Dashboard Antigo • Vue Legado', description: 'Painel clássico de bi-semanas e clientes.', href: '/dashboard-antigo', badge: { text: 'LEGADO', color: 'bg-amber-600' } },
+      { name: 'Dashboard', description: 'Painel executivo de indicadores comerciais e operacionais.', href: '/dashboard' },
     ],
   },
   {
@@ -66,11 +65,10 @@ const NAV_GRUPOS = [
     label: 'Painéis',
     icon: 'image',
     items: [
-      { name: 'Lista de Painéis', description: 'Realize o cadastro / edição de painéis.', href: '/Paineis' },
+      { name: 'Lista de Painéis', description: 'Inventário OOH com visualização em cards/tabela, cadastro e edição.', href: '/Paineis' },
       { name: 'Envio de Disponibilidades', description: 'Consulte painéis disponíveis, reservados e envie disponibilidades.', href: '/ResPaineis' },
       { name: 'Reserva de Painéis', description: 'Realize a reserva / cancelamento de reserva para clientes.', href: '/ResPaineisCli' },
-      { name: 'Gerar PI (Vue Legado)', description: 'Fluxo antigo Vue de emissão de PI por reserva.', href: '/ReservaSemPi' },
-      { name: 'Reservas sem PI • Novo React', description: 'Nova interface React com cards agrupados e stepper de emissão.', href: '/reservas-sem-pi', badge: { text: 'NOVO', color: 'bg-emerald-500' } },
+      { name: 'Reservas sem PI', description: 'Interface com cards agrupados e stepper de emissão.', href: '/reservas-sem-pi' },
     ],
   },
   {
@@ -78,8 +76,7 @@ const NAV_GRUPOS = [
     label: 'Vendas',
     icon: 'dollar-sign',
     items: [
-      { name: 'Lançar Venda • Novo React', description: 'Nova interface React com cards, filtros e stepper de venda.', href: '/vendas/lancar', badge: { text: 'NOVO', color: 'bg-emerald-500' } },
-      { name: 'Lançar Venda (Vue Legado)', description: 'Fluxo antigo Vue de lançamento de venda.', href: '/Vendas/Lancar-antigo' },
+      { name: 'Lançar Venda', description: 'Fluxo clássico de lançamento de venda e ordens de serviço.', href: '/vendas/lancar' },
     ],
   },
   {
@@ -113,10 +110,8 @@ const NAV_GRUPOS = [
     icon: 'dollar-sign',
     items: [
       { name: 'Cadastro de Serviços', description: 'Realize o cadastro / edição de serviços.', href: '/Servicos' },
-      { name: 'Cadastro de Comissões', description: 'Realize o cadastro / edição de comissões.', href: '/Comissoes' },
-      { name: 'Cadastro de Comissões - Novo', description: 'Tela React para gestão de regras de comissão usadas em PIs e OSs.', href: '/cadastro-comissoes', badge: { text: 'NOVO', color: 'bg-emerald-500' } },
-      { name: 'Controle de Caixa (Vue Legado)', description: 'Fluxo antigo Vue de entradas e saídas.', href: '/Caixa' },
-      { name: 'Caixa • Novo React', description: 'Nova interface com modais de Quitar, Editar, Excluir e emissão.', href: '/caixa', badge: { text: 'REACT', color: 'bg-cyan-500' } },
+      { name: 'Cadastro de Comissões', description: 'Gestão de regras de comissão usadas em PIs e OSs.', href: '/cadastro-comissoes' },
+      { name: 'Controle de Caixa', description: 'Gestão financeira com modais de Quitar, Editar, Excluir e emissão.', href: '/caixa' },
       { name: 'Comissões Pagas', description: 'Lista as comissões pagas por PI.', href: '/ListaComissoesPagas' },
     ],
   },
@@ -127,6 +122,49 @@ const NAV_GRUPOS = [
     items: [
       { name: 'Cadastro de Usuários', description: 'Realize o cadastro / edição de usuários no sistema.', href: '/ListaUsuarios' },
       { name: 'Configurações Gerais', description: 'Configurações Diversas', href: '/configuracoes' },
+    ],
+  },
+  {
+    key: 'legado',
+    label: 'Legado',
+    icon: 'history',
+    items: [
+      {
+        name: 'Cadastro de Comissões (Legado)',
+        description: 'Versão clássica Vue do cadastro de regras de comissão.',
+        href: '/Comissoes',
+        badge: { text: 'LEGADO', color: 'bg-amber-600' },
+      },
+      {
+        name: 'Controle de Caixa (Legado)',
+        description: 'Versão clássica Vue de controle de entradas e saídas.',
+        href: '/Caixa',
+        badge: { text: 'LEGADO', color: 'bg-amber-600' },
+      },
+      {
+        name: 'Dashboard (Legado)',
+        description: 'Painel clássico Vue de bi-semanas e clientes.',
+        href: '/dashboard-antigo',
+        badge: { text: 'LEGADO', color: 'bg-amber-600' },
+      },
+      {
+        name: 'Gerar PI / Reservas sem PI (Legado)',
+        description: 'Fluxo clássico Vue de emissão de PI por reserva.',
+        href: '/ReservaSemPi',
+        badge: { text: 'LEGADO', color: 'bg-amber-600' },
+      },
+      {
+        name: 'Lançar Venda (React)',
+        description: 'Interface React com cards, filtros e stepper de venda.',
+        href: '/vendas-react',
+        badge: { text: 'REACT', color: 'bg-sky-600' },
+      },
+      {
+        name: 'Lista de Painéis (Legado)',
+        description: 'Versão clássica Vue da listagem de painéis.',
+        href: '/paineis-antigo',
+        badge: { text: 'LEGADO', color: 'bg-amber-600' },
+      },
     ],
   },
 ];
@@ -195,7 +233,7 @@ const NAV_GRUPOS = [
           >
             <PopoverPanel
               :class="[
-                ['relatorios', 'financeiro', 'configuracoes'].includes(grupo.key) ? 'right-0' : 'left-0',
+                ['relatorios', 'financeiro', 'configuracoes', 'legado'].includes(grupo.key) ? 'right-0' : 'left-0',
                 'absolute top-full z-50 mt-1.5 w-[420px] max-w-[92vw] max-h-[65vh] overflow-y-auto rounded-3xl bg-white shadow-2xl ring-1 ring-gray-900/10 focus:outline-none'
               ]"
             >
@@ -229,6 +267,9 @@ const NAV_GRUPOS = [
                     <svg v-else-if="grupo.icon === 'file-text'" class="h-5 w-5 text-gray-600 group-hover:text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" />
                     </svg>
+                    <svg v-else-if="grupo.icon === 'history'" class="h-5 w-5 text-gray-600 group-hover:text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /><path d="M12 7v5l4 2" />
+                    </svg>
                     <svg v-else class="h-5 w-5 text-gray-600 group-hover:text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" />
                     </svg>
@@ -257,21 +298,6 @@ const NAV_GRUPOS = [
 
       <!-- ========== DIREITA: AÇÕES ========== -->
       <div class="flex items-center gap-0.5 md:gap-1 ml-auto shrink-0 pl-1 md:pl-2 min-w-0 overflow-hidden">
-        <!-- Botão LEGADO (apenas md+) -->
-        <a
-          href="/dashboard-antigo"
-          title="Voltar para o Dashboard Vue (legado)"
-          class="hidden md:inline-flex items-center gap-1.5 h-8 px-2.5 text-[11px] font-semibold rounded-lg border border-amber-300/70 bg-amber-100/95 hover:bg-amber-50 text-amber-900 no-underline mr-1 lg:mr-2 transition-colors whitespace-nowrap cursor-pointer"
-        >
-          <svg class="w-3.5 h-3.5 text-amber-700 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-          </svg>
-          <span class="inline font-bold">Dashboard antigo</span>
-          <span class="inline-flex items-center px-1.5 py-0 text-[9px] h-4 rounded font-black text-white bg-amber-600">
-            LEGADO
-          </span>
-        </a>
-
         <!-- Search button -->
         <button
           type="button"
@@ -449,22 +475,6 @@ const NAV_GRUPOS = [
                 </div>
               </div>
 
-              <!-- Botão LEGADO no drawer -->
-              <div class="px-4 pt-3">
-                <a
-                  href="/dashboard-antigo"
-                  class="inline-flex w-full items-center justify-center gap-2 h-10 px-3 text-[13px] font-semibold rounded-lg border border-amber-300/70 bg-amber-100/95 hover:bg-amber-50 text-amber-900 no-underline transition-colors"
-                >
-                  <svg class="w-4 h-4 text-amber-700 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-                  </svg>
-                  <span class="font-bold">Dashboard antigo</span>
-                  <span class="inline-flex items-center px-2 py-0 text-[10px] h-5 rounded font-black text-white bg-amber-600">
-                    LEGADO
-                  </span>
-                </a>
-              </div>
-
               <!-- Accordions com os grupos -->
               <div class="flex-1 overflow-y-auto px-2 pt-2 pb-6">
                 <div class="space-y-1">
@@ -501,6 +511,9 @@ const NAV_GRUPOS = [
                           </svg>
                           <svg v-else-if="grupo.icon === 'file-text'" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                          </svg>
+                          <svg v-else-if="grupo.icon === 'history'" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /><path d="M12 7v5l4 2" />
                           </svg>
                           <svg v-else class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" />

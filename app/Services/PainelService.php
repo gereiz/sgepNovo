@@ -12,37 +12,52 @@ class PainelService
 
     public function storeOrUpdatePainel(Request $request) {
 
-       $painel = Painel::updateorCreate(['identificacao' => $request->dados['sTwo']['ident']],
-       [
+       $idPainel = $request->dados['sTwo']['idPainel'] ?? null;
+       $isLed = isset($request->dados['sTwo']['is_led']) ? (int)$request->dados['sTwo']['is_led'] : 0;
+       $dimLona = $isLed === 1 ? null : ($request->dados['sTwo']['dimLona'] ?? null);
+
+       $dadosPainel = [
             'identificacao' => $request->dados['sTwo']['ident'],
-            'ident_antiga' => $request->dados['sTwo']['ident_ant'],
+            'ident_antiga' => $request->dados['sTwo']['ident_ant'] ?? null,
             'tipo' => $request->dados['sTwo']['tipo'],
-            'is_led' => isset($request->dados['sTwo']['is_led']) ? (int)$request->dados['sTwo']['is_led'] : 0,
+            'is_led' => $isLed,
             'bairro_id' => $request->dados['sOne']['bairro'],
             'logradouro' => $request->dados['sOne']['ender'],
-            'numero' => $request->dados['sOne']['numero'],
+            'numero' => $request->dados['sOne']['numero'] ?? null,
             'cadan' => $request->dados['sTwo']['cadan'],
             'posicao' => $request->dados['sTwo']['posicao'],
             'dimensao' => $request->dados['sTwo']['dim'],
-            'dimensao_lona' => $request->dados['sTwo']['dimLona'],
-            'ponto_referencia' => $request->dados['sOne']['referencia'],
-            'latitude' => $request->dados['sOne']['latitude'],
-            'longitude' => $request->dados['sOne']['longitude'],
+            'dimensao_lona' => $dimLona,
+            'ponto_referencia' => $request->dados['sOne']['referencia'] ?? null,
+            'latitude' => $request->dados['sOne']['latitude'] ?? null,
+            'longitude' => $request->dados['sOne']['longitude'] ?? null,
+       ];
 
-       ]);
+       if ($idPainel && (int)$idPainel > 0) {
+           $painel = Painel::find($idPainel);
+           if ($painel) {
+               $painel->update($dadosPainel);
+           } else {
+               $painel = Painel::create($dadosPainel);
+           }
+       } else {
+           $painel = Painel::updateOrCreate(['identificacao' => $request->dados['sTwo']['ident']], $dadosPainel);
+       }
 
-       $path = 'outdoorImages/'.$painel->identificacao;
-       $filname = $painel->identificacao.'.'.$request->dados['sTwo']['imagem']->extension();
-       $request->dados['sTwo']['imagem']->storeAs('public/'.$path, $filname);
+       $imagemFile = $request->file('dados.sTwo.imagem') ?? ($request->dados['sTwo']['imagem'] ?? null);
+       if ($imagemFile && $imagemFile instanceof \Illuminate\Http\UploadedFile) {
+           $path = 'outdoorImages/'.$painel->identificacao;
+           $filname = $painel->identificacao.'.'.$imagemFile->extension();
+           $imagemFile->storeAs('public/'.$path, $filname);
 
-         $painel->image_url = $path.'/'.$filname;
-        $painel->save();
+           $painel->image_url = $path.'/'.$filname;
+           $painel->save();
 
-        $disk = Storage::disk('public');
-        $compressedRel = $path.'/CompressedJpgImage.jpg';
-        if (!$disk->exists($compressedRel)) {
-            $src = $disk->path($path.'/'.$filname);
-            $dst = $disk->path($compressedRel);
+           $disk = Storage::disk('public');
+           $compressedRel = $path.'/CompressedJpgImage.jpg';
+           if (!$disk->exists($compressedRel)) {
+               $src = $disk->path($path.'/'.$filname);
+               $dst = $disk->path($compressedRel);
             try {
                 $info = @getimagesize($src);
                 if ($info && isset($info['mime'])) {
@@ -72,9 +87,9 @@ class PainelService
             } catch (\Throwable $e) {
             }
         }
+       }
 
-       return back()->with('success', 'Painel Cadastrado com sucesso.');
-
+       return $painel;
 
     }
 

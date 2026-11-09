@@ -1,6 +1,11 @@
 <table class="table" style="border-collapse: collapse; width: 100%;">
     <thead>
         <tr style="background: #e6e6e6;">
+            <th class="text-center font-italic py-0" colspan="2" style="border: 1px solid #cfcfcf; font-size: 12px; padding: 1px 4px;">
+                A desistência deste contrato pelo cliente fora do prazo de cancelamento, acarretará multa de 50% do valor da Veiculação.
+            </th>
+        </tr>
+        <tr style="background: #e6e6e6;">
             <th class="text-center font-italic py-0" colspan="2" style="border: 1px solid #cfcfcf; font-size: 12px; padding: 1px 4px;">OBSERVAÇÕES</th>
         </tr>
     </thead>

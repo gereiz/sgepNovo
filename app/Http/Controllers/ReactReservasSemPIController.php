@@ -591,8 +591,32 @@ class ReactReservasSemPIController extends Controller
                     $agObj->nro_insc = '';
                     $agObj->endereco = '';
                     $agObj->num = '';
+                    $agObj->bairro = '';
+                    $agObj->cidade = '';
+                    $agObj->uf = '';
                     $agObj->complemento = '';
                     $agObj->cep = '';
+
+                    if ($tipo === 'cliente' && $pid > 0) {
+                        $cliAg = Cliente::find($pid);
+                        if ($cliAg) {
+                            $agObj->cpf_cnpj    = $cliAg->cpf_cnpj ?? '';
+                            $agObj->nro_insc    = $cliAg->nro_insc ?? '';
+                            $agObj->endereco    = $cliAg->endereco ?? '';
+                            $agObj->num         = $cliAg->num ?? '';
+                            $agObj->bairro      = $cliAg->bairro ?? '';
+                            $agObj->cidade      = $cliAg->cidade ?? '';
+                            $agObj->uf          = $cliAg->uf ?? '';
+                            $agObj->complemento = $cliAg->complemento ?? '';
+                            $agObj->cep         = $cliAg->cep ?? '';
+                            if (!empty($cliAg->nome_fantasia)) {
+                                $agObj->nome_fantasia = $cliAg->nome_fantasia;
+                            }
+                            if (!empty($cliAg->razao_social)) {
+                                $agObj->razao_social = $cliAg->razao_social;
+                            }
+                        }
+                    }
                     $agentes[] = $agObj;
                 }
 

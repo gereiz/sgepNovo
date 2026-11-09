@@ -239,25 +239,65 @@ class ReservaController extends Controller
 
 
     public function cancelaReserva(Request $request) {
-
-        $reserva = Reserva::where([['outdoor_id', $request->painelReserva['id']],
-                                    ['bisemana_id', $request->bs]])->first();
-
-        if($reserva) {
-
-            $reserva->delete();
-
-            return response()->json(['cod' => 1, 'msg' => 'Reserva cancelada!']);
-
-        } else {
-            return response()->json(['cod' => 0, 'msg' => 'Reserva não localizada!']);
+        $reserva = null;
+        if ($request->filled('reserva_id')) {
+            $reserva = Reserva::find((int)$request->reserva_id);
+        } elseif (isset($request->painelReserva['id']) && $request->filled('bs')) {
+            $reserva = Reserva::where([
+                ['outdoor_id', $request->painelReserva['id']],
+                ['bisemana_id', $request->bs]
+            ])->first();
         }
 
+        if($reserva) {
+            $reserva->delete();
+            return response()->json(['cod' => 1, 'msg' => 'Reserva cancelada com sucesso!']);
+        } else {
+            return response()->json(['cod' => 0, 'msg' => 'Reserva não localizada!'], 404);
+        }
     }
 
 
     public function reservaPainelIndex() {
+        $clientes = Cliente::orderBy('razao_social')
+            ->where('ativo', 1)
+            ->get();
 
+        $anos = Ano::orderByDesc('ano_bisemana')->get();
+
+        $bisemanas = Bisemana::all();
+
+        $paineis = Painel::with('bairro.regiao.cidade')
+            ->orderByRaw("CAST(identificacao AS UNSIGNED) ASC")
+            ->get();
+
+        $service = new \App\Services\PainelService();
+        foreach ($paineis as $p) {
+            $tmp = new Painel();
+            $tmp->identificacao = $p->identificacao;
+            $tmp->image_url = $p->image_url;
+            $p->image_url = $service->latestImagePath($tmp);
+        }
+
+        $ambiente = env('APP_ENV');
+
+        $user = auth()->user();
+        $permissions = [
+            'cria_reserva'   => $user ? $user->can('criar reserva') : false,
+            'exclui_reserva' => $user ? $user->can('excluir reserva') : false,
+        ];
+
+        return Inertia::render('React/Reservas/Index', compact(
+            'clientes',
+            'anos',
+            'bisemanas',
+            'paineis',
+            'ambiente',
+            'permissions'
+        ))->rootView('app-react');
+    }
+
+    public function reservaPainelAntigo() {
         $clientes = Cliente::orderBy('razao_social')
             ->where('ativo', 1)
             ->get();
@@ -270,12 +310,13 @@ class ReservaController extends Controller
 
         $ambiente = env('APP_ENV');
 
-        return Inertia::render('Reservas/ReservaPaineisCli', compact('clientes',
-                                                                    'anos',
-                                                                    'bisemanas',
-                                                                    'reservas',
-                                                                    'ambiente',
-                                                                     ));
+        return Inertia::render('Reservas/ReservaPaineisCli', compact(
+            'clientes',
+            'anos',
+            'bisemanas',
+            'reservas',
+            'ambiente'
+        ));
     }
 
 
@@ -496,6 +537,10 @@ class ReservaController extends Controller
         \DB::beginTransaction();
         try {
             foreach ($intervaloBs as $bsId) {
+                $bsModel = Bisemana::find($bsId);
+                $dtIni = $bsModel ? $bsModel->inicio : null;
+                $dtFim = $bsModel ? $bsModel->fim : null;
+
                 foreach ($idPaineis as $idPainel) {
                     $existe = Reserva::where([
                         ['outdoor_id', $idPainel],
@@ -506,14 +551,16 @@ class ReservaController extends Controller
                         continue;
                     }
                     $res = Reserva::create([
-                        'cliente_id' => $request->clienteId,
-                        'outdoor_id' => $idPainel,
+                        'cliente_id'  => $request->clienteId,
+                        'outdoor_id'  => $idPainel,
                         'bisemana_id' => $bsId,
-                        'dt_reserva' => Carbon::now()->toDateString(),
-                        'campanha' => $request->campanha,
-                        'observacao' => $request->obs,
-                        'pi_ok' => 0,
-                        'user_id' => auth()->user()->id
+                        'dt_inicio'   => $dtIni,
+                        'dt_fim'      => $dtFim,
+                        'dt_reserva'  => Carbon::now()->toDateString(),
+                        'campanha'    => $request->campanha,
+                        'observacao'  => $request->obs,
+                        'pi_ok'       => 0,
+                        'user_id'     => auth()->user()->id
                     ]);
                     $criados[] = $res->id;
                 }
@@ -620,18 +667,75 @@ class ReservaController extends Controller
         return response()->json($dados);
     }
 
+    public function postReservaLed(Request $request)
+    {
+        $request->validate([
+            'cliente_id' => 'required|integer',
+            'painel_id'  => 'required|integer',
+            'dt_inicio'  => 'required|date',
+            'dt_fim'     => 'required|date|after_or_equal:dt_inicio',
+            'campanha'   => 'required|string|max:255',
+            'obs'        => 'nullable|string',
+        ]);
+
+        $ledService = new \App\Services\Reserva\LedService();
+
+        // Garante que é um LED
+        try {
+            $painel = $ledService->getPainelLedOrFail((int)$request->painel_id);
+        } catch (\Throwable $e) {
+            return response()->json(['cod' => 0, 'msg' => 'O painel selecionado não é um LED Digital.'], 422);
+        }
+
+        // Checa sobreposição de períodos
+        $conflito = $ledService->verificaConflitoDatas(
+            (int)$request->painel_id,
+            $request->dt_inicio,
+            $request->dt_fim
+        );
+
+        if ($conflito['conflito']) {
+            return response()->json(['cod' => 0, 'msg' => $conflito['msg']], 422);
+        }
+
+        try {
+            $reserva = Reserva::create([
+                'cliente_id'  => (int)$request->cliente_id,
+                'outdoor_id'  => (int)$request->painel_id,
+                'bisemana_id' => null,
+                'dt_inicio'   => Carbon::parse($request->dt_inicio)->toDateString(),
+                'dt_fim'      => Carbon::parse($request->dt_fim)->toDateString(),
+                'dt_reserva'  => Carbon::now()->toDateString(),
+                'campanha'    => $request->campanha,
+                'observacao'  => $request->obs,
+                'pi_ok'       => 0,
+                'user_id'     => auth()->id() ?? 1,
+            ]);
+
+            return response()->json([
+                'cod'        => 1,
+                'msg'        => 'Reserva do LED criada com sucesso!',
+                'reserva_id' => $reserva->id,
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json(['cod' => 0, 'msg' => 'Erro ao salvar reserva: ' . $e->getMessage()], 500);
+        }
+    }
+
     public function extenderReservaLed(Request $request)
     {
         $request->validate([
-            'reserva_id'          => 'required|integer',
-            'nova_bisemana_fim_id' => 'required|integer',
+            'reserva_id'           => 'required|integer',
+            'nova_data_fim'        => 'nullable|date',
+            'nova_bisemana_fim_id' => 'nullable|integer',
         ]);
 
         $ledService = new \App\Services\Reserva\LedService();
         $result = $ledService->extenderReservaLed(
             (int)$request->reserva_id,
-            (int)$request->nova_bisemana_fim_id,
-            auth()->id() ?? 1
+            $request->nova_data_fim,
+            auth()->id() ?? 1,
+            $request->nova_bisemana_fim_id ? (int)$request->nova_bisemana_fim_id : null
         );
 
         $status = $result['cod'] === 1 ? 200 : 422;
@@ -651,19 +755,34 @@ class ReservaController extends Controller
 
     public function verificaConflitoLed(Request $request)
     {
-        $request->validate([
-            'painel_id'   => 'required|integer',
-            'bisemana_id' => 'required|integer',
-            'reserva_id'  => 'nullable|integer',
-        ]);
+        $painelId = (int)$request->input('painel_id');
+        $reservaId = $request->input('reserva_id') ? (int)$request->input('reserva_id') : null;
 
         $ledService = new \App\Services\Reserva\LedService();
-        $result = $ledService->verificaConflitoReserva(
-            (int)$request->painel_id,
-            (int)$request->bisemana_id,
-            $request->reserva_id ? (int)$request->reserva_id : null
-        );
-        return response()->json($result);
+
+        // Se informou dt_inicio e dt_fim, usa validação por datas
+        if ($request->filled('dt_inicio') && $request->filled('dt_fim')) {
+            $result = $ledService->verificaConflitoDatas(
+                $painelId,
+                $request->dt_inicio,
+                $request->dt_fim,
+                $reservaId
+            );
+            return response()->json($result);
+        }
+
+        // Caso informe bisemana_id
+        if ($request->filled('bisemana_id')) {
+            $result = $ledService->verificaConflitoReserva(
+                $painelId,
+                (int)$request->bisemana_id,
+                $reservaId
+            );
+            return response()->json($result);
+        }
+
+        return response()->json(['conflito' => false, 'msg' => 'Parâmetros insuficientes']);
     }
 
 }
+

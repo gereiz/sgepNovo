@@ -72,9 +72,10 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::delete('/cadastro-comissoes/{id}', [ReactComissoesController::class, 'destroy'])->name('react.comissoes.destroy');
     route::post('/cadastro-comissoes/{id}/toggle-status', [ReactComissoesController::class, 'toggleStatus'])->name('react.comissoes.toggle');
 
-    // Vendas React
-    route::get('/vendas-lancar', [ReactVendaController::class, 'index'])->name('react.vendas.lancar');
-    route::get('/vendas/lancar', [ReactVendaController::class, 'index']);
+    // Vendas React (Legado / Alternativo)
+    route::get('/vendas-react', [ReactVendaController::class, 'index'])->name('react.vendas.lancar');
+    route::get('/vendas/lancar-react', [ReactVendaController::class, 'index']);
+    route::get('/vendas-lancar', [ReactVendaController::class, 'index']);
     route::post('/vendas/lancar/salvar', [ReactVendaController::class, 'store'])->name('react.vendas.store');
     route::post('/vendas/lancar/preview', [ReactVendaController::class, 'preview'])->name('react.vendas.preview');
     route::post('/vendas/lancar/cancelar', [ReactVendaController::class, 'cancel'])->name('react.vendas.cancel');
@@ -130,6 +131,8 @@ route::middleware(['auth', 'verified'])->group(function () {
 
     //Painéis
     route::get('/Paineis', [PaineisController::class, 'index'])->name('lista.paineis');
+    route::get('/paineis-react', [PaineisController::class, 'index'])->name('react.paineis.lista');
+    route::get('/paineis-antigo', [PaineisController::class, 'index'])->name('paineis.antigo');
     route::post('/CadPainel', [PaineisController::class, 'cadastraPainel'])->name('add.painel');
     route::post('/EditPainel', [PaineisController::class, 'editPainel']);
     route::any('/DelPainel', [PaineisController::class, 'deletePainel']);
@@ -150,6 +153,7 @@ route::middleware(['auth', 'verified'])->group(function () {
 
     // Reseva de painés por cliente
     route::get('/ResPaineisCli', [ReservaController::class, 'reservaPainelIndex'])->name('reserva.paineis.cli');
+    route::get('/ResPaineisCli-antigo', [ReservaController::class, 'reservaPainelAntigo'])->name('reserva.paineis.cli.antigo');
     route::post('/GetPaineisCli', [ReservaController::class, 'getPaineisCliente'])->name('get.paineis.cli');
     route::post('/ResPaineisCli', [ReservaController::class, 'reservaPaineisCliente'])->name('res.paineis.cli');
     route::post('/DelResCliente', [ReservaController::class, 'delResCliente'])->name('del.reserva.cli');
@@ -208,9 +212,11 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::any('/previewPi', [PiController::class, 'previewPi']);
     route::any('/storePi', [PiController::class, 'storePi']);
 
-    // Vendas
+    // Vendas (padrão legado)
+    route::get('/Vendas/Lancar', [VendaController::class, 'index'])->name('vendas.lancar');
+    route::get('/vendas/lancar', [VendaController::class, 'index']);
     route::get('/Vendas/Lancar-antigo', [VendaController::class, 'index'])->name('vendas.lancar.antigo');
-    route::get('/Vendas/Lancar', [ReactVendaController::class, 'index'])->name('vendas.lancar');
+    route::get('/vendas/lancar-antigo', [VendaController::class, 'index']);
     route::any('/vendas/sessionData', [VendaController::class, 'sessionData']);
     route::get('/vendas/preview', [VendaController::class, 'preview']);
     route::any('/vendas/store', [VendaController::class, 'store']);
@@ -330,6 +336,7 @@ route::middleware(['auth', 'verified'])->group(function () {
 
     // Endpoints de API do ReservaController para LEDs
     route::post('/MapaOcupacaoLed', [ReservaController::class, 'getMapaOcupacaoLed'])->name('mapa.ocupacao.led.json');
+    route::post('/ReservaLed', [ReservaController::class, 'postReservaLed'])->name('reserva.led.post');
     route::post('/GetReservasLed', [ReservaController::class, 'getReservasLed'])->name('get.reservas.led');
     route::post('/GetContratosProximosTerminoLed', [ReservaController::class, 'getContratosProximosTerminoLed'])->name('get.contratos.proximos.led');
     route::post('/ExtenderReservaLed', [ReservaController::class, 'extenderReservaLed'])->name('extender.reserva.led');
