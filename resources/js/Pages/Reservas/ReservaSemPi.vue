@@ -270,6 +270,8 @@ const bisemanaSelecionada = computed(() => {
                                 :bisemana="bisemanaSelecionada"
                                 :paineis="reservasIdent"
                                 :dataReserva="reservaData"
+                                :vendedorId="reservas && reservas[0] ? reservas[0].user_id : null"
+                                :vendedorNome="reservas && reservas[0] ? reservas[0].user_name : null"
                                 @closePi="openPi">
                     </ModalPiRes>
                     

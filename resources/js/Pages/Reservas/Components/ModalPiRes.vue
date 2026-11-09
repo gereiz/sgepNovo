@@ -17,7 +17,7 @@ const toastr = useToastr();
 
 const emit = defineEmits(['closePi', 'closeAdd'])
 
-const props = defineProps(['paineis', 'bisemana', 'openPi', 'cliente', 'campanha', 'dataReserva', 'agentes'])
+const props = defineProps(['paineis', 'bisemana', 'openPi', 'cliente', 'campanha', 'dataReserva', 'agentes', 'vendedorId', 'vendedorNome'])
 
 const step = shallowRef(StepOnePi)
 const open = ref(false)
@@ -61,13 +61,12 @@ function saveFormTwo(ev) {
     getFormPiTwo.value.vendedorId = ev.vendedorId
     getFormPiTwo.value.vendedor = ev.vendedor
     getFormPiTwo.value.agentesId = ev.agentesId
-
+    getFormPiTwo.value.participantesComissoes = ev.participantesComissoes || []
 
     localStorage.setItem('piFormTwo', JSON.stringify(getFormPiTwo.value))
 
     formPi.value.One = JSON.parse(localStorage.getItem('piFormOne'))
     formPi.value.Two = JSON.parse(localStorage.getItem('piFormTwo'))
-
 }
 
 function saveFormThree(ev) {
@@ -250,6 +249,8 @@ function naviForm(ev) {
                                      :paineis="paineis"
                                      :bisemana="bisemana"
                                      :dataReserva="dataReserva"
+                                     :vendedorId="vendedorId"
+                                     :vendedorNome="vendedorNome"
                                      @nextStep="naviForm"
                                      @formOne="saveFormOne"
                                      @formTwo="saveFormTwo"
