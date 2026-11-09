@@ -15,6 +15,7 @@ use App\Http\Controllers\Relatorios\RelPainXCliController;
 use App\Http\Controllers\Relatorios\RelLancamentosController;
 use App\Http\Controllers\Relatorios\RelComissaoController;
 use App\Http\Controllers\Relatorios\RelOcupacaoController;
+use App\Http\Controllers\Relatorios\RelLedController;
 use App\Http\Controllers\Reserva\PiController;
 use App\Http\Controllers\Vendas\VendaController;
 use App\Http\Controllers\User\UserController;
@@ -22,9 +23,14 @@ use App\Http\Controllers\Financeiro\ServicosController;
 use App\Http\Controllers\Financeiro\ComissoesController;
 use App\Http\Controllers\Config\UsuarioController;
 use App\Http\Controllers\Config\RolesController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\Financeiro\CaixaController;
 use App\Http\Controllers\Config\TextosPadraoController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ReactDashboardController;
+use App\Http\Controllers\ReactCaixaController;
+use App\Http\Controllers\ReactReservasSemPIController;
+use App\Http\Controllers\ReactComissoesController;
+use App\Http\Controllers\ReactVendaController;
+use App\Http\Controllers\Financeiro\CaixaController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -50,9 +56,30 @@ route::get('/home', function() {
 
 
 route::middleware(['auth', 'verified'])->group(function () {
-    // Dashboard
-    route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    // Dashboard Vue (legado)
+    route::get('/dashboard-antigo', [DashboardController::class, 'index'])->name('dashboard.antigo');
     route::post('/getClienteReservas', [DashboardController::class, 'getClienteReservas']);
+
+    // ============== NOVO FRONTEND REACT ==============
+    route::get('/dashboard', [ReactDashboardController::class, 'index'])->name('react.dashboard');
+    route::get('/caixa', [ReactCaixaController::class, 'index'])->name('react.caixa');
+    route::get('/reservas-sem-pi', [ReactReservasSemPIController::class, 'index'])->name('react.reservassempi');
+    route::post('/GerarPIPorReserva', [ReactReservasSemPIController::class, 'gerarPIPorReserva'])->name('react.gerarpi');
+
+    route::get('/cadastro-comissoes', [ReactComissoesController::class, 'index'])->name('react.comissoes.cadastro');
+    route::post('/cadastro-comissoes', [ReactComissoesController::class, 'store'])->name('react.comissoes.store');
+    route::put('/cadastro-comissoes/{id}', [ReactComissoesController::class, 'update'])->name('react.comissoes.update');
+    route::delete('/cadastro-comissoes/{id}', [ReactComissoesController::class, 'destroy'])->name('react.comissoes.destroy');
+    route::post('/cadastro-comissoes/{id}/toggle-status', [ReactComissoesController::class, 'toggleStatus'])->name('react.comissoes.toggle');
+
+    // Vendas React (Legado / Alternativo)
+    route::get('/vendas-react', [ReactVendaController::class, 'index'])->name('react.vendas.lancar');
+    route::get('/vendas/lancar-react', [ReactVendaController::class, 'index']);
+    route::get('/vendas-lancar', [ReactVendaController::class, 'index']);
+    route::post('/vendas/lancar/salvar', [ReactVendaController::class, 'store'])->name('react.vendas.store');
+    route::post('/vendas/lancar/preview', [ReactVendaController::class, 'preview'])->name('react.vendas.preview');
+    route::post('/vendas/lancar/cancelar', [ReactVendaController::class, 'cancel'])->name('react.vendas.cancel');
+    // =================================================
 
     // Usuários
     route::get('/ListaUsuarios', [UsuarioController::class, 'index'])->name('lista.usuarios');
@@ -104,6 +131,8 @@ route::middleware(['auth', 'verified'])->group(function () {
 
     //Painéis
     route::get('/Paineis', [PaineisController::class, 'index'])->name('lista.paineis');
+    route::get('/paineis-react', [PaineisController::class, 'index'])->name('react.paineis.lista');
+    route::get('/paineis-antigo', [PaineisController::class, 'index'])->name('paineis.antigo');
     route::post('/CadPainel', [PaineisController::class, 'cadastraPainel'])->name('add.painel');
     route::post('/EditPainel', [PaineisController::class, 'editPainel']);
     route::any('/DelPainel', [PaineisController::class, 'deletePainel']);
@@ -124,6 +153,7 @@ route::middleware(['auth', 'verified'])->group(function () {
 
     // Reseva de painés por cliente
     route::get('/ResPaineisCli', [ReservaController::class, 'reservaPainelIndex'])->name('reserva.paineis.cli');
+    route::get('/ResPaineisCli-antigo', [ReservaController::class, 'reservaPainelAntigo'])->name('reserva.paineis.cli.antigo');
     route::post('/GetPaineisCli', [ReservaController::class, 'getPaineisCliente'])->name('get.paineis.cli');
     route::post('/ResPaineisCli', [ReservaController::class, 'reservaPaineisCliente'])->name('res.paineis.cli');
     route::post('/DelResCliente', [ReservaController::class, 'delResCliente'])->name('del.reserva.cli');
@@ -164,6 +194,7 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::post('/CreateLancamento', [CaixaController::class, 'createLancamento']);
     route::any('/UpdateLancamento', [CaixaController::class, 'updateLancamento']);
     route::post('/DeleteLancamento', [CaixaController::class, 'deleteLancamento']);
+    route::post('/ToggleLancamentoStatus', [CaixaController::class, 'toggleLancamentoStatus']);
 
 
     // Comissões
@@ -181,15 +212,22 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::any('/previewPi', [PiController::class, 'previewPi']);
     route::any('/storePi', [PiController::class, 'storePi']);
 
-    // Vendas
+    // Vendas (padrão legado)
     route::get('/Vendas/Lancar', [VendaController::class, 'index'])->name('vendas.lancar');
+    route::get('/vendas/lancar', [VendaController::class, 'index']);
+    route::get('/Vendas/Lancar-antigo', [VendaController::class, 'index'])->name('vendas.lancar.antigo');
+    route::get('/vendas/lancar-antigo', [VendaController::class, 'index']);
     route::any('/vendas/sessionData', [VendaController::class, 'sessionData']);
     route::get('/vendas/preview', [VendaController::class, 'preview']);
     route::any('/vendas/store', [VendaController::class, 'store']);
+    route::post('/vendas/cancel', [VendaController::class, 'cancel']);
 
     // Agentes
     route::get('/getAgentes', [ClienteController::class, 'getAgentes']);
 
+    // Comissões (nova arquitetura por pessoa)
+    route::get('/listarComissoesAtivas', [DataController::class, 'listarComissoesAtivas']);
+    route::get('/listarParticipantesComissao', [DataController::class, 'listarParticipantesComissao']);
 
         // Relatórios
     // Dispopnibilidade
@@ -239,6 +277,7 @@ route::middleware(['auth', 'verified'])->group(function () {
 
     // Relatório de Lançamentos
     route::get('/RelLancamentos', [RelLancamentosController::class, 'index']);
+    route::get('/getRelLancamentosData', [RelLancamentosController::class, 'getRelLancamentosData']);
     route::any('/getRelLancamentos', [RelLancamentosController::class, 'getRelLancamentos']);
 
 
@@ -254,6 +293,7 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::post('/getPiBs', [ArquivosController::class, 'getPiBs']);
     route::get('/VendasGeradas', [ArquivosController::class, 'vendas']);
     route::post('/getOsBs', [ArquivosController::class, 'getOsBs']);
+    route::post('/groupPiPdf', [ArquivosController::class, 'groupPiPdf']);
 
 
 
@@ -264,7 +304,7 @@ route::middleware(['auth', 'verified'])->group(function () {
         route::post('/addAno', [ConfiguracoesController::class, 'AddAno'])->name('add.ano');
 
         // Roles
-        route::get('/roles', [RolesController::class, 'index']); 
+        route::get('/roles', [RolesController::class, 'index']);
         route::post('/createRole', [RolesController::class, 'createRole']);
         route::post('/updateRole', [RolesController::class, 'updateRole']);
         route::get('/getRoles', [RolesController::class, 'getRoles']);
@@ -286,11 +326,27 @@ route::middleware(['auth', 'verified'])->group(function () {
         route::post('/getTextoPadrao', [TextosPadraoController::class, 'getTextoPadrao']);
         route::post('/deleteTextoPadrao', [TextosPadraoController::class, 'deleteTextoPadrao']);
 
+        route::post('/atualizarImagens', [ConfiguracoesController::class, 'atualizarImagens']);
 
 
     });
 
 
+    // ============ MÓDULO LED ============
+
+    // Endpoints de API do ReservaController para LEDs
+    route::post('/MapaOcupacaoLed', [ReservaController::class, 'getMapaOcupacaoLed'])->name('mapa.ocupacao.led.json');
+    route::post('/ReservaLed', [ReservaController::class, 'postReservaLed'])->name('reserva.led.post');
+    route::post('/GetReservasLed', [ReservaController::class, 'getReservasLed'])->name('get.reservas.led');
+    route::post('/GetContratosProximosTerminoLed', [ReservaController::class, 'getContratosProximosTerminoLed'])->name('get.contratos.proximos.led');
+    route::post('/ExtenderReservaLed', [ReservaController::class, 'extenderReservaLed'])->name('extender.reserva.led');
+    route::post('/GetStatusContratoLed', [ReservaController::class, 'getStatusContratoLed'])->name('get.status.contrato.led');
+    route::post('/VerificaConflitoLed', [ReservaController::class, 'verificaConflitoLed'])->name('verifica.conflito.led');
+
+    // Telas e Relatórios de LED (Inertia e PDF)
+    route::get('/MapaOcupacaoLed', [RelLedController::class, 'mapaOcupacao'])->name('mapa.ocupacao.led');
+    route::get('/RelReservasLed', [RelLedController::class, 'relReservas'])->name('rel.reservas.led');
+    route::post('/RelReservasLedPdf', [RelLedController::class, 'relReservasPdf'])->name('rel.reservas.led.pdf');
 
 
 });

@@ -1,0 +1,10 @@
+# Arquivo .browserslistrc — EVITA a chamada de browserslist.findConfigFile()
+# Quando esse arquivo EXISTE no root do projeto, o @babel/helper-compilation-targets
+# lê ele diretamente e NÃO precisa chamar _browserslist.findConfigFile (que é a origem do erro).
+
+> 1% in BR
+last 2 Chrome versions
+last 2 Edge versions
+last 2 Firefox versions
+last 2 Safari versions
+not dead

@@ -70,11 +70,12 @@ class PiController extends Controller
         $campanha = session('dadosPi')['Two']['campanha'];
 
         $agentes = [];
-
-        foreach (session('dadosPi')['Two']['agentesId'] as $ag) {
+        $agentesIds = array_unique(session('dadosPi')['Two']['agentesId'] ?? []);
+        foreach ($agentesIds as $ag) {
             $agente = Cliente::where('agent', 1)->where('id', $ag)->first();
-
-            array_push($agentes, $agente);
+            if ($agente) {
+                array_push($agentes, $agente);
+            }
         }
 
 
@@ -113,9 +114,13 @@ class PiController extends Controller
         $vendedor = session('dadosPi')['Two']['vendedor'];
 
 
-        // Grava as reservas
+        // Grava as reservas e detecta painéis LED
+        $temPaineisLed = false;
         foreach($idPaineis as $idPainel) {
             $painel = Painel::where('identificacao', $idPainel)->first();
+            if ($painel && !empty($painel->is_led)) {
+                $temPaineisLed = true;
+            }
 
             $grava_reservas = $this->piService->storeReservation($cliente->id, $painel->id, $bsId, $campanha);
 
@@ -155,10 +160,14 @@ class PiController extends Controller
 
                 // dd($grava_pi);
 
+                // Observação: prefixa tag LED se houver painéis LED no PI
+                $obsOriginal = session('dadosPi')['Four']['servicos'][0]['detalhes'] ?? '';
+                $prefixoLed = $temPaineisLed ? "[PAINÉIS LED INCLUÍDOS]\n" : '';
+                $obsFinal = trim($prefixoLed . $obsOriginal);
+
                 $pi = Pi::updateOrCreate([
                     'id_cliente' => session('dadosPi')['One']['clienteId'],
                     'id_paineis' => json_encode(session('dadosPi')['Two']['paineis']),
-                    'arquivo' => $cliente_nome.'_'.$dt_pi.'.pdf',
                     'contato' => session('dadosPi')['One']['responsavel'],
                     'campanha' => session('dadosPi')['Two']['campanha'],
                     'id_bisemana' => session('dadosPi')['Two']['bisemanaId'],
@@ -170,8 +179,13 @@ class PiController extends Controller
                     'dt_pgto' => session('dadosPi')['Four']['dtPgto'],
                     'forma_pagamento' => session('dadosPi')['Four']['formaPgto'],
                     'vendedor' => session('dadosPi')['Two']['vendedorId'],
-                    'obs' => session('dadosPi')['Four']['servicos'][0]['detalhes']
+                    'obs' => $obsFinal
                 ]);
+
+                $nomeClienteSeguroPi = preg_replace('/[^A-Za-z0-9_-]+/', '_', (string)$cliente_nome);
+                $anoPi = substr((string)$dt_pi, 0, 4);
+                $nomeArquivoPi = 'PI' . $pi->id . '_' . $anoPi . '_' . $nomeClienteSeguroPi . '_' . $dt_pi . '.pdf';
+                $pi->update(['arquivo' => $nomeArquivoPi]);
 
             }
 
@@ -184,52 +198,22 @@ class PiController extends Controller
 
             $valor_liq_comissoes = 0;
 
-            // Calcula as comissões para salvar o valor liquido e o valor total
-            $this->piService->calculateComission($servicos, $agentes, $pi, $valor_liq_comissoes);
-
-            foreach($servicos as $servico) {
-                $vlr_total = $servico['vlr_total'];
-                $vlr_unit = $servico['vlr_unit'];
-                $vlr_desc = $servico['vlr_desc'];
-                $vlr_custo = $servico['vlr_custo'];
-
-                $vlr_liquido = $vlr_total - $vlr_desc;
-                $vlr_liquido_financeiro = $vlr_total - $vlr_desc - $vlr_custo;
-
-
-                foreach($agentes as $agente) {
-                    $comissao = Comissao::where('id_funcionario', $agente->id)
-                                          ->where('id_servico', $servico['id'])->first();
-
-                    $comissoes = Comissao::where('id_funcionario', $agente->id)->get()->toArray();
-
-
-                    $comissao_venda = new ComissaoVenda();
-
-
-                    if (optional($comissao)->exists()) {
-                        if($comissao->tipo_comissao == 1) {
-                            $comissao_venda->Create([
-                                'pi_id' => $pi->id,
-                                'comissao_id' => $comissao->id,
-                                'agente_id' => $agente->id,
-                                'valor_comissao' => $vlr_liquido * ($comissao->valor / 100),
-                            ]);
-                            $vlr_total -= $vlr_liquido * ($comissao->valor / 100);
-                        } else {
-                            $comissao_venda->Create([
-                                'pi_id' => $pi->id,
-                                'comissao_id' => $comissao->id,
-                                'agente_id' => $agente->id,
-                                'valor_comissao' => $vlr_liquido - $comissao->valor,
-                            ]);
-                            $vlr_total -= $vlr_liquido - $comissao->valor;
-                        }
+            $comissoes = [];
+            if (count($agentes) > 0) {
+                try {
+                    $agenteIds = [];
+                    foreach ($agentes as $ag) {
+                        if (!empty($ag->id)) $agenteIds[] = (int)$ag->id;
                     }
+                    if (count($agenteIds) > 0) {
+                        $comissoes = Comissao::whereIn('id_funcionario', $agenteIds)->get()->toArray();
+                    }
+                } catch (\Throwable $e) {
+                    $comissoes = [];
                 }
-
-                $valor_liq_comissoes += $vlr_total;
             }
+
+            $valor_liq_comissoes = $this->piService->calculateComission($servicos, $agentes, $pi, $valor_liq_comissoes);
 
 
 
@@ -331,7 +315,10 @@ class PiController extends Controller
 
                 $pi_fin->setPaper('a4', 'landscape');
 
-                $pi_fin->save(storage_path('app/public/pdf/pi/pi_fin_'.$cliente_nome.'_'.$dt_pi.'.pdf'));
+                $nomeClienteSeguroFin = preg_replace('/[^A-Za-z0-9_-]+/', '_', (string)$cliente_nome);
+                $anoFin = substr((string)$dt_pi, 0, 4);
+                $nomeArquivoFin = 'pi_fin_PI' . $pi->id . '_' . $anoFin . '_' . $nomeClienteSeguroFin . '_' . $dt_pi . '.pdf';
+                $pi_fin->save(storage_path('app/public/pdf/pi/' . $nomeArquivoFin));
 
                 // Via do Cliente
                 $pi_cli =  PDF::loadview('relatorios.pi.pi_nova', compact('pi', 'idPaineis', 'cliente', 'agentes', 'comissoes', 'bs_inicio', 'bs_final', 'bs_formated',  'pagamento', 'forma_pagamento',
@@ -339,7 +326,8 @@ class PiController extends Controller
 
                 $pi_cli->setPaper('a4', 'landscape');
 
-                $pi_cli->save(storage_path('app/public/pdf/pi/pi_cli_'.$cliente_nome.'_'.$dt_pi.'.pdf'));
+                $nomeArquivoCli = 'pi_cli_PI' . $pi->id . '_' . $anoFin . '_' . $nomeClienteSeguroFin . '_' . $dt_pi . '.pdf';
+                $pi_cli->save(storage_path('app/public/pdf/pi/' . $nomeArquivoCli));
 
 
                 return $pi_cli->stream('paineis_bisemana.pdf');
@@ -386,8 +374,26 @@ class PiController extends Controller
         $vendedor = $two['vendedor'] ?? null;
         $agentes = [];
         foreach (($two['agentesId'] ?? []) as $ag) {
-            $agente = Cliente::where('agent', 1)->where('id', $ag)->first();
-            array_push($agentes, $agente);
+            if ((int)$ag <= 0) continue;
+            $agente = Cliente::where('agent', 1)->where('id', (int)$ag)->first();
+            if ($agente) array_push($agentes, $agente);
+        }
+        if (count($agentes) === 0) {
+            $agDummy = new \stdClass();
+            $agDummy->id = 0;
+            $agDummy->razao_social = '— Não há agências/parceiros vinculados a esta PI —';
+            $agDummy->nome_fantasia = '';
+            $agDummy->cpf_cnpj = '';
+            $agDummy->nro_insc = '';
+            $agDummy->endereco = '';
+            $agDummy->num = '';
+            $agDummy->complemento = '';
+            $agDummy->bairro = 0;
+            $agDummy->cidade = $cliente->cidade ?? 0;
+            $agDummy->uf = $cliente->uf ?? 0;
+            $agDummy->cep = '';
+            $agDummy->agent = 1;
+            $agentes[] = $agDummy;
         }
         $textoAtivo = TextoPadrao::where('active', 1)->first();
         $observacao = $dados['Five']['observacao'] ?? null;

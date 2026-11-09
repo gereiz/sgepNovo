@@ -110,22 +110,18 @@
                                         <?php
                                         $filePath = 'storage/'.$p->image_url;
                                         $originalImage = public_path($filePath);
+                                        $dir = public_path('storage/outdoorImages/'.$p->identificacao);
                                         $reportImage = $originalImage;
-                                        //if(pathinfo('storage/'.$p->image_url, PATHINFO_EXTENSION) != "png" || mime_content_type($filePath) != "image/png"){
-                                        if(filesize($filePath) > 15000000){
-                                            $info = getimagesize($filePath);
-
-                                            if ($info['mime'] == 'image/jpeg')
-                                                $image = @imagecreatefromjpeg($filePath);
-
-                                            elseif ($info['mime'] == 'image/gif')
-                                                $image = @imagecreatefromgif($filePath);
-
-                                            elseif ($info['mime'] == 'image/png')
-                                                $image = @imagecreatefrompng($filePath);
-
-                                            imagejpeg($image, 'storage/outdoorImages/'.$p->id."/CompressedJpgImage.jpg", 5);
-                                            $reportImage = public_path('storage/outdoorImages/'.$p->id."/CompressedJpgImage.jpg");
+                                        if (is_dir($dir)) {
+                                            $files = array_values(array_diff(scandir($dir), ['.', '..']));
+                                            $files = array_map(fn($f) => $dir.'/'.$f, $files);
+                                            $files = array_filter($files, function ($f) {
+                                                return is_file($f) && basename($f) !== 'CompressedJpgImage.jpg';
+                                            });
+                                            usort($files, fn($a, $b) => filemtime($b) <=> filemtime($a));
+                                            if (!empty($files)) {
+                                                $reportImage = $files[0];
+                                            }
                                         }
 
                                         ?>
@@ -171,4 +167,3 @@
         <p style="margin : 0; padding-top:0;"><b>Total: <i>{{count($paineis)}}</i></b></p>
     </div>
 </div>
-

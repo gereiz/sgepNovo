@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Clientes\Cliente;
 use App\Models\Financeiro\ComissaoVenda;
+use App\Models\Financeiro\Comissao;
+use App\Models\Financeiro\ComissaoCadastro;
+use App\Models\User;
 use App\Services\FinanceiroService;
 use App\Services\UsuarioService;
 use App\Models\Config\Ano;
@@ -59,11 +62,65 @@ class ComissoesController extends Controller
 
         $anos = Ano::all();
         $bisemanas = Bisemana::all();
-        $comissoes = ComissaoVenda::all();
-        $pis = Pi::all();
+
+        $anoId = (int)($request->input('anoId') ?? $request->query('anoId') ?? 0);
+        $bisemanaId = (int)($request->input('bisemanaId') ?? $request->query('bisemanaId') ?? 0);
+
+        if ($anoId === 0 && $bisemanaId === 0) {
+            $anoAtual = (int)date('Y');
+            $anoRow = Ano::where('ano_bisemana', $anoAtual)->first();
+            if (!$anoRow) {
+                $anoRow = Ano::orderBy('ano_bisemana', 'desc')->first();
+            }
+            if ($anoRow) {
+                $anoId = (int)$anoRow->id;
+            }
+        }
+
+        $pisQ = Pi::query();
+        if ($bisemanaId > 0) {
+            $pisQ->where('id_bisemana', $bisemanaId);
+        } elseif ($anoId > 0) {
+            $bsDoAno = Bisemana::where('ano_id', $anoId)->pluck('id')->values()->all();
+            if (!empty($bsDoAno)) {
+                $pisQ->whereIn('id_bisemana', $bsDoAno);
+            } else {
+                $pisQ->whereRaw('0 = 1');
+            }
+        }
+        $pis = $pisQ->get();
+
+        $piIds = $pis->pluck('id')->values()->all();
+        $comissoesRaw = empty($piIds) ? collect() : ComissaoVenda::whereIn('pi_id', $piIds)->orderBy('id', 'desc')->get();
         $clientes = Cliente::all();
         $comissoes_defs = $this->financeiroService->listaComissoes();
-        $lancamentos = \App\Models\Financeiro\Lancamento::whereIn('id_reserva', $pis->pluck('id'))->get();
+        $lancamentos = empty($piIds) ? collect() : \App\Models\Financeiro\Lancamento::whereIn('id_reserva', $piIds)->get();
+
+        $usuariosMap = User::where('active', 1)->get()->keyBy('id')->map(fn($u) => trim((string)$u->name));
+        $clientesMap = $clientes->keyBy('id')->map(fn($c) => trim((string)($c->nome_fantasia ?: $c->razao_social)));
+        $comissoesNovaMap = ComissaoCadastro::whereNull('deleted_at')->get()->keyBy('id');
+        $comissoesLegadaMap = Comissao::with('servico')->get()->keyBy('id');
+
+        $comissoes = hidratarComissoesLegadoNovo($comissoesRaw, [
+            'usuariosMap'        => $usuariosMap,
+            'clientesMap'        => $clientesMap,
+            'comissoesNovaMap'   => $comissoesNovaMap,
+            'comissoesLegadaMap' => $comissoesLegadaMap,
+        ]);
+
+        $chavesVistas = [];
+        $comissoesDedup = [];
+        foreach ($comissoes as $c) {
+            $chaveBenef = $c['beneficiario_chave_logica'] ?? ((int)($c['agente_id'] ?? 0));
+            $chaveDef   = $c['comissao_definicao_id']   ?? ((int)($c['comissao_id'] ?? 0));
+            $ch = (string)$chaveBenef.'|'.(int)$chaveDef.'|'.(int)($c['pi_id'] ?? 0);
+            if (isset($chavesVistas[$ch])) {
+                continue;
+            }
+            $chavesVistas[$ch] = true;
+            $comissoesDedup[] = $c;
+        }
+        $comissoes = $comissoesDedup;
 
         return Inertia::render('Financeiro/ComissoesPagas/ComissoesPagas', compact('anos', 'bisemanas', 'comissoes', 'pis', 'clientes', 'comissoes_defs', 'lancamentos'));
     }

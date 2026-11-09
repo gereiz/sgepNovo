@@ -20,7 +20,8 @@
         @foreach ($servicos as $serv)
         <tr>
             <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{$serv['nome']}}</td>
-            <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{$serv['quantidade']}}</td>
+            @php $qtd_cobrada = max(0, ($serv['quantidade'] ?? 0) - ($serv['bonificado'] ?? 0)); @endphp
+            <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{$qtd_cobrada}}</td>
             <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{implode(", ", $idPaineis)}}</td>
             <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{$bs_formated}}</td>
             <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">
@@ -44,7 +45,7 @@
                         @if(buscarComissao($comissoes, $serv['id'], $ag->id)[1] == 1) % @endif
                 </td>
             @endforeach
-            <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{formataCash($serv['vlr_custo'] * $serv['quantidade'])}}</td>
+            <td style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">{{formataCash(($serv['vlr_custo'] ?? 0) * $qtd_cobrada)}}</td>
         </tr>
         @endforeach
     </tbody>

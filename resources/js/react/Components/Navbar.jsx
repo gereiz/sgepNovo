@@ -1,0 +1,501 @@
+import React, { useState } from 'react';
+import { usePage } from '@inertiajs/react';
+import {
+  Search,
+  Settings,
+  Bell,
+  Sparkles,
+  ChevronDown,
+  Menu,
+  MapPin,
+  User,
+  Image,
+  LayoutGrid,
+  FileText,
+  DollarSign,
+  Globe,
+  LogOut,
+  ExternalLink,
+  History,
+} from 'lucide-react';
+import { cn } from '@/react/lib/utils';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/react/Components/ui/popover';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose,
+} from '@/react/Components/ui/sheet';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/react/Components/ui/accordion';
+
+/**
+ * =======================================================
+ *  Navbar · ESTILO NOVO (React + shadcn)
+ *  - DESKTOP: abas dropdown com submenus 1:1 ao Vue antigo
+ *  - MOBILE:  botão hambúrguer → drawer lateral esquerdo com Accordions
+ * =======================================================
+ */
+
+const NAV_GRUPOS = [
+  {
+    key: 'home',
+    label: 'Início',
+    icon: LayoutGrid,
+    items: [
+      { name: 'Dashboard', description: 'Painel executivo de indicadores comerciais e operacionais.', href: '/dashboard' },
+    ],
+  },
+  {
+    key: 'enderecos',
+    label: 'Endereços',
+    icon: MapPin,
+    items: [
+      { name: 'Cidades', description: 'Realize o cadastro / edição de cidades.', href: '/CadCidade' },
+      { name: 'Regiões', description: 'Realize o cadastro / edição de regiões.', href: '/CadRegiao' },
+      { name: 'Bairros', description: 'Realize o cadastro / edição de bairros.', href: '/CadBairro' },
+    ],
+  },
+  {
+    key: 'clientes',
+    label: 'Clientes',
+    icon: User,
+    items: [
+      { name: 'Lista de Clientes', description: 'Realize o cadastro / edição de novos clientes.', href: '/Clientes' },
+    ],
+  },
+  {
+    key: 'paineis',
+    label: 'Painéis',
+    icon: Image,
+    items: [
+      { name: 'Lista de Painéis', description: 'Inventário OOH com visualização em cards/tabela, cadastro e edição.', href: '/Paineis' },
+      { name: 'Envio de Disponibilidades', description: 'Consulte painéis disponíveis, reservados e envie disponibilidades.', href: '/ResPaineis' },
+      { name: 'Reserva de Painéis e LEDs', description: 'Gerencie reservas de painéis convencionais (BS) e LEDs digitais (mensal).', href: '/ResPaineisCli' },
+      { name: 'Mapa de Ocupação • LEDs', description: 'Visualização em timeline e grade de ocupação dos painéis e LEDs digitais.', href: '/MapaOcupacaoLed' },
+      { name: 'Reservas sem PI', description: 'Interface com cards agrupados e stepper de emissão.', href: '/reservas-sem-pi' },
+    ],
+  },
+  {
+    key: 'vendas',
+    label: 'Vendas',
+    icon: DollarSign,
+    items: [
+      { name: 'Lançar Venda', description: 'Fluxo clássico de lançamento de venda e ordens de serviço.', href: '/vendas/lancar' },
+    ],
+  },
+  {
+    key: 'arquivos',
+    label: 'Arquivos',
+    icon: Sparkles,
+    items: [
+      { name: 'Disponibilidades Enviadas', description: 'Em Breve.', href: '#' },
+      { name: "Pi's Geradas", description: "Exibe todas as Pi's geradas nos ultimos 60 dias", href: '/PisGeradas' },
+      { name: 'Vendas Geradas', description: 'Exibe todas as Vendas geradas', href: '/VendasGeradas' },
+    ],
+  },
+  {
+    key: 'relatorios',
+    label: 'Relatórios',
+    icon: FileText,
+    items: [
+      { name: 'Relatório de Colagem', description: 'Relatório com a lista de painéis para colagem.', href: '/RelColagem' },
+      { name: 'Reservas por Cliente', description: 'Relatório com a quantidade de painéis por cliente específico na bi-semana.', href: '/ReservaCliente' },
+      { name: 'Painéis por Cliente', description: 'Relatório geral com a quantidade de painéis por cliente na bi-semana', href: '/PaineisCliente' },
+      { name: 'Painéis por Bisemana', description: 'Relatório com a lista de painéis por bisemana.', href: '/RelPainelBisemana' },
+      { name: 'Relatório de Ocupação', description: 'Acompanhamento de ocupação.', href: '/RelOcupacao' },
+      { name: 'Contas a Pagar/Receber', description: 'Relatório financeiro de lançamentos (entradas/saídas).', href: '/RelLancamentos' },
+      { name: 'Mapa de Ocupação • LEDs', description: 'Visualização em timeline/grade da ocupação dos painéis LED por bi-semana, com status de contrato.', href: '/MapaOcupacaoLed' },
+      { name: 'Relatório de Reservas • LEDs', description: 'Lista e PDF de reservas de LEDs com filtros, valores, PI e status de contrato.', href: '/RelReservasLed' },
+    ],
+  },
+  {
+    key: 'financeiro',
+    label: 'Financeiro',
+    icon: DollarSign,
+    items: [
+      { name: 'Cadastro de Serviços', description: 'Realize o cadastro / edição de serviços.', href: '/Servicos' },
+      { name: 'Cadastro de Comissões', description: 'Gestão de regras de comissão usadas em PIs e OSs.', href: '/cadastro-comissoes' },
+      { name: 'Controle de Caixa', description: 'Gestão financeira com modais de Quitar, Editar, Excluir e emissão.', href: '/caixa' },
+      { name: 'Comissões Pagas', description: 'Lista as comissões pagas por PI.', href: '/ListaComissoesPagas' },
+    ],
+  },
+  {
+    key: 'configuracoes',
+    label: 'Configurações',
+    icon: Globe,
+    items: [
+      { name: 'Cadastro de Usuários', description: 'Realize o cadastro / edição de usuários no sistema.', href: '/ListaUsuarios' },
+      { name: 'Configurações Gerais', description: 'Configurações Diversas', href: '/configuracoes' },
+    ],
+  },
+  {
+    key: 'legado',
+    label: 'Legado',
+    icon: History,
+    items: [
+      {
+        name: 'Cadastro de Comissões (Legado)',
+        description: 'Versão clássica Vue do cadastro de regras de comissão.',
+        href: '/Comissoes',
+        badge: { text: 'LEGADO', color: 'bg-amber-600' },
+      },
+      {
+        name: 'Controle de Caixa (Legado)',
+        description: 'Versão clássica Vue de controle de entradas e saídas.',
+        href: '/Caixa',
+        badge: { text: 'LEGADO', color: 'bg-amber-600' },
+      },
+      {
+        name: 'Dashboard (Legado)',
+        description: 'Painel clássico Vue de bi-semanas e clientes.',
+        href: '/dashboard-antigo',
+        badge: { text: 'LEGADO', color: 'bg-amber-600' },
+      },
+      {
+        name: 'Gerar PI / Reservas sem PI (Legado)',
+        description: 'Fluxo clássico Vue de emissão de PI por reserva.',
+        href: '/ReservaSemPi',
+        badge: { text: 'LEGADO', color: 'bg-amber-600' },
+      },
+      {
+        name: 'Lançar Venda (React)',
+        description: 'Interface React com cards, filtros e stepper de venda.',
+        href: '/vendas-react',
+        badge: { text: 'REACT', color: 'bg-sky-600' },
+      },
+      {
+        name: 'Lista de Painéis (Legado)',
+        description: 'Versão clássica Vue da listagem de painéis.',
+        href: '/paineis-antigo',
+        badge: { text: 'LEGADO', color: 'bg-amber-600' },
+      },
+      {
+        name: 'Reserva de Painéis (Legado)',
+        description: 'Versão clássica Vue da reserva de painéis por cliente.',
+        href: '/ResPaineisCli-antigo',
+        badge: { text: 'LEGADO', color: 'bg-amber-600' },
+      },
+    ],
+  },
+];
+
+export const navGroups = NAV_GRUPOS;
+
+export function Navbar({
+  activeTab = null,
+  notificationCount = 1,
+}) {
+  const page = usePage();
+  const authUser = page?.props?.auth?.user || null;
+  const userName = authUser?.name || authUser?.username || 'Gestor OOH';
+  const userEmail = authUser?.email || '';
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  return (
+    <header
+      className="fixed top-0 left-0 right-0 z-50 text-white shadow-nav"
+      style={{ backgroundColor: '#0F172A' }}
+    >
+      <div className="flex h-[56px] w-full items-center px-3 lg:px-6 gap-1 md:gap-3 relative">
+        {/* ========== MOBILE: BOTÃO HAMBÚRGUER ========== */}
+        <div className="md:hidden flex items-center justify-center shrink-0 min-w-0">
+          <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+            <SheetTrigger asChild>
+              <button
+                type="button"
+                aria-label="Abrir menu"
+                className="h-10 w-10 rounded-lg flex items-center justify-center text-white hover:bg-white/10 transition-colors bg-transparent border-0 shrink-0"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="left">
+              <SheetHeader>
+                <SheetTitle className="flex items-center gap-2">
+                  <img
+                    src="/storage/img/logo-black.png"
+                    alt="Equipe Propaganda"
+                    className="h-6 w-auto object-contain"
+                    onError={(ev) => {
+                      ev.currentTarget.style.display = 'none';
+                      const fb = ev.currentTarget.parentElement.querySelector('[data-sheet-logo-fb]');
+                      if (fb) fb.style.display = 'inline-flex';
+                    }}
+                  />
+                  <span data-sheet-logo-fb style={{ display: 'none' }} className="font-black tracking-tight text-[#0F172A]">
+                    EQUIPE PROPAGANDA
+                  </span>
+                </SheetTitle>
+              </SheetHeader>
+
+              {/* Usuário logado no drawer */}
+              <div className="px-4 pb-3 flex items-center gap-3 border-b border-gray-100">
+                <div
+                  className="w-11 h-11 rounded-full font-bold flex items-center justify-center text-white text-base select-none shrink-0"
+                  style={{ backgroundColor: '#ef4444' }}
+                >
+                  {String(userName || 'G').trim().charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[14px] font-semibold text-gray-900 truncate">
+                    {userName}
+                  </div>
+                  {userEmail && (
+                    <div className="text-[12px] text-gray-500 truncate">
+                      {userEmail}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Accordion com os grupos */}
+              <div className="flex-1 overflow-y-auto px-2 pt-2 pb-24">
+                <Accordion type="multiple">
+                  {NAV_GRUPOS.map((grupo) => {
+                    const IconG = grupo.icon;
+                    return (
+                      <AccordionItem key={grupo.key} value={grupo.key}>
+                        <AccordionTrigger className="pl-2">
+                          <span className="inline-flex items-center gap-2">
+                            <IconG className="w-5 h-5 text-indigo-600 shrink-0" />
+                            <span>{grupo.label}</span>
+                          </span>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="space-y-0.5 pl-2 pr-1">
+                            {grupo.items.map((item) => {
+                              const IconL = grupo.icon;
+                              return (
+                                <SheetClose asChild key={item.name}>
+                                  <a
+                                    href={item.href}
+                                    className="group relative flex items-start gap-x-3 rounded-lg p-2.5 text-sm leading-5 hover:bg-indigo-50 no-underline text-gray-900 transition-colors"
+                                  >
+                                    <div className="flex h-9 w-9 flex-none items-center justify-center rounded-md bg-gray-50 group-hover:bg-white shrink-0">
+                                      <IconL className="h-4 w-4 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
+                                    </div>
+                                    <div className="flex-auto min-w-0">
+                                      <div className="flex items-center gap-1.5 flex-wrap">
+                                        <div className="block font-semibold text-[13.5px] text-gray-900 truncate">
+                                          {item.name}
+                                        </div>
+                                        {item.badge && (
+                                          <span className={`inline-flex items-center px-1.5 py-0 text-[9px] h-4 rounded font-black tracking-wider text-white ${item.badge.color || 'bg-cyan-500'}`}>
+                                            {item.badge.text}
+                                          </span>
+                                        )}
+                                      </div>
+                                      <p className="mt-0.5 text-gray-500 text-[12px] leading-snug line-clamp-2">
+                                        {item.description}
+                                      </p>
+                                    </div>
+                                  </a>
+                                </SheetClose>
+                              );
+                            })}
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    );
+                  })}
+                </Accordion>
+              </div>
+
+              {/* Links de suporte e logout no rodapé do drawer */}
+              <div className="p-4 border-t border-gray-100 bg-gray-50/50 space-y-1">
+                <a
+                  href="https://ibitweb.atlassian.net/servicedesk/customer/portal/1/group/1/create/10"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100 rounded-lg no-underline transition-colors"
+                >
+                  <span>Abrir Chamado</span>
+                  <ExternalLink className="w-3.5 h-3.5 text-gray-400" />
+                </a>
+                <a
+                  href="/logout"
+                  className="flex items-center justify-between px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-lg no-underline transition-colors"
+                >
+                  <span>Sair do Sistema</span>
+                  <LogOut className="w-3.5 h-3.5 text-red-500" />
+                </a>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+
+        {/* ========== ESQUERDA: LOGO ========== */}
+        <a
+          href="/dashboard"
+          className="flex items-center gap-2 min-w-0 max-w-[140px] md:max-w-[160px] md:min-w-[160px] no-underline shrink-0 overflow-hidden"
+        >
+          <img
+            src="/storage/img/logo-black.png"
+            alt="Equipe Propaganda · SGEP"
+            className="h-7 md:h-8 w-auto object-contain"
+            onError={(ev) => {
+              const tgt = ev.currentTarget;
+              tgt.style.display = 'none';
+              const fb = tgt.parentElement.querySelector('[data-logo-fb]');
+              if (fb) fb.style.display = 'inline-flex';
+            }}
+          />
+          <div data-logo-fb style={{ display: 'none' }}>
+            <div className="text-[13px] md:text-[14px] font-black tracking-tight text-white select-none whitespace-nowrap">
+              EQUIPE PROPAGANDA
+            </div>
+          </div>
+        </a>
+
+        {/* ========== CENTRO: 8 ABAS DROPDOWN (APENAS md+) ========== */}
+        <nav className="hidden md:flex items-center gap-0 flex-1 justify-start lg:justify-center overflow-visible h-full min-w-0">
+          {NAV_GRUPOS.map((grupo) => {
+            const isActive = activeTab === grupo.key;
+            return (
+              <Popover key={grupo.key}>
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    className={cn(
+                      'inline-flex items-center gap-x-1 px-2 md:px-3 lg:px-4 h-[56px] text-[12px] md:text-[13px] lg:text-[14px] font-semibold whitespace-nowrap border-b-[3px] transition-colors bg-transparent border-0 outline-none cursor-pointer',
+                      isActive
+                        ? 'text-white border-white'
+                        : 'text-gray-300 border-transparent hover:text-white hover:border-white/20',
+                    )}
+                  >
+                    <span>{grupo.label}</span>
+                    <ChevronDown
+                      className="h-4 w-4 flex-none text-gray-400 shrink-0 transition-transform duration-200 data-[state=open]:rotate-180"
+                      aria-hidden="true"
+                    />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent
+                  align="start"
+                  sideOffset={8}
+                  className="w-[420px] max-w-[92vw] max-h-[65vh] overflow-auto rounded-3xl"
+                >
+                  <div className="p-4 space-y-1">
+                    {grupo.items.map((item) => {
+                      const IconL = grupo.icon;
+                      return (
+                        <a
+                          key={item.name}
+                          href={item.href}
+                          className="group relative flex items-center gap-x-6 rounded-xl p-4 text-sm leading-6 hover:bg-gray-50 no-underline text-gray-900"
+                        >
+                          <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white shrink-0">
+                            <IconL className="h-6 w-6 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
+                          </div>
+                          <div className="flex-auto min-w-0">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <div className="block font-semibold text-gray-900 truncate">
+                                {item.name}
+                              </div>
+                              {item.badge && (
+                                <span className={`inline-flex items-center px-1.5 py-0 text-[9px] h-4 rounded font-black tracking-wider text-white ${item.badge.color || 'bg-cyan-500'}`}>
+                                  {item.badge.text}
+                                </span>
+                              )}
+                            </div>
+                            <p className="mt-1 text-gray-500 text-[13px] leading-snug line-clamp-2">
+                              {item.description}
+                            </p>
+                          </div>
+                        </a>
+                      );
+                    })}
+                  </div>
+                </PopoverContent>
+              </Popover>
+            );
+          })}
+        </nav>
+
+        {/* ========== DIREITA: AÇÕES ========== */}
+        <div className="flex items-center gap-0.5 md:gap-1 ml-auto shrink-0 pl-1 md:pl-2 min-w-0 overflow-hidden">
+          {/* Search */}
+          <button
+            type="button"
+            title="Busca (Ctrl+K)"
+            className="hidden sm:flex h-9 w-9 rounded-lg items-center justify-center text-gray-300 hover:text-white hover:bg-white/10 transition-colors bg-transparent border-0 shrink-0"
+          >
+            <Search className="w-[18px] h-[18px]" />
+          </button>
+
+          {/* Notifications */}
+          <button
+            type="button"
+            title="Notificações"
+            className="relative h-9 w-9 rounded-lg flex items-center justify-center text-gray-300 hover:text-white hover:bg-white/10 transition-colors bg-transparent border-0 shrink-0"
+          >
+            <Bell className="w-[18px] h-[18px]" />
+            {notificationCount > 0 && (
+              <span className="absolute top-1.5 right-1.5 min-w-[10px] h-[10px] p-0 rounded-full bg-pink-500 ring-2 ring-[#0F172A]" />
+            )}
+          </button>
+
+          {/* Settings */}
+          <a
+            href="/configuracoes"
+            title="Configurações"
+            className="hidden sm:flex h-9 w-9 rounded-lg items-center justify-center text-gray-300 hover:text-white hover:bg-white/10 transition-colors bg-transparent border-0 shrink-0 no-underline"
+          >
+            <Settings className="w-[18px] h-[18px]" />
+          </a>
+
+          {/* User avatar com Popover */}
+          <div className="pl-1 ml-0.5 shrink-0">
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  className="w-9 h-9 rounded-full font-bold flex items-center justify-center text-white text-sm select-none ring-2 ring-white/10 shrink-0 cursor-pointer border-0 p-0 outline-none hover:ring-white/40 transition-all"
+                  style={{ backgroundColor: '#ef4444' }}
+                  title={`${userName}${userEmail ? ' • ' + userEmail : ''}`}
+                >
+                  {String(userName || 'G').trim().charAt(0).toUpperCase()}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-56 p-2 rounded-2xl shadow-xl">
+                <div className="px-3 py-2 border-b border-gray-100">
+                  <div className="font-semibold text-sm text-gray-900 truncate">{userName}</div>
+                  {userEmail && <div className="text-xs text-gray-500 truncate">{userEmail}</div>}
+                </div>
+                <div className="py-1">
+                  <a
+                    href="https://ibitweb.atlassian.net/servicedesk/customer/portal/1/group/1/create/10"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100 rounded-lg no-underline transition-colors"
+                  >
+                    <span>Abrir Chamado</span>
+                    <ExternalLink className="w-3.5 h-3.5 text-gray-400" />
+                  </a>
+                  <a
+                    href="/logout"
+                    className="flex items-center justify-between px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-lg no-underline transition-colors"
+                  >
+                    <span>Sair</span>
+                    <LogOut className="w-3.5 h-3.5 text-red-500" />
+                  </a>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}

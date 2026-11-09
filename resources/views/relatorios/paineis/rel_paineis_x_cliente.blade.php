@@ -63,20 +63,18 @@
                                         <?php
                                         $filePath = 'storage/'.$p->painel->image_url;
                                         $originalImage = public_path($filePath);
-                                        if(filesize($filePath) > 50000){
-                                            $info = getimagesize($filePath);
-                            
-                                            if ($info['mime'] == 'image/jpeg') 
-                                                $image = @imagecreatefromjpeg($filePath);
-                                        
-                                            elseif ($info['mime'] == 'image/gif') 
-                                                $image = @imagecreatefromgif($filePath);
-                                        
-                                            elseif ($info['mime'] == 'image/png') 
-                                                $image = @imagecreatefrompng($filePath);
-                                        
-                                            imagejpeg($image, 'storage/outdoorImages/'.$p->painel->id."/CompressedJpgImage.jpg", 5);
-                                            $reportImage = public_path('storage/outdoorImages/'.$p->painel->id."/CompressedJpgImage.jpg");
+                                        $dir = public_path('storage/outdoorImages/'.$p->painel->identificacao);
+                                        $reportImage = $originalImage;
+                                        if (is_dir($dir)) {
+                                            $files = array_values(array_diff(scandir($dir), ['.', '..']));
+                                            $files = array_map(fn($f) => $dir.'/'.$f, $files);
+                                            $files = array_filter($files, function ($f) {
+                                                return is_file($f) && basename($f) !== 'CompressedJpgImage.jpg';
+                                            });
+                                            usort($files, fn($a, $b) => filemtime($b) <=> filemtime($a));
+                                            if (!empty($files)) {
+                                                $reportImage = $files[0];
+                                            }
                                         }
                                     
                                         ?>
@@ -112,4 +110,3 @@
         <p style="margin : 0; padding-top:0;"><b>Status: <i>{{$status}}</i></b></p>
     </div>
 </div> --}}
-

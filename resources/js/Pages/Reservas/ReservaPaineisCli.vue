@@ -34,6 +34,8 @@ const idAno = ref(0); // Inicializa a variável reativa
 let idCliente = ref('');
 let clienteSel = ref('');
 const idBisemana = ref(0);
+const reservaExtensiva = ref(false)
+const bsFinal = ref(0)
 
 const open = ref(false)
 const openD = ref(false)
@@ -95,7 +97,8 @@ function getBisemanas() {
         idBisemana.value = 0
         reservas.value = []
 
-
+        bsFinal.value = 0
+        reservaExtensiva.value = false
 
     })
 
@@ -232,6 +235,15 @@ const reservaData = computed(() => {
     return reservaData[reservaData.length - 1]
 })
 
+const bsIntervalCount = computed(() => {
+    if (!reservaExtensiva.value || !idBisemana.value || !bsFinal.value) return 0
+    const list = (listaBisemana.value || []).slice().sort((a,b)=>a.id-b.id)
+    const idxIni = list.findIndex(b => b.id === idBisemana.value)
+    const idxFim = list.findIndex(b => b.id === bsFinal.value)
+    if (idxIni === -1 || idxFim === -1 || idxFim <= idxIni) return 0
+    return (idxFim - idxIni + 1)
+})
+
 
 </script>
 
@@ -253,7 +265,7 @@ const reservaData = computed(() => {
             <div class="w-full flex flex-row flex-wrap items-center lg:mb-4">
 
                 <!-- Ano Bi-semana, e CLiente -->
-                <div class="w-full lg:w-6/12 flex items-center sm:justify-start flex-wrap lg:flex-nowrap">
+                <div class="w-full lg:w-8/12 flex items-center sm:justify-start flex-wrap lg:flex-nowrap">
 
                      <!-- Anos -->
                      <div class="w-[23%] lg:w-[11%] flex flex-col me-4 sm:me-6 -mt-6 mb-2">
@@ -265,7 +277,7 @@ const reservaData = computed(() => {
                     </div>
 
                     <!-- Bi-semanas -->
-                    <div class="w-[66%] lg:w-[30%] flex flex-col me-4 sm:me-6 -mt-6 mb-2">
+                    <div class="w-[66%] lg:w-[23%] flex flex-col me-4 sm:me-6 -mt-6 mb-2">
                         <label for="bi-semana">Bi-Semana</label>
                         <select class="select select-bordered" name="bi-semana" id="bi-semama" v-model="idBisemana" @change="getReservas(idBisemana)">
                             <option value="0" selected>Selecione</option>
@@ -277,7 +289,7 @@ const reservaData = computed(() => {
                     </div>
 
                     <!-- Clientes -->
-                    <div class="w-full lg:w-[35%] flex flex-col sm:-mt-5 me-4 sm:me-6 mb-2">
+                    <div class="w-full lg:w-[25%] flex flex-col sm:-mt-5 me-4 sm:me-6 mb-2">
                         <label for="cliente">Cliente</label>
                         <multiselect :disabled="idBisemana == 0"
                             v-model="idCliente"
@@ -293,15 +305,38 @@ const reservaData = computed(() => {
                         </multiselect>
                     </div>
 
-                    <!-- Botões -->
-                    <div class=" w-full lg:w-[25%] flex justify-center sm:justify-start mt-2 space-x-4 mb-2">
+                    <!-- Opção de Reserva Extensiva + Botões -->
+                    <div class="w-full lg:w-[40%] lg:flex-1 flex items-center justify-start lg:flex-nowrap flex-wrap space-x-3 mb-2">
+                        <div class="flex items-center space-x-2 whitespace-nowrap">
+                            <input id="extensiva" type="checkbox" class="checkbox checkbox-sm" v-model="reservaExtensiva" @change="() => { if(!reservaExtensiva) bsFinal = 0 }">
+                            <label for="extensiva" class="label cursor-pointer"><span class="label-text">Reserva extensiva</span></label>
+                        </div>
+                        <div class="w-[66%] lg:w-[70%] flex flex-col me-4 sm:me-6 -mt-6 mb-2" v-show="reservaExtensiva">
+                            <label class="label"><span class="label-text">Bi-semana final</span></label>
+                            <select class="select select-bordered"
+                                    v-model.number="bsFinal">
+                                <option :value="0" disabled>Selecione</option>
+                                <option v-for="(bs, index) in listaBisemana"
+                                        :key="index"
+                                        :disabled="bs.id <= idBisemana"
+                                        :value="bs.id">
+                                    BS: {{ bs.num_bisemana }} {{ new Date(bs.inicio).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }} até {{ new Date(bs.fim).toLocaleDateString('pt-br', {timeZone: 'UTC'}) }}
+                                </option>
+                            </select>
+                        </div>
 
                         <!-- Criar reserva -->
                         <button v-if="idCliente && criaReserva"
+                                :disabled="reservaExtensiva && (bsFinal === 0 || bsFinal <= idBisemana)"
+                                :title="reservaExtensiva && (bsFinal === 0 || bsFinal <= idBisemana) ? 'Selecione uma bi-semana final válida' : 'Adicionar Painéis'"
                                 @click="clearChecked(), openAdd('t')"
                                 class="btn btn-square btn-info text-white -mt-1 tooltip tooltip-left" data-tip="Adicionar Painéis">
                             <i class="fa-solid fa-plus"></i>
                         </button>
+                        <span v-if="reservaExtensiva && bsIntervalCount > 0"
+                              class="badge badge-info ml-2 -mt-1 px-3 py-2 whitespace-nowrap text-xs">
+                              {{ bsIntervalCount }} BS
+                        </span>
 
                         <!-- Excluir Reserva -->
                         <button v-if="idCliente && checkedPaineis.length > 0 && excluiReserva && reservas[0] ? reservas[0].pi_ok == 0 : false"
@@ -364,6 +399,8 @@ const reservaData = computed(() => {
                         :cliente="idCliente"
                         :paineis="paineis"
                         :bisemana="idBisemana"
+                        :extensiva="reservaExtensiva"
+                        :bsFinal="bsFinal"
                         @closeAdd="openAdd">
             </AddReserva>
 
@@ -382,4 +419,3 @@ const reservaData = computed(() => {
     </AuthenticatedLayout>
 
 </template>
-

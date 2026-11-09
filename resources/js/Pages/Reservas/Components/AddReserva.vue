@@ -7,7 +7,7 @@ import { usePage } from '@inertiajs/vue3';
 import GridPaineis from '../../../Components/Paineis/GridPaineis.vue';
 import ModalPiRes from './ModalPiRes.vue';
 
-const props = defineProps(['openAdd', 'cliente', 'bisemana', 'paineis']);
+const props = defineProps(['openAdd', 'cliente', 'bisemana', 'paineis', 'extensiva', 'bsFinal']);
 const emit = defineEmits(['closeAdd']);
 
 import toastr from 'toastr'
@@ -20,6 +20,7 @@ const checkedPaineisId = ref([]);
 const campanha = ref('')
 const observacoes = ref('')
 const bisemana = ref('')
+const listaBsAno = ref([])
 
 watch(() => props.openAdd, (val)  =>{
     if(val === true) {
@@ -35,8 +36,7 @@ function getChecked(val) {
 }
 
 function getheCkedId(val) {
-    checkedPaineisId.value = []
-    checkedPaineisId.value.push(val)
+    checkedPaineisId.value = Array.isArray(val) ? val : [val]
 }
 
 function getCampanha(val) {
@@ -48,6 +48,11 @@ function getBisemana() {
     .then(res =>{
 
       bisemana.value = res.data
+      if (bisemana.value?.ano_id) {
+        axios.post('/getBisemanas', {anoId: bisemana.value.ano_id}).then(r => {
+          listaBsAno.value = Object.values(r.data)
+        })
+      }
 
       // console.log(bisemana.value)
 
@@ -65,15 +70,37 @@ function reservaPaineis() {
         return
     }
 
+    if (props.extensiva) {
+        if (!props.bsFinal) {
+            toastr.error('Informe a Bi-semana final')
+            return
+        }
+        if (Number(props.bsFinal) === Number(bisemana.value.id)) {
+            toastr.error('Bi-semana final deve ser maior que a inicial')
+            return
+        }
+        const bsIni = listaBsAno.value.find(b => b.id === bisemana.value.id)
+        const bsFim = listaBsAno.value.find(b => b.id === props.bsFinal)
+        if (!bsIni || !bsFim || bsIni.ano_id !== bsFim.ano_id) {
+            toastr.error('A bi-semana final deve ser do mesmo ano da inicial')
+            return
+        }
+    }
+
     axios.post('/ResPaineisCli', {
         clienteId: props.cliente.id,
         idPaineis: checkedPaineisId.value,
         campanha: campanha.value,
         obs: observacoes.value,
-        bsId: bisemana.value.id
+        bsId: bisemana.value.id,
+        extensiva: props.extensiva ? 1 : 0,
+        bsFinal: props.extensiva ? props.bsFinal : null
     })
     .then(res => {
-            toastr.success(res.data.message)
+            if (res.data?.skipped && res.data.skipped.length) {
+                toastr.warning(`Alguns painéis foram ignorados por já estarem reservados: ${res.data.skipped.join(', ')}`)
+            }
+            toastr.success(res.data.message || 'Reservas criadas')
             closeAdd()
     })
     .catch(err => {
@@ -173,4 +200,3 @@ function closePi() {
 
 <!--    />-->
 </template>
-

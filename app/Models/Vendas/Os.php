@@ -2,10 +2,10 @@
 
 namespace App\Models\Vendas;
 
+use App\Models\Bisemanas\Bisemana;
+use App\Models\Clientes\Cliente;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Clientes\Cliente;
-use App\Models\Bisemanas\Bisemana;
 
 class Os extends Model
 {
@@ -29,6 +29,7 @@ class Os extends Model
         'forma_pagamento',
         'vendedor',
         'obs',
+        'cancelada',
     ];
 
     public $timestamps = true;
@@ -43,4 +44,3 @@ class Os extends Model
         return $this->hasOne(Bisemana::class, 'id', 'id_bisemana');
     }
 }
-

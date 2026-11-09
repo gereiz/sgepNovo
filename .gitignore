@@ -3,6 +3,11 @@
 /public/hot
 /public/storage
 /vendor
+/storage/*.key
+/storage/framework/*
+/storage/logs/*
+!/storage/framework/.gitkeep
+!/storage/logs/.gitkeep
 .env
 .env.backup
 .env.production
@@ -15,8 +20,7 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-.env
-public/hot
-public/hot
-/public/storage/logs/*
+/trae
+.trae/
+/equipe-propaganda---gestão-ooh-&-vendas
 *.log

@@ -73,7 +73,7 @@ class RelatoriosController extends Controller
     public function relPaineis(Request $request) {
         $tZone = new \DateTimeZone('America/Sao_paulo');
         $user = auth()->user()->name;
-        $paineis = Painel::all();
+        $paineis = Painel::orderByRaw("CAST(identificacao AS UNSIGNED) ASC")->get();
         $status = 'Disponíveis';
         $bisemana = Bisemana::where('id', session('num_bs'))->first();
         $numBisemana = $bisemana->num_bisemana;

@@ -41,7 +41,8 @@ const openPagina = (val) => {
                 <div class="flex-none gap-2">
                     <button class="btn btn-info btn-sm" @click="openPagina('centro-custo')">Centros de Custo</button>
                     <button class="btn btn-accent btn-sm" @click="openPagina('tipo-lancamento')">Tipos de Lançamentos</button>
-                    <button class="btn btn-success btn-sm" @click="openPagina('lancamentos')">Lançamentos</button>
+                    <!-- <button class="btn btn-success btn-sm" @click="openPagina('lancamentos')">Lançamentos</button> -->
+                    <a class="btn btn-success btn-sm" href="/caixa">Lançamentos</a>
                 </div>
             </div>
 

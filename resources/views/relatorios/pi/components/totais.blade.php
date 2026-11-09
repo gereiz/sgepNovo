@@ -10,7 +10,8 @@
                 @endphp
                 @foreach ($servicos as $serv)
                     @php
-                        $total += (($serv['vlr_unit'] - $serv['vlr_desc']) * $serv['quantidade']);
+                        $qtd_cobrada = max(0, ($serv['quantidade'] ?? 0) - ($serv['bonificado'] ?? 0));
+                        $total += (($serv['vlr_unit'] - $serv['vlr_desc']) * $qtd_cobrada);
                     @endphp
                 @endforeach
                 <strong style="font-size: 12px;">{{formataCash($total)}}</strong>
@@ -49,11 +50,17 @@
             <td colspan="1" style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px; font-weight: bold;">
                 Outros Agentes:
             </td>
-            <td colspan="11" style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">
+            <td colspan="8" style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">
                 @foreach(collect($agentes)->slice(1) as $agente)
                     {{ $agente->nome_fantasia ? $agente->nome_fantasia : $agente->razao_social }}
                     @if (!$loop->last) || @endif
                 @endforeach
+            </td>
+            <td colspan="1" style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px; font-weight: bold;">
+                Campanha:
+            </td>
+            <td colspan="2" style="border: 1px solid #cfcfcf; font-size: 11px; padding: 2px 4px;">
+                <strong>{{ $campanha ?? '' }}</strong>
             </td>
         </tr>
     </tbody>

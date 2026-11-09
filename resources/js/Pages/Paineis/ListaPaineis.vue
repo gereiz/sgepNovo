@@ -87,6 +87,7 @@ function getImage(i) {
 }
 
 
+
 </script>
 
 <template>
@@ -167,4 +168,3 @@ function getImage(i) {
     </AuthenticatedLayout>
 
 </template>
-

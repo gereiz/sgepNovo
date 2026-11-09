@@ -43,6 +43,7 @@
 
     const idBisemana = ref(0);
     const idPainel = ref('T');
+    const idTipoPainel = ref('T');
     const idCidade = ref(0);
     const idRegiao = ref(0);
     const idBairro = ref(0);
@@ -137,6 +138,7 @@
             axios.post('/GetPaineis', {ano: idAno.value,
                                    bisemana: idBisemana.value,
                                    statusPainel: idPainel.value,
+                                   tipo_painel: idTipoPainel.value,
                                    cidade: idCidade.value,
                                    regiao: idRegiao.value,
                                    bairro: idBairro.value})
@@ -427,6 +429,16 @@
                         </select>
                     </div>
 
+                    <!-- Tipo Painel (LED/Convencional) -->
+                    <div class="w-[10%] hidden md:flex flex-col me-4">
+                        <label for="tipo_painel">Tipo Painel</label>
+                        <select class="select select-bordered" name="tipo_painel" id="tipo_painel" :disabled="statusDisabled" v-model="idTipoPainel" @change="getPaineis(), clearChecked()">
+                            <option value="T">Todos</option>
+                            <option value="C">Convencional</option>
+                            <option value="L">LED</option>
+                        </select>
+                    </div>
+
                     <!-- Botões -->
                     <div class="hidden md:flex w-[10%] items-center justify-center flex-wrap sm:space-x-4">
                         <div class="w-full flex mt-5">
@@ -522,6 +534,16 @@
                             <option value="R">Reservado</option>
                         </select>
                     </div>
+
+                    <!-- Tipo Painel MOBILE (LED/Convencional) -->
+                    <div class="md:hidden w-[35%] md:w-[10%] flex flex-col mt-4">
+                        <label for="tipo_painel_m">Tipo Painel</label>
+                        <select class="select select-bordered" name="tipo_painel_m" id="tipo_painel_m" :disabled="statusDisabled" v-model="idTipoPainel" @change="getPaineis(), clearChecked()">
+                            <option value="T">Todos</option>
+                            <option value="C">Convencional</option>
+                            <option value="L">LED</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Botões MOBILE -->
@@ -591,10 +613,13 @@
                         <div v-for="(pain, index) in pan "  :key="index" class="card w-full md:w-5/12 bg-base-100 border-2 rounded-md shadow-xl mt-4 md:mr-4">
                             <div class="card-body" :id="index" @click="isChecked(index, pain.identificacao, pain.id, pain)">
                                 <div class="flex justify-between">
-                                    <img v-if="pain.tipo === '1'" class="w-10 ms-4 md:w-14 md:hover:w-20 transition-all duration-500" src="../../../../public/storage/img/painel_nobre.png"
-                                                alt="Painel Nobre" title="Painel Nobre">
-                                    <img v-else class="w-10 ms-4 md:w-14 md:hover:w-20 transition-all duration-500" src="../../../../public/storage/img/painel_conv.png"
-                                                alt="Painel Convêncional" title="Painel Convêncional">
+                                    <div class="flex flex-col">
+                                        <img v-if="pain.tipo === '1'" class="w-10 ms-4 md:w-14 md:hover:w-20 transition-all duration-500" src="../../../../public/storage/img/painel_nobre.png"
+                                                    alt="Painel Nobre" title="Painel Nobre">
+                                        <img v-else class="w-10 ms-4 md:w-14 md:hover:w-20 transition-all duration-500" src="../../../../public/storage/img/painel_conv.png"
+                                                    alt="Painel Convencional" title="Painel Convencional">
+                                        <span v-if="pain.is_led == 1 || pain.is_led == true" class="badge badge-primary badge-sm mt-1 ml-3 font-bold text-white">LED</span>
+                                    </div>
                                     <h2 class="text-xs md:card-title text-red-500">Identificação.: {{pain.identificacao}}</h2>
                                 </div>
                                 <div class="w-full flex justify-end">

@@ -20,6 +20,7 @@ const usuarios = ref()
 const servicos = ref()
 const servico = ref(0)
 const quantidade = ref(props.paineis.length)
+const bonificado = ref(0)
 const id_servico = ref(0)
 const servicoSelecionado = ref('')
 const servicosPagos = ref([])
@@ -169,6 +170,13 @@ watch(() => formFour.vlr_total, () => gerarParcelasIniciais())
 
 watch(parcelas, () => ajustarUltimaParcela(), { deep: true })
 
+const qtdCobrada = computed(() => {
+    const q = parseInt(quantidade.value || 0, 10)
+    const b = parseInt(bonificado.value || 0, 10)
+    const qb = Math.max(0, q - b)
+    return qb
+})
+
 watch((vlrUnit), (val) => {
 
     vlrUnit.value = val
@@ -178,8 +186,8 @@ watch((vlrUnit), (val) => {
         vlrTotal.value = 0.0
 
     } else {
-        vlrTotal.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value)) * parseFloat(quantidade.value)).toFixed(2)
-        vlrTotalFin.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value) - parseFloat(vlrCusto.value)) * parseFloat(quantidade.value)).toFixed(2)
+        vlrTotal.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value)) * parseFloat(qtdCobrada.value)).toFixed(2)
+        vlrTotalFin.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value) - parseFloat(vlrCusto.value)) * parseFloat(qtdCobrada.value)).toFixed(2)
         formFour.vlr_total =  vlrTotal.value
     }
 
@@ -187,28 +195,28 @@ watch((vlrUnit), (val) => {
 })
 
 watch((vlrDesc), (val) => {
-    vlrDesc.value = val
+    vlrDesc.value = (val === '' || val === null || val === undefined) ? 0 : val
     // formFour.vlr_desc = val
 
     if(parseFloat(vlrDesc.value) > parseFloat(vlrUnit.value)) {
         vlrTotal.value = 0.0
     } else {
-        vlrTotal.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value)) * parseFloat(quantidade.value)).toFixed(2)
-        vlrTotalFin.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value) - parseFloat(vlrCusto.value)) * parseFloat(quantidade.value)).toFixed(2)
+        vlrTotal.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value)) * parseFloat(qtdCobrada.value)).toFixed(2)
+        vlrTotalFin.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value) - parseFloat(vlrCusto.value)) * parseFloat(qtdCobrada.value)).toFixed(2)
         formFour.vlr_total =  vlrTotal.value
     }
 
 })
 
 watch((vlrCusto), (val) => {
-    vlrCusto.value = val
+    vlrCusto.value = (val === '' || val === null || val === undefined) ? 0 : val
     // formFour.vlr_custo = val
 
     if(parseFloat(vlrCusto.value) > parseFloat(vlrUnit.value)) {
         vlrTotal.value = 0.0
     } else {
-        vlrTotal.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value)) * parseFloat(quantidade.value)).toFixed(2)
-        vlrTotalFin.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value) - parseFloat(vlrCusto.value)) * parseFloat(quantidade.value)).toFixed(2)
+        vlrTotal.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value)) * parseFloat(qtdCobrada.value)).toFixed(2)
+        vlrTotalFin.value = ((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value) - parseFloat(vlrCusto.value)) * parseFloat(qtdCobrada.value)).toFixed(2)
         formFour.vlr_total =  vlrTotal.value
     }
 
@@ -219,11 +227,24 @@ watch((quantidade), (val) => {
     if(parseFloat(vlrDesc.value) > parseFloat(vlrUnit.value)) {
         vlrTotal.value = 0.0
     } else {
-        vlrTotal.value = (((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value))) * parseFloat(quantidade.value)).toFixed(2)
-        vlrTotalFin.value = (((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value)) - parseFloat(vlrCusto.value)) * parseFloat(quantidade.value)).toFixed(2)
+        const qb = qtdCobrada.value
+        vlrTotal.value = (((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value))) * parseFloat(qb)).toFixed(2)
+        vlrTotalFin.value = (((parseFloat(vlrUnit.value) - parseFloat(vlrDesc.value)) - parseFloat(vlrCusto.value)) * parseFloat(qb)).toFixed(2)
         formFour.vlr_total =  vlrTotal.value
     }
 
+})
+
+watch((bonificado), (val) => {
+    let b = parseInt(val || 0, 10)
+    const q = parseInt(quantidade.value || 0, 10)
+    if (isNaN(b) || b < 0) b = 0
+    if (b > q) b = q
+    bonificado.value = b
+    const qb = q - b
+    vlrTotal.value = (((parseFloat(vlrUnit.value || 0) - parseFloat(vlrDesc.value || 0))) * qb).toFixed(2)
+    vlrTotalFin.value = (((parseFloat(vlrUnit.value || 0) - parseFloat(vlrDesc.value || 0)) - parseFloat(vlrCusto.value || 0)) * qb).toFixed(2)
+    formFour.vlr_total =  vlrTotal.value
 })
 
 function getUsuarios() {
@@ -275,6 +296,18 @@ function ListaServicosPagos() {
         return
     }
 
+    // valida bonificado
+    const b = parseInt(bonificado.value || 0, 10)
+    const q = parseInt(quantidade.value || 0, 10)
+    if (b < 0) {
+        toastr.error('Bonificado não pode ser negativo!')
+        return
+    }
+    if (b > q) {
+        toastr.error('Bonificado não pode ser maior que a Quantidade!')
+        return
+    }
+
     // verifica se a quantidade é menor que 1
     if(parseInt(quantidade.value) < 1 || quantidade.value == '') {
         toastr.error('Quantidade do serviço não pode ser menor que 1 !')
@@ -303,6 +336,8 @@ function ListaServicosPagos() {
         id: servicoSelecionado.value.id,
         nome: servicoSelecionado.value.nome,
         quantidade: quantidade.value,
+        bonificado: b,
+        qtd_cobrada: q - b,
         vlr_unit: vlrUnit.value,
         vlr_desc: vlrDesc.value,
         vlr_custo: vlrCusto.value,
@@ -313,6 +348,7 @@ function ListaServicosPagos() {
 
     servico.value = 0
     quantidade.value = props.paineis.length
+    bonificado.value = 0
     vlrUnit.value = ''
     vlrDesc.value = 0
     vlrCusto.value = 0
@@ -470,10 +506,10 @@ function changeEdit() {
         </div>
 
         <!--Quantidade / Valor Unitário / Desconto / Valor Total -->
-        <div :class="{'hidden': servico == 0}" class="flex w-full space-x-6">
-            <div class="w-11/12 flex flex-wrap space-x-0 sm:space-x-6 space-y-4 sm:space-y-0 border sm:border-0 border-sky-300 rounded-lg mb-2 sm:mb-0">
+        <div :class="{'hidden': servico == 0}" class="flex w-full">
+            <div class="w-11/12 grid grid-cols-12 gap-4 border sm:border-0 border-sky-300 rounded-lg mb-2 sm:mb-0">
                 <!-- Serviço -->
-                <div class="w-10/12 sm:w-8/12">
+                <div class="col-span-12 sm:col-span-7">
                     <label class="label">
                         <span class="label-text">Serviço</span>
                     </label>
@@ -486,21 +522,34 @@ function changeEdit() {
                 </div>
 
                 <!-- Quantidade -->
-                <div class="w-10/12 sm:w-3/12">
+                <div class="col-span-6 sm:col-span-3">
                     <label class="label">
                         <span class="label-text">Quantidade</span>
                     </label>
-                    <input type="text"
+                    <input type="number"
                         name="quantidade"
                         id="quantidade"
                         v-model="quantidade"
                         class="input input-bordered w-full text-center" />
                 </div>
+                <!-- Bonificado -->
+                <div class="col-span-6 sm:col-span-2">
+                    <label class="label">
+                        <span class="label-text">Bonificado</span>
+                    </label>
+                    <input type="number"
+                        min="0"
+                        :max="parseInt(quantidade || 0)"
+                        name="bonificado"
+                        id="bonificado"
+                        v-model.number="bonificado"
+                        class="input input-bordered w-full text-center" />
+                </div>
 
                 <!-- Valores -->
-                <div class="w-full flex justify-center space-x-4">
+                <div class="col-span-12 grid grid-cols-12 gap-4">
                     <!-- Valor Unit. -->
-                    <div class="w-10/12 sm:w-3/12">
+                    <div class="col-span-12 sm:col-span-4">
                         <label class="label">
                             <span class="label-text">Valor Unit.</span>
                         </label>
@@ -521,7 +570,7 @@ function changeEdit() {
                     </div>
 
                     <!-- Descontos -->
-                    <div class="w-10/12 sm:w-3/12">
+                    <div class="col-span-12 sm:col-span-4">
                         <label class="label">
                             <span class="label-text">Desc. Unit.</span>
                         </label>
@@ -542,7 +591,7 @@ function changeEdit() {
                     </div>
 
                     <!-- Custos -->
-                    <div class="w-10/12 sm:w-3/12">
+                    <div class="col-span-12 sm:col-span-4">
                         <label class="label">
                             <span class="label-text">Custo. Unit.</span>
                         </label>
@@ -564,11 +613,10 @@ function changeEdit() {
                 </div>
 
 
-                <!-- Valor Total -->
-                <div class="w-full flex justify-center space-x-4">
-
+                <!-- Valor Total + OK -->
+                <div class="col-span-12 grid grid-cols-12 gap-4">
                     <!-- Valor Total -->
-                    <div class="w-10/12 sm:w-3/12">
+                    <div class="col-span-12 sm:col-span-4">
                         <label class="label">
                             <span class="label-text">Valor Total</span>
                         </label>
@@ -590,8 +638,8 @@ function changeEdit() {
                     </div>
 
                     <!-- Botão OK -->
-                    <div class="w-10/12 sm:w-1/12 pt-[2.2rem]">
-                        <button @click="ListaServicosPagos()" class="btn btn-success">OK</button>
+                    <div class="col-span-12 sm:col-span-2 flex items-end">
+                        <button @click="ListaServicosPagos()" class="btn btn-success w-full">OK</button>
                     </div>
                 </div>
 
@@ -615,16 +663,26 @@ function changeEdit() {
                         class="input input-bordered w-full bg-base-200 text-center" />
                 </div>
 
-                <!-- Quantidade -->
+                <!-- Quantidade Cobrada -->
                 <div class="w-10/12 sm:w-[15%]">
                     <label class="label">
-                        <span class="label-text">Qtde.</span>
+                        <span class="label-text">Qtd Cob.</span>
                     </label>
                     <input type="text"
                         disabled
                         name="quantidade"
                         id="quantidade"
-                        :value="sp.quantidade"
+                        :value="(parseInt(sp.quantidade||0) - parseInt(sp.bonificado||0))"
+                        class="input input-bordered w-full bg-base-200 text-center" />
+                </div>
+                <!-- Bonificado -->
+                <div class="w-10/12 sm:w-[12%]">
+                    <label class="label">
+                        <span class="label-text">Bonif.</span>
+                    </label>
+                    <input type="text"
+                        disabled
+                        :value="sp.bonificado || 0"
                         class="input input-bordered w-full bg-base-200 text-center" />
                 </div>
 

@@ -6,6 +6,7 @@ import { ref, reactive, onMounted, computed } from 'vue';
 import AddAno from './Gerais/AddAno.vue';
 import AddRegra from './Gerais/AddRegra.vue';
 import BtnConfig from '../Components/BtnConfig.vue'
+import axios from 'axios'
 
 
 
@@ -18,6 +19,22 @@ const props = defineProps(['anos'])
 const toastr = useToastr(); 
 
 
+const loadingRefresh = ref(false)
+function refreshCompressed() {
+    if (loadingRefresh.value) return
+    loadingRefresh.value = true
+    axios.post('/configuracoes/atualizarImagens')
+        .then((resp) => {
+            const msg = typeof resp.data === 'string' ? resp.data : 'Imagens comprimidas atualizadas'
+            toastr.success(msg)
+        })
+        .catch(() => {
+            toastr.error('Falha ao atualizar imagens')
+        })
+        .finally(() => {
+            loadingRefresh.value = false
+        })
+}
 
 </script>
 
@@ -46,6 +63,13 @@ const toastr = useToastr();
                 <div class="card-body">
                     <h2 class="card-title">Áreas de Configuração</h2>
                     <span class="text-sm text-base-content/70">Escolha uma seção para gerenciar regras, permissões e textos padrão.</span>
+                    <div class="mt-2">
+                        <button class="btn btn-primary btn-sm" :disabled="loadingRefresh" @click="refreshCompressed">
+                            <span v-if="loadingRefresh" class="loading loading-spinner loading-xs"></span>
+                            <span v-else>Atualizar Imagens Comprimidas</span>
+                        </button>
+                    </div>
+
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                         <BtnConfig  :title="'Cadastro de Regras'"
@@ -63,4 +87,3 @@ const toastr = useToastr();
     </AuthenticatedLayout>
 
 </template>
-

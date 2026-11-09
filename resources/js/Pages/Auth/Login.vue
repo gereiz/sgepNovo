@@ -56,7 +56,7 @@
                             Forgot your password?
                         </Link> -->
 
-                        <button class="w-full btn btn-primary text-white" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                        <button @click.prevent="submit" type="button" class="w-full btn btn-primary text-white" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                             Entrar
                         </button>
                     </div>
@@ -76,6 +76,7 @@
     import PrimaryButton from '@/Components/old/PrimaryButton.vue';
     import TextInput from '@/Components/old/TextInput.vue';
     import { Head, Link, useForm } from '@inertiajs/vue3';
+    import axios from 'axios';
 
     defineProps({
         canResetPassword: {
@@ -93,11 +94,74 @@
         remember: false,
     });
 
-    const submit = () => {
-        form.post(route('login'), {
-            onFinish: () => form.reset('password'),
-        });
-
-
+    const submit = async () => {
+        console.log('[LOGIN] submit disparado. email=', form.email, 'senha_len=', (form.password||'').length);
+        if (form.processing) { console.log('[LOGIN] já em processamento, saindo.'); return; }
+        form.processing = true;
+        try {
+            let token = '';
+            const csrfMeta = document.head.querySelector('meta[name="csrf-token"]');
+            if (csrfMeta && csrfMeta.content) token = csrfMeta.content;
+            if (!token) {
+                const csrfCookie = document.cookie.split(';').map(s => s.trim()).find(s => s.startsWith('XSRF-TOKEN='));
+                if (csrfCookie) token = decodeURIComponent(csrfCookie.split('=')[1] || '');
+            }
+            console.log('[LOGIN] csrf token len=', (token||'').length, 'from=', csrfMeta && csrfMeta.content ? 'meta' : (token ? 'cookie' : 'none'));
+            const payload = new URLSearchParams();
+            if (token) payload.append('_token', token);
+            payload.append('email', form.email);
+            payload.append('password', form.password);
+            payload.append('remember', form.remember ? '1' : '0');
+            const resp = await window.axios.post('/login', payload.toString(), {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                withCredentials: true,
+                maxRedirects: 0,
+                validateStatus: status => (status >= 200 && status < 400) || status === 302 || status === 419 || status === 422
+            });
+            console.log('[LOGIN] axios status=', resp.status, 'statusText=', resp.statusText, 'headers=', JSON.stringify(Object.keys(resp.headers||{})));
+            let redirectTo = resp.headers && (resp.headers['x-inertia-location'] || resp.headers['location'] || (typeof resp.headers.get === 'function' ? (resp.headers.get('x-inertia-location') || resp.headers.get('location')) : null));
+            const isInertiaJson = resp.data && (typeof resp.data === 'object') && (resp.data.component || resp.data.url);
+            if (isInertiaJson && resp.data.url) redirectTo = resp.data.url;
+            console.log('[LOGIN] redirectTo inicial=', redirectTo, 'isInertiaJson=', isInertiaJson, 'data_type=', typeof resp.data);
+            if (resp.status === 422 || (resp.data && (resp.data.errors || resp.data.message))) {
+                console.log('[LOGIN] erro de validação:', resp.data?.errors || resp.data?.message);
+                if (resp.data?.errors) {
+                    form.errors = Object.assign({}, form.errors, resp.data.errors || {});
+                } else if (resp.data?.message) {
+                    form.setError('email', resp.data.message);
+                } else if (typeof resp.data === 'string' && resp.status === 422) {
+                    form.setError('email', 'Credenciais inválidas. Verifique e-mail e senha.');
+                }
+            } else if ((resp.status >= 200 && resp.status < 400) || resp.status === 302) {
+                if (!redirectTo) redirectTo = '/dashboard?refresh=1';
+                if (!String(redirectTo).includes('refresh=')) {
+                    redirectTo += (String(redirectTo).indexOf('?') === -1 ? '?' : '&') + 'refresh=1';
+                }
+                console.log('[LOGIN] SUCCESS. window.location.href=', redirectTo);
+                window.location.href = redirectTo;
+                return;
+            }
+        } catch (e) {
+            console.error('[LOGIN] catch erro:', e?.message || e, 'status=', e?.response?.status, 'data=', e?.response?.data);
+            if (e?.response?.status === 422 && e?.response?.data?.errors) {
+                form.errors = Object.assign({}, form.errors, e.response.data.errors);
+            } else if (e?.response?.status === 419) {
+                form.setError('email', 'Sessão expirou. Atualize a página e tente novamente. (CSRF)');
+            } else {
+                form.setError('email', 'Falha ao autenticar. Verifique os dados.');
+            }
+        } finally {
+            console.log('[LOGIN] finally. errors=', JSON.stringify(form.errors), 'email=', form.email);
+            form.reset('password');
+            form.processing = false;
+            if (!form.errors.email && !form.errors.password && Object.keys(form.errors || {}).length === 0) {
+                console.log('[LOGIN] finally fallback redirect para /dashboard?refresh=1');
+                setTimeout(() => { window.location.href = '/dashboard?refresh=1'; }, 300);
+            }
+        }
     };
 </script>

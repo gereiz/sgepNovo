@@ -12,14 +12,6 @@ const props = defineProps({
         default: () => ({
             reservations: []
         })
-    },
-    height: {
-        type: Number,
-        default: 220
-    },
-    legendPosition: {
-        type: String,
-        default: 'bottom'
     }
 });
 
@@ -53,7 +45,7 @@ const chartOptions = {
     maintainAspectRatio: false,
     plugins: {
         legend: {
-            position: props.legendPosition
+            position: 'right'
         }
     }
 };
@@ -122,7 +114,7 @@ watch(() => props.customerData, updateChartData, { immediate: true });
 <template>
     <div class="bg-white rounded-lg shadow-md p-6">
         <h3 class="text-lg font-medium text-gray-900 mb-4">Reservas por Cliente: {{ totalCustomers }}</h3>
-        <div class="mb-6 overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]" :style="{ height: props.height + 'px' }">
+        <div class="h-[400px] mb-6 overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <div v-if="!customerData.reservations || customerData.reservations.length === 0" class="flex items-center justify-center h-full">
                 <p class="text-gray-500">Selecione uma bisemana para visualizar os dados</p>
             </div>

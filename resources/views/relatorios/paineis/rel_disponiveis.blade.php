@@ -146,22 +146,89 @@
                                         <?php
                                         $filePath = 'storage/'.$p->image_url;
                                         $originalImage = public_path($filePath);
+                                        $dir = public_path('storage/outdoorImages/'.$p->identificacao);
                                         $reportImage = $originalImage;
-                                        //if(pathinfo('storage/'.$p->image_url, PATHINFO_EXTENSION) != "png" || mime_content_type($filePath) != "image/png"){
-                                        if(filesize($filePath) > 500000){
-                                            $info = getimagesize($filePath);
-
-                                            if ($info['mime'] == 'image/jpeg')
-                                                $image = @imagecreatefromjpeg($filePath);
-
-                                            elseif ($info['mime'] == 'image/gif')
-                                                $image = @imagecreatefromgif($filePath);
-
-                                            elseif ($info['mime'] == 'image/png')
-                                                $image = @imagecreatefrompng($filePath);
-
-                                            imagejpeg($image, 'storage/outdoorImages/'.$p->id."/CompressedJpgImage.jpg", 5);
-                                            $reportImage = public_path('storage/outdoorImages/'.$p->id."/CompressedJpgImage.jpg");
+                                        if (is_dir($dir)) {
+                                            $compressedCandidate = $dir.'/CompressedJpgImage.jpg';
+                                            $files = array_values(array_diff(scandir($dir), ['.', '..']));
+                                            $files = array_map(fn($f) => $dir.'/'.$f, $files);
+                                            $files = array_filter($files, function ($f) {
+                                                return is_file($f) && basename($f) !== 'CompressedJpgImage.jpg';
+                                            });
+                                            usort($files, fn($a, $b) => filemtime($b) <=> filemtime($a));
+                                            if (!empty($files)) {
+                                                $latestOriginal = $files[0];
+                                                if (is_file($compressedCandidate)) {
+                                                    $compressedMTime = filemtime($compressedCandidate);
+                                                    $originalMTime = filemtime($latestOriginal);
+                                                    if ($compressedMTime === false || $originalMTime === false || $compressedMTime < $originalMTime) {
+                                                        try {
+                                                            $info = @getimagesize($latestOriginal);
+                                                            if ($info && isset($info['mime'])) {
+                                                                $mime = strtolower($info['mime']);
+                                                                $img = null;
+                                                                if (in_array($mime, ['image/jpeg','image/jpg','image/pjpeg']) && function_exists('imagecreatefromjpeg')) {
+                                                                    $img = @imagecreatefromjpeg($latestOriginal);
+                                                                } elseif ($mime === 'image/png' && function_exists('imagecreatefrompng')) {
+                                                                    $img = @imagecreatefrompng($latestOriginal);
+                                                                } elseif ($mime === 'image/webp' && function_exists('imagecreatefromwebp')) {
+                                                                    $img = @imagecreatefromwebp($latestOriginal);
+                                                                }
+                                                                if ($img) {
+                                                                    $ow = imagesx($img);
+                                                                    $oh = imagesy($img);
+                                                                    $maxW = 800;
+                                                                    $scale = $ow > $maxW ? ($maxW / $ow) : 1;
+                                                                    $nw = max(1, (int)($ow * $scale));
+                                                                    $nh = max(1, (int)($oh * $scale));
+                                                                    $dstImg = imagecreatetruecolor($nw, $nh);
+                                                                    imagecopyresampled($dstImg, $img, 0, 0, 0, 0, $nw, $nh, $ow, $oh);
+                                                                    @imagejpeg($dstImg, $compressedCandidate, 65);
+                                                                    imagedestroy($dstImg);
+                                                                    imagedestroy($img);
+                                                                }
+                                                            }
+                                                        } catch (\Throwable $e) {
+                                                        }
+                                                    }
+                                                    $reportImage = $compressedCandidate;
+                                                } else {
+                                                    try {
+                                                        $info = @getimagesize($latestOriginal);
+                                                        if ($info && isset($info['mime'])) {
+                                                            $mime = strtolower($info['mime']);
+                                                            $img = null;
+                                                            if (in_array($mime, ['image/jpeg','image/jpg','image/pjpeg']) && function_exists('imagecreatefromjpeg')) {
+                                                                $img = @imagecreatefromjpeg($latestOriginal);
+                                                            } elseif ($mime === 'image/png' && function_exists('imagecreatefrompng')) {
+                                                                $img = @imagecreatefrompng($latestOriginal);
+                                                            } elseif ($mime === 'image/webp' && function_exists('imagecreatefromwebp')) {
+                                                                $img = @imagecreatefromwebp($latestOriginal);
+                                                            }
+                                                            if ($img) {
+                                                                $ow = imagesx($img);
+                                                                $oh = imagesy($img);
+                                                                $maxW = 800;
+                                                                $scale = $ow > $maxW ? ($maxW / $ow) : 1;
+                                                                $nw = max(1, (int)($ow * $scale));
+                                                                $nh = max(1, (int)($oh * $scale));
+                                                                $dstImg = imagecreatetruecolor($nw, $nh);
+                                                                imagecopyresampled($dstImg, $img, 0, 0, 0, 0, $nw, $nh, $ow, $oh);
+                                                                @imagejpeg($dstImg, $compressedCandidate, 65);
+                                                                imagedestroy($dstImg);
+                                                                imagedestroy($img);
+                                                                $reportImage = $compressedCandidate;
+                                                            } else {
+                                                                $reportImage = $latestOriginal;
+                                                            }
+                                                        } else {
+                                                            $reportImage = $latestOriginal;
+                                                        }
+                                                    } catch (\Throwable $e) {
+                                                        $reportImage = $latestOriginal;
+                                                    }
+                                                }
+                                            }
                                         }
 
                                         ?>
@@ -207,4 +274,3 @@
         <p style="margin : 0; padding-top:0;"><b>Status: <i>{{$status}}</i></b></p>
     </div>
 </div>
-

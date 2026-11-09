@@ -41,6 +41,25 @@ class PiService
      */
     public function storeOrUpdatePi($dados, $nome_cliente, $data_pi, $vlr_unt, $vlr_desc, $vlr_custo, $vl_total, $data_pgto_formated)
     {
+        $idsPaineis = $dados['Two']['paineis'] ?? [];
+        $temLed = false;
+        if (!empty($idsPaineis)) {
+            try {
+                $temLed = \App\Models\Paineis\Painel::whereIn('identificacao', $idsPaineis)
+                    ->where('is_led', 1)
+                    ->exists();
+            } catch (\Throwable $e) {
+                $temLed = false;
+            }
+        }
+
+        $obsOriginal = $dados['Four']['servicos'][0]['detalhes'] ?? null;
+        $obsFinal = $obsOriginal;
+        if ($temLed) {
+            $prefixo = '[PAINÉIS LED INCLUÍDOS]';
+            $obsFinal = $obsOriginal ? ($prefixo . ' | ' . $obsOriginal) : $prefixo;
+        }
+
         $pi = Pi::updateOrCreate(
             [
                 'id_cliente'  => $dados['One']['clienteId'],
@@ -48,7 +67,6 @@ class PiService
                 'id_bisemana' => $dados['Two']['bisemanaId'],
             ],
             [
-                'arquivo'         => 'pi_'.$nome_cliente.'_'.$data_pi.'.pdf',
                 'contato'         => $dados['One']['responsavel'] ?? null,
                 'campanha'        => $dados['Two']['campanha'] ?? null,
                 'vl_unit'         => $vlr_unt,
@@ -59,9 +77,14 @@ class PiService
                 'dt_pgto'         => $data_pgto_formated ?? now()->toDateString(),
                 'forma_pagamento' => $dados['Four']['formaPgto'] ?? null,
                 'vendedor'        => $dados['Two']['vendedorId'] ?? null,
-                'obs'             => $dados['Four']['servicos'][0]['detalhes'] ?? null,
+                'obs'             => $obsFinal,
             ]
         );
+
+        $nomeClienteSeguro = preg_replace('/[^A-Za-z0-9_-]+/', '_', (string)$nome_cliente);
+        $ano = substr((string)$data_pi, 0, 4);
+        $nomeArquivo = 'PI' . $pi->id . '_' . $ano . '_' . $nomeClienteSeguro . '_' . $data_pi . '.pdf';
+        $pi->update(['arquivo' => $nomeArquivo]);
 
         return $pi;
     }
@@ -72,34 +95,55 @@ class PiService
     public function calculateComission($servicos, $agentes, $pi, $valor_liq_comissoes)
     {
         foreach ($servicos as $servico) {
-            $vlr_total  = $servico['vlr_total'];
-            $vlr_unit   = $servico['vlr_unit'];
-            $vlr_desc   = $servico['vlr_desc'];
-            $vlr_custo  = $servico['vlr_custo'];
-            $vlr_liquido = $vlr_total - $vlr_desc - $vlr_custo;
+            $vlr_total  = (float)($servico['vlr_total'] ?? 0);
+            $vlr_unit   = (float)($servico['vlr_unit'] ?? 0);
+            $vlr_desc   = (float)($servico['vlr_desc'] ?? 0);
+            $vlr_custo  = (float)($servico['vlr_custo'] ?? 0);
+
+            $base_comissao = $vlr_total - $vlr_desc;
 
             foreach ($agentes as $agente) {
-                $comissao = Comissao::where('id_funcionario', $agente->id)
+                $agenteId = isset($agente->id) ? (int)$agente->id : 0;
+                if ($agenteId <= 0) continue;
+                $comissao = Comissao::where('id_funcionario', $agenteId)
                                     ->where('id_servico', $servico['id'])
                                     ->first();
 
                 if ($comissao) {
-                    if ($comissao->tipo_comissao == 1) {
-                        ComissaoVenda::create([
-                            'pi_id'          => $pi->id,
-                            'comissao_id'    => $comissao->id,
-                            'agente_id'      => $agente->id,
-                            'valor_comissao' => $vlr_liquido * ($comissao->valor / 100),
-                        ]);
-                        $vlr_total -= $vlr_liquido * ($comissao->valor / 100);
+                    if ((int)$comissao->tipo_comissao === 1) {
+                        $vlrComissao = $base_comissao * ((float)($comissao->valor ?? 0) / 100);
+                        $jaExiste = ComissaoVenda::where('pi_id', $pi->id)
+                            ->where('comissao_id', (int)$comissao->id)
+                            ->where('agente_id', $agenteId)
+                            ->first();
+                        if (!$jaExiste) {
+                            ComissaoVenda::create([
+                                'pi_id'          => $pi->id,
+                                'comissao_id'    => (int)$comissao->id,
+                                'agente_id'      => $agenteId,
+                                'valor_comissao' => $vlrComissao,
+                            ]);
+                        } else {
+                            $jaExiste->update(['valor_comissao' => $vlrComissao]);
+                        }
+                        $vlr_total -= $vlrComissao;
                     } else {
-                        ComissaoVenda::create([
-                            'pi_id'          => $pi->id,
-                            'comissao_id'    => $comissao->id,
-                            'agente_id'      => $agente->id,
-                            'valor_comissao' => $vlr_liquido - $comissao->valor,
-                        ]);
-                        $vlr_total -= $vlr_liquido - $comissao->valor;
+                        $vlrComissao = $base_comissao - (float)($comissao->valor ?? 0);
+                        $jaExiste = ComissaoVenda::where('pi_id', $pi->id)
+                            ->where('comissao_id', (int)$comissao->id)
+                            ->where('agente_id', $agenteId)
+                            ->first();
+                        if (!$jaExiste) {
+                            ComissaoVenda::create([
+                                'pi_id'          => $pi->id,
+                                'comissao_id'    => (int)$comissao->id,
+                                'agente_id'      => $agenteId,
+                                'valor_comissao' => $vlrComissao,
+                            ]);
+                        } else {
+                            $jaExiste->update(['valor_comissao' => $vlrComissao]);
+                        }
+                        $vlr_total -= $vlrComissao;
                     }
                 }
             }

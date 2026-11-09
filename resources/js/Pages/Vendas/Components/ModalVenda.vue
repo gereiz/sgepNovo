@@ -1,5 +1,5 @@
 <script setup>
-import { ref, shallowRef } from 'vue'
+import { ref, shallowRef, watch } from 'vue'
 import StepTwoVenda from '@/Pages/Vendas/Components/StepTwoVenda.vue'
 import StepFourVenda from '@/Pages/Vendas/Components/StepFourVenda.vue'
 import StepFiveVenda from '@/Pages/Vendas/Components/StepFiveVenda.vue'
@@ -11,12 +11,31 @@ const emit = defineEmits(['closeVenda'])
 
 const step = shallowRef(StepTwoVenda)
 const formVenda = ref({ One:{}, Two:{}, Four:{}, Five:{} })
+const bisemana = ref([{ id: 0, num_bisemana: '', inicio: new Date().toISOString().slice(0,10), fim: new Date().toISOString().slice(0,10) }])
 
 function closeM(val){ emit('closeVenda', val) }
 
 function saveFormTwo(ev){ formVenda.value.Two = ev }
 function saveFormFour(ev){ formVenda.value.Four = ev }
 function saveFormFive(ev){ formVenda.value.Five = ev }
+
+function loadBisemana() {
+  const id = props.bisemanaId
+  if (!id || id === 0) {
+    bisemana.value = [{ id: 0, num_bisemana: '', inicio: new Date().toISOString().slice(0,10), fim: new Date().toISOString().slice(0,10) }]
+    return
+  }
+  axios.post('/getBisemana', { idBs: id })
+    .then(res => {
+      const bs = res?.data || {}
+      bisemana.value = [{ id: bs.id ?? id, num_bisemana: bs.num_bisemana ?? '', inicio: bs.inicio ?? new Date().toISOString().slice(0,10), fim: bs.fim ?? new Date().toISOString().slice(0,10) }]
+    })
+    .catch(() => {
+      bisemana.value = [{ id, num_bisemana: '', inicio: new Date().toISOString().slice(0,10), fim: new Date().toISOString().slice(0,10) }]
+    })
+}
+
+watch(() => props.bisemanaId, () => loadBisemana(), { immediate: true })
 
 function next(ev){
   if(ev === 1){ closeM('f') }
@@ -78,7 +97,7 @@ function next(ev){
                    :cliente="[props.cliente]"
                    :campanha="['']"
                    :paineis="['VENDA']"
-                   :bisemana="[{ id: props.bisemanaId, num_bisemana: '', inicio: new Date().toISOString().slice(0,10), fim: new Date().toISOString().slice(0,10)}]"
+                   :bisemana="bisemana"
                    :dataReserva="new Date().toISOString().slice(0,10)"
                    :agentes="[]"
                    @nextStep="next"

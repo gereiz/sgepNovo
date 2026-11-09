@@ -23,7 +23,7 @@ class RelOcupacaoController extends Controller
     public function relOcupacao() {
 
         $anos = Ano::all();
-        $paineis = Painel::all();
+        $paineis = Painel::orderByRaw("CAST(identificacao AS UNSIGNED) ASC")->get();
 
         return Inertia::render('Relatorios/Ocupacao/RelOcupacao', compact('anos', 'paineis'));
 
@@ -53,7 +53,7 @@ class RelOcupacaoController extends Controller
         $dt_atual = $dt_atual[2].'/'.$dt_atual[1].'/'.$dt_atual[0];
 
         if(session('todos_paineis') == 'true') {
-            $paineis = Painel::all();
+            $paineis = Painel::orderByRaw("CAST(identificacao AS UNSIGNED) ASC")->get();
         } else {
             $paineis = Painel::find(session('paineis_id'));
         }

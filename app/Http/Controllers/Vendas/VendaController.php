@@ -90,7 +90,6 @@ class VendaController extends Controller
         $cliNomeFile = preg_replace('/[^A-Za-z0-9_-]+/', '_', $cliNomeFile);
         $os = Os::create([
             'id_cliente' => $clienteId ?? 0,
-            'arquivo' => 'os_cli_'.$cliNomeFile.'_'.$dtFile.'.pdf',
             'id_paineis' => json_encode($two['paineis'] ?? ['VENDA']),
             'contato' => $dados['One']['responsavel'] ?? '',
             'campanha' => $two['campanha'] ?? '',
@@ -104,7 +103,13 @@ class VendaController extends Controller
             'forma_pagamento' => $four['formaPgto'] ?? null,
             'vendedor' => $two['vendedorId'] ?? null,
             'obs' => strip_tags($five['observacao'] ?? ($servicos[0]['detalhes'] ?? '')),
+            'cancelada' => 0,
         ]);
+
+        $anoOs = substr((string)$dtFile, 0, 4);
+        $nomeArquivoOsBanco = 'OS' . $os->id . '_' . $anoOs . '_' . $cliNomeFile . '_' . $dtFile . '.pdf';
+        $os->update(['arquivo' => $nomeArquivoOsBanco]);
+
         $descricaoBase = 'OS nº ' . ($os->id ?? 0) . ' Cliente: ' . ($cliNome ?? '');
 
         // Monta lista de lançamentos
@@ -179,9 +184,72 @@ class VendaController extends Controller
         $textoAtivo = TextoPadrao::where('active', 1)->first();
         $idPaineis = $two['paineis'] ?? ['VENDA'];
         $agentes = [];
-        foreach (($two['agentesId'] ?? []) as $ag) {
-            $agente = Cliente::where('agent', 1)->where('id', $ag)->first();
-            if ($agente) { $agentes[] = $agente; }
+        $comissoes = [];
+        $participantesComissoes = $two['participantesComissoes'] ?? [];
+
+        if (is_array($participantesComissoes) && count($participantesComissoes) > 0) {
+            foreach ($participantesComissoes as $pc) {
+                $pTipo = $pc['pessoa_tipo'] ?? '';
+                $pId   = (int)($pc['pessoa_id'] ?? 0);
+                $pNome = trim((string)($pc['nome'] ?? ''));
+                $pIdSintetico = $pTipo === 'user' ? (1000000 + $pId) : $pId;
+
+                $agObj = new \stdClass();
+                $agObj->id = $pIdSintetico;
+                $agObj->pessoa_tipo_real = $pTipo;
+                $agObj->pessoa_id_real = $pId;
+                $agObj->nome_fantasia = $pNome;
+                $agObj->razao_social = $pNome;
+                $agObj->cpf_cnpj = '';
+                $agObj->nro_insc = '';
+                $agObj->endereco = '';
+                $agObj->num = '';
+                $agObj->bairro = '';
+                $agObj->cidade = '';
+                $agObj->uf = '';
+                $agObj->complemento = '';
+                $agObj->cep = '';
+
+                if ($pTipo === 'cliente' && $pId > 0) {
+                    $cliAg = Cliente::find($pId);
+                    if ($cliAg) {
+                        $agObj->cpf_cnpj    = $cliAg->cpf_cnpj ?? '';
+                        $agObj->nro_insc    = $cliAg->nro_insc ?? '';
+                        $agObj->endereco    = $cliAg->endereco ?? '';
+                        $agObj->num         = $cliAg->num ?? '';
+                        $agObj->bairro      = $cliAg->bairro ?? '';
+                        $agObj->cidade      = $cliAg->cidade ?? '';
+                        $agObj->uf          = $cliAg->uf ?? '';
+                        $agObj->complemento = $cliAg->complemento ?? '';
+                        $agObj->cep         = $cliAg->cep ?? '';
+                        if (!empty($cliAg->nome_fantasia)) {
+                            $agObj->nome_fantasia = $cliAg->nome_fantasia;
+                        }
+                        if (!empty($cliAg->razao_social)) {
+                            $agObj->razao_social = $cliAg->razao_social;
+                        }
+                    }
+                }
+                $agentes[] = $agObj;
+
+                $cValor = (float)($pc['comissao_valor_numerico'] ?? 0);
+                $cTipo  = (int)($pc['comissao_tipo'] ?? 1);
+
+                foreach ($servicos as $serv) {
+                    $sId = (int)($serv['id'] ?? 0);
+                    $comissoes[] = [
+                        'id_servico' => $sId,
+                        'id_funcionario' => $pIdSintetico,
+                        'valor' => $cValor,
+                        'tipo_comissao' => $cTipo,
+                    ];
+                }
+            }
+        } else {
+            foreach (($two['agentesId'] ?? []) as $ag) {
+                $agente = Cliente::where('agent', 1)->where('id', $ag)->first();
+                if ($agente) { $agentes[] = $agente; }
+            }
         }
 
         $osPdf = PDF::loadview('relatorios.os.os_nova', [
@@ -205,6 +273,7 @@ class VendaController extends Controller
             'vendedor' => $vendedor,
             'textoAtivo' => $textoAtivo,
             'agentes' => $agentes,
+            'comissoes' => $comissoes,
         ]);
         $osPdf->setPaper('a4','landscape');
         $cliNome = $cliente ? ($cliente->nome_fantasia ?: $cliente->razao_social) : ($cliNomeSess ?: 'cliente');
@@ -212,12 +281,45 @@ class VendaController extends Controller
         $dir = storage_path('app/public/pdf/os');
         if (!is_dir($dir)) { @mkdir($dir, 0777, true); }
         $cliNome = preg_replace('/[^A-Za-z0-9_-]+/', '_', $cliNome);
-        $fileName = 'os_cli_'.$cliNome.'_'.$dtFile.'.pdf';
+        $anoOs = substr((string)$dtFile, 0, 4);
+        $fileName = 'os_cli_OS' . $os->id . '_' . $anoOs . '_' . $cliNome . '_' . $dtFile . '.pdf';
         try {
             $osPdf->save($dir.'/'.$fileName);
             $os->update(['arquivo' => $fileName]);
         } catch (\Exception $e) {
             return response()->json(['cod'=>0,'msg'=>'Falha ao salvar PDF da OS: '.$e->getMessage()]);
+        }
+
+        // Via Financeira da OS
+        try {
+            $osFin = PDF::loadview('relatorios.os.os_fin_nova', [
+                'os' => $os,
+                'cliente' => $cliente,
+                'servicos' => $servicos,
+                'lista_lancamentos' => $lista,
+                'dt_atual' => $dt_atual,
+                'observacao' => $five['observacao'] ?? null,
+                'idPaineis' => $idPaineis,
+                'bs_inicio' => $bs_inicio,
+                'bs_final' => $bs_final,
+                'bs_formated' => $bs_formated,
+                'pagamento' => $pagamento,
+                'forma_pagamento' => $forma_pagamento,
+                'bairro' => $bairro,
+                'cidade' => $cidade,
+                'uf' => $uf,
+                'campanha' => $campanha,
+                'faturamento' => $faturamento,
+                'vendedor' => $vendedor,
+                'textoAtivo' => $textoAtivo,
+                'agentes' => $agentes,
+                'comissoes' => $comissoes,
+            ]);
+            $osFin->setPaper('a4','landscape');
+            $finName = str_replace('os_cli_', 'os_fin_', $fileName);
+            $osFin->save($dir.'/'.$finName);
+        } catch (\Exception $e) {
+            // não bloqueia a OS do cliente se a via financeira falhar
         }
 
         $fileUrl = url('storage/pdf/os/'.$fileName);
@@ -300,9 +402,72 @@ class VendaController extends Controller
         $textoAtivo = TextoPadrao::where('active', 1)->first();
         $idPaineis = $two['paineis'] ?? ['VENDA'];
         $agentes = [];
-        foreach (($two['agentesId'] ?? []) as $ag) {
-            $agente = Cliente::where('agent', 1)->where('id', $ag)->first();
-            if ($agente) { $agentes[] = $agente; }
+        $comissoes = [];
+        $participantesComissoes = $two['participantesComissoes'] ?? [];
+
+        if (is_array($participantesComissoes) && count($participantesComissoes) > 0) {
+            foreach ($participantesComissoes as $pc) {
+                $pTipo = $pc['pessoa_tipo'] ?? '';
+                $pId   = (int)($pc['pessoa_id'] ?? 0);
+                $pNome = trim((string)($pc['nome'] ?? ''));
+                $pIdSintetico = $pTipo === 'user' ? (1000000 + $pId) : $pId;
+
+                $agObj = new \stdClass();
+                $agObj->id = $pIdSintetico;
+                $agObj->pessoa_tipo_real = $pTipo;
+                $agObj->pessoa_id_real = $pId;
+                $agObj->nome_fantasia = $pNome;
+                $agObj->razao_social = $pNome;
+                $agObj->cpf_cnpj = '';
+                $agObj->nro_insc = '';
+                $agObj->endereco = '';
+                $agObj->num = '';
+                $agObj->bairro = '';
+                $agObj->cidade = '';
+                $agObj->uf = '';
+                $agObj->complemento = '';
+                $agObj->cep = '';
+
+                if ($pTipo === 'cliente' && $pId > 0) {
+                    $cliAg = Cliente::find($pId);
+                    if ($cliAg) {
+                        $agObj->cpf_cnpj    = $cliAg->cpf_cnpj ?? '';
+                        $agObj->nro_insc    = $cliAg->nro_insc ?? '';
+                        $agObj->endereco    = $cliAg->endereco ?? '';
+                        $agObj->num         = $cliAg->num ?? '';
+                        $agObj->bairro      = $cliAg->bairro ?? '';
+                        $agObj->cidade      = $cliAg->cidade ?? '';
+                        $agObj->uf          = $cliAg->uf ?? '';
+                        $agObj->complemento = $cliAg->complemento ?? '';
+                        $agObj->cep         = $cliAg->cep ?? '';
+                        if (!empty($cliAg->nome_fantasia)) {
+                            $agObj->nome_fantasia = $cliAg->nome_fantasia;
+                        }
+                        if (!empty($cliAg->razao_social)) {
+                            $agObj->razao_social = $cliAg->razao_social;
+                        }
+                    }
+                }
+                $agentes[] = $agObj;
+
+                $cValor = (float)($pc['comissao_valor_numerico'] ?? 0);
+                $cTipo  = (int)($pc['comissao_tipo'] ?? 1);
+
+                foreach ($servicos as $serv) {
+                    $sId = (int)($serv['id'] ?? 0);
+                    $comissoes[] = [
+                        'id_servico' => $sId,
+                        'id_funcionario' => $pIdSintetico,
+                        'valor' => $cValor,
+                        'tipo_comissao' => $cTipo,
+                    ];
+                }
+            }
+        } else {
+            foreach (($two['agentesId'] ?? []) as $ag) {
+                $agente = Cliente::where('agent', 1)->where('id', $ag)->first();
+                if ($agente) { $agentes[] = $agente; }
+            }
         }
         $osPreview = new Os();
         $osPreview->id = 0;
@@ -328,8 +493,25 @@ class VendaController extends Controller
             'vendedor' => $vendedor,
             'textoAtivo' => $textoAtivo,
             'agentes' => $agentes,
+            'comissoes' => $comissoes,
         ]);
         $osPdf->setPaper('a4','landscape');
         return $osPdf->stream('os_preview.pdf');
+    }
+
+    public function cancel(Request $request)
+    {
+        $id = (int)($request->id ?? 0);
+        if (!$id) {
+            return response()->json(['cod'=>0,'msg'=>'ID inválido'], 400);
+        }
+        $os = Os::find($id);
+        if (!$os) {
+            return response()->json(['cod'=>0,'msg'=>'OS não encontrada'], 404);
+        }
+        Lancamento::where('id_reserva', $os->id)->delete();
+        $os->cancelada = 1;
+        $os->save();
+        return response()->json(['cod'=>1,'msg'=>'Venda cancelada com sucesso']);
     }
 }
