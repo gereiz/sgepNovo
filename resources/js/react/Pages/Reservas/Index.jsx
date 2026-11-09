@@ -573,7 +573,7 @@ export default function ReservasIndex({
 
           <div className="flex items-center gap-2">
             <a
-              href="/reservas-sem-pi"
+              href="/ReservaSemPi"
               className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100 transition"
             >
               <FileText className="h-4 w-4" />
