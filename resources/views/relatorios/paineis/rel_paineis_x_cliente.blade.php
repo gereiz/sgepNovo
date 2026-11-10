@@ -33,6 +33,7 @@
     <?php
     $i = 1;
     foreach ($paineis as $p) {
+        if (!$p->painel) continue;
     ?>
     <tr>
         <td>
@@ -50,8 +51,8 @@
                                     <div class="mt-2" style="max-width: 390px;">
                                         <p><b>Localização:</b>  {{$p->painel->logradouro}}, nº
                                                                 {{$p->painel->numero}} - 
-                                                                {{$p->painel->bairro->nome}} / 
-                                                                {{$p->painel->bairro->regiao->cidade->nome}}
+                                                                {{$p->painel->bairro?->nome}} / 
+                                                                {{$p->painel->bairro?->regiao?->cidade?->nome}}
                                         </p>
                                         <p><b>Coordenadas:</b> <a href="https://maps.google.com/?q={{$p->painel->latitude}},{{$p->painel->longitude}}" target="_blank">Ver localização no mapa</a> </p>
                                     </div>

@@ -124,6 +124,7 @@ const NAV_GRUPOS = [
       { name: 'Configurações Gerais', description: 'Configurações Diversas', href: '/configuracoes' },
     ],
   },
+  /*
   {
     key: 'legado',
     label: 'Legado',
@@ -191,6 +192,7 @@ const NAV_GRUPOS = [
       },
     ],
   },
+  */
 ];
 </script>
 

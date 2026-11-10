@@ -6,6 +6,7 @@
     import Multiselect from 'vue-multiselect'
 
     const props = defineProps(['clientes', 'anos']);
+    const toastr = useToastr();
 
     const clientes = ref(props.clientes);
     const anos = ref(props.anos);
@@ -47,7 +48,10 @@
     }
 
     function setCliente() {
-        axios.post('/setCliente', {cliente: idCliente.value})
+        const clienteId = idCliente.value?.id ?? idCliente.value;
+        if (!clienteId) return;
+
+        axios.post('/setCliente', {cliente: clienteId})
             .then((res) => {
                 // console.log(res.data)
             })
@@ -67,26 +71,31 @@
     }
 
     function getRelReservaCliente() {
+        const clienteId = idCliente.value?.id ?? idCliente.value;
+
+        if (!bsId.value || bsId.value == 0) {
+            toastr.error('Selecione uma Bi-semana antes de gerar o relatório.');
+            return;
+        }
+
+        if (!clienteId) {
+            toastr.error('Selecione um Cliente antes de gerar o relatório.');
+            return;
+        }
+
         let btn = document.getElementById('gera_rel')
+        if (btn) btn.innerHTML = 'Carregando...'
 
-        btn.innerHTML = 'Carregando...'
+        const params = new URLSearchParams({
+            cliente: clienteId,
+            bisemana: bsId.value,
+            orient: orient.value || 'L'
+        });
 
-        axios.post('/getRelReservaCliente', {cliente: idCliente.value,
-                                            ano: anoId.value,
-                                            bisemana: bsId.value,
-                                            orient: orient.value
-            })
-            .then((res) => {
-            
-                setTimeout(() => {
-                    btn.innerHTML = 'Gerar Relatório'
-                    window.open('/getRelReservaCliente', '_blank')
-
-                }, 3000);
-            })
-            .catch((err) => {
-            console.log(err)
-            })
+        setTimeout(() => {
+            if (btn) btn.innerHTML = 'Gerar Relatório'
+            window.open('/getRelReservaCliente?' + params.toString(), '_blank')
+        }, 400);
 
     }
 
