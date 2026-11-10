@@ -288,28 +288,32 @@ class CaixaService
             // Busca o lançamento
             $lancamento = Lancamento::find($id);
 
-            //Remove o R$, troca virgula por ponto e transforma o valor para float
-            $lancamento['valor'] = str_replace('R$ ', '', $lancamento['valor']);
-            $lancamento['valor'] = str_replace(',', '.', $lancamento['valor']);
-            $lancamento['valor'] = floatval($lancamento['valor']);
-
-            //Transforma a data para o formato do banco de dados
-            // $lancamento['data_lancamento'] = date('Y-m-d', strtotime($lancamento['data_lancamento']));
-
             // Verifica se o lançamento foi encontrado
             if (!$lancamento) {
                 throw new \Exception('Lançamento não encontrado.');
             }
 
+            $valRaw = $dados_lancamento['valor'] ?? $lancamento->valor;
+            if (is_numeric($valRaw)) {
+                $valNum = floatval($valRaw);
+            } else {
+                $valStr = str_replace(['R$', ' '], '', (string)$valRaw);
+                if (strpos($valStr, ',') !== false) {
+                    $valStr = str_replace('.', '', $valStr);
+                    $valStr = str_replace(',', '.', $valStr);
+                }
+                $valNum = floatval($valStr);
+            }
+
             // Atualiza os campos do lançamento
-            $lancamento->descricao = $dados_lancamento['descricao'];
-            $lancamento->valor = $dados_lancamento['valor'];
-            $lancamento->parcelas = $dados_lancamento['parcelas'];
-            $lancamento->dt_faturamento = $dados_lancamento['dt_faturamento'];
-            $lancamento->centro_custo = $dados_lancamento['centro_custo']['id'];
-            $lancamento->tipo_lancamento = $dados_lancamento['tipo_lancamento']['id'];
-            $lancamento->id_reserva = $dados_lancamento['id_reserva'];
-            $lancamento->observacoes = $dados_lancamento['observacoes'];
+            $lancamento->descricao = $dados_lancamento['descricao'] ?? $lancamento->descricao;
+            $lancamento->valor = $valNum;
+            $lancamento->parcelas = $dados_lancamento['parcelas'] ?? $lancamento->parcelas;
+            $lancamento->dt_faturamento = $dados_lancamento['dt_faturamento'] ?? $lancamento->dt_faturamento;
+            $lancamento->centro_custo = $dados_lancamento['centro_custo']['id'] ?? ($dados_lancamento['centro_custo'] ?? $lancamento->centro_custo);
+            $lancamento->tipo_lancamento = $dados_lancamento['tipo_lancamento']['id'] ?? ($dados_lancamento['tipo_lancamento'] ?? $lancamento->tipo_lancamento);
+            $lancamento->id_reserva = $dados_lancamento['id_reserva'] ?? $lancamento->id_reserva;
+            $lancamento->observacoes = $dados_lancamento['observacoes'] ?? $lancamento->observacoes;
             if (isset($dados_lancamento['status_pagamento'])) {
                 $lancamento->status_pagamento = $dados_lancamento['status_pagamento'];
             }

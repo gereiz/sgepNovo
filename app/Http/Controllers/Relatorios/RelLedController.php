@@ -55,14 +55,25 @@ class RelLedController extends Controller
 
         $diasAlerta = LedService::DIAS_ALERTA_TERMINO;
 
-        return Inertia::render('React/Reservas/MapaOcupacao/Index', compact(
+        if ($request->query('view') === 'react' || $request->routeIs('mapa.ocupacao.led.react')) {
+            return Inertia::render('React/Reservas/MapaOcupacao/Index', compact(
+                'anos',
+                'bisemanas',
+                'clientes',
+                'leds',
+                'dadosIniciais',
+                'diasAlerta'
+            ))->rootView('app-react');
+        }
+
+        return Inertia::render('Relatorios/Led/MapaOcupacaoLed', compact(
             'anos',
             'bisemanas',
             'clientes',
             'leds',
             'dadosIniciais',
             'diasAlerta'
-        ))->rootView('app-react');
+        ));
     }
 
     public function relReservas(Request $request)

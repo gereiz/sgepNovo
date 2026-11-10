@@ -15,44 +15,44 @@ class PaineisController extends Controller
 
     public function index(Request $request) {
 
-        // Fallback para versão Vue legada se solicitado via query (?view=vue) ou rota paineis.antigo
-        if ($request->query('view') === 'vue' || $request->routeIs('paineis.antigo')) {
-            $paineis = Painel::with('bairro.regiao')
+        // Versão React acessível via rota react.paineis.lista ou ?view=react
+        if ($request->query('view') === 'react' || $request->routeIs('react.paineis.lista')) {
+            $paineis = Painel::with(['bairro.regiao.cidade.uf'])
                 ->join('bairros', 'outdoors.bairro_id', '=', 'bairros.id')
                 ->join('regioes', 'bairros.regiao_id', '=', 'regioes.id')
                 ->orderBy('regioes.nome')
                 ->orderBy('bairros.nome')
                 ->select('outdoors.*')
-            ->get();
+                ->get();
 
             $service = new PainelService();
             foreach ($paineis as $p) {
                 $p->image_url = $service->latestImagePath($p);
             }
 
-            return Inertia::render('Paineis/ListaPaineis', compact('paineis'));
+            $ufs = UF::orderBy('nome')->get(['id', 'nome', 'sigla']);
+
+            return Inertia::render('React/Paineis/Lista/Index', [
+                'paineis' => $paineis,
+                'ufs' => $ufs,
+            ])->rootView('app-react');
         }
 
-        // Nova versão React: carrega painéis com hierarquia de endereços
-        $paineis = Painel::with(['bairro.regiao.cidade.uf'])
+        // Padrão: Versão clássica Vue
+        $paineis = Painel::with('bairro.regiao')
             ->join('bairros', 'outdoors.bairro_id', '=', 'bairros.id')
             ->join('regioes', 'bairros.regiao_id', '=', 'regioes.id')
             ->orderBy('regioes.nome')
             ->orderBy('bairros.nome')
             ->select('outdoors.*')
-            ->get();
+        ->get();
 
         $service = new PainelService();
         foreach ($paineis as $p) {
             $p->image_url = $service->latestImagePath($p);
         }
 
-        $ufs = UF::orderBy('nome')->get(['id', 'nome', 'sigla']);
-
-        return Inertia::render('React/Paineis/Lista/Index', [
-            'paineis' => $paineis,
-            'ufs' => $ufs,
-        ])->rootView('app-react');
+        return Inertia::render('Paineis/ListaPaineis', compact('paineis'));
 
     }
 

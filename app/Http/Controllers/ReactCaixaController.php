@@ -208,6 +208,12 @@ class ReactCaixaController extends Controller
             'lancamentos' => $lancamentosArr,
         ];
 
-        return Inertia::render('React/Financeiro/Caixa/Index')->rootView('app-react')->with($props);
+        $isReactRoute = $request->routeIs('react.caixa.react') || str_contains($request->path(), 'react');
+
+        if ($isReactRoute) {
+            return Inertia::render('React/Financeiro/Caixa/Index')->rootView('app-react')->with($props);
+        }
+
+        return Inertia::render('Financeiro/LancamentosCaixa', $props);
     }
 }

@@ -56,18 +56,22 @@ route::get('/home', function() {
 
 
 route::middleware(['auth', 'verified'])->group(function () {
-    // Dashboard Vue (legado)
+    // Dashboard Vue (Padrão)
+    route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     route::get('/dashboard-antigo', [DashboardController::class, 'index'])->name('dashboard.antigo');
     route::post('/getClienteReservas', [DashboardController::class, 'getClienteReservas']);
 
     // ============== NOVO FRONTEND REACT ==============
-    route::get('/dashboard', [ReactDashboardController::class, 'index'])->name('react.dashboard');
+    // Dashboard React (Legado / Alternativo)
+    route::get('/dashboard-react', [ReactDashboardController::class, 'index'])->name('react.dashboard');
     route::get('/caixa', [ReactCaixaController::class, 'index'])->name('react.caixa');
+    route::get('/caixa-react', [ReactCaixaController::class, 'index'])->name('react.caixa.react');
     route::get('/reservas-sem-pi', [ReactReservasSemPIController::class, 'index'])->name('react.reservassempi');
     route::get('/reservas-sem-pi-react', [ReactReservasSemPIController::class, 'index']);
     route::post('/GerarPIPorReserva', [ReactReservasSemPIController::class, 'gerarPIPorReserva'])->name('react.gerarpi');
 
     route::get('/cadastro-comissoes', [ReactComissoesController::class, 'index'])->name('react.comissoes.cadastro');
+    route::get('/cadastro-comissoes-react', [ReactComissoesController::class, 'index'])->name('react.comissoes.cadastro.react');
     route::post('/cadastro-comissoes', [ReactComissoesController::class, 'store'])->name('react.comissoes.store');
     route::put('/cadastro-comissoes/{id}', [ReactComissoesController::class, 'update'])->name('react.comissoes.update');
     route::delete('/cadastro-comissoes/{id}', [ReactComissoesController::class, 'destroy'])->name('react.comissoes.destroy');
@@ -154,9 +158,11 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::get('/reservas-sem-pi-antigo', [ReservaController::class, 'reservaSemPi'])->name('reservas.sem.pi.antigo');
     route::post('/GetResSemPi', [ReservaController::class, 'getReservaSemPI'])->name('post.reservas.sem.pi');
 
-    // Reseva de painés por cliente
-    route::get('/ResPaineisCli', [ReservaController::class, 'reservaPainelIndex'])->name('reserva.paineis.cli');
+    // Reseva de painés por cliente (Padrão Vue)
+    route::get('/ResPaineisCli', [ReservaController::class, 'reservaPainelAntigo'])->name('reserva.paineis.cli');
     route::get('/ResPaineisCli-antigo', [ReservaController::class, 'reservaPainelAntigo'])->name('reserva.paineis.cli.antigo');
+    route::get('/reserva-paineis-react', [ReservaController::class, 'reservaPainelIndex'])->name('react.reserva.paineis');
+    route::get('/ResPaineisCli-react', [ReservaController::class, 'reservaPainelIndex']);
     route::post('/GetPaineisCli', [ReservaController::class, 'getPaineisCliente'])->name('get.paineis.cli');
     route::post('/ResPaineisCli', [ReservaController::class, 'reservaPaineisCliente'])->name('res.paineis.cli');
     route::post('/DelResCliente', [ReservaController::class, 'delResCliente'])->name('del.reserva.cli');
@@ -348,6 +354,7 @@ route::middleware(['auth', 'verified'])->group(function () {
 
     // Telas e Relatórios de LED (Inertia e PDF)
     route::get('/MapaOcupacaoLed', [RelLedController::class, 'mapaOcupacao'])->name('mapa.ocupacao.led');
+    route::get('/mapa-ocupacao-led-react', [RelLedController::class, 'mapaOcupacao'])->name('mapa.ocupacao.led.react');
     route::get('/RelReservasLed', [RelLedController::class, 'relReservas'])->name('rel.reservas.led');
     route::post('/RelReservasLedPdf', [RelLedController::class, 'relReservasPdf'])->name('rel.reservas.led.pdf');
 

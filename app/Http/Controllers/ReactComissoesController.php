@@ -75,29 +75,37 @@ class ReactComissoesController extends Controller
             'totalFixos'       => (int)ComissaoCadastro::where('tipo_comissao', 2)->count(),
         ];
 
-        return Inertia::render('React/Financeiro/Comissoes/Index')
-            ->rootView('app-react')
-            ->with([
-                'comissoes'       => $comissoes,
-                'pagination'      => [
-                    'page'           => $page,
-                    'perPage'        => $perPage,
-                    'totalItens'     => $totalItens,
-                    'ultimaPagina'   => $ultimaPagina,
-                    'de'             => $totalItens > 0 ? (($page - 1) * $perPage) + 1 : 0,
-                    'ate'            => min($page * $perPage, $totalItens),
-                ],
-                'filters'         => [
-                    'search' => $search,
-                    'tipo'   => $tipo,
-                    'status' => $status,
-                ],
-                'agregados'       => $agregados,
-                'flash'           => [
-                    'success' => session('success'),
-                    'error'   => session('error'),
-                ],
-            ]);
+        $viewProps = [
+            'comissoes'       => $comissoes,
+            'pagination'      => [
+                'page'           => $page,
+                'perPage'        => $perPage,
+                'totalItens'     => $totalItens,
+                'ultimaPagina'   => $ultimaPagina,
+                'de'             => $totalItens > 0 ? (($page - 1) * $perPage) + 1 : 0,
+                'ate'            => min($page * $perPage, $totalItens),
+            ],
+            'filters'         => [
+                'search' => $search,
+                'tipo'   => $tipo,
+                'status' => $status,
+            ],
+            'agregados'       => $agregados,
+            'flash'           => [
+                'success' => session('success'),
+                'error'   => session('error'),
+            ],
+        ];
+
+        $isReactRoute = $request->routeIs('react.comissoes.cadastro.react') || str_contains($request->path(), 'react');
+
+        if ($isReactRoute) {
+            return Inertia::render('React/Financeiro/Comissoes/Index')
+                ->rootView('app-react')
+                ->with($viewProps);
+        }
+
+        return Inertia::render('Financeiro/CadastroComissoes', $viewProps);
     }
 
     public function store(Request $request)
