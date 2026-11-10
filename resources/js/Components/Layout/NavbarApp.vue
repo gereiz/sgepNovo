@@ -69,6 +69,9 @@ const NAV_GRUPOS = [
       { name: 'Envio de Disponibilidades', description: 'Consulte painéis disponíveis, reservados e envie disponibilidades.', href: '/ResPaineis' },
       { name: 'Reserva de Painéis', description: 'Realize a reserva / cancelamento de reserva para clientes.', href: '/ResPaineisCli' },
       { name: 'Gerar PI / Reservas sem PI', description: 'Fluxo clássico de emissão de PI por reserva.', href: '/ReservaSemPi' },
+      { name: 'Cadastro de LEDs', description: 'Catálogo, cadastro e edição de painéis digitais de LED.', href: '/CadastroLeds' },
+      { name: 'Reserva de LEDs', description: 'Gerenciamento de contratos mensais, vigências e reservas de LEDs.', href: '/ReservaLeds' },
+      { name: 'Mapa de Ocupação', description: 'Visualização em grade mensal da ocupação e vigência dos painéis LED.', href: '/MapaOcupacaoLed' },
     ],
   },
   {

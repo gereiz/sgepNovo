@@ -353,6 +353,11 @@ route::middleware(['auth', 'verified'])->group(function () {
     route::post('/VerificaConflitoLed', [ReservaController::class, 'verificaConflitoLed'])->name('verifica.conflito.led');
 
     // Telas e Relatórios de LED (Inertia e PDF)
+    route::get('/CadastroLeds', [PaineisController::class, 'cadastroLeds'])->name('cadastro.leds');
+    route::get('/cadastro-leds', [PaineisController::class, 'cadastroLeds']);
+    route::get('/ReservaLeds', [ReservaController::class, 'reservaLedsIndex'])->name('reserva.leds');
+    route::get('/reserva-leds', [ReservaController::class, 'reservaLedsIndex']);
+    route::get('/MapaOcupacao', [RelLedController::class, 'mapaOcupacao'])->name('mapa.ocupacao');
     route::get('/MapaOcupacaoLed', [RelLedController::class, 'mapaOcupacao'])->name('mapa.ocupacao.led');
     route::get('/mapa-ocupacao-led-react', [RelLedController::class, 'mapaOcupacao'])->name('mapa.ocupacao.led.react');
     route::get('/RelReservasLed', [RelLedController::class, 'relReservas'])->name('rel.reservas.led');

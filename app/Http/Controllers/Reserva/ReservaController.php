@@ -319,6 +319,37 @@ class ReservaController extends Controller
         ));
     }
 
+    public function reservaLedsIndex() {
+        $clientes = Cliente::orderBy('razao_social')
+            ->where('ativo', 1)
+            ->get();
+
+        $paineis = Painel::with('bairro.regiao.cidade')
+            ->where('is_led', 1)
+            ->orderByRaw("CAST(identificacao AS UNSIGNED) ASC")
+            ->get();
+
+        $service = new \App\Services\PainelService();
+        foreach ($paineis as $p) {
+            $tmp = new Painel();
+            $tmp->identificacao = $p->identificacao;
+            $tmp->image_url = $p->image_url;
+            $p->image_url = $service->latestImagePath($tmp);
+        }
+
+        $user = auth()->user();
+        $permissions = [
+            'cria_reserva'   => $user ? $user->can('criar reserva') : false,
+            'exclui_reserva' => $user ? $user->can('excluir reserva') : false,
+        ];
+
+        return Inertia::render('Reservas/ReservaLeds', compact(
+            'clientes',
+            'paineis',
+            'permissions'
+        ));
+    }
+
 
     public function reservaSemPi() {
 

@@ -56,6 +56,28 @@ class PaineisController extends Controller
 
     }
 
+    public function cadastroLeds() {
+        $paineis = Painel::with(['bairro.regiao.cidade.uf'])
+            ->join('bairros', 'outdoors.bairro_id', '=', 'bairros.id')
+            ->join('regioes', 'bairros.regiao_id', '=', 'regioes.id')
+            ->where('outdoors.is_led', 1)
+            ->orderByRaw('CAST(outdoors.identificacao AS UNSIGNED) ASC')
+            ->select('outdoors.*')
+            ->get();
+
+        $service = new PainelService();
+        foreach ($paineis as $p) {
+            $p->image_url = $service->latestImagePath($p);
+        }
+
+        $ufs = UF::orderBy('nome')->get(['id', 'nome', 'sigla']);
+
+        return Inertia::render('Paineis/CadastroLeds', [
+            'paineis' => $paineis,
+            'ufs' => $ufs,
+        ]);
+    }
+
 
     public function cadastraPainel(Request $request) {
         $painelService = new PainelService();
