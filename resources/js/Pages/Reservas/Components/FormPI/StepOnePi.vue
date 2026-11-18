@@ -29,6 +29,32 @@ const formOne = useForm({
     email: null
 })
 
+function syncClienteToForm(cli) {
+    if (!cli || typeof cli !== 'object') return;
+    cliente.value = cli;
+    clienteUf.value = cli.uf || 0;
+    clienteCidade.value = cli.cidade || 0;
+    formOne.clienteId = cli.id;
+    formOne.clienteNome = cli.razao_social ? cli.razao_social : cli.nome_fantasia;
+    formOne.cnpj = cli.cpf_cnpj ? cli.cpf_cnpj : '00000000000000';
+    formOne.endereco = cli.endereco ? cli.endereco + ' - ' + cli.num : 'Não Cadastrado';
+    formOne.cep = cli.cep ? cli.cep : '00.000-000';
+    formOne.uf = clienteUf.value ? clienteUf.value : 0;
+    formOne.cidade = clienteCidade.value ? clienteCidade.value : 0;
+    formOne.celular = cli.tel_responsavel ? cli.tel_responsavel : 'Não Cadastrado';
+    formOne.inscEst = cli.nro_insc ? cli.nro_insc : 'Nao Cadastrado';
+    formOne.responsavel = cli.responsavel ? cli.responsavel : 'Não Cadastrado';
+    formOne.email = cli.email_responsavel ? cli.email_responsavel : 'Não Cadastrado';
+
+    if (clienteUf.value) {
+        getCidadeCli(clienteUf.value);
+    }
+}
+
+watch(() => props.cliente, (newCli) => {
+    syncClienteToForm(newCli);
+}, { immediate: true, deep: true });
+
 onMounted(() =>{
 
     axios.get('/dtGetUfs')
@@ -48,21 +74,7 @@ onMounted(() =>{
 
     })
 
-
-    if(props.cliente.value != {}) {
-        formOne.clienteId = cliente.value.id
-        formOne.clienteNome = cliente.value.razao_social ? cliente.value.razao_social : cliente.value.nome_fantasia
-        formOne.cnpj = cliente.value.cpf_cnpj ? cliente.value.cpf_cnpj : '00000000000000'
-        formOne.endereco = cliente.value.endereco ? cliente.value.endereco + ' - ' + cliente.value.num : 'Não Cadastrado'
-        formOne.cep = cliente.value.cep ? cliente.value.cep : '00.000-000'
-        formOne.uf = clienteUf.value ? clienteUf.value : 0
-        formOne.cidade =clienteCidade.value ? clienteCidade.value : 0
-        formOne.celular = cliente.value.tel_responsavel ? cliente.value.tel_responsavel : 'Não Cadastrado'
-        formOne.inscEst = cliente.value.nro_insc ? cliente.value.nro_insc : 'Nao Cadastrado'
-        formOne.responsavel = cliente.value.responsavel ? cliente.value.responsavel : 'Não Cadastrado'
-        formOne.email = cliente.value.email_responsavel ? cliente.value.email_responsavel : 'Não Cadastrado'
-
-    }
+    syncClienteToForm(props.cliente);
 
 })
 

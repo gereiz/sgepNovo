@@ -381,12 +381,16 @@ class ReservaController extends Controller
     public function getReservaSemPI(Request $request) {
 
         $bisemana = $request->bsId;
-        $cliente = $request->cliente;
+        $rawCliente = $request->cliente;
+        $cliente = is_array($rawCliente)
+            ? ($rawCliente['id'] ?? null)
+            : (is_object($rawCliente) ? ($rawCliente->id ?? null) : $rawCliente);
 
         $reservas = Painel::select('outdoors.id',
                                 'outdoors.identificacao',
                                 'outdoors.bairro_id',
                                 'outdoors.image_url',
+                                'res.id AS reserva_id',
                                 'res.campanha AS campanha',
                                 'res.observacao AS obs',
                                 'res.pi_ok AS pi_ok',
@@ -404,8 +408,6 @@ class ReservaController extends Controller
             ->when($cliente, function(Builder $query, $cliente) {
                 $query->where('res.cliente_id', $cliente);
             })
-
-
             ->groupBY('outdoors.id')
             ->orderBy('outdoors.identificacao')
             ->distinct()
@@ -431,10 +433,8 @@ class ReservaController extends Controller
             ->whereNotIn('outdoors.id', $reservas->pluck('id'))
             ->where('res.pi_ok', 0)
             ->when($cliente, function(Builder $query, $cliente) {
-            $query->where('res.cliente_id', $cliente);
+                $query->where('res.cliente_id', $cliente);
             })
-
-
             ->groupBY('outdoors.id')
             ->orderBy('outdoors.identificacao')
             ->distinct()
@@ -462,7 +462,10 @@ class ReservaController extends Controller
     public function getPaineisCliente(Request $request) {
 
         $bisemana = $request->bsId;
-        $cliente = $request->cliente;
+        $rawCliente = $request->cliente;
+        $cliente = is_array($rawCliente)
+            ? ($rawCliente['id'] ?? null)
+            : (is_object($rawCliente) ? ($rawCliente->id ?? null) : $rawCliente);
 
         $reservas = Painel::select('outdoors.id',
                                 'outdoors.identificacao',
@@ -483,8 +486,6 @@ class ReservaController extends Controller
             ->when($cliente, function(Builder $query, $cliente) {
                 $query->where('res.cliente_id', $cliente);
             })
-
-
             ->groupBY('outdoors.id')
             ->orderBy('outdoors.identificacao')
             ->distinct()

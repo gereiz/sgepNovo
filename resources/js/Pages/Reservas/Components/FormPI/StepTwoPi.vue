@@ -32,14 +32,31 @@ const paineisTexto = computed(() => {
   return String(props.paineis);
 });
 
+function resolveCampanhaProp(val) {
+  if (!val) return '';
+  if (Array.isArray(val)) {
+    const firstNonEmpty = val.find(c => c && String(c).trim() !== '');
+    return firstNonEmpty !== undefined ? String(firstNonEmpty) : (val[0] || '');
+  }
+  return String(val);
+}
+
 const formTwo = reactive({
   paineis: props.paineis,
-  campanha: props.campanha ? (Array.isArray(props.campanha) ? props.campanha[0] : props.campanha) : '',
+  campanha: resolveCampanhaProp(props.campanha),
   vendedorId: props.vendedorId || 0,
   vendedor: props.vendedorNome || '',
   agentesId: [],
   participantesComissoes: [],
 });
+
+watch(() => props.campanha, (newVal) => {
+  formTwo.campanha = resolveCampanhaProp(newVal);
+}, { immediate: true, deep: true });
+
+watch(() => props.paineis, (newVal) => {
+  formTwo.paineis = newVal;
+}, { immediate: true, deep: true });
 
 function getInitials(name) {
   if (!name) return '??';
@@ -203,12 +220,15 @@ async function loadInitialData() {
     participantesOptions.value = parts;
     comissoesAtivas.value = comRes.data || [];
 
-    // Tenta restaurar do localStorage se existir
+    // Garante que a campanha venha sempre da reserva atual (props.campanha)
+    formTwo.campanha = resolveCampanhaProp(props.campanha);
+    formTwo.paineis = props.paineis;
+
+    // Tenta restaurar apenas participantes da sessão atual do modal se existir
     const saved = localStorage.getItem('piFormTwo');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (parsed.campanha) formTwo.campanha = parsed.campanha;
         if (Array.isArray(parsed.participantesComissoes) && parsed.participantesComissoes.length > 0) {
           participantesComissoes.value = parsed.participantesComissoes;
           participantesSelected.value = parsed.participantesComissoes.map(p => p.chave);

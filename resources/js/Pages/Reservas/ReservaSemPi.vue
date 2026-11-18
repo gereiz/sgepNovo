@@ -15,6 +15,7 @@ const paineis = ref(props.paineis)
 const toastr = useToastr();
 
 const reservas = ref([]);
+const todasReservasBs = ref([]);
 const itemRefs = ref([])
 const checkedPaineis = ref([]);
 
@@ -48,14 +49,27 @@ watch(idAno, () => {
     getBisemanas()
 })
 
-watch(idCliente, () => {
-    getReservasCli(idBisemana.value)
+watch(idCliente, (val) => {
+    if (val) {
+        getReservasCli(idBisemana.value)
+    } else {
+        reservas.value = todasReservasBs.value
+        reservasCampanha.value = []
+        reservasIdent.value = []
+    }
     clearChecked()
 })
 
 const clientesComReserva = computed(() => {
   return props.clientes.filter(cliente =>
     reservas.value.some(reserva => reserva.cliente_id === cliente.id)
+  );
+});
+
+const opcoesClientesSelect = computed(() => {
+  const baseList = todasReservasBs.value.length > 0 ? todasReservasBs.value : reservas.value;
+  return props.clientes.filter(cliente =>
+    baseList.some(reserva => reserva.cliente_id === cliente.id)
   );
 });
 
@@ -90,18 +104,27 @@ function getBisemanas() {
         listaBisemana.value = Object.values(res.data)
         // bsDisabled.value = false
         idBisemana.value = 0
+        idCliente.value = ''
         reservas.value = []
+        todasReservasBs.value = []
+        reservasCampanha.value = []
+        reservasIdent.value = []
     })
 }
 
 function getReservasSemPi(bs) {
+    idCliente.value = ''
+    reservasCampanha.value = []
+    reservasIdent.value = []
+
     axios.post('/GetResSemPi', {
         bsId: bs,
-        cliente: idCliente.value
+        cliente: null
     })
     .then((res) => {
 
         reservas.value = res.data.reservas
+        todasReservasBs.value = res.data.reservas
         paineis.value = res.data.paineis
 
         idents.length = 0
@@ -223,7 +246,7 @@ const bisemanaSelecionada = computed(() => {
                         <label for="cliente">Cliente</label>
                         <multiselect :disabled="idBisemana == 0"
                             v-model="idCliente"
-                            :options="clientesComReserva"
+                            :options="opcoesClientesSelect"
                             :custom-label="clienteLista"
                             selectLabel="Enter para selecionar"
                             :multiple="false"

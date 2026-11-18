@@ -10,10 +10,23 @@ const props = defineProps(['openVenda','cliente','bisemanaId'])
 const emit = defineEmits(['closeVenda'])
 
 const step = shallowRef(StepTwoVenda)
+const modalSessionKey = ref(0)
 const formVenda = ref({ One:{}, Two:{}, Four:{}, Five:{} })
 const bisemana = ref([{ id: 0, num_bisemana: '', inicio: new Date().toISOString().slice(0,10), fim: new Date().toISOString().slice(0,10) }])
 
-function closeM(val){ emit('closeVenda', val) }
+watch(() => props.openVenda, (val) => {
+  if (val) {
+    step.value = StepTwoVenda
+    formVenda.value = { One:{}, Two:{}, Four:{}, Five:{} }
+    modalSessionKey.value++
+  }
+})
+
+function closeM(val){
+  step.value = StepTwoVenda
+  formVenda.value = { One:{}, Two:{}, Four:{}, Five:{} }
+  emit('closeVenda', val)
+}
 
 function saveFormTwo(ev){ formVenda.value.Two = ev }
 function saveFormFour(ev){ formVenda.value.Four = ev }
@@ -92,19 +105,21 @@ function next(ev){
         <button class="btn btn-sm btn-circle btn-ghost" @click="closeM('f')">✕</button>
       </div>
 
-      <keep-alive>
-        <component :is="step"
-                   :cliente="[props.cliente]"
-                   :campanha="['']"
-                   :paineis="['VENDA']"
-                   :bisemana="bisemana"
-                   :dataReserva="new Date().toISOString().slice(0,10)"
-                   :agentes="[]"
-                   @nextStep="next"
-                   @formTwo="saveFormTwo"
-                   @formFour="saveFormFour"
-                   @formFive="saveFormFive" />
-      </keep-alive>
+      <div :key="modalSessionKey">
+        <keep-alive>
+          <component :is="step"
+                     :cliente="[props.cliente]"
+                     :campanha="['']"
+                     :paineis="['VENDA']"
+                     :bisemana="bisemana"
+                     :dataReserva="new Date().toISOString().slice(0,10)"
+                     :agentes="[]"
+                     @nextStep="next"
+                     @formTwo="saveFormTwo"
+                     @formFour="saveFormFour"
+                     @formFive="saveFormFive" />
+        </keep-alive>
+      </div>
     </div>
   </dialog>
 </template>

@@ -27,8 +27,26 @@ const getFormPiThree = ref({})
 const getFormPiFive = ref({})
 const formPi = ref({})
 
+const modalSessionKey = ref(0)
+
+function clearPiLocalStorage() {
+    localStorage.removeItem('piFormOne')
+    localStorage.removeItem('piFormTwo')
+    localStorage.removeItem('piFormThree')
+    localStorage.removeItem('piFormFour')
+    localStorage.removeItem('piFormFive')
+}
+
 watch( () => props.openPi, (val) =>  {
     if(val === true) {
+        clearPiLocalStorage()
+        step.value = StepOnePi
+        getFormPiOne.value = {}
+        getFormPiTwo.value = {}
+        getFormPiThree.value = {}
+        getFormPiFive.value = {}
+        formPi.value = {}
+        modalSessionKey.value++
         open.value = true
     } else {
         open.value = false
@@ -163,6 +181,8 @@ function finalizePi() {
 
 
 function closeM() {
+    clearPiLocalStorage()
+    step.value = StepOnePi
     open.value  = false
     emit('closePi', open.value)
 }
@@ -240,7 +260,7 @@ function naviForm(ev) {
                   </button>
                 </div>
                 <div class="sm:flex flex-col sm:items-start">
-                  <div class="w-full mt-3 text-center sm:mt-0 sm:text-left">
+                  <div :key="modalSessionKey" class="w-full mt-3 text-center sm:mt-0 sm:text-left">
                       <KeepAlive>
                           <component :is="step"
                                      :cliente="cliente"

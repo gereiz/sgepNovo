@@ -33,6 +33,10 @@ const formTwo = reactive({
   participantesComissoes: [],
 });
 
+watch(() => props.campanha, (val) => {
+  formTwo.campanha = val ? (Array.isArray(val) ? (val[0] || '') : val) : '';
+}, { immediate: true, deep: true });
+
 function getInitials(name) {
   if (!name) return '??';
   const parts = String(name).trim().split(/\s+/);
