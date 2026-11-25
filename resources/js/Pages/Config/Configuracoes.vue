@@ -78,11 +78,11 @@ function gerarListaBisemanasAPartirDeData(dataInicialStr, existentes = []) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(str)) return [];
     const [y, m, d] = str.split('-').map(Number);
     let dtInicial = new Date(Date.UTC(y, m - 1, d));
-    let numBs = 1;
+    let numBs = 2;
     let idx = 0;
     const lista = [];
 
-    while (numBs < 53) {
+    while (numBs <= 52) {
         const dtFinal = new Date(dtInicial.getTime());
         dtFinal.setUTCDate(dtFinal.getUTCDate() + 13);
 
@@ -181,9 +181,9 @@ function abrirModalEditarBisemanas(itemAno) {
     modalVerBsOpen.value = false;
     anoEditando.value = itemAno;
 
-    const existentes = (itemAno.bisemanas || []).map(b => ({
+    const existentes = (itemAno.bisemanas || []).map((b, idx) => ({
         id: b.id,
-        num_bisemana: Number(b.num_bisemana),
+        num_bisemana: (idx + 1) * 2,
         inicio: String(b.inicio || '').slice(0, 10),
         fim: String(b.fim || '').slice(0, 10),
     }));
@@ -409,7 +409,7 @@ function refreshCompressed() {
 
                             <p class="text-xs text-gray-600">
                                 Informe o ano e o <strong>dia inicial da 1ª Bi-semana</strong> para criar automaticamente todas as
-                                <strong>26 bi-semanas</strong> (ciclos de 14 dias com numeração de <code>1</code> a <code>51</code>).
+                                <strong>26 bi-semanas pares</strong> (ciclos de 14 dias com numeração de <code>2</code> a <code>52</code>).
                             </p>
 
                             <form @submit.prevent="criarBisemanasAno" class="space-y-3">
@@ -775,7 +775,7 @@ function refreshCompressed() {
                         <div class="flex flex-col sm:flex-row sm:items-end gap-3">
                             <div class="form-control flex-1">
                                 <label class="label py-1">
-                                    <span class="label-text text-xs font-bold">Dia Inicial da 1ª Bi-semana (BS 1)</span>
+                                    <span class="label-text text-xs font-bold">Dia Inicial da 1ª Bi-semana (BS 2)</span>
                                 </label>
                                 <input
                                     v-model="dataInicioEdicao"

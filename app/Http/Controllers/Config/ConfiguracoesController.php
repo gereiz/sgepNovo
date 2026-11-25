@@ -87,10 +87,10 @@ class ConfiguracoesController extends Controller
             $anoRow = Ano::firstOrCreate(['ano_bisemana' => $anoParam]);
 
             $dtAtual = $semanaInicial->copy();
-            $numeroBisemana = 1;
+            $numeroBisemana = 2;
             $novasBisemanas = [];
 
-            while ($numeroBisemana < 53) {
+            while ($numeroBisemana <= 52) {
                 $semanaFinal = $dtAtual->copy()->addDays(13);
 
                 $novasBisemanas[] = [
@@ -138,24 +138,25 @@ class ConfiguracoesController extends Controller
         // Caso tenha enviado a lista detalhada de bi-semanas editadas ou recalculadas
         $listaParaSalvar = [];
         if (is_array($bisemanasInput) && count($bisemanasInput) > 0) {
-            foreach ($bisemanasInput as $idx => $item) {
+            foreach (array_values($bisemanasInput) as $idx => $item) {
+                $numBsPar = ($idx + 1) * 2;
                 $inicioStr = substr((string)($item['inicio'] ?? ''), 0, 10);
                 $fimStr = substr((string)($item['fim'] ?? ''), 0, 10);
                 if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $inicioStr) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fimStr)) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Datas inválidas na bi-semana ' . ($item['num_bisemana'] ?? ($idx + 1)) . '.',
+                        'message' => 'Datas inválidas na bi-semana ' . $numBsPar . '.',
                     ], 422);
                 }
                 if ($fimStr < $inicioStr) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'A data final não pode ser menor que a data inicial na BS ' . ($item['num_bisemana'] ?? ($idx + 1)) . '.',
+                        'message' => 'A data final não pode ser menor que a data inicial na BS ' . $numBsPar . '.',
                     ], 422);
                 }
                 $listaParaSalvar[] = [
                     'id'           => isset($item['id']) ? (int)$item['id'] : null,
-                    'num_bisemana' => isset($item['num_bisemana']) ? (int)$item['num_bisemana'] : (($idx * 2) + 1),
+                    'num_bisemana' => $numBsPar,
                     'inicio'       => $inicioStr,
                     'fim'          => $fimStr,
                 ];
@@ -170,8 +171,8 @@ class ConfiguracoesController extends Controller
                 ], 422);
             }
 
-            $numeroBisemana = 1;
-            while ($numeroBisemana < 53) {
+            $numeroBisemana = 2;
+            while ($numeroBisemana <= 52) {
                 $semanaFinal = $dtAtual->copy()->addDays(13);
                 $listaParaSalvar[] = [
                     'id'           => null,
