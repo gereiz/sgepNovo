@@ -24,9 +24,36 @@ const proximoAnoSugerido = computed(() => {
     return maiorAno + 1;
 });
 
+function addDaysISO(dateStr, days) {
+    if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(String(dateStr).slice(0, 10))) return '';
+    const [y, m, d] = String(dateStr).slice(0, 10).split('-').map(Number);
+    const dt = new Date(Date.UTC(y, m - 1, d));
+    dt.setUTCDate(dt.getUTCDate() + days);
+    return dt.toISOString().slice(0, 10);
+}
+
+function sugerirDataInicioParaAno(anoAlvo) {
+    const y = Number(anoAlvo);
+    if (!y || y < 2000 || y > 2100) return '';
+    const anoAnterior = listaAnos.value.find(a => Number(a.ano_bisemana) === y - 1);
+    if (anoAnterior && anoAnterior.fim_ano) {
+        const diaSeguinte = addDaysISO(String(anoAnterior.fim_ano).slice(0, 10), 1);
+        if (diaSeguinte) return diaSeguinte;
+    }
+    return `${y}-01-01`;
+}
+
 const novoAno = ref(proximoAnoSugerido.value);
+const dataInicioNovoAno = ref(sugerirDataInicioParaAno(proximoAnoSugerido.value));
 const salvandoAno = ref(false);
 const modalNovoAnoOpen = ref(false);
+
+watch(novoAno, (val) => {
+    const sugerida = sugerirDataInicioParaAno(val);
+    if (sugerida) {
+        dataInicioNovoAno.value = sugerida;
+    }
+});
 
 const loadingRefresh = ref(false);
 
@@ -34,26 +61,35 @@ const loadingRefresh = ref(false);
 const modalVerBsOpen = ref(false);
 const anoSelecionado = ref(null);
 
+// Modal para editar as bi-semanas de um ano (atual ou futuro)
+const modalEditarBsOpen = ref(false);
+const anoEditando = ref(null);
+const dataInicioEdicao = ref('');
+const bisemanasEditando = ref([]);
+const encadearDatasEdicao = ref(true);
+const salvandoEdicao = ref(false);
+
 const totalBisemanasSistema = computed(() => {
     return listaAnos.value.reduce((acc, a) => acc + (Number(a.qtd_bisemanas) || 0), 0);
 });
 
-// Prévia dinâmica das bi-semanas que serão geradas para o ano digitado
-const previewBisemanas = computed(() => {
-    const y = Number(novoAno.value);
-    if (!y || y < 2000 || y > 2100) return [];
-    const lista = [];
-    // Mesmo algoritmo do SQL:
-    // SET semana_inicial = CONCAT(ano_param, '-01-01');
-    // SET numero_bisemana = 1;
-    // WHILE numero_bisemana < 53 DO ...
-    let dtInicial = new Date(Date.UTC(y, 0, 1));
+function gerarListaBisemanasAPartirDeData(dataInicialStr, existentes = []) {
+    const str = String(dataInicialStr || '').slice(0, 10);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(str)) return [];
+    const [y, m, d] = str.split('-').map(Number);
+    let dtInicial = new Date(Date.UTC(y, m - 1, d));
     let numBs = 1;
+    let idx = 0;
+    const lista = [];
+
     while (numBs < 53) {
         const dtFinal = new Date(dtInicial.getTime());
         dtFinal.setUTCDate(dtFinal.getUTCDate() + 13);
 
+        const existente = existentes[idx] || existentes.find(e => Number(e.num_bisemana) === numBs);
+
         lista.push({
+            id: existente ? existente.id : null,
             num_bisemana: numBs,
             inicio: dtInicial.toISOString().slice(0, 10),
             fim: dtFinal.toISOString().slice(0, 10),
@@ -62,8 +98,17 @@ const previewBisemanas = computed(() => {
         dtInicial = new Date(dtFinal.getTime());
         dtInicial.setUTCDate(dtInicial.getUTCDate() + 1);
         numBs += 2;
+        idx++;
     }
     return lista;
+}
+
+// Prévia dinâmica das bi-semanas que serão geradas para o novo ano digitado
+const previewBisemanas = computed(() => {
+    const y = Number(novoAno.value);
+    if (!y || y < 2000 || y > 2100) return [];
+    const dtStr = dataInicioNovoAno.value || `${y}-01-01`;
+    return gerarListaBisemanasAPartirDeData(dtStr);
 });
 
 function formatDateBR(d) {
@@ -76,8 +121,14 @@ function formatDateBR(d) {
     return str;
 }
 
+function podeEditarAno(itemAno) {
+    if (!itemAno) return false;
+    return Number(itemAno.ano_bisemana) >= anoAtual;
+}
+
 function abrirModalNovoAno() {
     novoAno.value = proximoAnoSugerido.value;
+    dataInicioNovoAno.value = sugerirDataInicioParaAno(proximoAnoSugerido.value);
     modalNovoAnoOpen.value = true;
 }
 
@@ -88,9 +139,17 @@ async function criarBisemanasAno() {
         return;
     }
 
+    if (!dataInicioNovoAno.value || !/^\d{4}-\d{2}-\d{2}$/.test(dataInicioNovoAno.value)) {
+        toastr.error('Informe a data inicial da 1ª Bi-semana.');
+        return;
+    }
+
     salvandoAno.value = true;
     try {
-        const res = await axios.post('/configuracoes/addAno', { ano: anoNum });
+        const res = await axios.post('/configuracoes/addAno', {
+            ano: anoNum,
+            data_inicio: dataInicioNovoAno.value,
+        });
         const msg = res.data?.message || `Bi-semanas do ano ${anoNum} criadas com sucesso!`;
         toastr.success(msg);
         modalNovoAnoOpen.value = false;
@@ -98,6 +157,7 @@ async function criarBisemanasAno() {
             only: ['anos'],
             onSuccess: () => {
                 novoAno.value = proximoAnoSugerido.value;
+                dataInicioNovoAno.value = sugerirDataInicioParaAno(proximoAnoSugerido.value);
             },
         });
     } catch (err) {
@@ -105,6 +165,113 @@ async function criarBisemanasAno() {
         toastr.error(msg);
     } finally {
         salvandoAno.value = false;
+    }
+}
+
+function abrirModalVerBisemanas(itemAno) {
+    anoSelecionado.value = itemAno;
+    modalVerBsOpen.value = true;
+}
+
+function abrirModalEditarBisemanas(itemAno) {
+    if (!podeEditarAno(itemAno)) {
+        toastr.error('Apenas bi-semanas do ano atual ou de anos futuros podem ser editadas.');
+        return;
+    }
+    modalVerBsOpen.value = false;
+    anoEditando.value = itemAno;
+
+    const existentes = (itemAno.bisemanas || []).map(b => ({
+        id: b.id,
+        num_bisemana: Number(b.num_bisemana),
+        inicio: String(b.inicio || '').slice(0, 10),
+        fim: String(b.fim || '').slice(0, 10),
+    }));
+
+    if (existentes.length > 0) {
+        dataInicioEdicao.value = existentes[0].inicio;
+        bisemanasEditando.value = existentes;
+    } else {
+        const sugerida = sugerirDataInicioParaAno(itemAno.ano_bisemana);
+        dataInicioEdicao.value = sugerida;
+        bisemanasEditando.value = gerarListaBisemanasAPartirDeData(sugerida);
+    }
+
+    modalEditarBsOpen.value = true;
+}
+
+const dataSugeridaAnoAnteriorEdicao = computed(() => {
+    if (!anoEditando.value) return '';
+    return sugerirDataInicioParaAno(anoEditando.value.ano_bisemana);
+});
+
+function recalcularEdicaoPelaDataInicial(novaDataOpcional = null) {
+    if (novaDataOpcional && typeof novaDataOpcional === 'string') {
+        dataInicioEdicao.value = novaDataOpcional;
+    }
+    if (!dataInicioEdicao.value || !/^\d{4}-\d{2}-\d{2}$/.test(dataInicioEdicao.value)) {
+        toastr.error('Informe uma data inicial válida para recalcular.');
+        return;
+    }
+    bisemanasEditando.value = gerarListaBisemanasAPartirDeData(
+        dataInicioEdicao.value,
+        bisemanasEditando.value
+    );
+}
+
+function aoAlterarInicioBsEdicao(index) {
+    const item = bisemanasEditando.value[index];
+    if (!item || !/^\d{4}-\d{2}-\d{2}$/.test(item.inicio)) return;
+
+    if (index === 0) {
+        dataInicioEdicao.value = item.inicio;
+    }
+
+    if (encadearDatasEdicao.value) {
+        // Recalcula o fim desta BS (+13 dias) e todas as BS seguintes em cascata
+        let dtInicioAtual = item.inicio;
+        for (let i = index; i < bisemanasEditando.value.length; i++) {
+            const dtFimAtual = addDaysISO(dtInicioAtual, 13);
+            bisemanasEditando.value[i].inicio = dtInicioAtual;
+            bisemanasEditando.value[i].fim = dtFimAtual;
+            dtInicioAtual = addDaysISO(dtFimAtual, 1);
+        }
+    }
+}
+
+function aoAlterarFimBsEdicao(index) {
+    const item = bisemanasEditando.value[index];
+    if (!item || !/^\d{4}-\d{2}-\d{2}$/.test(item.fim)) return;
+
+    if (encadearDatasEdicao.value && index + 1 < bisemanasEditando.value.length) {
+        let dtInicioAtual = addDaysISO(item.fim, 1);
+        for (let i = index + 1; i < bisemanasEditando.value.length; i++) {
+            const dtFimAtual = addDaysISO(dtInicioAtual, 13);
+            bisemanasEditando.value[i].inicio = dtInicioAtual;
+            bisemanasEditando.value[i].fim = dtFimAtual;
+            dtInicioAtual = addDaysISO(dtFimAtual, 1);
+        }
+    }
+}
+
+async function salvarEdicaoBisemanas() {
+    if (!anoEditando.value) return;
+
+    salvandoEdicao.value = true;
+    try {
+        const res = await axios.post('/configuracoes/updateAnoBisemanas', {
+            ano_id: anoEditando.value.id,
+            data_inicio: dataInicioEdicao.value,
+            bisemanas: bisemanasEditando.value,
+        });
+        toastr.success(res.data?.message || 'Bi-semanas atualizadas com sucesso!');
+        modalEditarBsOpen.value = false;
+        router.reload({ only: ['anos'] });
+    } catch (err) {
+        const msg = err?.response?.data?.message || 'Erro ao atualizar as bi-semanas do ano.';
+        toastr.error(msg);
+    } finally {
+        salvandoEdicao.value = false;
     }
 }
 
@@ -122,11 +289,6 @@ function refreshCompressed() {
         .finally(() => {
             loadingRefresh.value = false;
         });
-}
-
-function abrirModalVerBisemanas(itemAno) {
-    anoSelecionado.value = itemAno;
-    modalVerBsOpen.value = true;
 }
 </script>
 
@@ -246,24 +408,38 @@ function abrirModalVerBisemanas(itemAno) {
                             </div>
 
                             <p class="text-xs text-gray-600">
-                                Informe o ano desejado para criar automaticamente o registro do ano e todas as suas
-                                <strong>26 bi-semanas</strong> (iniciando em <code>01/01</code>, com ciclos de 14 dias e numeração ímpar de <code>1</code> a <code>51</code>).
+                                Informe o ano e o <strong>dia inicial da 1ª Bi-semana</strong> para criar automaticamente todas as
+                                <strong>26 bi-semanas</strong> (ciclos de 14 dias com numeração de <code>1</code> a <code>51</code>).
                             </p>
 
                             <form @submit.prevent="criarBisemanasAno" class="space-y-3">
-                                <div class="form-control w-full">
-                                    <label class="label py-1">
-                                        <span class="label-text font-semibold">Ano para Geração *</span>
-                                    </label>
-                                    <input
-                                        v-model="novoAno"
-                                        type="number"
-                                        min="2020"
-                                        max="2100"
-                                        placeholder="Ex: 2027"
-                                        class="input input-bordered w-full font-bold text-lg"
-                                        required
-                                    />
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div class="form-control w-full">
+                                        <label class="label py-1">
+                                            <span class="label-text font-semibold">Ano para Geração *</span>
+                                        </label>
+                                        <input
+                                            v-model="novoAno"
+                                            type="number"
+                                            min="2020"
+                                            max="2100"
+                                            placeholder="Ex: 2027"
+                                            class="input input-bordered w-full font-bold text-base"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div class="form-control w-full">
+                                        <label class="label py-1">
+                                            <span class="label-text font-semibold">Início da 1ª Bi-semana *</span>
+                                        </label>
+                                        <input
+                                            v-model="dataInicioNovoAno"
+                                            type="date"
+                                            class="input input-bordered w-full text-sm font-semibold"
+                                            required
+                                        />
+                                    </div>
                                 </div>
 
                                 <!-- Resumo da prévia -->
@@ -324,7 +500,7 @@ function abrirModalVerBisemanas(itemAno) {
                                     <div>
                                         <h2 class="text-lg font-bold">Calendário de Anos e Bi-semanas</h2>
                                         <p class="text-xs text-gray-500">
-                                            Anos disponíveis para reservas, lançamentos de vendas (OS) e emissão de PIs
+                                            Anos disponíveis para reservas, lançamentos de vendas (OS) e emissão de PIs. Anos atuais e futuros podem ter suas datas editadas.
                                         </p>
                                     </div>
                                     <button
@@ -403,14 +579,27 @@ function abrirModalVerBisemanas(itemAno) {
                                                 </td>
 
                                                 <td class="whitespace-nowrap py-3 px-3 text-center">
-                                                    <button
-                                                        type="button"
-                                                        class="btn btn-xs btn-info text-white"
-                                                        @click="abrirModalVerBisemanas(item)"
-                                                    >
-                                                        <i class="fa-solid fa-calendar-days mr-1"></i>
-                                                        Ver Bi-semanas
-                                                    </button>
+                                                    <div class="flex items-center justify-center gap-1.5">
+                                                        <button
+                                                            type="button"
+                                                            class="btn btn-xs btn-info text-white"
+                                                            @click="abrirModalVerBisemanas(item)"
+                                                        >
+                                                            <i class="fa-solid fa-calendar-days mr-1"></i>
+                                                            Ver Bi-semanas
+                                                        </button>
+
+                                                        <button
+                                                            v-if="podeEditarAno(item)"
+                                                            type="button"
+                                                            class="btn btn-xs btn-warning text-white"
+                                                            @click="abrirModalEditarBisemanas(item)"
+                                                            title="Editar datas das bi-semanas deste ano"
+                                                        >
+                                                            <i class="fa-solid fa-pen-to-square mr-1"></i>
+                                                            Editar
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -436,22 +625,34 @@ function abrirModalVerBisemanas(itemAno) {
                         Criar Bi-semanas de Novo Ano
                     </h3>
                     <p class="text-xs text-gray-600 mb-4">
-                        Informe apenas o ano abaixo. O sistema criará o ano e gerará todas as bi-semanas começando em
-                        <code>01/01</code>, somando 13 dias para o término de cada bi-semana e incrementando a numeração de 2 em 2 até completar o ano.
+                        Informe o ano e o <strong>dia inicial da primeira bi-semana</strong>. O sistema gerará todas as 26 bi-semanas somando 13 dias para o término de cada bi-semana e iniciando a próxima no dia seguinte.
                     </p>
 
-                    <div class="form-control w-full mb-4">
-                        <label class="label py-1">
-                            <span class="label-text font-semibold">Informe o Ano *</span>
-                        </label>
-                        <input
-                            v-model="novoAno"
-                            type="number"
-                            min="2020"
-                            max="2100"
-                            placeholder="Ex: 2027"
-                            class="input input-bordered w-full font-bold text-lg"
-                        />
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div class="form-control w-full">
+                            <label class="label py-1">
+                                <span class="label-text font-semibold">Informe o Ano *</span>
+                            </label>
+                            <input
+                                v-model="novoAno"
+                                type="number"
+                                min="2020"
+                                max="2100"
+                                placeholder="Ex: 2027"
+                                class="input input-bordered w-full font-bold text-lg"
+                            />
+                        </div>
+
+                        <div class="form-control w-full">
+                            <label class="label py-1">
+                                <span class="label-text font-semibold">Dia Inicial da 1ª Bi-semana *</span>
+                            </label>
+                            <input
+                                v-model="dataInicioNovoAno"
+                                type="date"
+                                class="input input-bordered w-full font-bold text-base"
+                            />
+                        </div>
                     </div>
 
                     <!-- Tabela de Prévia das Bi-semanas -->
@@ -507,10 +708,21 @@ function abrirModalVerBisemanas(itemAno) {
             <input type="checkbox" id="modal-ver-bisemanas" class="modal-toggle" v-model="modalVerBsOpen" />
             <div class="modal" :class="{ 'modal-open': modalVerBsOpen }">
                 <div class="modal-box max-w-2xl">
-                    <h3 class="font-bold text-lg mb-2">
-                        <i class="fa-solid fa-calendar-days text-info mr-2"></i>
-                        Bi-semanas do Ano {{ anoSelecionado?.ano_bisemana }}
-                    </h3>
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-bold text-lg">
+                            <i class="fa-solid fa-calendar-days text-info mr-2"></i>
+                            Bi-semanas do Ano {{ anoSelecionado?.ano_bisemana }}
+                        </h3>
+                        <button
+                            v-if="podeEditarAno(anoSelecionado)"
+                            type="button"
+                            class="btn btn-warning btn-xs text-white"
+                            @click="abrirModalEditarBisemanas(anoSelecionado)"
+                        >
+                            <i class="fa-solid fa-pen-to-square mr-1"></i>
+                            Editar Bi-semanas
+                        </button>
+                    </div>
 
                     <div class="max-h-96 overflow-y-auto border rounded-lg mt-3">
                         <table class="min-w-full divide-y divide-gray-200 text-xs">
@@ -541,6 +753,122 @@ function abrirModalVerBisemanas(itemAno) {
                     <div class="modal-action">
                         <button type="button" class="btn btn-primary text-white" @click="modalVerBsOpen = false">
                             Fechar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== MODAL EDITAR BI-SEMANAS (ANO ATUAL E FUTUROS) ==================== -->
+            <input type="checkbox" id="modal-editar-bisemanas" class="modal-toggle" v-model="modalEditarBsOpen" />
+            <div class="modal" :class="{ 'modal-open': modalEditarBsOpen }">
+                <div class="modal-box max-w-3xl">
+                    <h3 class="font-bold text-lg mb-1">
+                        <i class="fa-solid fa-pen-to-square text-warning mr-2"></i>
+                        Editar Bi-semanas do Ano {{ anoEditando?.ano_bisemana }}
+                    </h3>
+                    <p class="text-xs text-gray-600 mb-4">
+                        Altere o <strong>Dia Inicial da 1ª Bi-semana</strong> para recalcular todo o calendário do ano automaticamente, ou ajuste as datas de cada bi-semana abaixo.
+                    </p>
+
+                    <!-- Barra de Recálculo Rápido pelo Dia Inicial -->
+                    <div class="p-3.5 bg-base-200 rounded-lg border border-base-300 mb-4 space-y-3">
+                        <div class="flex flex-col sm:flex-row sm:items-end gap-3">
+                            <div class="form-control flex-1">
+                                <label class="label py-1">
+                                    <span class="label-text text-xs font-bold">Dia Inicial da 1ª Bi-semana (BS 1)</span>
+                                </label>
+                                <input
+                                    v-model="dataInicioEdicao"
+                                    type="date"
+                                    class="input input-bordered w-full text-sm font-bold bg-white"
+                                />
+                            </div>
+
+                            <button
+                                type="button"
+                                class="btn btn-primary btn-sm text-white h-10"
+                                @click="recalcularEdicaoPelaDataInicial()"
+                            >
+                                <i class="fa-solid fa-rotate mr-1"></i>
+                                Recalcular Todas pelo Dia Inicial
+                            </button>
+
+                            <button
+                                v-if="dataSugeridaAnoAnteriorEdicao && dataSugeridaAnoAnteriorEdicao !== dataInicioEdicao"
+                                type="button"
+                                class="btn btn-outline btn-info btn-sm h-10"
+                                @click="recalcularEdicaoPelaDataInicial(dataSugeridaAnoAnteriorEdicao)"
+                                title="Definir início logo após o fim da última bi-semana do ano anterior"
+                            >
+                                <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>
+                                Usar {{ formatDateBR(dataSugeridaAnoAnteriorEdicao) }} (Pós-{{ Number(anoEditando?.ano_bisemana) - 1 }})
+                            </button>
+                        </div>
+
+                        <label class="flex items-center gap-2 cursor-pointer text-xs text-gray-700 font-medium pt-1">
+                            <input
+                                type="checkbox"
+                                v-model="encadearDatasEdicao"
+                                class="checkbox checkbox-xs checkbox-primary"
+                            />
+                            <span>Recalcular bi-semanas seguintes automaticamente em cascata (14 dias cada) ao alterar uma data na tabela</span>
+                        </label>
+                    </div>
+
+                    <!-- Tabela Editável das Bi-semanas -->
+                    <div class="max-h-80 overflow-y-auto border rounded-lg">
+                        <table class="min-w-full divide-y divide-gray-200 text-xs">
+                            <thead class="bg-base-200 sticky top-0 z-10">
+                                <tr>
+                                    <th class="py-2.5 px-3 text-left font-bold uppercase">ID</th>
+                                    <th class="py-2.5 px-3 text-center font-bold uppercase">Bi-semana</th>
+                                    <th class="py-2.5 px-3 text-center font-bold uppercase">Data Inicial</th>
+                                    <th class="py-2.5 px-3 text-center font-bold uppercase">Data Final</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 bg-white">
+                                <tr v-for="(bs, idx) in bisemanasEditando" :key="bs.id || bs.num_bisemana">
+                                    <td class="py-1.5 px-3 text-gray-500">#{{ bs.id || 'Novo' }}</td>
+                                    <td class="py-1.5 px-3 text-center font-bold text-gray-900">BS {{ bs.num_bisemana }}</td>
+                                    <td class="py-1.5 px-3 text-center">
+                                        <input
+                                            type="date"
+                                            v-model="bs.inicio"
+                                            @change="aoAlterarInicioBsEdicao(idx)"
+                                            class="input input-bordered input-xs w-36 text-xs font-medium"
+                                        />
+                                    </td>
+                                    <td class="py-1.5 px-3 text-center">
+                                        <input
+                                            type="date"
+                                            v-model="bs.fim"
+                                            @change="aoAlterarFimBsEdicao(idx)"
+                                            class="input input-bordered input-xs w-36 text-xs font-medium"
+                                        />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="modal-action">
+                        <button
+                            type="button"
+                            class="btn btn-ghost"
+                            :disabled="salvandoEdicao"
+                            @click="modalEditarBsOpen = false"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-success text-white"
+                            :disabled="salvandoEdicao"
+                            @click="salvarEdicaoBisemanas"
+                        >
+                            <i v-if="salvandoEdicao" class="fa-solid fa-spinner fa-spin mr-1"></i>
+                            <i v-else class="fa-solid fa-floppy-disk mr-1"></i>
+                            {{ salvandoEdicao ? 'Salvando...' : `Salvar Bi-semanas de ${anoEditando?.ano_bisemana || ''}` }}
                         </button>
                     </div>
                 </div>

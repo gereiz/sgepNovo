@@ -311,6 +311,7 @@ route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('/configuracoes')->group(function () {
         route::get('/', [ConfiguracoesController::class, 'index']);
         route::post('/addAno', [ConfiguracoesController::class, 'AddAno'])->name('add.ano');
+        route::post('/updateAnoBisemanas', [ConfiguracoesController::class, 'UpdateAnoBisemanas'])->name('update.ano.bisemanas');
 
         // Roles
         route::get('/roles', [RolesController::class, 'index']);
